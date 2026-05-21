@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<DebugSwitches>
+	<Package name="matr.map">
+		<!-- no classes yet -->
+	</Package>
+	<Package name="srojak.map">
+		<Class name="MapSquareGridArray" level="TRACE">
+			<Subject name="ShowCoastGen" level="TRACE"/>
+			<Subject name="Regions" level="DEBUG"/>
+		</Class>
+	</Package>
+	<Package name="srojak.map.generate">
+		<Class name="MapCoastlineTool" id="99" level="DEBUG"/>	
+		<Class name="MapCommunityTool" />
+	</Package>
+</DebugSwitches>

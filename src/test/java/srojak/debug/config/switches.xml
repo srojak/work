@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<DebugSwitches>
+	<!-- 
+	 * Copyright © 2026 Stephen Rojak.
+	 * 
+	 * This file is part of the srojak Java portfolio.
+	 * 
+	 * The srojak Java portfolio is free software: you can redistribute it and/or modify it
+	 * under the terms of the GNU General Public License as published by the Free Software Foundation,
+	 * version 3 of the License.
+	 * 
+	 * The srojak Java portfolio is distributed in the hope that it will be useful, 
+	 * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	 * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+	 * 
+	 * You should have received a copy of the GNU General Public License along with this portfolio.
+	 * If not, see <https://www.gnu.org/licenses/>.
+	-->
+	<Package name="func.map">
+		<!-- no classes yet -->
+	</Package>
+	<Package name="srojak.map">
+		<Class name="MapSquareGridArray" level="TRACE" locs="true">
+			<Subject name="ShowCoastGen" level="TRACE"/>
+			<Subject name="Regions" level="DEBUG"/>
+		</Class>
+	</Package>
+	<Package name="srojak.map.generate">
+		<Class name="MapCoastlineTool" level="DEBUG" locs="false"/>	
+		<Class name="MapCommunityTool" locs="false" />
+	</Package>
+</DebugSwitches>
