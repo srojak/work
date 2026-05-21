@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DebugSwitches" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+<!-- 
+ * Copyright © 2026 Stephen Rojak.
+ * 
+ * This file is part of the srojak Java portfolio.
+ * 
+ * The srojak Java portfolio is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free Software Foundation,
+ * version 3 of the License.
+ * 
+ * The srojak Java portfolio is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this portfolio.
+ * If not, see <https://www.gnu.org/licenses/>.
+-->
+  <xs:simpleType name="boolString">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="true"/>
+	  <xs:enumeration value="false"/>
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DebugSwitches" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Package">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Class" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Subject" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="level" type="xs:string" />
+						<xs:attribute name="locs" type="boolString" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" />
+                  <xs:attribute name="level" type="xs:string" />
+                  <xs:attribute name="locs" type="boolString" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
