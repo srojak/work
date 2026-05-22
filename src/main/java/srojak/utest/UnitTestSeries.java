@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 import srojak.core.observe.ObsLevel;
 import srojak.numerics.ConditionSense;
 import srojak.numerics.OrderedComparison;
+import srojak.utest.conditions.StringCondition;
 import srojak.utest.helpers.UnitTestClassElementMethods;
 import srojak.utest.helpers.UnitTestConditionComparison;
 import srojak.utest.helpers.UnitTestEqualsMethods;
@@ -186,6 +187,41 @@ public class UnitTestSeries
 		instance.execute(condition, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
+		checkStopOnFailure(strTest, outcome);
+		return outcome;
+	}
+	
+	/**
+	 * Evaluate a test where the result is a {@code String} value.
+	 * @param strTest The name of the test instance.
+	 * @param strValueName The name of the value under test.
+	 * @param condition The string condition to evaluate for the actual value.
+	 * @param expected The expected value, which is an input to the condition.
+	 * @param actual The actual String value.
+	 * @return the {@code TestOutcome} for the test.
+	 */
+	public TestOutcome expectString(String strTest, String strValueName,
+			StringCondition condition, String expected, String actual) {
+		Objects.requireNonNull(condition, "condition");
+		Objects.requireNonNull(expected, "expected");
+		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, strTest);
+		sb.append(strValueName);
+		sb.append(' ');
+		sb.append(condition);
+		sb.append(' ');
+		sb.append(expected);
+		sb.append("? ");
+		TestOutcome outcome = TestOutcome.NONE;
+		if (actual == null) {
+			sb.append("actual is null");
+			outcome = TestOutcome.FAIL;
+		} else {
+			sb.append("actual=\"");
+			sb.append(actual);
+			sb.append("\"");
+			outcome = TestOutcome.evaluate(() -> condition.evaluate(expected, actual));
+		}
+		writeOutcomeMessage(outcome, sb.toString());
 		checkStopOnFailure(strTest, outcome);
 		return outcome;
 	}
