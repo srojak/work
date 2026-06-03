@@ -17,6 +17,8 @@
 package srojak.core.tools;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -36,6 +38,18 @@ public class CollectionMethods {
 			}
 		}
 		return nCount;
+	}
+	
+	public static <T> List<T> where(Collection<T> collection, Predicate<T> predicate) {
+		Objects.requireNonNull(collection, "collection");
+		Objects.requireNonNull(predicate, "predicate");
+		LinkedList<T> list = new LinkedList<T>();
+		for (T item : collection) {
+			if (predicate.test(item)) {
+				list.addLast(item);
+			}
+		}
+		return list;
 	}
 	
 	public static <T> T findFirstIn(Collection<T> collection, Predicate<T> predicate) {

@@ -22,7 +22,8 @@ import java.util.List;
  * @author Stephen
  *
  */
-public interface IChangeEventingList<T> 
-		extends IChangeEventing, List<T> {
-
+public interface TypedList<E> 
+		extends List<E> {
+	Class<E> getElementClass();
+	boolean isElementAssignableFrom(Class<?> classOther);
 }

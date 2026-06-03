@@ -19,6 +19,9 @@ package srojak.core.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -31,7 +34,8 @@ import srojak.core.events.EventingListChangeListener;
  */
 public class ChangeEventingArrayList<T>
 		extends ArrayList<T>
-		implements IChangeEventingList<T> {
+		implements ChangeEventingList<T> {
+
 	private OwnerReferenceList<EventingListChangeListener> _listeners;
 	/**
 	 * 
@@ -139,6 +143,24 @@ public class ChangeEventingArrayList<T>
 	}
 
 	@Override
+	public ListIterator<T> listIterator(int index) {
+		// prevent iterator from changing the list
+		return List.copyOf(this).listIterator(index);
+	}
+
+	@Override
+	public ListIterator<T> listIterator() {
+		// prevent iterator from changing the list
+		return List.copyOf(this).listIterator();
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		// prevent iterator from changing the list
+		return List.copyOf(this).iterator();
+	}
+
+	@Override
 	public boolean addAll(Collection<? extends T> c) {
 		boolean bResult = super.addAll(c);
 		if (bResult) {
@@ -154,6 +176,14 @@ public class ChangeEventingArrayList<T>
 			raiseChangeEvent(EventingListChangeEvent.VERB_ADD_MULT);
 		}
 		return bResult;
+	}
+	
+	@Override
+	protected void removeRange(int fromIndex, int toIndex) {
+		super.removeRange(fromIndex, toIndex);
+		if (fromIndex < toIndex) {
+			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE_MULT);
+		}
 	}
 
 	@Override

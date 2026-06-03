@@ -38,6 +38,11 @@ public final class OnceFlag
 		return _tokenName;
 	}
 
+	@Override
+	public boolean isNameTokenEqual(NameToken token) {
+		return token == null ? false : _tokenName.equals(token);
+	}
+
 	public boolean getState() {
 		return _bState;
 	}

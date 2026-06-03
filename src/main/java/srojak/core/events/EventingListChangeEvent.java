@@ -63,4 +63,14 @@ public class EventingListChangeEvent
 	public Object getItem() {
 		return _objItem;
 	}
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append(_nVerb);
+		if (_objItem != null) {
+			sb.append(", item=[");
+			sb.append(_objItem);
+			sb.append(']');
+		}
+	}
 }

@@ -35,15 +35,15 @@ public class TQueue<T>
 	public boolean isEmpty() {
 		return _queue.isEmpty();
 	}
+
+	@Override
+	public int size() {
+		return _queue.size();
+	}
 	
 	@Override
 	public T getItemAt(int nPos) {
 		return _queue.get(nPos);
-	}
-
-	@Override
-	public int length() {
-		return _queue.size();
 	}
 
 	public void clear() {

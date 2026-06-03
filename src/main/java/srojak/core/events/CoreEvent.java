@@ -27,7 +27,7 @@ import java.util.EventObject;
  *
  */
 @SuppressWarnings("serial")
-public class CoreEvent
+public abstract class CoreEvent
 		extends EventObject {
 
 	/**
@@ -35,6 +35,17 @@ public class CoreEvent
 	 */
 	public CoreEvent(Object source) {
 		super(source);
+	}
+	
+	protected abstract void formatData(StringBuilder sb);
+	
+	public String toDataString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append('[');
+		formatData(sb);
+		sb.append(']');
+		return sb.toString();
 	}
 
     /**

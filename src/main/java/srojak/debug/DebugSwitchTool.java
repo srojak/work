@@ -23,7 +23,7 @@ import srojak.core.reflect.PackageClassLocator;
 /**
  * @author Stephen
  *
- * Common methos for making keys.
+ * Common methods for making keys.
  */
 public class DebugSwitchTool {
 	

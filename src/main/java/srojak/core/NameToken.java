@@ -24,12 +24,23 @@ import srojak.core.impl.NameTokenFixed;
  *
  */
 public interface NameToken
-	extends INamed, StringComparable, Comparable<NameToken> {
+		extends INamed, StringComparable, Comparable<NameToken> {
+	int hashCode();
+	boolean equals(Object obj);
+	boolean isRestricted();
 
 	@SuppressWarnings("exports")
 	public static final NameTokenFixed Anon = new NameTokenFixed("anon");
 	
 	public static NameToken factory(String strName) {
 		return new NameTokenCommon(strName);
+	}
+	
+	public static NameToken classNameFactory(Class<?> classObj) {
+		return new NameTokenCommon(classObj.getSimpleName());
+	}
+	
+	public static NameToken factory(NameToken tokenBase, String strExtend) {
+		return NameTokenCommon.extend(tokenBase, strExtend);
 	}
 }

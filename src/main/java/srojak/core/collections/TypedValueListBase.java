@@ -33,7 +33,7 @@ import srojak.core.reflect.TypeBearingValue;
  *
  */
 public abstract class TypedValueListBase<E>
-		implements CommonCollectionReadOnly, List<E> {
+		implements CommonCollectionSize, List<E> {
 	protected final List<TypeBearingValue<E>> _list;
 
 	/**

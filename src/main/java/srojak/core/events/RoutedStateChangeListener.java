@@ -14,23 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.collections;
+package srojak.core.events;
+
+import java.util.EventListener;
 
 /**
  * @author Stephen
  *
  */
-public interface CommonCollectionReadOnly {
+public interface RoutedStateChangeListener
+		extends EventListener {
+
+	void stateChanged(RoutedStateChangeEvent event);
 	
-	/**
-     * Returns {@code true} if this collection contains no elements.
-	 * @return {@code true} if this collection contains no elements.
-	 */
-	boolean isEmpty();
-	
-	/**
-	 * returns the integer length of the collection.
-	 * @return the integer length of the collection.
-	 */
-	int size();
+	public static final int SUBJECT_SELECTION = 10;
+	public static final int SUBJECT_REQUIRED_DATA = 11;
 }

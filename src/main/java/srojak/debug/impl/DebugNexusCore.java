@@ -27,6 +27,7 @@ import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
 import srojak.debug.DebugProperties;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchKey;
+import srojak.debug.DebugNexus.PropertyKeys;
 /**
  * @author Stephen
  *
@@ -67,6 +68,13 @@ public class DebugNexusCore {
 	}
 	
 	public static void putContent(DebugSwitchContent content) {
+		if (_properties.evalProperty(PropertyKeys.DIAG_NEW_SWITCH, 
+				v -> { 
+					String strValue = v.toLowerCase();
+					return strValue.equals("yes") || strValue.equals("true");
+				})) {
+			_writer.writeDiagnostic("creating new DebugSwitch for " + content.getKey());
+		}
 		_table.put(content.getKey(), content);
 	}
 	

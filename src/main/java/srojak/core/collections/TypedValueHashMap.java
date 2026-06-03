@@ -32,7 +32,7 @@ import srojak.core.reflect.TypeBearingValue;
  *
  */
 public final class TypedValueHashMap<K, V>
-		implements CommonCollectionReadOnly, Map<K, V> {
+		implements CommonCollectionSize, Map<K, V> {
 	private final HashMap<K, TypeBearingValue<V>> _map;
 	
 	public TypedValueHashMap() {

@@ -33,6 +33,11 @@ public final class NameTokenFixed
 	}
 
 	@Override
+	public boolean isRestricted() {
+		return true;
+	}
+
+	@Override
 	protected int getSeries() {
 		return 1;
 	}

@@ -52,13 +52,13 @@ public class BooleanLatch
 			return;
 		}
 		_bState = bState;
-		ListIterator<StateChangeListener> iter = _listeners.listIterator(_listeners.size());
+		ListIterator<StateChangeListener> iter = _listeners.listIterator();
 		StateChangeEvent event = null;
-		while (iter.hasPrevious()) {
+		while (iter.hasNext()) {
 			if (event == null) {
-				event = new StateChangeEvent(this);
+				event = new StateChangeEvent(this, _bState);
 			}
-			iter.previous().stateChanged(event);
+			iter.next().stateChanged(event);
 		}
 	}
 

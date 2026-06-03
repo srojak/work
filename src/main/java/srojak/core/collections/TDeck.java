@@ -24,7 +24,8 @@ import srojak.core.EmptyCollectionException;
  * @author Stephen
  *
  */
-public class TDeck<T> {
+public class TDeck<T>
+		implements CommonCollectionSize {
 	private ArrayList<T> _list;
 	
 	public TDeck() {

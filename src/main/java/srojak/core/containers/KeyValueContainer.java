@@ -69,7 +69,6 @@ public class KeyValueContainer<K, V>
 		return _key.hashCode();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {

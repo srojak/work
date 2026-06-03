@@ -18,7 +18,7 @@ package srojak.core.observe;
 
 import java.util.Objects;
 
-import srojak.core.collections.CommonCollectionReadOnly;
+import srojak.core.collections.CommonCollectionSize;
 import srojak.core.impl.ObservablePassThroughArray;
 
 /**
@@ -27,7 +27,7 @@ import srojak.core.impl.ObservablePassThroughArray;
  * The public interface to a passthrough list.
  */
 public interface ObsPassThroughList 
-	extends CommonCollectionReadOnly {
+	extends CommonCollectionSize {
 	
 	/**
 	 * Gets a value from the list.

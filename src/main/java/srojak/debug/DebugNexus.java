@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 
 import srojak.core.IPropertiesReadOnly;
 import srojak.core.StringBox;
+import srojak.core.logic.SimpleGate;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationWriter;
@@ -35,6 +36,8 @@ import srojak.debug.impl.DebugSwitchContent;
  */
 public class DebugNexus {
 	private final DebugProperties _properties;
+	
+	private static final SimpleGate commonGate = new SimpleGate();
 	
 	/**
 	 * Constructor.
@@ -86,6 +89,14 @@ public class DebugNexus {
 	}
 	
 	/**
+	 * Get the writer for the debug switches.
+	 * @return The current writer.
+	 */
+	public ObservationWriter getWriter() {
+		return DebugNexusCore.getWriter();
+	}
+	
+	/**
 	 * Set the writer for the debug switches.
 	 * @param writer The writer to use.
 	 */
@@ -106,21 +117,15 @@ public class DebugNexus {
 		}
 	}
 	
-	private DebugSwitchContent fetch(DebugSwitchKey key) {
+	private DebugSwitchContent fetch(DebugSwitchKey key, SimpleGate gateNew) {
+		gateNew.setGateState(false);
 		DebugSwitchContent swDebug = DebugNexusCore.getContent(key);
 		if (swDebug == null) {
-			if (_properties.evalProperty(PropertyKeys.DIAG_NEW_SWITCH, 
-					v -> { 
-						String strValue = v.toLowerCase();
-						return strValue.equals("yes") || strValue.equals("true");
-					})) {
-				ObservationWriter writer = DebugNexusCore.getWriter();
-				writer.writeDiagnostic("creating new DebugSwitch for " + key);
-			}
 			DebugSwitchKeyBase keyReal = (DebugSwitchKeyBase) key;
 			swDebug = new DebugSwitchContent(keyReal);
 			swDebug.setLevel(DebugNexusCore.getDefaultLogLevel());
 			DebugNexusCore.putContent(swDebug);
+			gateNew.setGateState(true);
 		}
 		return swDebug;
 	}
@@ -133,7 +138,7 @@ public class DebugNexus {
 	 */
 	public ObsLevel getDebugLevel(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
-		return fetch(key).getLevel();
+		return fetch(key, commonGate).getLevel();
 	}
 	
 	/**
@@ -144,7 +149,29 @@ public class DebugNexus {
 	 */
 	public DebugSwitch getSwitch(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
-		return fetch(key);
+		return fetch(key, commonGate);
+	}
+	
+	/**
+	 * Get a specific debug switch.
+	 * Code can use this to set options only if they are not already set earlier.
+	 * The switch will be created if it does not already exist.
+	 * @param key The key identifying the debug switch.
+	 * @param levelNew The level to set the switch to, if created.
+	 * @param bShowSource The state of the show source option to set the switch to, if created.
+	 * @return The debug switch.
+	 */
+	public DebugSwitch getSwitch(DebugSwitchKey key,
+			ObsLevel levelNew, boolean bShowSource) {
+		Objects.requireNonNull(key, "key");
+		Objects.requireNonNull(levelNew, "levelNew");
+		SimpleGate gate = new SimpleGate();
+		DebugSwitchContent swDebug = fetch(key, gate);
+		if (gate.getGateState()) {
+			swDebug.setLevel(levelNew);
+			swDebug.setShowSourceLocations(bShowSource);
+		}
+		return swDebug;
 	}
 	
 	/**
@@ -156,7 +183,7 @@ public class DebugNexus {
 	 */
 	public void setDebugLevel(DebugSwitchKey key, ObsLevel level, boolean bShowSource) {
 		Objects.requireNonNull(key, "key");
-		DebugSwitchContent swDebug = fetch(key);
+		DebugSwitchContent swDebug = fetch(key, commonGate);
 		swDebug.setLevel(level);
 		swDebug.setShowSourceLocations(bShowSource);
 	}

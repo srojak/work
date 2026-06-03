@@ -16,11 +16,17 @@
  */
 package srojak.core.observe;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Stephen
  *
  */
-public final class SourceLocation {
+public final class SourceLocation
+		implements SourceDetailFlags {
+	private final String _strPackage;
 	private final String _strClass;
 	private final String _strMethod;
 	private final int _nLine;
@@ -34,9 +40,16 @@ public final class SourceLocation {
 	}
 	
 	private SourceLocation(StackTraceElement element) {
-		_strClass = element.getClassName();
+		String strFull = element.getClassName();
+		int index = strFull.lastIndexOf('.');
+		_strClass = strFull.substring(index + 1);
+		_strPackage = strFull.substring(0, index - 1);
 		_strMethod = element.getMethodName();
 		_nLine = element.getLineNumber();
+	}
+	
+	public String getPackageName() {
+		return _strPackage;
 	}
 	
 	public String getClassName() {
@@ -51,9 +64,34 @@ public final class SourceLocation {
 		return _nLine;
 	}
 	
+	public String toString(SourceDetail detail) {
+		List<String> list = new LinkedList<String>();
+		if (detail.isFlagSet(FLAG_CLASS)) {
+			list.add("class=" + (detail.isFlagSet(FLAG_PACKAGE)
+					? _strPackage + "." + _strClass : _strClass));
+		}
+		if (detail.isFlagSet(FLAG_METHOD)) {
+			list.add("method=" + _strMethod);
+		}
+		if (detail.isFlagSet(FLAG_LINE)) {
+			list.add("line=" + _nLine);
+		}
+		StringBuilder sb = new StringBuilder("@[");
+		Iterator<String> iter = list.iterator();
+		if (iter.hasNext()) {
+			sb.append(iter.next());
+		}
+		while (iter.hasNext()) {
+			sb.append(", ");
+			sb.append(iter.next());
+		}
+		sb.append(']');
+		return sb.toString();
+	}
+	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("[");
+		StringBuilder sb = new StringBuilder("@[");
 		sb.append("class=");
 		sb.append(_strClass);
 		sb.append(", method=");

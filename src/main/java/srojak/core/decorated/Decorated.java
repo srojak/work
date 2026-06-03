@@ -16,6 +16,12 @@
  */
 package srojak.core.decorated;
 
+import java.util.Objects;
+import java.util.function.DoublePredicate;
+import java.util.function.IntPredicate;
+import java.util.function.LongPredicate;
+import java.util.function.Predicate;
+
 import srojak.core.NameToken;
 
 /**
@@ -30,4 +36,79 @@ public interface Decorated<T> {
 	void putDecorator(Decorator decorator);
 	boolean isEqualTo(T other);
 	boolean isEqualTo(Decorated<T> other);
+	
+	default boolean hasDecoratorBooleanValue(NameToken tokenKey, boolean value) {
+		Objects.requireNonNull(tokenKey, "tokenKey");
+		Decorator decorator = getDecorator(tokenKey);
+		if (decorator != null) {
+			if (decorator instanceof BooleanDecorator tdecor) {
+				if (tdecor.getValue() == value) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	default boolean hasDecoratorIntValue(NameToken tokenKey, IntPredicate predicate) {
+		Objects.requireNonNull(tokenKey, "tokenKey");
+		Objects.requireNonNull(predicate, "predicate");
+		Decorator decorator = getDecorator(tokenKey);
+		if (decorator != null) {
+			if (decorator instanceof IntDecorator tdecor) {
+				if (predicate.test(tdecor.getValue())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	default boolean hasDecoratorLongValue(NameToken tokenKey, LongPredicate predicate) {
+		Objects.requireNonNull(tokenKey, "tokenKey");
+		Objects.requireNonNull(predicate, "predicate");
+		Decorator decorator = getDecorator(tokenKey);
+		if (decorator != null) {
+			if (decorator instanceof LongDecorator tdecor) {
+				if (predicate.test(tdecor.getValue())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	default boolean hasDecoratorDoubleValue(NameToken tokenKey, DoublePredicate predicate) {
+		Objects.requireNonNull(tokenKey, "tokenKey");
+		Objects.requireNonNull(predicate, "predicate");
+		Decorator decorator = getDecorator(tokenKey);
+		if (decorator != null) {
+			if (decorator instanceof DoubleDecorator tdecor) {
+				if (predicate.test(tdecor.getValue())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	default <V> boolean hasDecoratorObjValue(Class<V> classValue, NameToken tokenKey,
+			Predicate<V> predicate) {
+		Objects.requireNonNull(tokenKey, "classValue");
+		Objects.requireNonNull(tokenKey, "classValue");
+		Objects.requireNonNull(predicate, "predicate");
+		Decorator decorator = getDecorator(tokenKey);
+		if (decorator != null) {
+			if (decorator instanceof @SuppressWarnings("rawtypes") ObjDecorator tdecor) {
+				if (classValue.isAssignableFrom(tdecor.getValueClass())) {
+					@SuppressWarnings("unchecked")
+					V value = (V) tdecor.getValue();
+					if (predicate.test(value)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

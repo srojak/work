@@ -28,7 +28,7 @@ import srojak.core.NameToken;
  */
 public class DecoratedObject<T>
 		implements Decorated<T> {
-	private final T _value;
+	protected final T _value;
 	private final Map<NameToken, Decorator> _decorators;
 	
 	public DecoratedObject(T value) {

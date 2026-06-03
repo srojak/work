@@ -16,18 +16,11 @@
  */
 package srojak.core;
 
-import srojak.core.events.DataChangeListener;
-import srojak.core.events.StateChangeListener;
-
 /**
  * @author Stephen
  *
  */
-public interface ISingletonContainer {
-	boolean isEmpty();
-	void faultIfEmpty(String strMessage);
-	void addStateChangeListener(StateChangeListener listener);
-	void removeStateChangeListener(StateChangeListener listener);
-	void addDataChangeListener(DataChangeListener listener);
-	void removeDataChangeListener(DataChangeListener listener);
+public interface CoreCloseable
+		extends LifeCycleEventOriginating, AutoCloseable {
+	
 }

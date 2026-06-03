@@ -32,8 +32,8 @@ public abstract sealed class NameTokenBase
 	
 	public NameTokenBase(String strName) {
 		Objects.requireNonNull(strName, "strName");
-		if (strName.isEmpty()) {
-			throw new IllegalArgumentException("strName is empty");
+		if (strName.isEmpty() || strName.isBlank()) {
+			throw new IllegalArgumentException("strName");
 		}
 		_strName = strName;
 	}

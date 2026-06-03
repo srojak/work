@@ -39,6 +39,11 @@ public class DecoratorObjValue<V>
 	}
 
 	@Override
+	public Class<?> getValueClass() {
+		return _value.getClass();
+	}
+
+	@Override
 	public V getValue() {
 		return _value;
 	}

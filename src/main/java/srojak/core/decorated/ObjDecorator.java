@@ -22,6 +22,7 @@ package srojak.core.decorated;
  */
 public interface ObjDecorator<V>
 		extends Decorator {
+	Class<?> getValueClass();
 	V getValue();
 	void setValue(V value);
 }

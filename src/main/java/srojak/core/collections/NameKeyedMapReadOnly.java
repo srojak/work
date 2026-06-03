@@ -25,7 +25,7 @@ import srojak.core.NamedKey;
  *
  */
 public interface NameKeyedMapReadOnly<E> 
-		extends CommonCollectionReadOnly {
+		extends CommonCollectionSize {
 	boolean containsKey(NamedKey key);
 	E get(NamedKey key);
 	void forEach(Consumer<? super E> consumer);

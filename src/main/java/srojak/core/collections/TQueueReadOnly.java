@@ -22,9 +22,8 @@ import java.util.function.Consumer;
  * @author Stephen
  *
  */
-public interface TQueueReadOnly<T> {
-	boolean isEmpty();
-	int length();
+public interface TQueueReadOnly<T>
+		extends CommonCollectionSize {
 	T getItemAt(int nPos);
 	void forEach(Consumer<T> consumer);
 }

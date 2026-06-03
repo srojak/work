@@ -20,7 +20,6 @@ package srojak.core.collections;
  * @author Stephen
  *
  */
-public interface TStackDepth {
-	boolean isEmpty();
-	int depth();
+public interface TStackDepth
+		extends CommonCollectionSize {
 }

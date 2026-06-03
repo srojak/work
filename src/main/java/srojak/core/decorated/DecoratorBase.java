@@ -42,6 +42,11 @@ public abstract class DecoratorBase
 	}
 	
 	@Override
+	public boolean isNameTokenEqual(NameToken token) {
+		return token == null ? false : _name.equals(token);
+	}
+
+	@Override
 	public boolean isLocked() {
 		return _bLocked;
 	}

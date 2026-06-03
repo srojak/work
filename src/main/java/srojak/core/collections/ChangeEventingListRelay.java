@@ -29,10 +29,10 @@ import srojak.core.events.EventingListChangeListener;
  *
  */
 public class ChangeEventingListRelay<E>
-		implements IChangeEventingList<E> {
+		implements ChangeEventingList<E> {
 	private OwnerReferenceList<EventingListChangeListener> _listeners;
 	private ChangeRelay _relay;
-	private IChangeEventingList<E> _listBound;
+	private ChangeEventingList<E> _listBound;
 
 	/**
 	 * 
@@ -43,7 +43,7 @@ public class ChangeEventingListRelay<E>
 		_listBound = null;
 	}
 
-	public void bind(IChangeEventingList<E> list) {
+	public void bind(ChangeEventingList<E> list) {
 		if (_listBound != null) {
 			_listBound.removeChangeListeners(this);
 		}
@@ -100,7 +100,7 @@ public class ChangeEventingListRelay<E>
 
 	@Override
 	public Iterator<E> iterator() {
-		return _listBound != null ? _listBound.iterator() : null;
+		return _listBound != null ? List.copyOf(_listBound).iterator() : null;
 	}
 
 	@Override

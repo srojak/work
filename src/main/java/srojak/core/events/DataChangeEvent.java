@@ -31,4 +31,9 @@ public class DataChangeEvent
 		super(source);
 	}
 
+	@Override
+	protected void formatData(StringBuilder sb) {
+		
+	}
+
 }

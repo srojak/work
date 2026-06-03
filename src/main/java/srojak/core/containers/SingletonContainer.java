@@ -20,25 +20,40 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 import srojak.core.EmptyCollectionException;
-import srojak.core.ISingletonContainer;
-import srojak.core.events.DataChangeEvent;
-import srojak.core.events.DataChangeListener;
+import srojak.core.LifeCycleEventOriginating;
+import srojak.core.SingletonReadOnly;
+import srojak.core.events.LifeCycleEvent;
+import srojak.core.events.LifeCycleListener;
 import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationWriterNull;
 
 /**
  * @author Stephen
  *
  */
 public class SingletonContainer<T>
-		implements ISingletonContainer {
-	private final LinkedList<DataChangeListener> _listenersData;
+		implements SingletonReadOnly<T> {
 	private final LinkedList<StateChangeListener> _listenersState;
+	private final ObjectLifeCycleListener _listenerLife;
 	private T _obj;
 	
+	private static ObservationWriter _writer = new ObservationWriterNull();
+	
+	public static ObservationWriter getObservationWriter() {
+		return _writer;
+	}
+	
+	public static void setObservationWriter(ObservationWriter writer) {
+		Objects.requireNonNull(writer, "writer");
+		_writer = writer;
+	}
+	
 	public SingletonContainer() {
-		_listenersData = new LinkedList<DataChangeListener>();
 		_listenersState = new LinkedList<StateChangeListener>();
+		_listenerLife = new ObjectLifeCycleListener();
 		_obj = null;
 	}
 	
@@ -57,45 +72,58 @@ public class SingletonContainer<T>
 		}
 		
 	}
-
-	public void clear() {
+	
+	private void releaseCurrent() {
 		if (_obj != null) {
 			if (!_listenersState.isEmpty()) {
-				StateChangeEvent event = new StateChangeEvent(this);
+				StateChangeEvent event = new StateChangeEvent(this, false);
 				_listenersState.forEach(ls -> ls.stateChanged(event));
 			}
-			if (!_listenersData.isEmpty()) {
-				DataChangeEvent event = new DataChangeEvent(_obj);
-				_listenersData.forEach(ls -> ls.dataRemoved(event));
+			if (_obj instanceof AutoCloseable objClose) {
+				try {
+					objClose.close();
+				} catch (Exception exc) {
+					_writer.buildAndWrite(ObsLevel.ERROR, sb -> {
+						sb.append("caught ");
+						sb.append(exc.getClass().getSimpleName());
+						sb.append("\n    ");
+						sb.append(exc.getMessage());
+					});
+				}
+			}
+			if (_obj instanceof LifeCycleEventOriginating objLC) {
+				objLC.removeLifeCycleListener(_listenerLife);
 			}
 		}
+	}
+	
+	private synchronized void vacate(Object objClosed) {
+		if (_obj == objClosed) {
+			releaseCurrent();
+			_obj = null;
+		}
+	}
+
+	public synchronized void clear() {
+		releaseCurrent();
 		_obj = null;
 	}
 	
+	@Override
 	public T get() {
 		return _obj;
 	}
 	
-	public void set(T objNew) {
+	public synchronized void set(T objNew) {
 		Objects.requireNonNull(objNew, "objNew");
-		if (_obj != null) {
-			if (!_listenersState.isEmpty()) {
-				StateChangeEvent event = new StateChangeEvent(this);
-				_listenersState.forEach(ls -> ls.stateChanged(event));
-			}
-			if (!_listenersData.isEmpty()) {
-				DataChangeEvent event = new DataChangeEvent(_obj);
-				_listenersData.forEach(ls -> ls.dataRemoved(event));
-			}
-		}
+		releaseCurrent();
 		_obj = objNew;
-		if (!_listenersState.isEmpty()) {
-			StateChangeEvent event = new StateChangeEvent(this);
-			_listenersState.forEach(ls -> ls.stateChanged(event));
+		if (_obj instanceof LifeCycleEventOriginating objLC) {
+			objLC.addLifeCycleListener(_listenerLife);
 		}
-		if (!_listenersData.isEmpty()) {
-			DataChangeEvent event = new DataChangeEvent(_obj);
-			_listenersData.forEach(ls -> ls.dataAdded(event));
+		if (!_listenersState.isEmpty()) {
+			StateChangeEvent event = new StateChangeEvent(this, true);
+			_listenersState.forEach(ls -> ls.stateChanged(event));
 		}
 	}
 	
@@ -110,16 +138,16 @@ public class SingletonContainer<T>
 		Objects.requireNonNull(listener, "listener");
 		_listenersState.remove(listener);
 	}
-
-	@Override
-	public void addDataChangeListener(DataChangeListener listener) {
-		Objects.requireNonNull(listener, "listener");
-		_listenersData.add(listener);
-	}
 	
-	@Override
-	public void removeDataChangeListener(DataChangeListener listener) {
-		Objects.requireNonNull(listener, "listener");
-		_listenersData.remove(listener);
+	private class ObjectLifeCycleListener
+			implements LifeCycleListener {
+
+		@Override
+		public void receive(LifeCycleEvent event) {
+			if (event.getID() == LifeCycleEvent.ID_CLOSED) {
+				vacate(event.getSource());
+			}
+		}
+		
 	}
 }

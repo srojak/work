@@ -23,4 +23,5 @@ package srojak.core;
  */
 public interface NameTokenBearing {
 	NameToken getNameToken();
+	boolean isNameTokenEqual(NameToken token);
 }

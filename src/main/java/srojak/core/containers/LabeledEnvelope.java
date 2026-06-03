@@ -49,4 +49,22 @@ public class LabeledEnvelope<T>
 	public Object getObject() {
 		return _item;
 	}
+
+	@Override
+	public int hashCode() {
+		return _item.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (obj instanceof LabeledObject other) {
+			return _item.equals(other.getObject());
+		} else {
+			return _item.equals(obj);
+		}
+	}
 }

@@ -20,14 +20,10 @@ package srojak.core.events;
  * @author Stephen
  *
  */
+@SuppressWarnings("serial")
 public class CollectionChangeEvent 
 		extends CoreEvent {
 	private final int _nVerb;
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1305658796432544428L;
 	
 	/**
 	 * Verb values
@@ -51,5 +47,11 @@ public class CollectionChangeEvent
 
 	public int getVerb() {
 		return _nVerb;
+	}
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append( "verb = ");
+		sb.append(_nVerb);
 	}
 }

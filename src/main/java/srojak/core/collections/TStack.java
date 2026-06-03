@@ -38,7 +38,7 @@ public class TStack<T>
 	}
 
 	@Override
-	public int depth() {
+	public int size() {
 		return _stack.size();
 	}
 

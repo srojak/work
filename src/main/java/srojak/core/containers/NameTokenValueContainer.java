@@ -14,15 +14,39 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.collections;
+package srojak.core.containers;
 
-import srojak.core.events.EventingListChangeListener;
+import srojak.core.NameToken;
+import srojak.core.NameTokenBearing;
+import srojak.core.impl.NameTokenCommon;
+
 /**
  * @author Stephen
  *
  */
-public interface IChangeEventing {
-	void addChangeListener(Object owner, EventingListChangeListener listener);
-	boolean removeChangeListener(Object owner, EventingListChangeListener listener);
-	boolean removeChangeListeners(Object owner);
+public class NameTokenValueContainer<V>
+		extends KeyValueContainer<NameToken, V> 
+		implements NameTokenBearing {
+
+	/**
+	 * @param key
+	 * @param value
+	 */
+	public NameTokenValueContainer(NameToken key, V value) {
+		super(key, value);
+		if (key.isRestricted()) {
+			throw new IllegalArgumentException("key is restricted");
+		}
+	}
+
+	@Override
+	public NameToken getNameToken() {
+		return getKey();
+	}
+
+	@Override
+	public boolean isNameTokenEqual(NameToken token) {
+		return token == null ? false : getKey().equals(token);
+	}
+
 }

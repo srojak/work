@@ -28,7 +28,7 @@ import srojak.core.observe.TraceLevel;
 /**
  * @author Stephen
  *
- * the readonly interface to a debug switch
+ * the readonly interface to a debug switch.
  */
 public interface DebugSwitch {
 	

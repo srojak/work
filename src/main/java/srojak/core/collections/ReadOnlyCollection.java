@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  *
  */
 public interface ReadOnlyCollection<E>
-		extends CommonCollectionReadOnly {
+		extends CommonCollectionSize {
 	
 	/**
      * Returns {@code true} if and only if this collection

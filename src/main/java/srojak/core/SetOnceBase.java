@@ -44,8 +44,20 @@ public abstract class SetOnceBase
 	}
 
 	@Override
+	public boolean isNameTokenEqual(NameToken token) {
+		return token == null ? false : _flag.isNameTokenEqual(token);
+	}
+
+	@Override
 	public boolean hasBeenSet() {
 		return _flag.getState();
+	}
+	
+	public void faultIfAlreadySet() {
+		if (_flag.getState()) {
+			throw new IllegalStateException("value for " + _flag.getNameToken().getName()
+					+ " has already been set");
+		}
 	}
 	
 	protected void gettingValue() {
@@ -56,10 +68,7 @@ public abstract class SetOnceBase
 	}
 
 	protected void settingValue() {
-		if (_flag.getState()) {
-			throw new IllegalStateException("value for " + _flag.getNameToken().getName()
-					+ " has already been set");
-		}
+		faultIfAlreadySet();
 		_flag.set();
 	}
 }

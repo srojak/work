@@ -49,7 +49,7 @@ public class DebugLogFileTest {
 		
 		UnitTestSupervisedVoid<ObservationWriter> instance2
 			= series.createVoidInstance("create writer", TestOutcome.PASS, 
-					() -> DebugWriterLogFile.create(debug.getLogDirectory(), app));
+					() -> DebugWriterLogFile.create(debug.getLogDirectory(), DebugLogFileTest.class));
 		writer = instance2.execute();
 		debug.setWriter(writer);
 		

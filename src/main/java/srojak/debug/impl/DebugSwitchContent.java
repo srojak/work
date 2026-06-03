@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
+import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugSwitch;
@@ -36,18 +37,20 @@ import srojak.debug.DebugSwitchKeyBase;
  */
 public final class DebugSwitchContent 
 		implements DebugSwitch {
-	private final DebugSwitchKeyBase _key;
+	private final DebugSwitchKey _key;
 	private ObsLevel _level;
 	private boolean _bShowSource;
+	private SourceDetail _sdetail;
 	
 	/**
 	 * 
 	 */
-	public DebugSwitchContent(DebugSwitchKeyBase key) {
+	public DebugSwitchContent(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
 		_key = key;
 		_level = ObsLevel.NONE;
 		_bShowSource = false;
+		_sdetail = SourceDetail.NONE;
 	}
 
 	@Override
@@ -76,14 +79,12 @@ public final class DebugSwitchContent
 	
 	public void setShowSourceLocations(boolean bState) {
 		_bShowSource = bState;
+		_sdetail = bState ? SourceDetail.ALL : SourceDetail.CLASS_ONLY;
 	}
 	
-	private void writeSourceLocation(StringBuilder sb, SourceLocation location) {
-		if (_bShowSource ) {
-			sb.append("at ");
-			sb.append(location);
-			sb.append(" ");
-		}		
+	private void writeSourceLocation(StringBuilder sb, SourceLocation location, SourceDetail detail) {
+		sb.append(location.toString(detail));
+		sb.append(" ");
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public final class DebugSwitchContent
 				DebugNexusCore.writeDiagnostic("passed null message string at " + location);
 			}
 			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location);
+			writeSourceLocation(sb, location, _sdetail);
 			sb.append(strMessage);
 			DebugNexusCore.writeln(level, sb.toString());
 		}
@@ -106,7 +107,7 @@ public final class DebugSwitchContent
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location);
+			writeSourceLocation(sb, location, _sdetail);
 			sb.append(message.get());
 			DebugNexusCore.writeln(level, sb.toString());
 		}
@@ -118,7 +119,7 @@ public final class DebugSwitchContent
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location);
+			writeSourceLocation(sb, location, _sdetail);
 			sb.append(message.apply(listPassThrough));
 			DebugNexusCore.writeln(level, sb.toString());
 		}
@@ -127,7 +128,7 @@ public final class DebugSwitchContent
 	private void writeTraceEnter(ObsLevel level, SourceLocation location, 
 			Consumer<StringBuilder> messageBuilder) {
 		StringBuilder sb = new StringBuilder();
-		writeSourceLocation(sb, location);
+		writeSourceLocation(sb, location, _sdetail);
 		sb.append("enter ");
 		sb.append(location.getMethodName());
 		messageBuilder.accept(sb);
@@ -137,7 +138,7 @@ public final class DebugSwitchContent
 	private void writeTraceReturn(ObsLevel level, SourceLocation location, 
 			Consumer<StringBuilder> messageBuilder) {
 		StringBuilder sb = new StringBuilder();
-		writeSourceLocation(sb, location);
+		writeSourceLocation(sb, location, _sdetail);
 		sb.append("return from ");
 		sb.append(location.getMethodName());
 		messageBuilder.accept(sb);
@@ -195,7 +196,7 @@ public final class DebugSwitchContent
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location);
+			writeSourceLocation(sb, location, _sdetail);
 			messageBuilder.accept(sb);
 			DebugNexusCore.writeln(level, sb.toString());
 		}
@@ -207,7 +208,7 @@ public final class DebugSwitchContent
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location);
+			writeSourceLocation(sb, location, _sdetail);
 			messageBuilder.accept(sb, listPassThrough);
 			DebugNexusCore.writeln(level, sb.toString());
 		}

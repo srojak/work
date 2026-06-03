@@ -16,20 +16,29 @@
  */
 package srojak.core.impl;
 
+import java.util.Objects;
+
+import srojak.core.NameToken;
 import srojak.core.NameTokenBase;
 
 /**
  * @author Stephen
  *
  */
-public final class NameTokenCommon
-		extends NameTokenBase {
-
+public sealed class NameTokenCommon
+		extends NameTokenBase
+		permits NameOrderTokenValues {
+	
 	/**
 	 * @param strName
 	 */
 	public NameTokenCommon(String strName) {
 		super(strName);
+	}
+
+	@Override
+	public boolean isRestricted() {
+		return false;
 	}
 
 	@Override
@@ -40,5 +49,17 @@ public final class NameTokenCommon
 	@Override
 	protected String getLeaderTag() {
 		return "token";
+	}
+	
+	public static NameTokenCommon extend(NameToken tokenBase, String strExtend) {
+		Objects.requireNonNull(tokenBase, "tokenBase");
+		Objects.requireNonNull(strExtend, "strExtend");
+		if (tokenBase.isRestricted()) {
+			throw new IllegalArgumentException("tokenBase is restricted");
+		}
+		if (strExtend.isEmpty() || strExtend.isBlank()) {
+			throw new IllegalArgumentException("strExtend is empty or blank");
+		}
+		return new NameTokenCommon(tokenBase.getName() + "." + strExtend);
 	}
 }

@@ -46,13 +46,13 @@ public class DebugWriterLogFile
 	private PrintStream _print;
 	private String _strAppName;
 	
-	protected DebugWriterLogFile(Path pathDir, Object objApp)
+	protected DebugWriterLogFile(Path pathDir, Class<?> classApp)
 			throws IOException {
 		super();
 		Objects.requireNonNull(pathDir, "pathDir");
-		Objects.requireNonNull(objApp, "objApp");
+		Objects.requireNonNull(classApp, "classApp");
 		_pathDir = pathDir;
-		_strAppName = objApp.getClass().getName();
+		_strAppName = classApp.getName();
 		LocalDateTime dtNow = LocalDateTime.now();
 		Path pathFile = _pathDir.resolve(DatedFileNameMethods.formFileName("debug", "log", true, dtNow));
 		Files.createFile(pathFile);
@@ -104,17 +104,17 @@ public class DebugWriterLogFile
 		_print.flush();
 	}
 
-	public static DebugWriterLogFile create(Path pathDir, Object objApp)
+	public static DebugWriterLogFile create(Path pathDir, Class<?> classApp)
 			throws IOException {
-		return new DebugWriterLogFile(pathDir, objApp);
+		return new DebugWriterLogFile(pathDir, classApp);
 	}
 	
-	public static DebugWriterLogFile tryCreate(Path pathDir, Object objApp, StringBox boxFailure) {
+	public static DebugWriterLogFile tryCreate(Path pathDir, Class<?> classApp, StringBox boxFailure) {
 		Objects.requireNonNull(boxFailure, "boxFailure");
 		boxFailure.reset();
 		DebugWriterLogFile output = null;
 		try {
-			output = new DebugWriterLogFile(pathDir, objApp);
+			output = new DebugWriterLogFile(pathDir, classApp);
 		} catch (IOException exc) {
 			boxFailure.setContent(exc.getMessage());
 		}

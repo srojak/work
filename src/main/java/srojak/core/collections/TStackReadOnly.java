@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  *
  */
 public interface TStackReadOnly<T>
-		extends TStackDepth {
+		extends CommonCollectionSize, TStackDepth {
 	T peek();
 	T peekSafely();
 	T getItemAtDepth(int nDepth);

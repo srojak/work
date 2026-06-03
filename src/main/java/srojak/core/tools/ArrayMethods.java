@@ -16,6 +16,8 @@
  */
 package srojak.core.tools;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -33,7 +35,19 @@ public class ArrayMethods {
 		return nCount;
 	}
 	
-	public static <T> T where(T[] array, Predicate<T> predicate) {
+	public static <T> List<T> where(T[] array, Predicate<T> predicate) {
+		Objects.requireNonNull(array, "array");
+		Objects.requireNonNull(predicate, "predicate");
+		LinkedList<T> list = new LinkedList<T>();
+		for (T item : array) {
+			if (predicate.test(item)) {
+				list.addLast(item);
+			}
+		}
+		return list;
+	}
+	
+	public static <T> T findFirst(T[] array,  Predicate<T> predicate) {
 		Objects.requireNonNull(array, "array");
 		Objects.requireNonNull(predicate, "predicate");
 		for (T item : array) {

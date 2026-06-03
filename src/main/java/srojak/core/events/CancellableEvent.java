@@ -41,4 +41,10 @@ public class CancellableEvent
 		_bCancelled = true;
 	}
 
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append("cancelled = ");
+		sb.append(_bCancelled);
+	}
+
 }
