@@ -36,7 +36,7 @@ public class RoutedStateChangeEvent
 
 	@Override
 	protected void formatData(StringBuilder sb) {
-		sb.append("subject = ");
+		sb.append(", subject = ");
 		sb.append(getSubjectID());
 		sb.append(", state = ");
 		sb.append(_bState);

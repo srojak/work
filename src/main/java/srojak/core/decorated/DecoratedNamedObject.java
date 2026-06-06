@@ -19,7 +19,7 @@ package srojak.core.decorated;
 import java.util.Objects;
 
 import srojak.core.NameToken;
-import srojak.core.NameTokenBearing;
+import srojak.core.NameTokenEquatable;
 
 /**
  * @author Stephen
@@ -27,7 +27,7 @@ import srojak.core.NameTokenBearing;
  */
 public class DecoratedNamedObject<T>
 		extends DecoratedObject<T>
-		implements NameTokenBearing {
+		implements DecoratedNamed<T> {
 	private final NameToken _tokenKey;
 	
 	public DecoratedNamedObject(NameToken tokenKey, T value) {
@@ -44,6 +44,7 @@ public class DecoratedNamedObject<T>
 		return _tokenKey;
 	}
 	
+	@Override
 	public boolean isNameTokenEqual(NameToken token) {
 		if (token == null) {
 			return false;
@@ -65,8 +66,8 @@ public class DecoratedNamedObject<T>
 			return false;
 		if (obj instanceof NameToken other) {
 			return _tokenKey.equals(other);
-		} else if (obj instanceof DecoratedNamedObject other) {
-			return _tokenKey.equals(other._tokenKey);
+		} else if (obj instanceof NameTokenEquatable other) {
+			return other.isNameTokenEqual(_tokenKey);
 		} else {
 			return false;
 		}

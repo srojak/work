@@ -14,64 +14,60 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.spatial;
+package srojak.core.specialized;
 
 import java.util.Objects;
-
-import srojak.core.field.LazyDouble;
 
 /**
  * @author Stephen
  *
  */
-public class S2Offset {
-	public final int dx;
-	public final int dy;
-	private final LazyDouble _distance;
+public final class IndexRange {
+	private final int _nFirst;
+	private final int _nLast;
 	
-	public S2Offset(int nX, int nY) {
-		dx = nX;
-		dy = nY;
-		_distance = new LazyDouble(() -> Math.sqrt(dx * dx + dy * dy));
-	}
-	
-	public int getX() {
-		return dx;
-	}
-	
-	public int getY() {
-		return dy;
-	}
-	
-	public double getDistance() {
-		return _distance.get();
-	}
-	
-	public double getSlope() {
-		if (dx == 0) {
-			return dy >= 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+	/**
+	 * 
+	 */
+	public IndexRange(int first, int last) {
+		if (first > last) {
+			throw new IllegalArgumentException("first is greater than last");
 		}
-		return ((double)dy) / ((double)dx);
+		_nFirst = first;
+		_nLast = last;
+	}
+	
+	public int getFirst() {
+		return _nFirst;
+	}
+
+	public int getLast() {
+		return _nLast;
+	}
+	
+	public boolean isWithin(int value) {
+		return value >= _nFirst && value <= _nLast;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(dx, dy);
+		return Objects.hash(_nFirst, _nLast);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj instanceof S2Offset other) {
-			return dx == other.dx && dy == other.dy;
-		} else
+		if (obj == null)
 			return false;
+		if (obj instanceof IndexRange other) {
+			return _nFirst == other._nFirst && _nLast == other._nLast;
+		}
+		return false;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "offset [dx=" + dx + ", dy=" + dy + "]";
+		return "range[" + _nFirst + ", " + _nLast + "]";
 	}
 }
-	

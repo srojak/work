@@ -48,7 +48,7 @@ public class S2FieldCalcs {
 		if (nRadius < 1) {
 			throw new IllegalArgumentException("nRadius must be at least 1");
 		}
-		swDebugClass.writeTraceEnter(TraceLevel.T1,
+		swDebugClass.writeTraceEnter(TraceLevel.HIGH,
 				() -> "center=" + coordsCenter + ", radius=" + nRadius);
 		S2MovableCoords coordsTopLeft = new S2MovableCoords(coordsCenter._x - nRadius,
 				coordsCenter._y - nRadius);

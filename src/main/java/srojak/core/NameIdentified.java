@@ -21,7 +21,7 @@ package srojak.core;
  *
  */
 public interface NameIdentified
-		extends INamed, StringComparable {
+		extends Named, StringComparable {
 	String getName();
 	int compareToString(String other);
 }

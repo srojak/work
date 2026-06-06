@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
 
-import srojak.core.StringBox;
+import srojak.core.specialized.StringBox;
 
 /**
  * @author Stephen

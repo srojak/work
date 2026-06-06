@@ -18,7 +18,7 @@ package srojak.core.reflect;
 
 import java.util.Objects;
 
-import srojak.core.StringBox;
+import srojak.core.specialized.StringBox;
 
 /**
  * @author Stephen
@@ -61,6 +61,11 @@ public class PackageClassLocator
 		return _strPackage + "." + _strClass;
 	}
 	
+	public boolean isJavaClass() {
+		return _strPackage.startsWith("java.") || _strPackage.startsWith("javax.")
+				|| _strPackage.startsWith("jdk.");
+	}
+	
 	public boolean isValidated() {
 		return _bValidated;
 	}
@@ -100,13 +105,15 @@ public class PackageClassLocator
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
 		if (obj == null)
 			return false;
 		else if (obj instanceof PackageClassLocator other) {
-			return _strPackage == other._strPackage
-					&& _strClass == other._strClass;
-		}
-		else
+			return _strPackage.equals(other._strPackage)
+					&& _strClass.equals(other._strClass);
+		} else
 			return false;
 	}
 

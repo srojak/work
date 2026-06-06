@@ -14,44 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.field;
+
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @author Stephen
  *
  */
-public class SetOnceInt
-		extends SetOnceBase {
-	private int _value;
-
-	/**
-	 * @param token
-	 */
-	public SetOnceInt(NameToken token) {
-		super(token);
-		_value = 0;
-	}
-
-	/**
-	 * @param strName
-	 */
-	public SetOnceInt(String strName) {
-		super(strName);
-		_value = 0;
-	}
-
-	@Override
-	public boolean allowsNonNullValue() {
-		return false;
-	}
-
-	public int get() {
-		gettingValue();
-		return _value;
+public class LazyFloat {
+	private final Supplier<Float> _initor;
+	private float _value;
+	private boolean _bInitialized;
+	
+	public LazyFloat(Supplier<Float> initializer) {
+		Objects.requireNonNull(initializer, "initializer");
+		_initor = initializer;
+		_value = Float.NaN;
+		_bInitialized = false;
 	}
 	
-	public void set(int value) {
-		settingValue();
-		_value = value;
+	public float get() {
+		if (!_bInitialized) {
+			_value = _initor.get();
+			_bInitialized = true;
+		}
+		return _value;
 	}
 }

@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import srojak.core.IntegerCounter;
 import srojak.core.KeyValue;
 import srojak.core.containers.KeyValueContainer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterContainerBase;
 import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.core.specialized.IntegerCounter;
 import srojak.core.tools.KeyValueMethods;
 import srojak.spatial.S2CompassDirection;
 import srojak.spatial.S2Offset;

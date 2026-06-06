@@ -14,49 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.decorated;
 
-import java.util.Objects;
+import srojak.core.NameTokenEquatable;
 
 /**
  * @author Stephen
  *
  */
-public class SetOnce<T>
-		extends SetOnceBase {
-	private final boolean _bAllowsNull;	
-	private T _value;
-	
-	/**
-	 * @param token
-	 */
-	public SetOnce(NameToken token, boolean bAllowsNull) {
-		super(token);
-		_value = null;
-		_bAllowsNull = bAllowsNull;
-	}
-	
-	public SetOnce(String strName, boolean bAllowsNull) {
-		super(strName);
-		_value = null;
-		_bAllowsNull = bAllowsNull;
-	}
+public interface DecoratedNamed<T> 
+		extends Decorated<T>, NameTokenEquatable {
 
-	@Override
-	public boolean allowsNonNullValue() {
-		return _bAllowsNull;
-	}
-
-	public T get() {
-		gettingValue();
-		return _value;
-	}
-	
-	public void set(T value) {
-		if (!_bAllowsNull) {
-			Objects.requireNonNull(value, "value");
-		}
-		settingValue();
-		_value = value;
-	}
 }

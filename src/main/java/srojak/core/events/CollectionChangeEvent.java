@@ -51,7 +51,7 @@ public class CollectionChangeEvent
 
 	@Override
 	protected void formatData(StringBuilder sb) {
-		sb.append( "verb = ");
+		sb.append( ", verb = ");
 		sb.append(_nVerb);
 	}
 }

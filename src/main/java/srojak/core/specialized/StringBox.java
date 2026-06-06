@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.specialized;
 
 import java.util.Objects;
 
@@ -22,29 +22,47 @@ import java.util.Objects;
  * @author Stephen
  *
  */
-public final class NamedKey 
-		implements Named {
-	private final String _strName;
+public class StringBox {
+	private String _content;
+	private boolean _bChanged;
 	
-	public NamedKey(String strName) {
-		Objects.requireNonNull(strName, "strName");
-		if (strName.isEmpty()) {
-			throw new IllegalArgumentException("strName is empty");
-		}
-		_strName = strName;
+	private static final String nullString = "";
+	
+	public StringBox() {
+		_content = nullString;
+		_bChanged = false;
 	}
-
-	@Override
-	public String getName() {
-		return _strName;
+	
+	public String getContent() {
+		return _content;
+	}
+	
+	public void setContent(String strText) {
+		Objects.requireNonNull(strText, "strText");
+		if (strText.isEmpty())
+			throw new IllegalArgumentException("strText is empty");
+		_content = strText;
+		_bChanged = true;
+	}
+	
+	public void reset() {
+		_content = nullString;
+		_bChanged = false;
+	}
+	
+	public boolean isChanged() {
+		return _bChanged;
+	}
+	
+	public void resetChanged() {
+		_bChanged = false;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("key");
-		sb.append('[');
-		sb.append(_strName);
-		sb.append(']');
-		return sb.toString();
+		if (_bChanged)
+			return _content.toString();
+		else
+			return "*not set";
 	}
 }

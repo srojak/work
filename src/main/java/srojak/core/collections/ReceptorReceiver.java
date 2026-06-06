@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.collections;
 
 /**
  * @author Stephen
  *
  */
-public interface CoreCloseable
-		extends LifeCycleEventOriginating, AutoCloseable {
-	
+public interface ReceptorReceiver<T>
+		extends ReceptorCommon {
+	void receive(T value);
 }

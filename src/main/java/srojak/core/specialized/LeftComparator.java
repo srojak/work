@@ -14,29 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.specialized;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class StateChangeEvent
-		extends CoreEvent {
-	private final boolean _bState;
+@FunctionalInterface
+public interface LeftComparator<T> {
 
-	public StateChangeEvent(Object source, boolean bState) {
-		super(source);
-		_bState = bState;
-	}
-	
-	public boolean getState() {
-		return _bState;
-	}
+	int compare(T o1, Object o2);
 
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", state = ");
-		sb.append(_bState);
-	}
 }

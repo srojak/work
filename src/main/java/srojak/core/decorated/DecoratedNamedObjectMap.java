@@ -33,7 +33,7 @@ import srojak.core.collections.CommonCollectionSize;
  * @author Stephen
  *
  */
-public class DecoratedNamedObjectMap<V extends DecoratedNamedObject<?>>
+public class DecoratedNamedObjectMap<V extends DecoratedNamed<?>>
 		implements CommonCollectionSize, Map<NameToken, V> {
 	private final HashMap<NameToken, V> _map;
 	

@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 @SuppressWarnings("serial")
 public class DecoratedNamedObjectArrayList<V>
-		extends ArrayList<DecoratedNamedObject<V>>
+		extends ArrayList<DecoratedNamed<V>>
 		implements DecoratedNamedObjectList<V> {
 
 	/**
@@ -38,7 +38,7 @@ public class DecoratedNamedObjectArrayList<V>
 	/**
 	 * @param c
 	 */
-	public DecoratedNamedObjectArrayList(Collection<? extends DecoratedNamedObject<V>> c) {
+	public DecoratedNamedObjectArrayList(Collection<? extends DecoratedNamed<V>> c) {
 		super(c);
 	}
 

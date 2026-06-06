@@ -21,9 +21,9 @@ package srojak.core.observe;
  *
  */
 public enum TraceLevel {
-	T1(1, ObsLevel.TRACE),
-	T2(2, ObsLevel.TRACE2),
-	T3(3, ObsLevel.TRACE3);
+	HIGH(1, ObsLevel.TRACE),
+	MEDIUM(2, ObsLevel.TRACE2),
+	LOW(3, ObsLevel.TRACE3);
 	
 	private final int _nOrdinal;
 	private final ObsLevel _levelObs;

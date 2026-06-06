@@ -14,55 +14,52 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.field;
 
 import java.util.Objects;
+
+import srojak.core.NameToken;
+import srojak.core.tools.BitMethods;
 
 /**
  * @author Stephen
  *
  */
-public class StringBox {
-	private String _content;
-	private boolean _bChanged;
+public class SetOnce<T>
+		extends SetOnceBase {
+	private final boolean _bAllowsNull;	
+	private T _value;
 	
-	private static final String nullString = "";
-	
-	public StringBox() {
-		_content = nullString;
-		_bChanged = false;
+	/**
+	 * @param token
+	 */
+	public SetOnce(NameToken token, int options) {
+		super(token);
+		_value = null;
+		_bAllowsNull = BitMethods.test(options, ALLOWS_NULL);
 	}
 	
-	public String getContent() {
-		return _content;
-	}
-	
-	public void setContent(String strText) {
-		Objects.requireNonNull(strText, "strText");
-		if (strText.isEmpty())
-			throw new IllegalArgumentException("strText is empty");
-		_content = strText;
-		_bChanged = true;
-	}
-	
-	public void reset() {
-		_content = nullString;
-		_bChanged = false;
-	}
-	
-	public boolean isChanged() {
-		return _bChanged;
-	}
-	
-	public void resetChanged() {
-		_bChanged = false;
+	public SetOnce(String strName, int options) {
+		super(strName);
+		_value = null;
+		_bAllowsNull = BitMethods.test(options, ALLOWS_NULL);
 	}
 
 	@Override
-	public String toString() {
-		if (_bChanged)
-			return _content.toString();
-		else
-			return "*not set";
+	public boolean allowsNonNullValue() {
+		return _bAllowsNull;
+	}
+
+	public T get() {
+		gettingValue();
+		return _value;
+	}
+	
+	public void set(T value) {
+		if (!_bAllowsNull) {
+			Objects.requireNonNull(value, "value");
+		}
+		settingValue();
+		_value = value;
 	}
 }

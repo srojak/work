@@ -14,32 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.specialized;
 
 /**
- * @author Stephen Rojak
+ * @author Stephen
  *
  */
-public abstract class Counter<T extends Comparable<T>> {
-	protected T _value;
+public interface Tuple<V> {
 	
-	public Counter(T value) {
-		_value = value;
-	}
+	V getFirstValue();
 	
-	public T getValue() {
-		return _value;
-	}
-	
-	public void setValue(T newValue) {
-		_value = newValue;
-	}
-	
-	public int compareTo(T value) {
-		return _value.compareTo(value);
-	}
-	
-	public abstract void increment(T incrValue);
-	
-	public abstract void decrement(T decrValue);
+	V getSecondValue();
 }

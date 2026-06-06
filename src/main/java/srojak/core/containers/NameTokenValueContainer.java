@@ -18,7 +18,6 @@ package srojak.core.containers;
 
 import srojak.core.NameToken;
 import srojak.core.NameTokenBearing;
-import srojak.core.impl.NameTokenCommon;
 
 /**
  * @author Stephen

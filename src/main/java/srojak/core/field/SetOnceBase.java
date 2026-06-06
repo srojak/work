@@ -14,9 +14,12 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.field;
 
 import java.util.Objects;
+
+import srojak.core.NameToken;
+import srojak.core.OnceFlag;
 
 /**
  * @author Stephen

@@ -14,12 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.field;
+
+import java.util.Objects;
+import java.util.function.DoubleSupplier;
 
 /**
  * @author Stephen
  *
  */
-public interface INamed {
-	String getName();
+public class LazyDouble {
+	private final DoubleSupplier _initor;
+	private double _value;
+	private boolean _bInitialized;
+	
+	public LazyDouble(DoubleSupplier initializer) {
+		Objects.requireNonNull(initializer, "initializer");
+		_initor = initializer;
+		_value = Double.NaN;
+		_bInitialized = false;
+	}
+	
+	public double get() {
+		if (!_bInitialized) {
+			_value = _initor.getAsDouble();
+			_bInitialized = true;
+		}
+		return _value;
+	}
 }

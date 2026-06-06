@@ -16,8 +16,10 @@
  */
 package srojak.spatial;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import srojak.core.tools.CollectionMethods;
@@ -43,6 +45,7 @@ public final class S2CompassDirection
 	public static final S2CompassDirection NorthWest;
 	public static final List<S2CompassDirection> AllDirs;
 	public static final List<S2CompassDirection> CardinalDirs;
+	private static final Map<S2CompassDirection, S2CompassDirection> _mapOpposites;
 	
 	static {
 		LinkedList<S2CompassDirection> dirs = new LinkedList<S2CompassDirection>();
@@ -73,6 +76,15 @@ public final class S2CompassDirection
 		dirs.forEach(d -> register(d));
 		AllDirs = List.copyOf(dirs);
 		CardinalDirs = List.copyOf(CollectionMethods.where(dirs, d -> d.isCardinalDirection()));
+		_mapOpposites = new HashMap<S2CompassDirection, S2CompassDirection>();
+		_mapOpposites.put(North, South);
+		_mapOpposites.put(NorthEast, SouthWest);
+		_mapOpposites.put(East,  West);
+		_mapOpposites.put(SouthEast, NorthWest);
+		_mapOpposites.put(South, North);
+		_mapOpposites.put(SouthWest,  NorthEast);
+		_mapOpposites.put(West, East);
+		_mapOpposites.put(NorthWest,  SouthEast);
 	}
 
 	protected S2CompassDirection(String strAbbrev, int ordinal, String strName, Code code) {
@@ -102,6 +114,10 @@ public final class S2CompassDirection
 	
 	public boolean isCardinalDirection() {
 		return _code.isCardinal();
+	}
+	
+	public S2CompassDirection getOppositeDirection() {
+		return _mapOpposites.get(this);
 	}
 	
 	public static S2CompassDirection findDirectionFor(CompassDegrees cdg) {

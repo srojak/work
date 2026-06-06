@@ -20,8 +20,7 @@ package srojak.core;
  * @author Stephen
  *
  */
-public interface SetOnceConditions
-		extends NameTokenBearing {
-	boolean hasBeenSet();
-	boolean allowsNonNullValue();
+public interface NameComparable
+	extends Named, StringComparable {
+
 }

@@ -47,11 +47,7 @@ public class BooleanLatch
 		return _bState;
 	}
 	
-	public void setState(boolean bState) {
-		if (_bState == bState) {
-			return;
-		}
-		_bState = bState;
+	public void propagate() {
 		ListIterator<StateChangeListener> iter = _listeners.listIterator();
 		StateChangeEvent event = null;
 		while (iter.hasNext()) {
@@ -60,6 +56,14 @@ public class BooleanLatch
 			}
 			iter.next().stateChanged(event);
 		}
+	}
+	
+	public void setState(boolean bState) {
+		if (_bState == bState) {
+			return;
+		}
+		_bState = bState;
+		propagate();
 	}
 
 	@Override

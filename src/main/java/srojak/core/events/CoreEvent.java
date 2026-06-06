@@ -42,7 +42,8 @@ public abstract class CoreEvent
 	public String toDataString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getSimpleName());
-		sb.append('[');
+		sb.append("[source=");
+		sb.append(getSource().getClass().getName());
 		formatData(sb);
 		sb.append(']');
 		return sb.toString();

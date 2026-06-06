@@ -66,6 +66,7 @@ public class EventingListChangeEvent
 
 	@Override
 	protected void formatData(StringBuilder sb) {
+		sb.append(", verb=");
 		sb.append(_nVerb);
 		if (_objItem != null) {
 			sb.append(", item=[");

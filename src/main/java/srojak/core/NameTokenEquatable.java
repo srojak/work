@@ -14,29 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core;
 
 /**
  * @author Stephen
  *
+ * The object with this interface is equatable based on its NameToken.
  */
-@SuppressWarnings("serial")
-public class StateChangeEvent
-		extends CoreEvent {
-	private final boolean _bState;
-
-	public StateChangeEvent(Object source, boolean bState) {
-		super(source);
-		_bState = bState;
-	}
-	
-	public boolean getState() {
-		return _bState;
-	}
-
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", state = ");
-		sb.append(_bState);
-	}
+public interface NameTokenEquatable
+		extends NameTokenBearing {
+	int hashCode();
+	boolean equals(Object obj);
 }

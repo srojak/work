@@ -26,6 +26,7 @@ import java.util.Objects;
  * @author Stephen
  *
  */
+@SuppressWarnings("serial")
 public class ColorSelfSelectProvider
 	extends Color
 	implements ColorSelectionProvider {

@@ -20,9 +20,7 @@ package srojak.core;
  * @author Stephen
  *
  */
-public interface Tuple<V> {
+public interface LifeCycleCloseable
+		extends LifeCycleEventOriginating, AutoCloseable {
 	
-	V getFirstValue();
-	
-	V getSecondValue();
 }

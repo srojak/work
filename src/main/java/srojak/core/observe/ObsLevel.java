@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import srojak.core.INamed;
+import srojak.core.Named;
 
 /**
  * defines an ordered set of observation levels.
@@ -30,7 +30,7 @@ import srojak.core.INamed;
  *
  */
 public class ObsLevel 
-		implements INamed, Comparable<ObsLevel> {
+		implements Named, Comparable<ObsLevel> {
 	private final int _level;
 	private final String _strName;
 	

@@ -23,7 +23,7 @@ import java.util.Objects;
  *
  */
 public abstract class NamedValueBase 
-		implements INamed {
+		implements Named {
 	private final String _strName;
 	
 	public NamedValueBase(String strName) {

@@ -20,7 +20,6 @@ import java.util.EventListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**

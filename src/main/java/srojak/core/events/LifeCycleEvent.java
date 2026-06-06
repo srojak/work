@@ -41,7 +41,7 @@ public class LifeCycleEvent
 
 	@Override
 	protected void formatData(StringBuilder sb) {
-		sb.append("ID = ");
+		sb.append(", ID = ");
 		sb.append(_id);
 	}
 }

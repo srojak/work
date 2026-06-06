@@ -25,7 +25,7 @@ import java.util.LinkedList;
  */
 @SuppressWarnings("serial")
 public class DecoratedNamedObjectLinkedList<V>
-		extends LinkedList<DecoratedNamedObject<V>>
+		extends LinkedList<DecoratedNamed<V>>
 		implements DecoratedNamedObjectList<V>  {
 
 	/**
@@ -38,7 +38,7 @@ public class DecoratedNamedObjectLinkedList<V>
 	/**
 	 * @param c
 	 */
-	public DecoratedNamedObjectLinkedList(Collection<? extends DecoratedNamedObject<V>> c) {
+	public DecoratedNamedObjectLinkedList(Collection<? extends DecoratedNamed<V>> c) {
 		super(c);
 	}
 

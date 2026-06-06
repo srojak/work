@@ -14,29 +14,46 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.field;
 
-import java.util.Objects;
-import java.util.function.Supplier;
+import srojak.core.NameToken;
 
 /**
  * @author Stephen
  *
  */
-public class Lazy<T> {
-	private final Supplier<T> _initor;
-	private T _value;
-	
-	public Lazy(Supplier<T> initializer) {
-		Objects.requireNonNull(initializer, "initializer");
-		_initor = initializer;
-		_value = null;
+public class SetOnceInt
+		extends SetOnceBase {
+	private int _value;
+
+	/**
+	 * @param token
+	 */
+	public SetOnceInt(NameToken token) {
+		super(token);
+		_value = 0;
+	}
+
+	/**
+	 * @param strName
+	 */
+	public SetOnceInt(String strName) {
+		super(strName);
+		_value = 0;
+	}
+
+	@Override
+	public boolean allowsNonNullValue() {
+		return false;
+	}
+
+	public int get() {
+		gettingValue();
+		return _value;
 	}
 	
-	public T get() {
-		if (_value == null) {
-			_value = _initor.get();
-		}
-		return _value;
+	public void set(int value) {
+		settingValue();
+		_value = value;
 	}
 }

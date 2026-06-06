@@ -14,29 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.field;
+
+import srojak.core.NameTokenBearing;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class StateChangeEvent
-		extends CoreEvent {
-	private final boolean _bState;
-
-	public StateChangeEvent(Object source, boolean bState) {
-		super(source);
-		_bState = bState;
-	}
+public interface SetOnceConditions
+		extends NameTokenBearing {
+	boolean hasBeenSet();
+	boolean allowsNonNullValue();
 	
-	public boolean getState() {
-		return _bState;
-	}
-
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", state = ");
-		sb.append(_bState);
-	}
+	public static final int DEFAULT = 0;
+	public static final int ALLOWS_NULL = 01;
 }

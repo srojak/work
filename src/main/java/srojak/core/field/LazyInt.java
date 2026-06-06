@@ -14,15 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.field;
+
+import java.util.Objects;
+import java.util.function.IntSupplier;
 
 /**
  * @author Stephen
  *
  */
-@FunctionalInterface
-public interface LeftComparator<T> {
-
-	int compare(T o1, Object o2);
-
+public class LazyInt {
+	private final IntSupplier _initor;
+	private int _value;
+	private boolean _bInitialized;
+	
+	public LazyInt(IntSupplier initializer) {
+		Objects.requireNonNull(initializer, "initializer");
+		_initor = initializer;
+		_value = 0;
+		_bInitialized = false;
+	}
+	
+	public int get() {
+		if (!_bInitialized) {
+			_value = _initor.getAsInt();
+			_bInitialized = true;
+		}
+		return _value;
+	}
 }

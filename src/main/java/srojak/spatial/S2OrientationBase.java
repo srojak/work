@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import srojak.core.KeyValue;
-import srojak.core.Tuple;
 import srojak.core.containers.TupleContainer;
+import srojak.core.specialized.Tuple;
 import srojak.core.tools.KeyValueMethods;
 import srojak.numerics.CircleOctant;
 import srojak.spatial.impl.S2DirectionMapping;

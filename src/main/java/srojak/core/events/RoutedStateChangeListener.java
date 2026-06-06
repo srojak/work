@@ -29,4 +29,5 @@ public interface RoutedStateChangeListener
 	
 	public static final int SUBJECT_SELECTION = 10;
 	public static final int SUBJECT_REQUIRED_DATA = 11;
+	public static final int SUBJECT_DATA_READY = 12;
 }

@@ -27,12 +27,12 @@ import srojak.core.collections.CommonCollectionSize;
  *
  */
 public interface DecoratedNamedObjectList<T>
-		extends CommonCollectionSize, List<DecoratedNamedObject<T>> {
+		extends CommonCollectionSize, List<DecoratedNamed<T>> {
 	
 	default boolean containsKey(NameToken tokenKey) {
-		ListIterator<DecoratedNamedObject<T>> iterator = listIterator();
+		ListIterator<DecoratedNamed<T>> iterator = listIterator();
 		while (iterator.hasNext()) {
-			DecoratedNamedObject<T> item = iterator.next();
+			DecoratedNamed<T> item = iterator.next();
 			if (item.isNameTokenEqual(tokenKey)) {
 				return true;
 			}
@@ -40,10 +40,10 @@ public interface DecoratedNamedObjectList<T>
 		return false;
 	}
 
-	default DecoratedNamedObject<T> find(NameToken tokenKey) {
-		ListIterator<DecoratedNamedObject<T>> iterator = listIterator();
+	default DecoratedNamed<T> find(NameToken tokenKey) {
+		ListIterator<DecoratedNamed<T>> iterator = listIterator();
 		while (iterator.hasNext()) {
-			DecoratedNamedObject<T> item = iterator.next();
+			DecoratedNamed<T> item = iterator.next();
 			if (item.isNameTokenEqual(tokenKey)) {
 				return item;
 			}

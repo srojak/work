@@ -16,30 +16,15 @@
  */
 package srojak.core;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
 /**
  * @author Stephen
  *
  */
-public class LazyFloat {
-	private final Supplier<Float> _initor;
-	private float _value;
-	private boolean _bInitialized;
+public interface Named {
 	
-	public LazyFloat(Supplier<Float> initializer) {
-		Objects.requireNonNull(initializer, "initializer");
-		_initor = initializer;
-		_value = Float.NaN;
-		_bInitialized = false;
-	}
-	
-	public float get() {
-		if (!_bInitialized) {
-			_value = _initor.get();
-			_bInitialized = true;
-		}
-		return _value;
-	}
+	/**
+	 * Get the name of the object.
+	 * @return The name of the object.
+	 */
+	String getName();
 }

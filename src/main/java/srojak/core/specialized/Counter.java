@@ -14,32 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
-
-import java.util.Objects;
-import java.util.function.IntSupplier;
+package srojak.core.specialized;
 
 /**
- * @author Stephen
+ * @author Stephen Rojak
  *
  */
-public class LazyInt {
-	private final IntSupplier _initor;
-	private int _value;
-	private boolean _bInitialized;
+public abstract class Counter<T extends Comparable<T>> {
+	protected T _value;
 	
-	public LazyInt(IntSupplier initializer) {
-		Objects.requireNonNull(initializer, "initializer");
-		_initor = initializer;
-		_value = 0;
-		_bInitialized = false;
+	public Counter(T value) {
+		_value = value;
 	}
 	
-	public int get() {
-		if (!_bInitialized) {
-			_value = _initor.getAsInt();
-			_bInitialized = true;
-		}
+	public T getValue() {
 		return _value;
 	}
+	
+	public void setValue(T newValue) {
+		_value = newValue;
+	}
+	
+	public int compareTo(T value) {
+		return _value.compareTo(value);
+	}
+	
+	public abstract void increment(T incrValue);
+	
+	public abstract void decrement(T decrValue);
 }
