@@ -14,15 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug;
+
+import java.util.List;
+
+import srojak.core.reflect.PackageClassLocator;
+
 /**
  * @author Stephen
  *
  */
-module srojak.utest.debug {
-	requires java.xml;
-	requires srojak.core;
-	requires srojak.numerics;
-	requires srojak.utest;
-	requires srojak.xml;
-	requires srojak.debug;
+public interface ClassDebugOptions {
+	PackageClassLocator getOwner();
+	boolean hasOption(String strName);
+	int getOptionValue(String strName);
+	List<DebugOptionNameValue> getOptions();
 }

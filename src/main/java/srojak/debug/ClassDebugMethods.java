@@ -14,15 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug;
+
+import java.util.Objects;
+
+import srojak.core.NameToken;
+import srojak.core.logic.BooleanLatch;
+import srojak.debug.tools.DebuggingBooleanLatch;
+
 /**
  * @author Stephen
  *
  */
-module srojak.utest.debug {
-	requires java.xml;
-	requires srojak.core;
-	requires srojak.numerics;
-	requires srojak.utest;
-	requires srojak.xml;
-	requires srojak.debug;
+public class ClassDebugMethods {
+	public static final String OPT_DEBUG_LATCH = "OptDebugLatch";
+	
+	public static BooleanLatch makeBooleanLatch(ClassDebugOptions options, NameToken tokenName) {
+		Objects.requireNonNull(options, "options");
+		int nValue = options.getOptionValue(OPT_DEBUG_LATCH);
+		if (nValue != 0) {
+			return new DebuggingBooleanLatch(tokenName);
+		} else {
+			return new BooleanLatch();
+		}
+	}
 }

@@ -14,44 +14,43 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.utest.debug.config;
+package srojak.utest.debug;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
 import srojak.core.specialized.IntegerCounter;
+import srojak.debug.AppDebugMethods;
 import srojak.debug.DebugNexus;
-import srojak.debug.config.DebugConfigReader;
+import srojak.debug.DebugSwitchTool;
 import srojak.numerics.OrderedComparison;
-import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
-import srojak.utest.instances.UnitTestSupervisedVoid;
 
 /**
  * @author Stephen
  *
  */
-public class ConfigReaderBadElement {
+public class DebugCascadingBaseClassTest {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DebugNexus debug = new DebugNexus();
-		UnitTestSeries series = new UnitTestSeries("ConfigReaderBadElement");
+		UnitTestSeries series = new UnitTestSeries("ConfigReader");
 		series.getOptions().setShowStackOnExceptions(true);
 		ObservationWriterLevelFilterPrintStream writer
 			= new ObservationWriterLevelFilterPrintStream(System.out);
 		writer.setObsLevel(ObsLevel.DEBUG);
 		series.getOptions().setObservationWriter(writer);
 		
-		UnitTestSupervisedVoid<DebugConfigReader> test1
-			= series.<DebugConfigReader>createVoidInstance("read config file", 
-					TestOutcome.PASS, () -> {
-						DebugConfigReader reader = new DebugConfigReader();
-						reader.readFrom("badelem.xml");		
-						return reader;
-					});
-		test1.execute();
+		AppDebugMethods.readDebugPropertiesFromCurrentDir(2);
+		boolean bCreated = AppDebugMethods.tryCreateLogFile(DebugCascadingBaseClassTest.class);
+		series.expectValue("create log file", "result", true, bCreated);
+		AppDebugMethods.setAutoFlush(true);
+		
+		@SuppressWarnings("unused")
+		TestSpecializedTarget target = new TestSpecializedTarget();
+		DebugNexus debug = new DebugNexus(DebugNexus.CONS_NONE);
+		debug.enableBaseClassSwitches(DebugSwitchTool.makeClassKey(TestSpecializedTarget.class));
 		
 		StringBuilder sb = new StringBuilder("Switches");
 		IntegerCounter counter = new IntegerCounter();
@@ -61,7 +60,7 @@ public class ConfigReaderBadElement {
 			counter.increment(1);
 		});
 		series.writeMessageLine(ObsLevel.NOTICE, sb.toString());
-		series.expectValue("switch count", "# switches", OrderedComparison.GT, 0, counter.getValue());
+		series.expectValue("switch count", "# switches", OrderedComparison.EQ, 3, counter.getValue());
 
 		series.complete();
 	}

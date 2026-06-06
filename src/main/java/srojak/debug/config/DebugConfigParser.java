@@ -28,8 +28,8 @@ import srojak.core.observe.ObservationWriterNull;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.tools.StringMethods;
 import srojak.debug.DebugSwitchKey;
-import srojak.debug.DebugSwitchKeyBase;
 import srojak.debug.DebugSwitchTool;
+import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.debug.impl.DebugSwitchContent;
 import srojak.xml.stream.XmlElementAttribute;
@@ -52,20 +52,26 @@ public class DebugConfigParser
 	private static final QName ELEMENT_PACKAGE;
 	private static final QName ELEMENT_CLASS;
 	private static final QName ELEMENT_SUBJECT;
+	private static final QName ELEMENT_OPTION;
 	private static final QName ATTRIB_NAME;
 	private static final QName ATTRIB_LEVEL;
 	private static final QName ATTRIB_LOCS;
-	private static final String[] LOCS_TRUE;
+	private static final QName ATTRIB_CASCADE;
+	private static final QName ATTRIB_VALUE;
+	private static final String[] BOOL_TRUE;
 	
 	static {
 		EVENTS = new XmlStreamEventsDictionary();
 		ELEMENT_PACKAGE = new QName("Package");
 		ELEMENT_CLASS = new QName("Class");
 		ELEMENT_SUBJECT = new QName("Subject");
+		ELEMENT_OPTION = new QName("Option");
 		ATTRIB_NAME = new QName("name");
 		ATTRIB_LEVEL = new QName("level");
 		ATTRIB_LOCS = new QName("locs");
-		LOCS_TRUE = new String[] { "t", "true" };
+		ATTRIB_CASCADE = new QName("cascade");
+		ATTRIB_VALUE = new QName("value");
+		BOOL_TRUE = new String[] { "t", "true" };
 	}
 	
 	/**
@@ -106,7 +112,8 @@ public class DebugConfigParser
 			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
 			_locClass = new PackageClassLocator(_strPackageName, attrName.getValue());
 			ObsLevel level = readObsLevel(nameElement, attributes, _levelDefault);
-			boolean bShowSource = readShowSourceLocations(nameElement, attributes);
+			boolean bShowSource = readBooleanAttribValue(ATTRIB_LOCS, attributes);
+			boolean bCascade = readBooleanAttribValue(ATTRIB_CASCADE, attributes);
 			DebugSwitchKey key = DebugSwitchTool.makeClassKey(_locClass);
 			DebugSwitchContent sw = DebugNexusCore.getContent(key);
 			if (sw == null) {
@@ -115,10 +122,13 @@ public class DebugConfigParser
 			}
 			sw.setLevel(level);
 			sw.setShowSourceLocations(bShowSource);
+			if (bCascade) {
+				DebugNexusCore.enableBaseClassSwitches(key);
+			}
 		} else if (nameElement.equals(ELEMENT_SUBJECT)) {
 			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
 			ObsLevel level = readObsLevel(nameElement, attributes, _levelDefault);
-			boolean bShowSource = readShowSourceLocations(nameElement, attributes);
+			boolean bShowSource = readBooleanAttribValue(ATTRIB_LOCS, attributes);
 			DebugSwitchKey key = DebugSwitchTool.makeClassSubjectKey(_locClass, attrName.getValue());
 			DebugSwitchContent sw = DebugNexusCore.getContent(key);
 			if (sw == null) {
@@ -127,6 +137,15 @@ public class DebugConfigParser
 			}
 			sw.setLevel(level);
 			sw.setShowSourceLocations(bShowSource);
+		} else if (nameElement.equals(ELEMENT_OPTION)) {
+			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
+			XmlElementAttribute attrValue = findAttributeByName(attributes, ATTRIB_VALUE);
+			int nValue = Integer.parseInt(attrValue.getValue());
+			ClassDebugOptionMap options = DebugNexusCore.getOptionsForClass(_locClass);
+			if (options == null) {
+				options = DebugNexusCore.createOptionsForClass(_locClass);
+			}
+			options.putOption(attrName.getValue(), nValue);
 		}
 	}
 
@@ -167,12 +186,24 @@ public class DebugConfigParser
 		return level;
 	}
 	
+	private boolean readBooleanAttribValue(QName nameAttribute,
+			XmlElementAttribute[] attributes) {
+		XmlElementAttribute attrib = findAttributeByName(attributes, nameAttribute);
+		if (attrib != null && attrib.hasValue()) {
+			String strValue = attrib.getValue();
+			if (StringMethods.forAnyOfArray(strValue, (s, t) -> s.equals(t), BOOL_TRUE)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private boolean readShowSourceLocations(QName nameElement, XmlElementAttribute[] attributes) {
 		XmlElementAttribute attrLocs = findAttributeByName(attributes, ATTRIB_LOCS);
 		if (attrLocs != null && attrLocs.hasValue()) {
 			String strLocs = attrLocs.getValue();
 			if (StringMethods.forAnyOfArray(strLocs, (s, t) -> s.equals(t), 
-					LOCS_TRUE)) {
+					BOOL_TRUE)) {
 				return true;
 			}
 		}

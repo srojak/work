@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.utest.debug;
+
 /**
  * @author Stephen
  *
  */
-module srojak.utest.debug {
-	requires java.xml;
-	requires srojak.core;
-	requires srojak.numerics;
-	requires srojak.utest;
-	requires srojak.xml;
-	requires srojak.debug;
+public class TestBase1 {
+
 }

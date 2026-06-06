@@ -52,7 +52,7 @@ public class DebuggingBooleanLatch
 	public DebuggingBooleanLatch(NameToken tokenName) {
 		super();
 		Objects.requireNonNull(tokenName, "tokenName");
-		_swDebugClass.writeTraceEnter(TraceLevel.T2, () -> "name = " + tokenName.getName());
+		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "name = " + tokenName.getName());
 		_name = tokenName;
 		addStateChangeListener(new DebugStateChangeListener());
 	}
@@ -63,7 +63,7 @@ public class DebuggingBooleanLatch
 	public DebuggingBooleanLatch(NameToken tokenName, boolean bStateInitial) {
 		super(bStateInitial);
 		Objects.requireNonNull(tokenName, "tokenName");
-		_swDebugClass.writeTraceEnter(TraceLevel.T2, () -> "name = " + tokenName.getName()
+		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "name = " + tokenName.getName()
 				+ ", initial state = " + bStateInitial);
 		_name = tokenName;
 		addStateChangeListener(new DebugStateChangeListener());
@@ -78,10 +78,16 @@ public class DebuggingBooleanLatch
 	public boolean isNameTokenEqual(NameToken token) {
 		return _name.equals(token);
 	}
+	
+	@Override
+	public void propagate() {
+		_swDebugClass.writeTraceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName());
+		super.propagate();
+	}
 
 	@Override
 	public void setState(boolean bState) {
-		_swDebugClass.writeTraceEnter(TraceLevel.T3, () ->  "name = " + _name.getName()
+		_swDebugClass.writeTraceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName()
 				+ ", set state to " + bState);
 		super.setState(bState);
 	}

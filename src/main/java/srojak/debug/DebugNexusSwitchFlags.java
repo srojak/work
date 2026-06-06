@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug;
+
 /**
  * @author Stephen
  *
  */
-module srojak.utest.debug {
-	requires java.xml;
-	requires srojak.core;
-	requires srojak.numerics;
-	requires srojak.utest;
-	requires srojak.xml;
-	requires srojak.debug;
+public interface DebugNexusSwitchFlags {
+	public static int SW_NONE = 0;
+	public static int SW_BASE_CASCADE = 01;
 }

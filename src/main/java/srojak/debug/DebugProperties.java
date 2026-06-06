@@ -24,8 +24,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import srojak.core.IPropertiesReadOnly;
-import srojak.core.StringBox;
 import srojak.core.io.PropertiesLoader;
+import srojak.core.specialized.StringBox;
 /**
  * @author Stephen
  *
@@ -83,6 +83,15 @@ public class DebugProperties
 			return false;
 		} else {
 			return predicate.test(strValue);
+		}
+	}
+	
+	public boolean isPropertyValueYesOrTrue(String strKey) {
+		String strValue = _props.getProperty(strKey);
+		if (strValue == null) {
+			return false;
+		} else {
+			return strValue.equalsIgnoreCase("yes") || strValue.equalsIgnoreCase("true");
 		}
 	}
 }

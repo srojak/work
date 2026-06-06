@@ -18,7 +18,7 @@ package srojak.debug;
 
 import java.util.Objects;
 
-import srojak.core.LazyInt;
+import srojak.core.field.LazyInt;
 import srojak.core.reflect.PackageClassLocator;
 
 /**

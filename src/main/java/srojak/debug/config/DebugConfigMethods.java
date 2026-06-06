@@ -25,7 +25,6 @@ import org.xml.sax.SAXException;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.tools.ExceptionMethods;
 import srojak.debug.DebugNexus;
 
 /**

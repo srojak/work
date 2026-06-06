@@ -22,28 +22,40 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import srojak.core.IPropertiesReadOnly;
-import srojak.core.StringBox;
+import srojak.core.InvalidOperationException;
 import srojak.core.logic.SimpleGate;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.reflect.PackageClassLocator;
+import srojak.core.specialized.StringBox;
+import srojak.core.tools.BitMethods;
+import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.debug.impl.DebugSwitchContent;
 /**
  * @author Stephen
  *
  */
-public class DebugNexus {
+public class DebugNexus
+		implements DebugNexusConsFlags, DebugNexusSwitchFlags {
 	private final DebugProperties _properties;
+	private final int _flags;
 	
 	private static final SimpleGate commonGate = new SimpleGate();
+	private static final String className = DebugNexus.class.getSimpleName();
 	
 	/**
-	 * Constructor.
+	 * Default constructor.
 	 */
 	public DebugNexus() {
 		_properties = DebugNexusCore.getProperties();
+		_flags = CONS_NONE;
+	}
+	
+	public DebugNexus(int flags) {
+		_properties = DebugNexusCore.getProperties();
+		_flags = flags;
 	}
 	
 	/**
@@ -117,7 +129,7 @@ public class DebugNexus {
 		}
 	}
 	
-	private DebugSwitchContent fetch(DebugSwitchKey key, SimpleGate gateNew) {
+	private DebugSwitchContent fetchSwitch(DebugSwitchKey key, SimpleGate gateNew) {
 		gateNew.setGateState(false);
 		DebugSwitchContent swDebug = DebugNexusCore.getContent(key);
 		if (swDebug == null) {
@@ -138,7 +150,7 @@ public class DebugNexus {
 	 */
 	public ObsLevel getDebugLevel(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
-		return fetch(key, commonGate).getLevel();
+		return fetchSwitch(key, commonGate).getLevel();
 	}
 	
 	/**
@@ -149,7 +161,7 @@ public class DebugNexus {
 	 */
 	public DebugSwitch getSwitch(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
-		return fetch(key, commonGate);
+		return fetchSwitch(key, commonGate);
 	}
 	
 	/**
@@ -166,7 +178,7 @@ public class DebugNexus {
 		Objects.requireNonNull(key, "key");
 		Objects.requireNonNull(levelNew, "levelNew");
 		SimpleGate gate = new SimpleGate();
-		DebugSwitchContent swDebug = fetch(key, gate);
+		DebugSwitchContent swDebug = fetchSwitch(key, gate);
 		if (gate.getGateState()) {
 			swDebug.setLevel(levelNew);
 			swDebug.setShowSourceLocations(bShowSource);
@@ -174,16 +186,25 @@ public class DebugNexus {
 		return swDebug;
 	}
 	
+	public void enableBaseClassSwitches(DebugSwitchKey key) {
+		Objects.requireNonNull(key, "key");
+		DebugNexusCore.enableBaseClassSwitches(key);
+	}
+	
 	/**
 	 * Set the debug level for a specific debug switch.
 	 * The switch will be created if it does not already exist.
+	 * The nexus must be created for modification.
 	 * @param key The key identifying the debug switch.
 	 * @param level The observation level to assign.
 	 * @param bShowSource If {@code true}, the switch should show source information in its output.
 	 */
 	public void setDebugLevel(DebugSwitchKey key, ObsLevel level, boolean bShowSource) {
 		Objects.requireNonNull(key, "key");
-		DebugSwitchContent swDebug = fetch(key, commonGate);
+		if (!BitMethods.test(_flags, CONS_CAN_MODIFY)) {
+			throw new InvalidOperationException(className, "not open for modification");
+		}
+		DebugSwitchContent swDebug = fetchSwitch(key, commonGate);
 		swDebug.setLevel(level);
 		swDebug.setShowSourceLocations(bShowSource);
 	}
@@ -209,6 +230,52 @@ public class DebugNexus {
 					DebugSwitch sw = DebugNexusCore.getContent(k);
 					consumer.accept(sw);
 				});
+	}
+	
+	private ClassDebugOptionMap fetchClassOptions(PackageClassLocator locClass) {
+		ClassDebugOptionMap options = DebugNexusCore.getOptionsForClass(locClass);
+		if (options == null) {
+			options = DebugNexusCore.createOptionsForClass(locClass);
+		}
+		return options;
+	}
+	
+	/**
+	 * Get the debug options for a class.
+	 * @param locClass The locator for the class for which to find options.
+	 * @return The defined debug options; an empty set will be created if not already defined.
+	 */
+	public ClassDebugOptions getClassOptions(PackageClassLocator locClass) {
+		Objects.requireNonNull(locClass, "locClass");
+		return fetchClassOptions(locClass);
+	}
+	
+	/**
+	 * Get the debug options for a class.
+	 * @param classOwner The class for which to find options.
+	 * @return The defined debug options; an empty set will be created if not already defined.
+	 */
+	public ClassDebugOptions getClassOptions(Class<?> classOwner) {
+		Objects.requireNonNull(classOwner, "classOwner");
+		PackageClassLocator locator = new PackageClassLocator(classOwner);
+		return fetchClassOptions(locator);
+	}
+	
+	/**
+	 * Set a debug option for a class.
+	 * The nexus must be created for modification.
+	 * @param classOwner The class for which to set the option.
+	 * @param strName The name of the option.
+	 * @param nValue The value for the option.
+	 */
+	public void setClassOption(Class<?> classOwner, String strName, int nValue) {
+		Objects.requireNonNull(classOwner, "classOwner");
+		if (!BitMethods.test(_flags, CONS_CAN_MODIFY)) {
+			throw new InvalidOperationException(className, "not open for modification");
+		}
+		PackageClassLocator locator = new PackageClassLocator(classOwner);
+		ClassDebugOptionMap options = fetchClassOptions(locator);
+		options.putOption(strName, nValue);
 	}
 	
 	/**
@@ -250,5 +317,6 @@ public class DebugNexus {
 	public class PropertyKeys {
 		public static final String LOG_DIR = "dir.log";
 		public static final String DIAG_NEW_SWITCH = "diag.new.switch";
+		public static final String DIAG_NEW_CLASS_OPTIONS = "diag.new.classoptions";
 	}
 }

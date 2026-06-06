@@ -16,9 +16,9 @@
  */
 package srojak.utest.debug.config;
 
-import srojak.core.IntegerCounter;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.specialized.IntegerCounter;
 import srojak.debug.DebugNexus;
 import srojak.debug.config.DebugConfigReader;
 import srojak.numerics.OrderedComparison;
