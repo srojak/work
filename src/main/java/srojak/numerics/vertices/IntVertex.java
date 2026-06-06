@@ -14,38 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics;
+package srojak.numerics.vertices;
+
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public class RadiansMethods {
-		
-	public static final double TWOPI;
-	public static final double HALFPI;
+public class IntVertex {
+	public final int _x;
+	public final int _y;
 	
-	static {
-		TWOPI = Math.PI * 2.0d;
-		HALFPI = Math.PI * 0.5d;
-	}
-	
-	/**
-	 * Normalize an angle to be in the interval (-PI, PI].
-	 * @param dRadians the angle in radians.
-	 * @return The normalized angle.
-	 */
-	public static double normalizeAngle(double dRadians) {
-		return dRadians - TWOPI * Math.floor((dRadians + Math.PI) / TWOPI);
+	public IntVertex(int x, int y) {
+		_x = x;
+		_y = y;
 	}
 
-	/**
-	 * Convert from degrees to radians.
-	 * @param dDegrees the angle from the positive X axis in degrees.
-	 * @return The normalized angle in radians.
-	 */
-	public static double fromDegrees(double dDegrees) {
-		double dRadians = dDegrees * Math.PI / 180.0;
-		return normalizeAngle(dRadians);
+	@Override
+	public int hashCode() {
+		return Objects.hash(_x, _y);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof IntVertex other) {
+			return _x == other._x && _y == other._y;
+		} else
+			return false;
+	}
+
+	@Override
+	public String toString() {
+		return "IntVertex [x=" + _x + ", y=" + _y + "]";
 	}
 }

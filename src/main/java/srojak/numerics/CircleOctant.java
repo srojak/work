@@ -53,6 +53,6 @@ public enum CircleOctant {
 	public static CircleOctant getOctantFor(double dRadians) {
 		double dd = Math.round(RadiansMethods.normalizeAngle(dRadians) / A4);
 		int n = ((int) dd + 8) % 8;
-		return ArrayMethods.where(CircleOctant.values(), i -> i.isIndexEqual(n));
+		return ArrayMethods.findFirst(CircleOctant.values(), i -> i.isIndexEqual(n));
 	}
 }

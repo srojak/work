@@ -85,6 +85,23 @@ public class IntervalDouble
 				&& _type.evalRightComparison(comparer.compare(_valueMaximum, dValue));
 	}
 	
+	public int compareToInterval(double dValue, DoublePrecisionComparer comparer) {
+		Objects.requireNonNull(comparer, "comparer");
+		if (_type.evalLeftComparison(comparer.compare(_valueMinimum, dValue))) {
+			if (_type.evalRightComparison(comparer.compare(_valueMaximum, dValue))) {
+				return 0;
+			} else {
+				return 1;
+			}
+		} else {
+			return -1;
+		}
+	}
+	
+	public int compareToInterval(double dValue) {
+		return compareToInterval(dValue, _comparer);
+	}
+	
 	public double getFullRange() {
 		return _valueMaximum - _valueMinimum;
 	}

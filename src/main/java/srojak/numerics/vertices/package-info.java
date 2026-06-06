@@ -18,10 +18,4 @@
  * @author Stephen
  *
  */
-module srojak.numerics {
-	requires transitive srojak.core;
-	requires transitive srojak.debug;
-	exports srojak.numerics;
-	exports srojak.numerics.intervals;
-	exports srojak.numerics.vertices;
-}
+package srojak.numerics.vertices;
