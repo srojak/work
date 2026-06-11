@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import srojak.core.NamedKey;
+import srojak.core.keys.NamedKey;
 
 /**
  * @author Stephen

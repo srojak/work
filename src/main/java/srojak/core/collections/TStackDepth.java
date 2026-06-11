@@ -16,6 +16,8 @@
  */
 package srojak.core.collections;
 
+import srojak.core.CommonCollectionSize;
+
 /**
  * @author Stephen
  *

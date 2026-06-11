@@ -19,6 +19,8 @@ package srojak.core.collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+import srojak.core.CommonCollectionSize;
+
 /**
  * @author Stephen
  *

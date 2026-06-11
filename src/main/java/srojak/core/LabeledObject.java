@@ -22,5 +22,6 @@ package srojak.core;
  */
 public interface LabeledObject {
 	String toString();
+	boolean hasObject();
 	Object getObject();
 }

@@ -18,6 +18,8 @@ package srojak.core.collections;
 
 import java.util.function.Consumer;
 
+import srojak.core.CommonCollectionSize;
+
 /**
  * @author Stephen
  *

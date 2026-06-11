@@ -16,8 +16,6 @@
  */
 package srojak.core.containers;
 
-import java.util.Objects;
-
 import srojak.core.KeyValue;
 
 /**
@@ -28,30 +26,14 @@ import srojak.core.KeyValue;
  * 
  */
 public class KeyValueContainer<K, V>
+		extends KeyedContainerBase<K>
 		implements KeyValue<K, V> {
-	private final K _key;
 	private final V _value;
 	
 	public KeyValueContainer(K key, V value) {
-		Objects.requireNonNull(key, "key");
+		super(key);
 		// value can be null
-		_key = key;
 		_value = value;
-	}
-
-	@Override
-	public K getKey() {
-		return _key;
-	}
-	
-	protected boolean isNonNullKeyEqual(Object obj)
-	{
-		return _key.equals(obj);
-	}
-
-	@Override
-	public boolean isKeyEqual(K key) {
-		return key == null ? false : isNonNullKeyEqual(key);
 	}
 
 	@Override
@@ -62,20 +44,6 @@ public class KeyValueContainer<K, V>
 	@Override
 	public V getValue() {
 		return _value;
-	}
-
-	@Override
-	public int hashCode() {
-		return _key.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		} else {
-			return isNonNullKeyEqual(obj);
-		}
 	}
 
 	@Override

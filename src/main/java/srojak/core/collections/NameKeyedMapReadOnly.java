@@ -18,7 +18,8 @@ package srojak.core.collections;
 
 import java.util.function.Consumer;
 
-import srojak.core.NamedKey;
+import srojak.core.CommonCollectionSize;
+import srojak.core.keys.NamedKey;
 
 /**
  * @author Stephen

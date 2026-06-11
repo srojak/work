@@ -13,5 +13,6 @@ public interface TypeAndEventListener {
 	Class<?> getListenerClass();
 	boolean isOfClass(Class<?> ccmp);
 	String getTypeName();
-	EventListener getListenerAsBase();
+	EventListener getListener();
+	<L extends EventListener> L getListenerAs(Class<L> cls);
 }

@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import srojak.core.CommonCollectionSize;
 import srojak.core.reflect.TypeBearingValue;
 
 /**

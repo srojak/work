@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public interface CommonEventListenerStore {
 	int getListenerCount();
 	void clear();
-	TypeAndEventListener[] getList();
+	List<TypeAndEventListener> getList();
 	<T extends EventListener> List<T> getListeners(Class<T> t);
 	<T extends EventListener> void forEach(Class<T> t, Consumer<T> consumer);
 	<T extends EventListener> void forEachReversed(Class<T> t, Consumer<T> consumer);

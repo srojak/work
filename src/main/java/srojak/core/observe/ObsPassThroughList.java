@@ -18,7 +18,7 @@ package srojak.core.observe;
 
 import java.util.Objects;
 
-import srojak.core.collections.CommonCollectionSize;
+import srojak.core.CommonCollectionSize;
 import srojak.core.impl.ObservablePassThroughArray;
 
 /**

@@ -19,8 +19,8 @@ package srojak.core.decorated;
 import java.util.List;
 import java.util.ListIterator;
 
+import srojak.core.CommonCollectionSize;
 import srojak.core.NameToken;
-import srojak.core.collections.CommonCollectionSize;
 
 /**
  * @author Stephen

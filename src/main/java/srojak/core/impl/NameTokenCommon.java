@@ -29,6 +29,8 @@ public sealed class NameTokenCommon
 		extends NameTokenBase
 		permits NameOrderTokenValues {
 	
+	public static final int SERIES = 5;
+	
 	/**
 	 * @param strName
 	 */
@@ -43,7 +45,7 @@ public sealed class NameTokenCommon
 
 	@Override
 	protected int getSeries() {
-		return 5;
+		return SERIES;
 	}
 
 	@Override

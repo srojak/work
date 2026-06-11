@@ -33,6 +33,17 @@ public class StringMethods {
 		return _strQuote + strText + _strQuote;
 	}
 	
+	public static String makeIndent(int chars) {
+		if (chars < 0) {
+			throw new IllegalArgumentException("chars is negative");
+		}
+		if (chars == 0) {
+			return "";
+		} else {
+			return(new String(" ").repeat(chars));
+		}
+	}
+	
 	public static boolean forAnyOfArray(String strText, BiPredicate<String, String> predicate, 
 			String[] strValues) {
 		Objects.requireNonNull(strText, "strText");

@@ -19,7 +19,7 @@ package srojak.core.specialized;
 /**
  * @author Stephen
  *
- * an integer counter object that can be used by lambdas.
+ * An integer counter object that can be used by lambdas.
  */
 public class IntegerCounter {
 	private int _value;

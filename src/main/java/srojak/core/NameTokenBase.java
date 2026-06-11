@@ -32,8 +32,8 @@ public abstract sealed class NameTokenBase
 	
 	public NameTokenBase(String strName) {
 		Objects.requireNonNull(strName, "strName");
-		if (strName.isEmpty() || strName.isBlank()) {
-			throw new IllegalArgumentException("strName");
+		if (strName.isBlank()) {
+			throw new IllegalArgumentException("strName is blank");
 		}
 		_strName = strName;
 	}
@@ -61,6 +61,12 @@ public abstract sealed class NameTokenBase
 					&& _strName.equals(other._strName);
 		} else
 			return false;
+	}
+
+	@Override
+	public boolean isNameEqual(String strName) {
+		// only valid for NameTokenCommon
+		return _strName.equals(strName);
 	}
 
 	@Override

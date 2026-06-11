@@ -24,6 +24,8 @@ import srojak.core.NameTokenBase;
  */
 public final class NameTokenFixed 
 		extends NameTokenBase {
+	
+	public static final int SERIES = 1;
 
 	/**
 	 * @param strName
@@ -39,7 +41,12 @@ public final class NameTokenFixed
 
 	@Override
 	protected int getSeries() {
-		return 1;
+		return SERIES;
+	}
+
+	@Override
+	public boolean isNameEqual(String strName) {
+		return false;
 	}
 
 	@Override

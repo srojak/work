@@ -27,6 +27,7 @@ public interface NameToken
 		extends Named, StringComparable, Comparable<NameToken> {
 	int hashCode();
 	boolean equals(Object obj);
+	boolean isNameEqual(String strName);
 	boolean isRestricted();
 
 	@SuppressWarnings("exports")

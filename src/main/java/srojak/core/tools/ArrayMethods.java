@@ -58,6 +58,17 @@ public class ArrayMethods {
 		return null;
 	}
 	
+	public static <T> int findFirstIndex(T[] array,  Predicate<T> predicate) {
+		Objects.requireNonNull(array, "array");
+		Objects.requireNonNull(predicate, "predicate");
+		for (int i = 0; i < array.length; i++) {
+			if (predicate.test(array[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public static <T> boolean equalsAny(T[] array, T itemCompare) {
 		Objects.requireNonNull(array, "array");
 		Objects.requireNonNull(itemCompare, "itemCompare");

@@ -17,7 +17,7 @@
 package srojak.core.containers;
 
 import srojak.core.NameToken;
-import srojak.core.NameTokenBearing;
+import srojak.core.NameTokenEquatable;
 
 /**
  * @author Stephen
@@ -25,7 +25,7 @@ import srojak.core.NameTokenBearing;
  */
 public class NameTokenValueContainer<V>
 		extends KeyValueContainer<NameToken, V> 
-		implements NameTokenBearing {
+		implements NameTokenEquatable {
 
 	/**
 	 * @param key

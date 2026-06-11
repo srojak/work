@@ -18,7 +18,7 @@ package srojak.core.containers;
 
 import java.util.Objects;
 
-import srojak.core.specialized.Tuple;
+import srojak.core.Tuple;
 
 /**
  * @author Stephen

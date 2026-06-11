@@ -19,6 +19,7 @@ package srojak.core.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import srojak.core.CommonCollectionSize;
 import srojak.core.EmptyCollectionException;
 /**
  * @author Stephen

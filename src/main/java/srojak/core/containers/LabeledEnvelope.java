@@ -25,24 +25,32 @@ import srojak.core.LabeledObject;
  *
  */
 public class LabeledEnvelope<T>
-		implements LabeledObject {
+		extends LabeledEnvelopeBase<T> {
 	private final T _item;
-	private final String _strLabel;
 	
 	public LabeledEnvelope(T item, String strLabel) {
+		super(strLabel);
 		Objects.requireNonNull(item, "item");
-		Objects.requireNonNull(strLabel, "strLabel");
 		_item = item;
-		_strLabel = strLabel;
 	}
 	
+	@Override
+	public boolean hasObject() {
+		return true;
+	}
+
+	@Override
 	public T getValue() {
 		return _item;
 	}
 	
 	@Override
-	public String toString() {
-		return _strLabel;
+	public boolean isValueEqual(T value) {
+		if (value == null) {
+			return false;
+		} else {
+			return _item.equals(value);
+		}
 	}
 
 	@Override

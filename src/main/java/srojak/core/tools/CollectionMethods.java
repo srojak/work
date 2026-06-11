@@ -16,10 +16,12 @@
  */
 package srojak.core.tools;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.function.Predicate;
 
 /**
@@ -63,6 +65,20 @@ public class CollectionMethods {
 		return null;
 	}
 	
+	public static <T> int findFirstIndexIn(Collection<T> collection, Predicate<T> predicate) {
+		Objects.requireNonNull(collection, "collection");
+		Objects.requireNonNull(predicate, "predicate");
+		int index = 0;
+		for (T item : collection) {
+			if (predicate.test(item)) {
+				return index;
+			}
+			index++;
+		}
+		return -1;
+		
+	}
+	
 	public static <T> boolean isTrueForAny(Collection<T> collection, Predicate<T> predicate) {
 		Objects.requireNonNull(collection, "collection");
 		Objects.requireNonNull(predicate, "predicate");
@@ -83,6 +99,18 @@ public class CollectionMethods {
 			}
 		}
 		return true;		
+	}
+	
+	public static <T> Vector<T> vectorize(Collection<T> collection) {
+		Objects.requireNonNull(collection, "collection");
+		return new Vector<T>(collection);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T[] createArray(Class<T> classData, Collection<T> collection) {
+		Objects.requireNonNull(classData, "classData");
+		Objects.requireNonNull(collection, "collection");
+		return collection.toArray((T[])Array.newInstance(classData, collection.size()));
 	}
 
 }

@@ -25,10 +25,13 @@ module srojak.core {
 	exports srojak.core.decorated;
 	exports srojak.core.events;
 	exports srojak.core.field;
+	exports srojak.core.functional;
 	exports srojak.core.io;
+	exports srojak.core.keys;
 	exports srojak.core.logic;
 	exports srojak.core.observe;
 	exports srojak.core.reflect;
+	exports srojak.core.result;
 	exports srojak.core.specialized;
 	exports srojak.core.tools;
 }

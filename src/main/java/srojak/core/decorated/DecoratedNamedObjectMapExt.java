@@ -23,8 +23,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import srojak.core.CommonCollectionSize;
 import srojak.core.NameToken;
-import srojak.core.collections.CommonCollectionSize;
 
 /**
  * @author Stephen
