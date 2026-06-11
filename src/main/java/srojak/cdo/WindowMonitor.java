@@ -31,6 +31,7 @@ import srojak.core.events.StateChangeListener;
 /**
  * @author Stephen
  *
+ * Monitor the existence of a window.
  */
 public class WindowMonitor
 		implements NameTokenBearing {
@@ -38,6 +39,10 @@ public class WindowMonitor
 	private final SingleEventListenerStore<StateChangeListener> _listeners;
 	private Window _window;
 	
+	/**
+	 * Constructor.
+	 * @param tokenName The identifying {@code NameToken} for the monitor.
+	 */
 	public WindowMonitor(NameToken tokenName) {
 		Objects.requireNonNull(tokenName);
 		_token = tokenName;
@@ -45,11 +50,20 @@ public class WindowMonitor
 		_window = null;
 	}
 	
+	/**
+	 * Get the identifying {@code NameToken} for the object.
+	 * @return The {@code NameToken} identifying the object.
+	 */
 	@Override
 	public NameToken getNameToken() {
 		return _token;
 	}
 
+	/**
+	 * Is the  identifying {@code NameToken} for the object equal to the given {@code NameToken}?
+	 * @param token The value to which to compare for equality.
+	 * @return {@code true} if the {@code NameToken} values are equal.
+	 */
 	@Override
 	public boolean isNameTokenEqual(NameToken token) {
 		return _token.equals(token);
@@ -63,6 +77,11 @@ public class WindowMonitor
 		_listeners.remove(listener);
 	}
 
+	/**
+	 * Assign a window to the monitor.
+	 * @param window The window that the monitor will observe.
+	 * @throws IllegalStateException If the monitor is observing another window.
+	 */
 	public void assignWindow(Window window) {
 		Objects.requireNonNull(window, "window");
 		if (_window != null) {

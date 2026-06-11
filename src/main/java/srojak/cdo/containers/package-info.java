@@ -18,12 +18,4 @@
  * @author Stephen
  *
  */
-module srojak.cdo {
-	requires transitive java.desktop;
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires srojak.debug;
-	exports srojak.cdo;
-	exports srojak.cdo.containers;
-	exports srojak.cdo.events;
-}
+package srojak.cdo.containers;

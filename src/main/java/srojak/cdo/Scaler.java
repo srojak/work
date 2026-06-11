@@ -26,11 +26,46 @@ import srojak.numerics.intervals.IntervalDouble;
  *
  */
 public interface Scaler {
+	
+	/**
+	 * Get the current scale.
+	 * @return The current scale factor.
+	 */
 	double getScale();
+	
+	/**
+	 * Get the unscaled surface size.
+	 * @return A {@code Dimension} object containing the unscaled surface size.
+	 */
 	Dimension getUnscaledSurfaceSize();
+	
+	/**
+	 * Get the scaled full size.
+	 * @return A {@code Dimension} object containing the surface size at the current scale.
+	 */
 	Dimension getScaledFullSize();
+	
+	/**
+	 * Is the scale range limited?
+	 * @return {@code true} if the scale is limited within an interval.
+	 */
 	boolean isRangeLimited();
+	
+	/**
+	 * Get the interval limiting the scale range, if any.
+	 * @return The interval limiting the scale range, or {@code null} if there is no limit.
+	 */
 	IntervalDouble getLimits();
+	
+	/**
+	 * Add a {@code ScaleChangeListener} to the object.
+	 * @param listener The listener to add.
+	 */
 	void addScaleChangeListener(ScaleChangeListener listener);
+	
+	/**
+	 * Remove a {@code ScaleChangeListener} from the object.
+	 * @param listener The listener to remove.
+	 */
 	void removeScaleChangeListener(ScaleChangeListener listener);
 }

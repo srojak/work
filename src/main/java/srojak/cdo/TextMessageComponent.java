@@ -1,5 +1,5 @@
 /**
- * Copyright © 2026 Stephen Rojak.
+  * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.cdo;
+
 /**
  * @author Stephen
  *
  */
-module srojak.cdo {
-	requires transitive java.desktop;
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires srojak.debug;
-	exports srojak.cdo;
-	exports srojak.cdo.containers;
-	exports srojak.cdo.events;
+public interface TextMessageComponent {
+	void clearText();
+	void selectAllText();
+	String getSelectedString();
 }

@@ -13,17 +13,19 @@
  * 
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
+ * 
  */
+package srojak.cdo;
+
 /**
  * @author Stephen
  *
  */
-module srojak.cdo {
-	requires transitive java.desktop;
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires srojak.debug;
-	exports srojak.cdo;
-	exports srojak.cdo.containers;
-	exports srojak.cdo.events;
+public enum DialogResult {
+	Unassigned,
+	OK,
+	Cancel,
+	Abort,
+	Yes,
+	No,
 }
