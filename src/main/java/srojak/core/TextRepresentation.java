@@ -16,13 +16,14 @@
  */
 package srojak.core;
 
+import srojak.core.text.TextRepresentDirect;
+
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public interface TextRepresentation {
+	String getTextFor(Object obj);
+	
+	public static final TextRepresentation forString = new TextRepresentDirect();
 }

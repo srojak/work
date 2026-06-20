@@ -14,15 +14,26 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.decorated;
+
+import srojak.core.logic.LockGate;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public class DecoratorLockGate
+		extends LockGate {
+
+	/**
+	 * 
+	 */
+	public DecoratorLockGate() {
+		super();
+	}
+
+	@Override
+	protected void throwLockException(String strName, String strMessage) {
+		super.throwLockException(strName, "decorator is locked");
+	}
 }

@@ -33,5 +33,6 @@ module srojak.core {
 	exports srojak.core.reflect;
 	exports srojak.core.result;
 	exports srojak.core.specialized;
+	exports srojak.core.text;
 	exports srojak.core.tools;
 }

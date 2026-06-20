@@ -22,6 +22,17 @@ package srojak.core;
  *
  */
 public interface NameTokenBearing {
+	
+	/**
+	 * Get the identifying {@code NameToken} for the object.
+	 * @return The {@code NameToken} identifying the object.
+	 */
 	NameToken getNameToken();
+	
+	/**
+	 * Is the  identifying {@code NameToken} for the object equal to the given {@code NameToken}?
+	 * @param token The value to which to compare for equality.
+	 * @return {@code true} if the {@code NameToken} values are equal.
+	 */
 	boolean isNameTokenEqual(NameToken token);
 }

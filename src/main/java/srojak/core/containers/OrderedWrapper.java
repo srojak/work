@@ -14,15 +14,48 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.containers;
+
+import java.util.Objects;
+
+import srojak.core.Ordered;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public class OrderedWrapper<T>
+		implements Ordered<T> {
+	private final int _order;
+	private final T _value;
+
+	/**
+	 * 
+	 */
+	public OrderedWrapper(T value, int order) {
+		Objects.requireNonNull(value, "value");
+		_value = value;
+		_order = order;
+	}
+
+	@Override
+	public int getOrder() {
+		return _order;
+	}
+
+	@Override
+	public Object getValueObject() {
+		return _value;
+	}
+
+	@Override
+	public T getValue() {
+		return _value;
+	}
+
+	@Override
+	public String toString() {
+		return "order=" + _order + ", " + _value + "]";
+	}
+
 }

@@ -44,6 +44,16 @@ public class StringMethods {
 		}
 	}
 	
+	public static String leftPadToSize(String strSource, char charPad, int szMinimum) {
+		Objects.requireNonNull(strSource, "strSource");
+		if (strSource.length() < szMinimum) {
+			String strPad = String.valueOf(charPad).repeat(szMinimum - strSource.length());
+			return strPad + strSource;
+		} else {
+			return strSource;
+		}
+	}
+	
 	public static boolean forAnyOfArray(String strText, BiPredicate<String, String> predicate, 
 			String[] strValues) {
 		Objects.requireNonNull(strText, "strText");

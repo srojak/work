@@ -20,9 +20,7 @@ package srojak.core;
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public interface Lockable {
+	boolean isLocked();
+	void lock();
 }

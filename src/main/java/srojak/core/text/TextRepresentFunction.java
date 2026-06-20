@@ -14,15 +14,34 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.text;
+
+import java.util.Objects;
+import java.util.function.Function;
+
+import srojak.core.TextRepresentation;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public class TextRepresentFunction<T>
+		implements TextRepresentation {
+	private final Function<T, String> _fnPresent;
+	
+	public TextRepresentFunction(Function<T, String> fnPresent) {
+		Objects.requireNonNull(fnPresent, "fnPresent");
+		_fnPresent = fnPresent;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getTextFor(Object obj) {
+		if (obj == null) {
+			return "";
+		} else {
+			return _fnPresent.apply((T) obj);
+		}
+	}
+
 }

@@ -14,15 +14,34 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.events;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+@SuppressWarnings("serial")
+public class ActionCompletedEvent 
+		extends CoreEvent {
+	private final int _id;
+	
+	public static final int ID_FILE_READ = 100;
+
+	/**
+	 * @param source
+	 */
+	public ActionCompletedEvent(Object source, int id) {
+		super(source);
+		_id = id;
+	}
+	
+	public int getID() {
+		return  _id;
+	}
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append(", ID = ");
+		sb.append(_id);
+	}
 }

@@ -18,60 +18,71 @@ package srojak.core.containers;
 
 import java.util.Objects;
 
-import srojak.core.NameIdentified;
+import srojak.core.NameIdentifiedAndLabeled;
 
 /**
  * @author Stephen
  *
  */
-public abstract class NameIdentifiedBase
-		implements NameIdentified {
+public abstract class NamedAndLabeledBase 
+		implements NameIdentifiedAndLabeled {
 	private final String _strName;
+	private final String _strLabel;
 	
-	public NameIdentifiedBase(String strName) {
+	protected NamedAndLabeledBase(String strName, String strLabel) {
 		Objects.requireNonNull(strName, "strName");
 		if (strName.isBlank()) {
 			throw new IllegalArgumentException("strName is empty or blank");
 		}
+		Objects.requireNonNull(strLabel, "strLabel");
 		_strName = strName;
+		_strLabel = strLabel;
+	}
+	
+	protected NamedAndLabeledBase(String strName) {
+		this(strName, strName);
 	}
 
 	@Override
 	public String getName() {
 		return _strName;
 	}
-	
+
 	@Override
 	public boolean isNameEqual(String strText) {
 		return _strName.equals(strText);
+	}
+	
+	@Override
+	public int compareToString(String other) {
+		Objects.requireNonNull(other, "other");
+		return _strName.compareTo(other);
+	}
+
+	@Override
+	public String getLabel() {
+		return _strLabel;
 	}
 
 	@Override
 	public int hashCode() {
 		return _strName.hashCode();
 	}
-	
-	protected abstract boolean canBeComparedTo(NameIdentifiedBase other);
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof NameIdentifiedBase other) {
-			if (canBeComparedTo(other)) {
-				return _strName.equals(other._strName);
-			}
-		}
-		return false;
+		if (obj == this)
+			return true;
+		else if (obj == null) {
+			return false;
+		} else if (obj instanceof NamedAndLabeledBase other) {
+			return _strName.equals(other._strName);
+		} else
+			return false;
 	}
 
-	@Override
-	public int compareToString(String other) {
-		Objects.requireNonNull(other, "other");
-		return _strName.compareTo(other);
-	}
-	
 	protected String makeTaggedName(String strTag) {
 		Objects.requireNonNull(strTag, "strTag");
 		return strTag + "[" + _strName + "]";
 	}
-
 }

@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.events;
+
+import java.util.EventListener;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public interface ObjectOwnershipListener 
+		extends EventListener {
+
+	void acquire(ObjectOwnershipEvent event);
+	void release(ObjectOwnershipEvent event);
 }

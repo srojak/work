@@ -10,10 +10,13 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.EventObject;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import srojak.core.impl.TypedEventListenerEntry;
 
@@ -96,6 +99,34 @@ public class CommonEventListenerArray
 		}
 	}
 	
+	@Override
+	public <T extends EventListener, E extends EventObject> void sendToAll(Class<T> t,
+			Supplier<E> makeEvent, BiConsumer<T, E> activator) {
+		List<T> listeners = getListeners(t);
+		ListIterator<T> iter = listeners.listIterator();
+		E event = null;
+		while (iter.hasNext()) {
+			if (event == null) {
+				event = makeEvent.get();
+			}
+			activator.accept(iter.next(), event);
+		}
+	}
+
+	@Override
+	public <T extends EventListener, E extends EventObject> void sendToAllReversed(Class<T> t,
+			Supplier<E> makeEvent, BiConsumer<T, E> activator) {
+		List<T> listeners = getListeners(t);
+		ListIterator<T> iter = listeners.listIterator(listeners.size());
+		E event = null;
+		while (iter.hasPrevious()) {
+			if (event == null) {
+				event = makeEvent.get();
+			}
+			activator.accept(iter.previous(), event);
+		}
+	}
+
 	@Override
 	public synchronized <T extends EventListener> void add(Class<T> t, T listener) {
 		if (listener == null) {

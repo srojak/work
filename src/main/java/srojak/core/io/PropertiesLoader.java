@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
 
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
 import srojak.core.specialized.StringBox;
 
 /**
@@ -31,16 +33,19 @@ import srojak.core.specialized.StringBox;
  */
 public class PropertiesLoader {
 	
-	private static void loadFrom(Properties properties, IOSupplier<InputStream> opener)
-					throws IOException {
-		
+	@SuppressWarnings("unused")
+	private static XResult loadFrom(Properties properties, IOSupplier<InputStream> opener) {
+		XResultStatusCarrier result = new XResultStatusCarrier();
 		try (InputStream stream = opener.get()) {
 			properties.load(stream);
+			result.setValid();
 		} catch (IOException exc) {
-				throw exc;
+			result.caughtException(exc);
 		}
+		return result;
 	}
 	
+	@SuppressWarnings("unused")
 	private static boolean tryLoadFrom(Properties properties,
 			IOSupplier<InputStream> opener, StringBox boxFailure)
 	{
@@ -54,40 +59,33 @@ public class PropertiesLoader {
 		}
 	}
 
-	public static void loadFromResource(Properties properties, ClassLoader loaderClass,
-			String strName) 
-					throws IOException {
+	public static XResult loadFromResource(Properties properties, ClassLoader loaderClass,
+			String strName)  {
 		Objects.requireNonNull(properties, "properties");
 		Objects.requireNonNull(loaderClass, "loaderClass");
 		Objects.requireNonNull(strName, "strName");
-		loadFrom(properties, () -> loaderClass.getResourceAsStream(strName));
+		XResultStatusCarrier result = new XResultStatusCarrier();
+		try (InputStream stream = loaderClass.getResourceAsStream(strName)) {
+			properties.load(stream);
+			result.setValid();
+		} catch (IOException exc) {
+			result.caughtException(exc);
+		}
+		return result;
 	}
 	
-	public static boolean tryLoadFromResource(Properties properties, ClassLoader loaderClass,
-			String strName, StringBox boxFailure) {
-		Objects.requireNonNull(properties, "properties");
-		Objects.requireNonNull(loaderClass, "loaderClass");
-		Objects.requireNonNull(strName, "strName");
-		Objects.requireNonNull(boxFailure, "boxFailure");
-		return tryLoadFrom(properties, () -> loaderClass.getResourceAsStream(strName), boxFailure);
-	}
-	
-	public static void loadFromDirectory(Properties properties, Path pathDir, String strName)
-			throws IOException {
+	public static XResult loadFromDirectory(Properties properties, Path pathDir, String strName) {
 		Objects.requireNonNull(properties, "properties");
 		Objects.requireNonNull(pathDir, "pathDir");
 		Objects.requireNonNull(strName, "strName");
 		Path pathFile = pathDir.resolve(strName);
-		loadFrom(properties, () -> Files.newInputStream(pathFile));
-	}
-	
-	public static boolean tryLoadFromDirectory(Properties properties, Path pathDir, 
-			String strName, StringBox boxFailure) {
-		Objects.requireNonNull(properties, "properties");
-		Objects.requireNonNull(pathDir, "pathDir");
-		Objects.requireNonNull(strName, "strName");
-		Objects.requireNonNull(boxFailure, "boxFailure");
-		Path pathFile = pathDir.resolve(strName);
-		return tryLoadFrom(properties, () -> Files.newInputStream(pathFile), boxFailure);
+		XResultStatusCarrier result = new XResultStatusCarrier();
+		try (InputStream stream = Files.newInputStream(pathFile)) {
+			properties.load(stream);
+			result.setValid();
+		} catch (IOException exc) {
+			result.caughtException(exc);
+		}
+		return result;
 	}
 }

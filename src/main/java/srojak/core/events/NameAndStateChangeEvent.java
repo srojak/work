@@ -14,15 +14,39 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.events;
+
+import java.util.Objects;
+
+import srojak.core.Named;
+import srojak.core.tools.StringMethods;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+@SuppressWarnings("serial")
+public class NameAndStateChangeEvent
+		extends StateChangeEvent
+		implements Named {
+	private final String _strName;
+	
+	public NameAndStateChangeEvent(Object source, String strName, boolean bState) {
+		super(source, bState);
+		Objects.requireNonNull(strName, "strName");
+		_strName = strName;
+	}
+
+	@Override
+	public String getName() {
+		return _strName;
+	}
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append(", name = ");
+		sb.append(StringMethods.encloseInQuotes(_strName));
+		super.formatData(sb);
+	}
 }
+

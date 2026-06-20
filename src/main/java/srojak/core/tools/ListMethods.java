@@ -16,6 +16,8 @@
  */
 package srojak.core.tools;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -81,5 +83,12 @@ public class ListMethods {
 		Objects.requireNonNull(list, "list");
 		Objects.requireNonNull(comparator, "comparator");
 		return list.stream().sorted(comparator).toList();
+	}
+	
+	public static <T> List<T> makeListOf(T[] array) {
+		Objects.requireNonNull(array, "array");
+		ArrayList<T> list = new ArrayList<T>(array.length);
+		list.addAll(Arrays.asList(array));
+		return list;
 	}
 }

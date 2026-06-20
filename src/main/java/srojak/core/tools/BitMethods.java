@@ -22,7 +22,7 @@ package srojak.core.tools;
  */
 public class BitMethods {
 
-	public static int sett(int flags, int ... masks) {
+	public static int set(int flags, int ... masks) {
 		for (int mask : masks) {
 			flags |= mask;
 		}

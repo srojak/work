@@ -14,30 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.containers;
-
-import java.util.Objects;
-
-import srojak.core.Labeled;
+package srojak.core.functional;
 
 /**
  * @author Stephen
  *
  */
-public abstract class LabeledEnvelopeBase<T>
-		implements Labeled<T> {
-	private final String _strLabel;
+@FunctionalInterface
+public interface LeftComparator<T> {
 
-	/**
-	 * 
-	 */
-	protected LabeledEnvelopeBase(String strLabel) {
-		Objects.requireNonNull(strLabel, "strLabel");
-		_strLabel = strLabel;
-	}
+	int compare(T o1, Object o2);
 
-	@Override
-	public String toString() {
-		return _strLabel;
-	}
 }

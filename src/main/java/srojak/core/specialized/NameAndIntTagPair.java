@@ -14,65 +14,72 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.containers;
+package srojak.core.specialized;
 
 import java.util.Objects;
 
-import srojak.core.LabeledObject;
+import srojak.core.NamedAndIntTagged;
+import srojak.core.StringComparable;
 
 /**
  * @author Stephen
  *
  */
-public class LabeledEnvelope<T>
-		extends LabeledEnvelopeBase<T> {
-	private final T _item;
+public class NameAndIntTagPair
+		implements NamedAndIntTagged, StringComparable, Comparable<NameAndIntTagPair> {
+	private final int _tag;
+	private final String _name;
 	
-	public LabeledEnvelope(T item, String strLabel) {
-		super(strLabel);
-		Objects.requireNonNull(item, "item");
-		_item = item;
-	}
-	
-	@Override
-	public boolean hasObject() {
-		return true;
+	public NameAndIntTagPair(int nTag, String strName) {
+		Objects.requireNonNull(strName, "strName");
+		_tag = nTag;
+		_name = strName;
 	}
 
 	@Override
-	public T getValue() {
-		return _item;
+	public String getName() {
+		return _name;
 	}
-	
+
 	@Override
-	public boolean isValueEqual(T value) {
-		if (value == null) {
-			return false;
+	public boolean isNameEqual(String strName) {
+		return _name.equals(strName);
+	}
+
+	@Override
+	public int getTagValue() {
+		return _tag;
+	}
+
+	@Override
+	public int compareToString(String other) {
+		return _name.compareTo(other);
+	}
+
+	@Override
+	public int compareTo(NameAndIntTagPair o) {
+		if (this == o) {
+			return 0;
+		} else if (o == null) {
+			return 1;
 		} else {
-			return _item.equals(value);
+			return _name.compareTo(o._name);
 		}
 	}
 
 	@Override
-	public Object getObject() {
-		return _item;
-	}
-
-	@Override
 	public int hashCode() {
-		return _item.hashCode();
+		return _name.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (obj instanceof LabeledObject other) {
-			return _item.equals(other.getObject());
-		} else {
-			return _item.equals(obj);
+		if (obj instanceof NameAndIntTagPair other) {
+			return _name.equals(other._name);
 		}
+		return false;
 	}
+
 }

@@ -14,15 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.text;
+
+import java.util.Objects;
+
+import srojak.core.Labeled;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public abstract class LabeledEnvelopeBase<T>
+		implements Labeled<T> {
+	private final String _strLabel;
+
+	/**
+	 * 
+	 */
+	protected LabeledEnvelopeBase(String strLabel) {
+		Objects.requireNonNull(strLabel, "strLabel");
+		_strLabel = strLabel;
+	}
+
+	@Override
+	public boolean isLabelEqual(String strText) {
+		return _strLabel.equals(strText);
+	}
+
+	@Override
+	public String toString() {
+		return _strLabel;
+	}
 }

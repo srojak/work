@@ -20,9 +20,19 @@ package srojak.core;
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public interface IntOrdered
+		extends Comparable<IntOrdered> {
+
+	int getOrder();
+	Object getValueObject();
+	
+	default int compareTo(IntOrdered other) {
+		if (other == null) {
+			return 1;
+		} else if (other == this) {
+			return 0;
+		} else {
+			return Integer.compare(getOrder(), other.getOrder());
+		}
+	}
 }

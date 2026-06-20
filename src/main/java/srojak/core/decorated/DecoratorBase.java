@@ -19,21 +19,23 @@ package srojak.core.decorated;
 import java.util.Objects;
 
 import srojak.core.InvalidOperationException;
+import srojak.core.Lockable;
 import srojak.core.NameToken;
+import srojak.core.logic.LockGate;
 
 /**
  * @author Stephen
  *
  */
 public abstract class DecoratorBase
-		implements Decorator {
+		implements Decorator, Lockable {
 	private final NameToken _name;
-	private boolean _bLocked;
+	private final DecoratorLockGate _gateLock;
 	
 	public DecoratorBase(NameToken token) {
 		Objects.requireNonNull(token, "token");
 		_name = token;
-		_bLocked = false;
+		_gateLock = new DecoratorLockGate();
 	}
 
 	@Override
@@ -48,17 +50,16 @@ public abstract class DecoratorBase
 
 	@Override
 	public boolean isLocked() {
-		return _bLocked;
+		return _gateLock.isLocked();
 	}
 	
-	public void lockValue() {
-		_bLocked = true;
+	@Override
+	public void lock() {
+		_gateLock.lock();;
 	}
 	
 	protected void testLock() {
-		if (_bLocked) {
-			throw new InvalidOperationException(_name.getName(), "decorator is locked");
-		}
+		_gateLock.testLock(_name);
 	}
 	
 	protected abstract Object getValueAsObject();

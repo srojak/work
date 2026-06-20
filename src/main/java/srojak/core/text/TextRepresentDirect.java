@@ -14,15 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.text;
+
+import srojak.core.TextRepresentation;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public class TextRepresentDirect
+		implements TextRepresentation {
+
+	@Override
+	public String getTextFor(Object obj) {
+		return obj != null ? obj.toString() : "";
+	}
+
 }

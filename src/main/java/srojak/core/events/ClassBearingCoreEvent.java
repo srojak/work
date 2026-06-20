@@ -14,15 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.events;
+
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+@SuppressWarnings("serial")
+public abstract class ClassBearingCoreEvent
+		extends CoreEvent {
+	protected final Class<?> _classObj;
+
+	public ClassBearingCoreEvent(Object source, Class<?> classObj) {
+		super(source);
+		Objects.requireNonNull(classObj, "classObj");
+		_classObj = classObj;
+	}
+	
+	public ClassBearingCoreEvent(Object source, Object objValue) {
+		super(source);
+		Objects.requireNonNull(objValue, "objValue");
+		_classObj = objValue.getClass();
+	}
+	
+	public Class<?> getValueClass() {
+		return _classObj;
+	}
+	
+	public abstract boolean isValueNull();
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append("value(class=");
+		sb.append(_classObj.getSimpleName());
+	}
 }

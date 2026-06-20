@@ -14,15 +14,37 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.io;
+
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public abstract class SpecializedTextFileWriterBase
+		extends SpecializedFileWriterBase {
+
+	/**
+	 * 
+	 */
+	public SpecializedTextFileWriterBase() {
+	}
+	
+	protected abstract boolean writeTextContent(PrintWriter writer);
+
+	@Override
+	protected final XResult writeContent(FileOutputStream streamOut) {
+		XResultStatusCarrier result = new XResultStatusCarrier();
+		PrintWriter writer = new PrintWriter(streamOut);
+		if (writeTextContent(writer));
+			result.setValid();
+		writer.close();
+		return result;
+	}
+
 }

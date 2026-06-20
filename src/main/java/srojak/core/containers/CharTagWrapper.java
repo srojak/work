@@ -14,15 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.containers;
+
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public class CharTagWrapper<T>
+		implements CharTagged<T> {
+	private final char _tag;
+	private final T _value;
+
+	/**
+	 * 
+	 */
+	public CharTagWrapper(char charTag, T objValue) {
+		Objects.requireNonNull(objValue, "objValue");
+		_tag = charTag;
+		_value = objValue;
+	}
+
+	@Override
+	public char getTag() {
+		return _tag;
+	}
+	
+	@Override
+	public T getValue() {
+		return _value;
+	}
+
+	@Override
+	public boolean isValueEqual(Object obj) {
+		return _value.equals(obj);
+	}
 }

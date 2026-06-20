@@ -14,15 +14,38 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.containers;
+
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public interface NameIdentified
-		extends Named, StringComparable {
-	String getName();
-	boolean isNameEqual(String strText);
-	int compareToString(String other);
+public class NamedAndLabeledObj<T>
+		extends NamedAndLabeledBase {
+	private final T _value;
+
+	/**
+	 * @param strName
+	 * @param strLabel
+	 */
+	public NamedAndLabeledObj(String strName, String strLabel, T value) {
+		super(strName, strLabel);
+		Objects.requireNonNull(value, "value");
+		_value = value;
+	}
+
+	/**
+	 * @param strName
+	 */
+	public NamedAndLabeledObj(String strName, T value) {
+		super(strName);
+		Objects.requireNonNull(value, "value");
+		_value = value;
+	}
+
+	public T getValue() {
+		return _value;
+	}
 }

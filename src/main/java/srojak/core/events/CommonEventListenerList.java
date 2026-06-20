@@ -5,11 +5,14 @@ package srojak.core.events;
 
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.EventObject;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import srojak.core.impl.TypedEventListenerEntry;
 
@@ -75,6 +78,41 @@ public class CommonEventListenerList
 			if (entry.isOfClass(t)) {
 				T listener = entry.getListenerAs(t);
 				consumer.accept(listener);
+			}
+		}
+	}
+
+	@Override
+	public <T extends EventListener, E extends EventObject> void sendToAll(Class<T> t,
+			Supplier<E> makeEvent, BiConsumer<T, E> activator) {
+		ListIterator<TypedEventListenerEntry> iter = _list.listIterator();
+		E event = null;
+		while (iter.hasNext()) {
+			TypedEventListenerEntry entry = iter.next();
+			if (entry.isOfClass(t)) {
+				if (event == null) {
+					event = makeEvent.get();
+				}
+				T listener = entry.getListenerAs(t);
+				activator.accept(listener, event);
+			}
+		}
+		
+	}
+
+	@Override
+	public <T extends EventListener, E extends EventObject> void sendToAllReversed(Class<T> t,
+			Supplier<E> makeEvent, BiConsumer<T, E> activator) {
+		ListIterator<TypedEventListenerEntry> iter = _list.listIterator(_list.size());
+		E event = null;
+		while (iter.hasPrevious()) {
+			TypedEventListenerEntry entry = iter.previous();
+			if (entry.isOfClass(t)) {
+				if (event == null) {
+					event = makeEvent.get();
+				}
+				T listener = entry.getListenerAs(t);
+				activator.accept(listener, event);
 			}
 		}
 	}
