@@ -25,4 +25,11 @@ import java.awt.Color;
 public interface ColorSelectionProvider {
 	Color getSelectionColor();
 	
+	default public boolean isSelectionColorEqual(ColorSelectionProvider other) {
+		if (other == null) {
+			return false;
+		} else {
+			return getSelectionColor().equals(other.getSelectionColor());
+		}
+	}
 }

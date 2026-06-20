@@ -20,7 +20,25 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.Objects;
 
+import srojak.numerics.DoubleMethods;
+import srojak.numerics.OrderedComparison;
+
 public class DimensionMethods {
+	
+	public static Dimension halve(Dimension dm) {
+		Objects.requireNonNull(dm, "dm");
+		return new Dimension(dm.width >> 1, dm.height >> 1);
+	}
+	
+	public static Dimension scale(Dimension dm, double dScale) {
+		Objects.requireNonNull(dm, "dm");
+		if (DoubleMethods.compare(OrderedComparison.LE, dScale, 0.0d)) {
+			throw new IllegalArgumentException("dNewScale must be positive");
+		}
+		Dimension dmScaled = new Dimension(0, 0);
+		dmScaled.setSize(dm.getWidth() * dScale, dm.getHeight() * dScale);
+		return dmScaled;
+	}
 
 	public static Dimension addHorizontal(Dimension ... dims) {
 		int width = 0;

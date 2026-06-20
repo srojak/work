@@ -14,17 +14,23 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.cdo.events;
+
+import java.awt.ItemSelectable;
+import java.awt.event.ItemEvent;
+import java.util.Objects;
+
 /**
  * @author Stephen
  *
  */
-module srojak.cdo {
-	requires transitive java.desktop;
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.events;
-	requires srojak.debug;
-	exports srojak.cdo;
-	exports srojak.cdo.containers;
-	exports srojak.cdo.events;
+public class AWTEventMethods {
+
+	public static ItemEvent createItemSelectionEvent(ItemSelectable originator,
+			Object objItem, boolean bIsSelected) {
+		// the constructor checks originator
+		Objects.requireNonNull(objItem, "objItem");
+		return new ItemEvent(originator, ItemEvent.ITEM_STATE_CHANGED, objItem,
+				bIsSelected ? ItemEvent.SELECTED : ItemEvent.DESELECTED);
+	}
 }

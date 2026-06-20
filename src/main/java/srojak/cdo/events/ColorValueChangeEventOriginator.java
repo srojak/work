@@ -14,28 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo;
-
-import java.awt.event.ActionListener;
+package srojak.cdo.events;
 
 /**
  * @author Stephen
  *
  */
-public interface SendsActionEvents {
+public interface ColorValueChangeEventOriginator {
 
-    /**
-     * Adds an <code>ActionListener</code> to the object.
-     *
-     * @param listener The listener to add
-     */
-    void addActionListener(ActionListener listener);
-
-    /**
-     * Removes an <code>ActionListener</code> from the object.
-     *
-     * @param listener The listener to remove
-     */
-    void removeActionListener(ActionListener listener);
-
+	void addColorValueChangeListener(ColorValueChangeListener listener);
+	void removeColorValueChangeListener(ColorValueChangeListener listener);
 }
