@@ -16,6 +16,8 @@
  */
 package srojak.events;
 
+import java.util.Objects;
+
 import srojak.core.events.CoreEvent;
 
 /**
@@ -26,6 +28,7 @@ import srojak.core.events.CoreEvent;
 public class CollectionChangeEvent 
 		extends CoreEvent {
 	private final int _nVerb;
+	private final Object _obj;
 	
 	/**
 	 * Verb values
@@ -39,16 +42,34 @@ public class CollectionChangeEvent
 	public static final int VERB_REPLACE_MULT = 6;
 	public static final int VERB_SORT = 7;
 
-	/**
-	 * @param source
-	 */
 	public CollectionChangeEvent(Object source, int verb) {
 		super(source);
 		_nVerb = verb;
+		_obj = null;
+	}
+	
+	public CollectionChangeEvent(Object source, int verb, Object objChange) {
+		super(source);
+		Objects.requireNonNull(objChange, "objChange");
+		_nVerb = verb;
+		_obj = objChange;
 	}
 
 	public int getVerb() {
 		return _nVerb;
+	}
+	
+	public boolean hasChangeObject() {
+		return _obj == null;
+	}
+	
+	public Object getChangeObject() {
+		return _obj;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getChangeObjectAs() {
+		return (T) _obj;
 	}
 
 	@Override

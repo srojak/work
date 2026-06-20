@@ -16,12 +16,14 @@
  */
 package srojak.events;
 
+import java.util.EventListener;
+
 /**
  * @author Stephen
  *
  */
-public interface SendsCommandEvents {
+public interface ResyncListener 
+		extends EventListener {
 
-	void addCommandListener(CommandListener listener);
-	void removeCommandListener(CommandListener listener);
+	void receive(ResyncEvent event);
 }

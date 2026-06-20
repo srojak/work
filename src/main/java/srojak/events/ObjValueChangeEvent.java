@@ -16,6 +16,8 @@
  */
 package srojak.events;
 
+import srojak.core.events.ClassBearingCoreEvent;
+
 /**
  * @author Stephen
  *

@@ -16,16 +16,12 @@
  */
 package srojak.events;
 
-import srojak.core.events.InstanceListenerBearing;
-import srojak.core.keys.InstanceKey;
-
 /**
  * @author Stephen
  *
  */
-public interface SendsInstanceCommandEvents
-		extends InstanceListenerBearing {
-	
-	void addCommandListener(InstanceKey instance, CommandListener listener);
-	void removeCommandListener(InstanceKey instance, CommandListener listener);
+public interface CollectionChangeEventOriginator {
+
+	void addCollectionChangeListener(CollectionChangeListener listener);
+	void removeCollectionChangeListener(CollectionChangeListener listener);
 }

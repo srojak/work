@@ -23,7 +23,7 @@ import java.util.EventListener;
  *
  */
 public interface CommandListener
-		extends EventListener {
+		extends EventListener, CommandEventValues {
 
 	public void execute(CommandEvent event);
 }

@@ -16,8 +16,6 @@
  */
 package srojak.events;
 
-import java.util.Objects;
-
 import srojak.core.events.CoreEvent;
 
 /**
@@ -25,31 +23,19 @@ import srojak.core.events.CoreEvent;
  *
  */
 @SuppressWarnings("serial")
-public abstract class ClassBearingCoreEvent
+public class ResyncEvent
 		extends CoreEvent {
-	protected final Class<?> _classObj;
 
-	public ClassBearingCoreEvent(Object source, Class<?> classObj) {
+	/**
+	 * @param source
+	 */
+	public ResyncEvent(Object source) {
 		super(source);
-		Objects.requireNonNull(classObj, "classObj");
-		_classObj = classObj;
 	}
-	
-	public ClassBearingCoreEvent(Object source, Object objValue) {
-		super(source);
-		Objects.requireNonNull(objValue, "objValue");
-		_classObj = objValue.getClass();
-	}
-	
-	public Class<?> getValueClass() {
-		return _classObj;
-	}
-	
-	public abstract boolean isValueNull();
 
 	@Override
 	protected void formatData(StringBuilder sb) {
-		sb.append("value(class=");
-		sb.append(_classObj.getSimpleName());
+
 	}
+
 }

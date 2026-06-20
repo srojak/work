@@ -23,7 +23,8 @@ import srojak.core.events.CoreEvent;
  *
  */
 public class CommandEvent
-		extends CoreEvent {
+		extends CoreEvent
+		implements CommandEventValues {
 	private final int _command;
 	private final int _option;
 	

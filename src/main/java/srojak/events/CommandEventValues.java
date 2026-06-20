@@ -20,8 +20,7 @@ package srojak.events;
  * @author Stephen
  *
  */
-public interface SendsObjectValueChangeEvents {
+public interface CommandEventValues {
 
-	void addObjectValueChangeListener(ObjectValueChangeListener listener);
-	void removeObjectValueChangeListener(ObjectValueChangeListener listener);
+	public static final int CMD_RESYNC = 100;
 }

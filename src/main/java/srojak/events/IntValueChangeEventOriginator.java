@@ -20,7 +20,7 @@ package srojak.events;
  * @author Stephen
  *
  */
-public interface SendsIntValueChangeEvents {
+public interface IntValueChangeEventOriginator {
 
 	void addIntValueChangeListener(IntValueChangeListener listener);
 	void removeIntValueChangeListener(IntValueChangeListener listener);

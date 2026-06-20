@@ -16,43 +16,12 @@
  */
 package srojak.events;
 
-import srojak.core.events.ClassBearingCoreEvent;
-
 /**
  * @author Stephen
  *
  */
-public class ObjectValueChangeEvent
-		extends ClassBearingCoreEvent {
-	private final Object _value;
+public interface ObjectValueChangeEventOriginator {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3478960381264809164L;
-
-	public ObjectValueChangeEvent(Object source, Class<?> classObj) {
-		super(source, classObj);
-		_value = null;
-	}
-	
-	public ObjectValueChangeEvent(Object source, Object objValue) {
-		super(source, objValue);
-		_value = objValue;
-	}
-	
-	@Override
-	public boolean isValueNull() {
-		return _value == null;
-	}
-	
-	public Object getValue() {
-		return _value;
-	}
-	
-	public <T> T getValueAs() {
-		@SuppressWarnings("unchecked")
-		T value = (T) _value;
-		return value;
-	}
+	void addObjectValueChangeListener(ObjectValueChangeListener listener);
+	void removeObjectValueChangeListener(ObjectValueChangeListener listener);
 }
