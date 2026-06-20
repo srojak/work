@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Objects;
 
-import srojak.core.collections.CommonCollectionSize;
+import srojak.core.CommonCollectionSize;
 
 /**
  * @author Stephen
