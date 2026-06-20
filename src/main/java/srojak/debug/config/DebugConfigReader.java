@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 
 import srojak.core.observe.ObservationWriter;
 import srojak.debug.DebugConfigSchema;
+import srojak.debug.impl.DebugNexusCore;
 import srojak.xml.XmlSchemaTool;
 import srojak.xml.stream.XmlParserOptions;
 import srojak.xml.stream.XmlStreamErrorHandler;
@@ -86,7 +87,9 @@ public class DebugConfigReader {
 		validator.setErrorHandler(_handlerErrors);
 		validator.validate(new StreamSource(streamIn));
 		streamIn.close();
+		DebugNexusCore.startConfigFile(pathFile);
 		streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
 		_parser.parse(streamIn);
+		DebugNexusCore.endConfigFile(pathFile);
 	}
 }

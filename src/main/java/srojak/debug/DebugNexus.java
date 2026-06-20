@@ -16,7 +16,6 @@
  */
 package srojak.debug;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -28,7 +27,7 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.reflect.PackageClassLocator;
-import srojak.core.specialized.StringBox;
+import srojak.core.result.XResult;
 import srojak.core.tools.BitMethods;
 import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
@@ -76,20 +75,10 @@ public class DebugNexus
 	
 	/**
 	 * Load properties from a file in the current directory.
-	 * @throws IOException
+	 * 
 	 */
-	public void loadPropertiesFromCurrentDir() 
-			throws IOException {
-		_properties.loadFromCurrentDirectory(DebugNexusCore.PROPERTIES_FILE_NAME);
-	}
-	
-	/**
-	 * Try to load properties from a file in the current directory.
-	 * @param boxFailure A container to receive a string explaining a failure.
-	 * @return {@code true} if the properties file could be read successfully.
-	 */
-	public boolean tryLoadPropertiesFromCurrentDir(StringBox boxFailure) {
-		return _properties.tryLoadFromCurrentDirectory(DebugNexusCore.PROPERTIES_FILE_NAME, boxFailure);
+	public XResult loadPropertiesFromCurrentDir() {
+		return _properties.loadFromCurrentDirectory(DebugNexusCore.PROPERTIES_FILE_NAME);
 	}
 	
 	/**
@@ -121,7 +110,7 @@ public class DebugNexus
 	 * @return A {@code Path} object identifying the log directory, or {@code null} if none is defined.
 	 */
 	public Path getLogDirectory() {
-		String strPath = _properties.getProperty(PropertyKeys.LOG_DIR);
+		String strPath = _properties.getProperty(DebugPropertyKeys.LOG_DIR);
 		if (strPath == null) {
 			return null;
 		} else {
@@ -306,17 +295,5 @@ public class DebugNexus
 	public static ObsPassThroughList makePassThroughList(String[] strings) {
 		Objects.requireNonNull(strings);
 		return ObsPassThroughList.createFrom(strings);
-	}
-	
-	/**
-	 * Recognized keys in the properties file.
-	 * 
-	 * @author Stephen
-	 *
-	 */
-	public class PropertyKeys {
-		public static final String LOG_DIR = "dir.log";
-		public static final String DIAG_NEW_SWITCH = "diag.new.switch";
-		public static final String DIAG_NEW_CLASS_OPTIONS = "diag.new.classoptions";
 	}
 }

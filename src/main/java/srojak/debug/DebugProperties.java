@@ -17,49 +17,73 @@
 package srojak.debug;
 
 import java.nio.file.Path;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import srojak.core.IPropertiesReadOnly;
+import srojak.core.events.ActionCompletedEvent;
+import srojak.core.events.ActionCompletedListener;
+import srojak.core.events.ActionCompletedOriginator;
+import srojak.core.events.SingleEventListenerList;
+import srojak.core.events.SingleEventListenerStore;
 import srojak.core.io.PropertiesLoader;
-import srojak.core.specialized.StringBox;
+import srojak.core.result.XResult;
 /**
  * @author Stephen
  *
  */
 public class DebugProperties
-		implements IPropertiesReadOnly {
+		implements IPropertiesReadOnly, DebugPropertyKeys, ActionCompletedOriginator {
+	private final SingleEventListenerStore<ActionCompletedListener> _listeners;
 	private final Properties _props;
-	private boolean _bLoaded;
+	private boolean _bDiagNewSwitch;
+	private boolean _bDiagNewClassOptions;
 	
 	public DebugProperties() {
+		_listeners = new SingleEventListenerList<ActionCompletedListener>();
 		_props = new Properties();
-		_bLoaded = false;
+		_bDiagNewSwitch = false;
+		_bDiagNewClassOptions = false;
 	}
 	
-	public boolean isLoaded() {
-		return _bLoaded;
+	private void setFlags() {
+		_bDiagNewSwitch = isPropertyValueYesOrTrue(DIAG_NEW_SWITCH);
+		_bDiagNewClassOptions = isPropertyValueYesOrTrue(DIAG_NEW_CLASS_OPTIONS);
 	}
 	
-	public boolean tryLoadFromResource(Object objApp, String strName) {
+	public boolean isDiagNewSwitchEnabled() {
+		return _bDiagNewSwitch;
+	}
+	
+	public boolean isDiagNewClassOptionsEnabled() {
+		return _bDiagNewClassOptions;
+	}
+	
+	public XResult loadFromResource(Object objApp, String strName) {
 		Objects.requireNonNull(objApp, "objApp");
 		ClassLoader loader = objApp.getClass().getClassLoader();
-		return PropertiesLoader.tryLoadFromResource(_props, loader, strName, null);
+		XResult result = PropertiesLoader.loadFromResource(_props, loader, strName);
+		if (result.isValid()) {
+			setFlags();
+			ActionCompletedEvent event 
+				= new ActionCompletedEvent(this, ActionCompletedEvent.ID_FILE_READ);
+			_listeners.forEach(ls -> ls.completed(event));
+		}
+		return result;
 	}
 	
-	public void loadFromCurrentDirectory(String strName)
-			throws IOException
-	{
+	public XResult loadFromCurrentDirectory(String strName) {
 		Path pathCurrent = Path.of(System.getProperty("user.dir"));
-		PropertiesLoader.loadFromDirectory(_props, pathCurrent, strName);
-	}
-	
-	public boolean tryLoadFromCurrentDirectory(String strName, StringBox boxFailure) {
-		Path pathCurrent = Path.of(System.getProperty("user.dir"));
-		return PropertiesLoader.tryLoadFromDirectory(_props, pathCurrent, strName, boxFailure);
+		XResult result = PropertiesLoader.loadFromDirectory(_props, pathCurrent, strName);
+		if (result.isValid()) {
+			setFlags();
+			ActionCompletedEvent event 
+				= new ActionCompletedEvent(this, ActionCompletedEvent.ID_FILE_READ);
+			_listeners.forEach(ls -> ls.completed(event));
+		}
+		return result;
 	}
 
 	@Override
@@ -93,5 +117,15 @@ public class DebugProperties
 		} else {
 			return strValue.equalsIgnoreCase("yes") || strValue.equalsIgnoreCase("true");
 		}
+	}
+
+	@Override
+	public void addActionCompletedListener(ActionCompletedListener listener) {
+		_listeners.add(listener);
+	}
+
+	@Override
+	public void removeActionCompletedListener(ActionCompletedListener listener) {
+		_listeners.remove(listener);
 	}
 }

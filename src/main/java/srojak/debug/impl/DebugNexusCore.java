@@ -16,18 +16,21 @@
  */
 package srojak.debug.impl;
 
+import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import srojak.core.TextMessageRelay;
+import srojak.core.io.PrintStreamTextRelay;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
 import srojak.core.reflect.PackageClassLocator;
-import srojak.debug.DebugNexus.PropertyKeys;
 import srojak.debug.DebugProperties;
+import srojak.debug.DebugPropertyKeys;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchKey;
 import srojak.debug.DebugSwitchKeyClass;
@@ -35,7 +38,8 @@ import srojak.debug.DebugSwitchKeyClass;
  * @author Stephen
  *
  */
-public class DebugNexusCore {
+public class DebugNexusCore
+		implements DebugPropertyKeys {
 	private static final HashMap<DebugSwitchKey, DebugSwitchContent> _table;
 	private static final HashMap<PackageClassLocator, ClassDebugOptionMap> _mapClassOptions;
 	private static final DebugProperties _properties;
@@ -44,6 +48,7 @@ public class DebugNexusCore {
 	private static ObservationWriter _writer;
 	private static ObsLevel _levelDefault;
 	private static boolean _bAutoFlush;
+	private static SwitchCaptureList _listCapture;
 	
 	static {
 		_table = new HashMap<DebugSwitchKey, DebugSwitchContent>();
@@ -54,6 +59,7 @@ public class DebugNexusCore {
 		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 		_levelDefault = ObsLevel.WARN;
 		_bAutoFlush = false;
+		_listCapture = null;
 	}
 	
 	public static DebugProperties getProperties() {
@@ -72,15 +78,40 @@ public class DebugNexusCore {
 		return _table.get(key);
 	}
 	
-	private static void putContent(DebugSwitchContent content, Supplier<String> supplierDiagnostic) {
-		if (_properties.isPropertyValueYesOrTrue(PropertyKeys.DIAG_NEW_SWITCH)) {
+	public static void startConfigFile(Path pathFile) {
+		if (_properties.isDiagNewSwitchEnabled()) {
+			_writer.writeDiagnostic("starting file " + pathFile);
+		}
+	}
+	
+	public static void endConfigFile(Path pathFile) {
+		if (_properties.isDiagNewSwitchEnabled()) {
+			_writer.writeDiagnostic("completed file " + pathFile);
+		}
+	}
+	
+	public static void diagnosticTableWalk(TextMessageRelay relay) {
+		relay.writeln("currently defined switches");
+		_table.forEach((k, c) -> {
+			relay.writeln(c.toString());
+		});
+	}
+	
+	private static void putNewContent(DebugSwitchContent content, Supplier<String> supplierDiagnostic) {
+		if (_properties.isDiagNewSwitchEnabled()) {
 			_writer.writeDiagnostic(supplierDiagnostic.get());
 		}
 		_table.put(content.getKey(), content);
 	}
 	
 	public static void putContent(DebugSwitchContent content) {
-		putContent(content, () -> "creating new DebugSwitch for " + content.getKey());
+		if (_listCapture != null) {
+			putNewContent(content, () -> "creating new DebugSwitch for " + content.getKey()
+				+ " from loading " + _listCapture.getStartSwitch().getKey());
+			_listCapture.addToList(content);
+		} else {
+			putNewContent(content, () -> "creating new DebugSwitch for " + content.getKey());
+		}
 	}
 	
 	public static int getSwitchCount() {
@@ -100,13 +131,15 @@ public class DebugNexusCore {
 	}
 	
 	public static void enableBaseClassSwitches(DebugSwitchKey keyClass) {
+		TextMessageRelay relayErr = new PrintStreamTextRelay(System.err);
+		boolean bDiagCascade = _properties.isPropertyValueYesOrTrue(DIAG_SWITCH_CASCADE);
 		DebugSwitchContent swClass = _table.get(keyClass);
 		if (swClass == null) {
 			return;
 		}
-		PackageClassLocator locatorLeaf = keyClass.getClassLocator();
 		ObsLevel levelClass = swClass.getLevel();
 		try {
+			_listCapture = new SwitchCaptureList(swClass);
 			Class<?> classLeaf = Class.forName(keyClass.getFullName());
 			Class<?> classBase = classLeaf.getSuperclass();
 			while (classBase != null) {
@@ -121,8 +154,18 @@ public class DebugNexusCore {
 					swBase = new DebugSwitchContent(keyBase);
 					swBase.setLevel(swClass.getLevel());
 					swBase.setShowSourceLocations(swClass.showSourceLocations());
-					putContent(swBase, () -> "creating new DebugSwitch for " + keyBase
+					putNewContent(swBase, () -> "creating new DebugSwitch for " + keyBase
 							+ " cascading from " + keyClass);
+				} else if (_listCapture.isInList(swBase)) {
+					if (bDiagCascade) {
+						_writer.writeDiagnostic("found DebugSwitch in capture list for " + keyBase);
+					}
+					if (!swBase.isLevelAtLeast(levelClass)) {
+						swBase.setLevel(levelClass);
+					}
+					if (swClass.showSourceLocations()) {
+						swBase.setShowSourceLocations(true);
+					}
 				} else {
 					if (!swBase.isLevelAtLeast(levelClass)) {
 						swBase.setLevel(levelClass);
@@ -132,11 +175,13 @@ public class DebugNexusCore {
 			}
 		} catch (ClassNotFoundException exc) {
 			_writer.writeDiagnostic("unexpected ClassNotFoundException: " + exc.getMessage());
+		} finally {
+			_listCapture = null;
 		}
 	}
 	
 	public static ClassDebugOptionMap createOptionsForClass(PackageClassLocator locClass) {
-		if (_properties.isPropertyValueYesOrTrue(PropertyKeys.DIAG_NEW_CLASS_OPTIONS)) {
+		if (_properties.isDiagNewClassOptionsEnabled()) {
 			_writer.writeDiagnostic("creating new class options for " + locClass);
 		}
 		ClassDebugOptionMap entry = new ClassDebugOptionMap(locClass);

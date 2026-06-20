@@ -198,6 +198,7 @@ public class DebugConfigParser
 		return false;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean readShowSourceLocations(QName nameElement, XmlElementAttribute[] attributes) {
 		XmlElementAttribute attrLocs = findAttributeByName(attributes, ATTRIB_LOCS);
 		if (attrLocs != null && attrLocs.hasValue()) {

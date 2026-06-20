@@ -18,6 +18,7 @@ package srojak.debug.config;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
+import java.util.Objects;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -25,6 +26,8 @@ import org.xml.sax.SAXException;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.DebugNexus;
 
 /**
@@ -58,27 +61,31 @@ public class DebugConfigMethods {
 		}
 	}
 
-	public static void readConfigFile(String strFile, int codeExit, boolean bFileMustExist) {
+	public static XResult readConfigFile(String strFile, boolean bFileMustExist) {
+		Objects.requireNonNull(strFile, "strFile");
+		XResultStatusCarrier result = new XResultStatusCarrier();
 		ObservationWriter writer = _nexus.getWriter();
 		try {
 			DebugConfigReader reader = new DebugConfigReader();
 			reader.readFrom(strFile);
+			result.setValid();
 		} catch (NoSuchFileException exc) {
 			if (bFileMustExist) {
 				writer.write(ObsLevel.FATAL, strFile + " does not exist");
-				System.exit(codeExit);
+				result.caughtException(exc);
 			} else {
-				return;
+				result.setValid();
 			}
 		} catch (IOException exc) {
 			trapException(writer, exc);
-			System.exit(codeExit);
+			result.caughtException(exc);
 		} catch (XMLStreamException exc) {
 			trapException(writer, exc);
-			System.exit(codeExit);
+			result.caughtException(exc);
 		} catch (SAXException exc) {
 			trapException(writer, exc);
-			System.exit(codeExit);
+			result.caughtException(exc);
 		}
+		return result;
 	}
 }

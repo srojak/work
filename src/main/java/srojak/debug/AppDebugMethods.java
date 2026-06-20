@@ -18,16 +18,20 @@ package srojak.debug;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
+import srojak.core.EnvironmentCharacteristicException;
 import srojak.core.observe.ObservationWriter;
-import srojak.debug.DebugNexus.PropertyKeys;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.impl.DebugNexusCore;
 
 /**
  * @author Stephen
  *
  */
-public class AppDebugMethods {
+public class AppDebugMethods
+		implements DebugPropertyKeys {
 
 	private static final DebugProperties _properties = DebugNexusCore.getProperties();
 	
@@ -35,39 +39,42 @@ public class AppDebugMethods {
 		DebugNexusCore.setAutoFlush(bState);
 	}
 	
-	public static void readDebugPropertiesFromCurrentDir(int codeExit) {
-		try {
-			_properties.loadFromCurrentDirectory(DebugNexusCore.PROPERTIES_FILE_NAME);
-		} catch (IOException exc) {
-			System.err.println("cannot load properties: " + exc.getMessage());
-			System.exit(codeExit);
-		}
+	public static XResult readDebugPropertiesFromCurrentDir() {
+		XResult result = _properties.loadFromCurrentDirectory(DebugNexusCore.PROPERTIES_FILE_NAME);
+		return result;
 	}
 	
-	public static boolean tryCreateLogFile(Class<?> classApp) {
-		String strPath = _properties.getProperty(PropertyKeys.LOG_DIR);
+	public static XResult tryCreateLogFile(Class<?> classApp) {
+		Objects.requireNonNull(classApp, "classApp");
+		XResultStatusCarrier result = new XResultStatusCarrier();
+		String strPath = _properties.getProperty(LOG_DIR);
 		if (strPath == null) {
-			System.err.println("property " + PropertyKeys.LOG_DIR + " is not defined");
-			return false;
+			result.caughtException(
+					new EnvironmentCharacteristicException("property " 
+							+ LOG_DIR + " is not defined"));
+			return result;
 		}
 		Path pathLogDir = Path.of(strPath);
 		try {
 			ObservationWriter writer = DebugWriterLogFile.create(pathLogDir, classApp);
 			DebugNexusCore.setWriter(writer);
+			result.setValid();
 		} catch (IOException exc) {
-			System.err.println("cannot create log file: " + exc.getMessage());
-			return false;
+			result.caughtException(exc);
 		}
-		return true;
+		return result;
 	}
 	
 	public static boolean tryCreateLogFileIn(Class<?> classApp, Path pathDir) {
+		Objects.requireNonNull(classApp, "classApp");
+		Objects.requireNonNull(pathDir, "pathDir");
+		XResultStatusCarrier result = new XResultStatusCarrier();
 		try {
 			ObservationWriter writer = DebugWriterLogFile.create(pathDir, classApp);
 			DebugNexusCore.setWriter(writer);
+			result.setValid();
 		} catch (IOException exc) {
-			System.err.println("cannot create log file: " + exc.getMessage());
-			return false;
+			result.caughtException(exc);
 		}
 		return true;
 	}
