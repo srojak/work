@@ -48,8 +48,10 @@ public class TestS2MathOrientation {
 			= new UnitTestEqualsMethods<S2Offset>();
 		
 		S2Orientation orient = S2Orientation.math();
-		series.expectValueEquals("orientation", "increasing direction", methodDirEq,
-				S2CompassDirection.NorthEast, orient.getIncreasingDirection());
+		series.expectValueEquals("orientation", "increasing horizontal direction", methodDirEq,
+				S2CompassDirection.East, orient.getIncreasingHorizontalDirection());
+		series.expectValueEquals("orientation", "increasing vertical direction", methodDirEq,
+				S2CompassDirection.North, orient.getIncreasingVerticalDirection());
 		
 		S2OrientationValidator validator = new S2OrientationValidator(orient);
 		validator.setObservationWriter(writer);

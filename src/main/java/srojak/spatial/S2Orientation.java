@@ -22,12 +22,18 @@ package srojak.spatial;
  * Defines application of compass directions to the S2 coordinates.
  */
 public interface S2Orientation {
-
+	
 	/**
-	 * Gets the direction for the orientation where both x and y values increase.
-	 * @return The increasing direction for the orientation.
+	 * Gets the direction for the orientation where x values increase.
+	 * @return The increasing horizontal direction for the orientation.
 	 */
-	S2CompassDirection getIncreasingDirection();
+	S2CompassDirection getIncreasingHorizontalDirection();
+	
+	/**
+	 * Gets the direction for the orientation where y values increase.
+	 * @return The increasing vertical direction for the orientation.
+	 */
+	S2CompassDirection getIncreasingVerticalDirection();
 	
 	/**
 	 * Find the direction for the offset in the orientation.
@@ -63,6 +69,16 @@ public interface S2Orientation {
 	 * @return The offset to move in that direction in the orientation.
 	 */
 	S2Offset offset(S2CompassDirection direction, int nDistance);
+	
+	/**
+	 * Create a rectangle on the given field size with specified width and height.
+	 * @param direction The side of the field to use.
+	 * @param szField The full size of the field.
+	 * @param nWidth The width of the generated rectangle.
+	 * @param nHeight The height of the generated rectangle.
+	 * @return The rectangle with the required dimensions and placement.
+	 */
+	S2Rect getSideRect(S2CompassDirection direction, S2FieldSize szField, int nWidth, int nHeight);
 	
 	/**
 	 * Gets the math orientation, in which coordinates increase upward and rightward.

@@ -60,12 +60,68 @@ public class S2GraphicsOrientation
 	}
 
 	/**
-	 * Gets the direction for the orientation where both x and y values increase.
-	 * @return The increasing direction for the orientation.
+	 * Gets the direction for the orientation where x values increase.
+	 * @return The increasing horizontal direction for the orientation.
 	 */
 	@Override
-	public S2CompassDirection getIncreasingDirection() {
-		return S2CompassDirection.SouthEast;
+	public S2CompassDirection getIncreasingHorizontalDirection() {
+		return S2CompassDirection.East;
+	}
+
+	/**
+	 * Gets the direction for the orientation where y values increase.
+	 * @return The increasing vertical direction for the orientation.
+	 */
+	@Override
+	public S2CompassDirection getIncreasingVerticalDirection() {
+		return S2CompassDirection.South;
+	}
+
+	@Override
+	protected S2Rect findSideRect(S2CompassDirection direction, S2FieldSize szField,
+			int nWidth, int nHeight) {
+		S2Coords origin = new S2Coords(0, 0);
+		S2Offset offset = new S2Offset(0, 0);
+		switch (direction.getDirectionCode()) {
+		case N:
+			offset = new S2Offset(szField.width, nHeight);
+			break;
+			
+		case W:
+			offset = new S2Offset(nWidth, szField.height);
+			break;
+			
+		case S:
+			origin = new S2Coords(0, szField.height - nHeight);
+			offset = new S2Offset(szField.width, nHeight);
+			break;
+			
+		case E:
+			origin = new S2Coords(szField.width - nWidth, 0);
+			offset = new S2Offset(nWidth, szField.height);
+			break;
+			
+		case NW:
+			offset = new S2Offset(nWidth, nHeight);
+			break;
+			
+		case SW:
+			origin = new S2Coords(0, szField.height - nHeight);
+			offset = new S2Offset(nWidth, nHeight);
+			break;
+			
+		case SE:
+			origin = new S2Coords(szField.width - nWidth, szField.height - nHeight); 
+			offset = new S2Offset(nWidth, nHeight);
+			break;
+		
+		case NE:
+			origin = new S2Coords(szField.width - nWidth, 0);
+			offset = new S2Offset(nWidth, nHeight);
+			break;
+		}
+		
+		return new S2Rect(origin, offset);
 	}
 
 }

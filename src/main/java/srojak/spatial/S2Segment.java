@@ -19,26 +19,39 @@ package srojak.spatial;
 import java.util.Objects;
 
 import srojak.core.InvalidOperationException;
+import srojak.core.Lockable;
+import srojak.core.logic.LockGate;
 
 /**
  * @author Stephen
  *
  */
-public class S2Segment {
+public class S2Segment
+		implements Lockable {
 	public S2Coords _coordsStart;
 	public S2Coords _coordsEnd;
-	public boolean _bLock;
+	public final LockGate _gateLock;
 	
 	public S2Segment(S2Coords coordsStart, S2Coords coordsEnd, boolean bIsLocked) {
 		Objects.requireNonNull(coordsStart, "coordsStart");
 		Objects.requireNonNull(coordsStart, "_coordsEnd");
 		_coordsStart = coordsStart;
 		_coordsEnd = coordsEnd;
-		_bLock = bIsLocked;
+		_gateLock = new LockGate();
+		if (bIsLocked) {
+			_gateLock.lock();
+		}
 	}
 	
 	public S2Segment(S2Coords coordsStart, S2Coords coordsEnd) {
 		this(coordsStart, coordsEnd, false);
+	}
+	
+	public S2Segment(S2Segment segSource) {
+		Objects.requireNonNull(segSource, "segSource");
+		_coordsStart = segSource._coordsStart;
+		_coordsEnd = segSource._coordsEnd;
+		_gateLock = new LockGate();
 	}
 	
 	public S2Coords getStart() {
@@ -49,28 +62,40 @@ public class S2Segment {
 		return _coordsEnd;
 	}
 	
+	@Override
 	public boolean isLocked() {
-		return _bLock;
+		return _gateLock.isLocked();
 	}
 	
+	@Override
 	public void lock() {
-		_bLock = true;
+		_gateLock.lock();
 	}
 	
 	public void changeStart(S2Coords coords) {
 		Objects.requireNonNull(coords, "coords");
-		if (_bLock) {
-			throw new InvalidOperationException("S2Segment", "is locked");
-		}
+		_gateLock.testLock("S2Segment");
 		_coordsStart = coords;
 	}
 	
 	public void changeEnd(S2Coords coords) {
 		Objects.requireNonNull(coords, "coords");
-		if (_bLock) {
-			throw new InvalidOperationException("S2Segment", "is locked");
-		}
+		_gateLock.testLock("S2Segment");
 		_coordsEnd = coords;	
+	}
+	
+	public boolean merge(S2Segment segment) {
+		Objects.requireNonNull(segment, "segment");
+		_gateLock.testLock("S2Segment");
+		if (_coordsEnd.equals(segment._coordsStart)) {
+			_coordsEnd = segment._coordsEnd;
+			return true;
+		} else if (_coordsStart.equals(segment._coordsEnd)) {
+			_coordsStart = segment._coordsStart;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

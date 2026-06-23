@@ -27,6 +27,7 @@ import java.util.List;
  */
 public final class S2SymbolicDirection
 		extends S2Direction {
+	private final String _strListAbbrev;
 	
 	public static final int ORDINAL_NONE = 1;
 	public static final int ORDINAL_RANDOM = 2;
@@ -37,7 +38,7 @@ public final class S2SymbolicDirection
 	
 	static {
 		ArrayList<S2SymbolicDirection> dirs = new ArrayList<S2SymbolicDirection>();
-		None = new S2SymbolicDirection("@", ORDINAL_NONE, "None");
+		None = new S2SymbolicDirection("@", " ", ORDINAL_NONE, "None");
 		Random = new S2SymbolicDirection("?", ORDINAL_RANDOM, "Random");
 		dirs.forEach(d -> register(d));
 		AllDirs = Collections.unmodifiableList(dirs);
@@ -50,12 +51,22 @@ public final class S2SymbolicDirection
 	 */
 	protected S2SymbolicDirection(String strAbbrev, int ordinal, String strName) {
 		super(strAbbrev, ordinal, strName);
-		// TODO Auto-generated constructor stub
+		_strListAbbrev = strAbbrev;
+	}
+
+	protected S2SymbolicDirection(String strAbbrev, String strListAbbrev, int ordinal, String strName) {
+		super(strAbbrev, ordinal, strName);
+		_strListAbbrev = strListAbbrev;
 	}
 
 	@Override
 	protected int getDirType() {
 		return TYPE_SYMBOLIC;
+	}
+
+	@Override
+	public String getListAbbrev() {
+		return _strListAbbrev;
 	}
 
 }

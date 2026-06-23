@@ -19,8 +19,13 @@ package srojak.spatial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
+import srojak.core.Labeled;
+import srojak.core.TextRepresentation;
+import srojak.core.text.LabeledEnvelope;
 import srojak.numerics.CompassDegrees;
+import srojak.spatial.impl.S2DirectionRepListAbbrev;
 
 /**
  * @author Stephen
@@ -32,12 +37,14 @@ public abstract sealed class S2Direction
 	private final String _strAbbrev;
 	private final int _nOrdinal;
 	
+	public static final TextRepresentation TEXT_LIST_ABBREV;
 	private static final ArrayList<S2Direction> _AllDirs;
 	
 	protected static final int TYPE_COMPASS = 1;
 	protected static final int TYPE_SYMBOLIC = 2;
 	
 	static {
+		TEXT_LIST_ABBREV = new S2DirectionRepListAbbrev();
 		_AllDirs = new ArrayList<S2Direction>();
 	}
 	
@@ -104,7 +111,30 @@ public abstract sealed class S2Direction
 		}
 		return direction;
 	}
-
+	
+	public static List<S2Direction> getCompassList(boolean bIncludeBlank) {
+		ArrayList<S2Direction> list
+			= new ArrayList<S2Direction>(8 + (bIncludeBlank ? 1 : 0));
+		if (bIncludeBlank) {
+			list.add(S2SymbolicDirection.None);
+		}
+		list.addAll(S2CompassDirection.AllDirs);
+		return list;
+	}
+	
+	public static List<Labeled<S2Direction>> getLabeledCompassList (
+			boolean bIncludeBlank, Function<S2Direction, String> functionLabel) {
+		Objects.requireNonNull(functionLabel, "functionLabel");
+		ArrayList<Labeled<S2Direction>> list
+			= new ArrayList<Labeled<S2Direction>>(8 + (bIncludeBlank ? 1 : 0));
+		if (bIncludeBlank) {
+			list.add(new LabeledEnvelope<S2Direction>(S2SymbolicDirection.None, ""));
+		}
+		list.addAll(S2CompassDirection.AllDirs.stream()
+				.map(d -> new LabeledEnvelope<S2Direction>(d, functionLabel.apply(d))).toList());
+		return list;
+	}
+	
 	protected S2Direction(String strAbbrev, int ordinal, String strName) {
 		Objects.requireNonNull(strAbbrev, "strAbbrev");
 		Objects.requireNonNull(strName, "strName");
@@ -122,6 +152,10 @@ public abstract sealed class S2Direction
 	}
 	
 	public final String getAbbrev() {
+		return _strAbbrev;
+	}
+	
+	public String getListAbbrev() {
 		return _strAbbrev;
 	}
 	

@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import srojak.core.KeyValue;
+import srojak.core.Tuple;
 import srojak.core.containers.TupleContainer;
-import srojak.core.specialized.Tuple;
 import srojak.core.tools.KeyValueMethods;
 import srojak.numerics.CircleOctant;
 import srojak.spatial.impl.S2DirectionMapping;
@@ -97,6 +97,28 @@ public abstract class S2OrientationBase
 		}
 		S2Offset offsetBase = offsetByOne(direction);
 		return new S2Offset(offsetBase.getX() * nDistance, offsetBase.getY() * nDistance);
+	}
+	
+	protected abstract S2Rect findSideRect(S2CompassDirection direction, S2FieldSize szField, 
+			int nWidth, int nHeight);
+
+	@Override
+	public S2Rect getSideRect(S2CompassDirection direction, S2FieldSize szField, int nWidth, int nHeight) {
+		Objects.requireNonNull(direction, "direction");
+		Objects.requireNonNull(szField, "szField");
+		if (nWidth <= 0) {
+			throw new IllegalArgumentException("nWidth must be positive");
+		}
+		if (nHeight <= 0) {
+			throw new IllegalArgumentException("nHeight must be positive");
+		}
+		if (nWidth > szField.width) {
+			nWidth = szField.width;
+		}
+		if (nHeight > szField.height) {
+			nHeight = szField.height;
+		}
+		return findSideRect(direction, szField, nWidth, nHeight);
 	}
 
 }

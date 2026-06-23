@@ -240,6 +240,22 @@ public class S2Rect {
 	}
 	
 	@Override
+	public int hashCode() {
+		return Objects.hash(_coordsStart, _height, _width);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj instanceof S2Rect other) {
+			return Objects.equals(_coordsStart, other._coordsStart) 
+					&& _height == other._height && _width == other._width;
+		}
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("rect(");
 		sb.append(_coordsStart);

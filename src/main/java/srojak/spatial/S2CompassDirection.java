@@ -31,7 +31,8 @@ import srojak.numerics.IRandomSource;
  *
  */
 public final class S2CompassDirection
-		extends S2Direction {
+		extends S2Direction
+		implements S2CompassOrdinals {
 	private final CompassDegrees _degrees;
 	private final Code _code;
 	
@@ -49,28 +50,28 @@ public final class S2CompassDirection
 	
 	static {
 		LinkedList<S2CompassDirection> dirs = new LinkedList<S2CompassDirection>();
-		S2CompassDirection rd = new S2CompassDirection("N", 0, "North", Code.N);
+		S2CompassDirection rd = new S2CompassDirection("N", OrdNorth, "North", Code.N);
 		North = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("NE", 1, "N-East", Code.NE);
+		rd = new S2CompassDirection("NE", OrdNorthEast, "N-East", Code.NE);
 		NorthEast = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("E", 2, "East", Code.E);
+		rd = new S2CompassDirection("E", OrdEast, "East", Code.E);
 		East = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("SE", 3, "S-East", Code.SE);
+		rd = new S2CompassDirection("SE", OrdSouthEast, "S-East", Code.SE);
 		SouthEast = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("S", 4, "South", Code.S);
+		rd = new S2CompassDirection("S", OrdSouth, "South", Code.S);
 		South = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("SW", 5, "S-West", Code.SW);
+		rd = new S2CompassDirection("SW", OrdSouthWest, "S-West", Code.SW);
 		SouthWest = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("W", 6, "West", Code.W);
+		rd = new S2CompassDirection("W", OrdWest, "West", Code.W);
 		West = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("NW", 7, "N-West", Code.NW);
+		rd = new S2CompassDirection("NW", OrdNorthWest, "N-West", Code.NW);
 		NorthWest = rd;
 		dirs.add(rd);
 		dirs.forEach(d -> register(d));
@@ -143,12 +144,6 @@ public final class S2CompassDirection
 			}
 		}
 		return null;
-	}
-
-	public static S2CompassDirection getRandomDirection(IRandomSource rsource) {
-		Objects.requireNonNull(rsource, "rsource");
-		int nRoll = rsource.genIntInRange(8);
-		return AllDirs.get(nRoll);
 	}
 	
 	public enum Code {
