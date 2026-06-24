@@ -20,32 +20,8 @@ package srojak.core.events;
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class ObjectOwnershipEvent 
-		extends ClassBearingCoreEvent {
-	private final Object _value;
+public interface NameAndStateChangeOriginator {
 
-	/**
-	 * @param source
-	 */
-	public ObjectOwnershipEvent(Object source, Object objValue) {
-		super(source, objValue);
-		_value = objValue;
-	}
-
-	@Override
-	public boolean isValueNull() {
-		return false;
-	}
-	
-	public Object getValue() {
-		return _value;
-	}
-	
-	public <T> T getValueAs() {
-		@SuppressWarnings("unchecked")
-		T value = (T) _value;
-		return value;
-	}
-
+	void addNameAndStateChangeListener(NameAndStateChangeListener listener);
+	void removeNameAndStateChangeListener(NameAndStateChangeListener listener);
 }

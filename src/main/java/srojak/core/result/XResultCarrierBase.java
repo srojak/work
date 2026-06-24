@@ -27,7 +27,7 @@ import srojak.core.observe.SourceLocation;
  */
 public abstract class XResultCarrierBase
 		implements XResult {
-	private final SourceLocation _origin;
+	private SourceLocation _origin;
 	private boolean _bValid;
 	private Exception _exception;
 
@@ -44,6 +44,13 @@ public abstract class XResultCarrierBase
 	
 	protected void markValid() {
 		_bValid = true;
+	}
+	
+	public void copyFrom(XResult result) {
+		Objects.requireNonNull(result, "result");
+		_origin = result.getOriginator();
+		_bValid = result.isValid();
+		_exception = result.getException();
 	}
 
 	@Override

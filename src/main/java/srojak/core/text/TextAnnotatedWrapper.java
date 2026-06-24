@@ -14,41 +14,59 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.text;
 
 import java.util.Objects;
+
+import srojak.core.NameToken;
+import srojak.core.TextAnnotated;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public abstract class ClassBearingCoreEvent
-		extends CoreEvent {
-	protected final Class<?> _classObj;
+public class TextAnnotatedWrapper<T> 
+		extends TextAnnotatedBase implements TextAnnotated<T> {
+	private final T _object;
+	
+	public static final NameToken ClassToken;
 
-	public ClassBearingCoreEvent(Object source, Class<?> classObj) {
-		super(source);
-		Objects.requireNonNull(classObj, "classObj");
-		_classObj = classObj;
+	static {
+		Class<?> classThis = TextAnnotatedObjectCarrier.class;
+		ClassToken = NameToken.classNameFactory(classThis);
 	}
 	
-	public ClassBearingCoreEvent(Object source, Object objValue) {
-		super(source);
-		Objects.requireNonNull(objValue, "objValue");
-		_classObj = objValue.getClass();
+	/**
+	 * 
+	 */
+	public TextAnnotatedWrapper(T obj) {
+		Objects.requireNonNull(obj, "obj");
+		_object = obj;
 	}
-	
-	public Class<?> getValueClass() {
-		return _classObj;
-	}
-	
-	public abstract boolean isValueNull();
 
 	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", value(class=");
-		sb.append(_classObj.getSimpleName());
-		sb.append(')');
+	public Object getObject() {
+		return _object;
 	}
+
+	@Override
+	public Class<?> getValueClass() {
+		return _object.getClass();
+	}
+
+	@Override
+	public T getValue() {
+		return _object;
+	}
+
+	@Override
+	public boolean isValueEqual(T value) {
+		return _object.equals(value);
+	}
+
+	@Override
+	protected NameToken getClassToken() {
+		return ClassToken;
+	}
+
 }

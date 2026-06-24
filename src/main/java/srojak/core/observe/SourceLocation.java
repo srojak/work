@@ -43,7 +43,7 @@ public final class SourceLocation
 		String strFull = element.getClassName();
 		int index = strFull.lastIndexOf('.');
 		_strClass = strFull.substring(index + 1);
-		_strPackage = strFull.substring(0, index - 1);
+		_strPackage = strFull.substring(0, index);
 		_strMethod = element.getMethodName();
 		_nLine = element.getLineNumber();
 	}

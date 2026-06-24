@@ -45,7 +45,7 @@ public class TDeck<T>
 		_list.clear();
 	}
 	
-	protected void add(T item) {
+	public void add(T item) {
 		_list.add(item);
 	}
 	

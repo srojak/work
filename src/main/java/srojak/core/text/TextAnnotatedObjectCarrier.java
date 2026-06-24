@@ -14,38 +14,43 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.text;
+
+import java.util.Objects;
+
+import srojak.core.NameToken;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class ObjectOwnershipEvent 
-		extends ClassBearingCoreEvent {
-	private final Object _value;
+public class TextAnnotatedObjectCarrier
+		extends TextAnnotatedBase {
+	private final Object _object;
+	
+	public static final NameToken ClassToken;
 
+	static {
+		Class<?> classThis = TextAnnotatedObjectCarrier.class;
+		ClassToken = NameToken.classNameFactory(classThis);
+	}
+	
 	/**
-	 * @param source
+	 * 
 	 */
-	public ObjectOwnershipEvent(Object source, Object objValue) {
-		super(source, objValue);
-		_value = objValue;
+	public TextAnnotatedObjectCarrier(Object obj) {
+		Objects.requireNonNull(obj, "obj");
+		_object = obj;
 	}
 
 	@Override
-	public boolean isValueNull() {
-		return false;
+	public Object getObject() {
+		return _object;
 	}
-	
-	public Object getValue() {
-		return _value;
-	}
-	
-	public <T> T getValueAs() {
-		@SuppressWarnings("unchecked")
-		T value = (T) _value;
-		return value;
+
+	@Override
+	protected NameToken getClassToken() {
+		return ClassToken;
 	}
 
 }
