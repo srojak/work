@@ -14,15 +14,21 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.numerics.function;
+
 /**
  * @author Stephen
  *
  */
-module srojak.numerics {
-	requires transitive srojak.core;
-	requires transitive srojak.debug;
-	exports srojak.numerics;
-	exports srojak.numerics.function;
-	exports srojak.numerics.intervals;
-	exports srojak.numerics.vertices;
+@FunctionalInterface
+public interface ToFloatFunction<T> {
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param value the function argument
+     * @return the function result
+     */
+    float applyAsFloat(T value);
+
 }

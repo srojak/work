@@ -14,15 +14,30 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.numerics.function;
+
+import java.util.Objects;
+
 /**
  * @author Stephen
  *
  */
-module srojak.numerics {
-	requires transitive srojak.core;
-	requires transitive srojak.debug;
-	exports srojak.numerics;
-	exports srojak.numerics.function;
-	exports srojak.numerics.intervals;
-	exports srojak.numerics.vertices;
+@FunctionalInterface
+public interface FloatPredicate {
+
+	boolean test(float value);
+	
+	default FloatPredicate and(FloatPredicate other) {
+	       Objects.requireNonNull(other);
+	       return (value) -> test(value) && other.test(value);
+	}
+	
+	default FloatPredicate or(FloatPredicate other) {
+        Objects.requireNonNull(other);
+        return (value) -> test(value) || other.test(value);
+	}
+	
+	default FloatPredicate negate() {
+        return (value) -> !test(value);
+	}
 }
