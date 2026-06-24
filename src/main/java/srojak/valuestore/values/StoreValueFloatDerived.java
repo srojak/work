@@ -16,36 +16,42 @@
  */
 package srojak.valuestore.values;
 
-import srojak.core.NameToken;
-import srojak.core.field.SetOnce;
-import srojak.core.field.SetOnceConditions;
+import java.util.Objects;
+
 import srojak.core.keys.NamedKey;
-import srojak.valuestore.StoreValueKeyed;
+import srojak.valuestore.StoreValueFloat;
 
 /**
  * @author Stephen
  *
  */
-public abstract class StoreValueCalculationBindable<C extends StoreValueKeyed>
-		extends StoreValueCalculationBase {
-	private final SetOnce<C> _boundCollection;	
-	
+public class StoreValueFloatDerived 
+		extends StoreValueDerivedBase 
+		implements StoreValueFloat {
+	private final StoreValueCalculationFloat _calc;
+
 	/**
-	 * @param valuesDependentOn
+	 * @param key
 	 */
-	public StoreValueCalculationBindable(NamedKey dependentCar, NamedKey[] dependentCdr) {
-		super(dependentCar, dependentCdr);
-		_boundCollection = new SetOnce<C>(NameToken.factory("BoundCollection"), SetOnceConditions.DEFAULT);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void bindTo(StoreValueKeyed collection) {
-		_boundCollection.set((C) collection);
-		
+	public StoreValueFloatDerived(NamedKey key, StoreValueCalculationFloat calculation) {
+		super(key);
+		Objects.requireNonNull(calculation, "calculation");
+		_calc = calculation;
 	}
 
-	public C getBoundCollection() {
-		return _boundCollection.get();
+	@Override
+	public StoreValueCalculationBase getCalculation() {
+		return _calc;
 	}
+
+	@Override
+	public float getValue() {
+		return _calc.calculate();
+	}
+
+	@Override
+	public void setValue(float value) {
+		throw new UnsupportedOperationException("cannot set value for " + getKey().getName());	
+	}
+
 }

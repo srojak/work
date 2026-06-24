@@ -16,36 +16,39 @@
  */
 package srojak.valuestore.values;
 
-import srojak.core.NameToken;
-import srojak.core.field.SetOnce;
-import srojak.core.field.SetOnceConditions;
 import srojak.core.keys.NamedKey;
-import srojak.valuestore.StoreValueKeyed;
+import srojak.valuestore.StoreValueFloat;
 
 /**
  * @author Stephen
  *
  */
-public abstract class StoreValueCalculationBindable<C extends StoreValueKeyed>
-		extends StoreValueCalculationBase {
-	private final SetOnce<C> _boundCollection;	
-	
+public class StoreValueFloatInstance 
+		extends StoreValueBase 
+		implements StoreValueFloat {
+	private float _fValue;
+
 	/**
-	 * @param valuesDependentOn
+	 * @param key
 	 */
-	public StoreValueCalculationBindable(NamedKey dependentCar, NamedKey[] dependentCdr) {
-		super(dependentCar, dependentCdr);
-		_boundCollection = new SetOnce<C>(NameToken.factory("BoundCollection"), SetOnceConditions.DEFAULT);
+	public StoreValueFloatInstance(NamedKey key, float valueInitial) {
+		super(key);
+		_fValue = valueInitial;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void bindTo(StoreValueKeyed collection) {
-		_boundCollection.set((C) collection);
-		
+	protected void validate(float value) {
+		// base class method does nothing
 	}
 
-	public C getBoundCollection() {
-		return _boundCollection.get();
+	@Override
+	public float getValue() {
+		return _fValue;
 	}
+
+	@Override
+	public void setValue(float value) {
+		validate(value);
+		_fValue = value;
+	}
+
 }

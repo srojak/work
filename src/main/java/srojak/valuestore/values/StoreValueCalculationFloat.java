@@ -16,36 +16,32 @@
  */
 package srojak.valuestore.values;
 
-import srojak.core.NameToken;
-import srojak.core.field.SetOnce;
-import srojak.core.field.SetOnceConditions;
+import java.util.Objects;
+
 import srojak.core.keys.NamedKey;
-import srojak.valuestore.StoreValueKeyed;
+import srojak.numerics.function.ToFloatFunction;
+import srojak.valuestore.GlobalStoreFloatCollection;
 
 /**
  * @author Stephen
  *
  */
-public abstract class StoreValueCalculationBindable<C extends StoreValueKeyed>
-		extends StoreValueCalculationBase {
-	private final SetOnce<C> _boundCollection;	
-	
+public class StoreValueCalculationFloat
+		extends StoreValueCalculationBindable<GlobalStoreFloatCollection> {
+	private final ToFloatFunction<GlobalStoreFloatCollection> _fnCalc;
+
 	/**
-	 * @param valuesDependentOn
+	 * 
 	 */
-	public StoreValueCalculationBindable(NamedKey dependentCar, NamedKey[] dependentCdr) {
+	public StoreValueCalculationFloat(ToFloatFunction<GlobalStoreFloatCollection> calculation,
+			NamedKey dependentCar, NamedKey ... dependentCdr) {
 		super(dependentCar, dependentCdr);
-		_boundCollection = new SetOnce<C>(NameToken.factory("BoundCollection"), SetOnceConditions.DEFAULT);
+		Objects.requireNonNull(calculation, "calculation");
+		_fnCalc = calculation;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void bindTo(StoreValueKeyed collection) {
-		_boundCollection.set((C) collection);
-		
+	public float calculate() {
+		return _fnCalc.applyAsFloat(getBoundCollection());
 	}
 
-	public C getBoundCollection() {
-		return _boundCollection.get();
-	}
 }

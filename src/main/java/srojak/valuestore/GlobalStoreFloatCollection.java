@@ -21,9 +21,8 @@ import srojak.core.keys.NamedKey;
 /**
  * @author Stephen
  *
- * The interface that a global store facade holding {@code int} data must provide.
  */
-public interface GlobalStoreIntCollection 
+public interface GlobalStoreFloatCollection 
 		extends StoreValueKeyed {
 	
 	/**
@@ -31,11 +30,11 @@ public interface GlobalStoreIntCollection
 	 * @param key The key for the value.
 	 * @return the store for the value, or {@code null} if not defined.
 	 */
-	StoreValueInt get(NamedKey key);
+	StoreValueFloat get(NamedKey key);
 	
 	/**
 	 * Define a value in the store.
 	 * @param value The store for the value.
 	 */
-	void define(StoreValueInt value);
+	void define(StoreValueFloat value);
 }

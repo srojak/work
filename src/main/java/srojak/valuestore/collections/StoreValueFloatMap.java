@@ -14,38 +14,45 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.valuestore.values;
+package srojak.valuestore.collections;
 
-import srojak.core.NameToken;
-import srojak.core.field.SetOnce;
-import srojak.core.field.SetOnceConditions;
+import java.util.Objects;
+
 import srojak.core.keys.NamedKey;
-import srojak.valuestore.StoreValueKeyed;
+import srojak.core.reflect.PackageClassLocator;
+import srojak.valuestore.GlobalStoreFloatCollection;
+import srojak.valuestore.StoreValueFloat;
+import srojak.valuestore.values.StoreValueCalculationBase;
 
 /**
  * @author Stephen
  *
  */
-public abstract class StoreValueCalculationBindable<C extends StoreValueKeyed>
-		extends StoreValueCalculationBase {
-	private final SetOnce<C> _boundCollection;	
-	
+@SuppressWarnings("serial")
+public class StoreValueFloatMap
+		extends StoreValueMap<StoreValueFloat>
+		implements GlobalStoreFloatCollection {
+
 	/**
-	 * @param valuesDependentOn
+	 * @param locator
 	 */
-	public StoreValueCalculationBindable(NamedKey dependentCar, NamedKey[] dependentCdr) {
-		super(dependentCar, dependentCdr);
-		_boundCollection = new SetOnce<C>(NameToken.factory("BoundCollection"), SetOnceConditions.DEFAULT);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void bindTo(StoreValueKeyed collection) {
-		_boundCollection.set((C) collection);
-		
+	public StoreValueFloatMap(PackageClassLocator locator) {
+		super(locator);
 	}
 
-	public C getBoundCollection() {
-		return _boundCollection.get();
+	@Override
+	public StoreValueFloat get(NamedKey key) {
+		return super.get(key);
 	}
+
+	@Override
+	public void define(StoreValueFloat value) {
+		Objects.requireNonNull(value, "value");
+		super.put(value.getKey(), value);	
+		StoreValueCalculationBase calc = value.getCalculation();
+		if (calc != null) {
+			calc.bindTo(this);
+		}
+	}
+
 }

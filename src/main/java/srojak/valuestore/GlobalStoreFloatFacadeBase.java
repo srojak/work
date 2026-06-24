@@ -24,33 +24,33 @@ import srojak.core.keys.NamedKey;
  * @author Stephen
  *
  */
-public abstract class GlobalStoreObjFacadeBase<V>
+public abstract class GlobalStoreFloatFacadeBase 
 		extends GlobalStoreFacadeBase
-		implements GlobalStoreObjValueFacade<V> {
+		implements GlobalStoreFloatValueFacade {
 
 	/**
 	 * @param classInstance
 	 */
-	public GlobalStoreObjFacadeBase(Class<?> classInstance) {
+	public GlobalStoreFloatFacadeBase(Class<?> classInstance) {
 		super(classInstance);
 	}
 
 	@Override
-	public V getValue(NamedKey key) {
-		StoreValueObj<V> storeValue = this.<GlobalStoreObjCollection<V>>getStoreAs().get(key);
-		return storeValue != null ? storeValue.getValue() : null;
+	public float getValue(NamedKey key) {
+		StoreValueFloat storeValue = this.<GlobalStoreFloatCollection>getStoreAs().get(key);
+		return storeValue != null ? storeValue.getValue() : Float.NaN;
 	}
 
 	@Override
-	public V getValueOrDefault(NamedKey key, V valueDefault) {
-		StoreValueObj<V> storeValue = this.<GlobalStoreObjCollection<V>>getStoreAs().get(key);
+	public float getValueOrDefault(NamedKey key, float valueDefault) {
+		StoreValueFloat storeValue = this.<GlobalStoreFloatCollection>getStoreAs().get(key);
 		return storeValue != null ? storeValue.getValue() : valueDefault;
 	}
 
 	@Override
-	public void setValue(NamedKey key, V value) {
+	public void setValue(NamedKey key, float value) {
 		Objects.requireNonNull(key, "key");
-		StoreValueObj<V> storeValue = this.<GlobalStoreObjCollection<V>>getStoreAs().get(key);
+		StoreValueFloat storeValue = this.<GlobalStoreFloatCollection>getStoreAs().get(key);
 		if (storeValue == null)
 			throw new StoreKeyNotFoundException(getClassLocator(), key.toString());
 		storeValue.setValue(value);		

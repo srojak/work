@@ -21,9 +21,9 @@ import srojak.core.keys.NamedKey;
 /**
  * @author Stephen
  *
- * The interface that a global store facade holding {@code double} data must provide.
+ * The interface that a global store facade holding {@code float} data must provide.
  */
-public interface GlobalStoreDoubleValueFacade
+public interface GlobalStoreFloatValueFacade 
 		extends GlobalStoreCommon {
 	
 	/**
@@ -31,7 +31,7 @@ public interface GlobalStoreDoubleValueFacade
 	 * @param key The key identifying the value.
 	 * @return the value associated with the key, or {@code NaN} if the key is not defined.
 	 */
-	double getValue(NamedKey key);
+	float getValue(NamedKey key);
 	
 	/**
 	 * Get the value for the key, or a default value if the key is not defined.
@@ -39,7 +39,7 @@ public interface GlobalStoreDoubleValueFacade
 	 * @param valueDefault The value to return if the key is not defined.
 	 * @return The value associated with the key, if any, or the default value otherwise.
 	 */
-	double getValueOrDefault(NamedKey key, double valueDefault);
+	float getValueOrDefault(NamedKey key, float valueDefault);
 	
 	/**
 	 * Sets the value for the key.
@@ -49,5 +49,5 @@ public interface GlobalStoreDoubleValueFacade
 	 * @throws IllegalArgumentException if the value for the key has validations
 	 *   and these validation requirements were not met.
 	 */
-	void setValue(NamedKey key, double value);
+	void setValue(NamedKey key, float value);
 }
