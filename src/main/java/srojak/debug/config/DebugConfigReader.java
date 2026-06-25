@@ -31,6 +31,8 @@ import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
 
 import srojak.core.observe.ObservationWriter;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.DebugConfigSchema;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.xml.XmlSchemaTool;
@@ -91,5 +93,25 @@ public class DebugConfigReader {
 		streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
 		_parser.parse(streamIn);
 		DebugNexusCore.endConfigFile(pathFile);
+	}
+	
+	public XResult validateContent(Path pathFile) {
+		XResultStatusCarrier result = new XResultStatusCarrier();
+		try (InputStream streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ)) {
+			Validator validator = _schema.newValidator();
+			validator.setErrorHandler(_handlerErrors);
+			validator.validate(new StreamSource(streamIn));
+			result.setValid();
+		} catch (IOException exc) {
+			result.caughtException(exc);
+		} catch (SAXException exc) {
+			result.caughtException(exc);
+		}
+		return result;
+	}
+	
+	public XResult validateContent(String strPath) {
+		Path pathConfig = Path.of(strPath);
+		return validateContent(pathConfig);
 	}
 }

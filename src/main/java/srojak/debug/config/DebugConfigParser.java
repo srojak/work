@@ -49,6 +49,7 @@ public class DebugConfigParser
 	private PackageClassLocator _locClass;
 
 	private static final XmlStreamEventsDictionary EVENTS;
+	private static final QName ELEMENT_CTRLSET;
 	private static final QName ELEMENT_PACKAGE;
 	private static final QName ELEMENT_CLASS;
 	private static final QName ELEMENT_SUBJECT;
@@ -62,6 +63,7 @@ public class DebugConfigParser
 	
 	static {
 		EVENTS = new XmlStreamEventsDictionary();
+		ELEMENT_CTRLSET = new QName("SwitchControlSet");
 		ELEMENT_PACKAGE = new QName("Package");
 		ELEMENT_CLASS = new QName("Class");
 		ELEMENT_SUBJECT = new QName("Subject");
@@ -117,7 +119,7 @@ public class DebugConfigParser
 			DebugSwitchKey key = DebugSwitchTool.makeClassKey(_locClass);
 			DebugSwitchContent sw = DebugNexusCore.getContent(key);
 			if (sw == null) {
-				sw = new DebugSwitchContent(key);
+				sw = DebugNexusCore.createSwitch(key);
 				DebugNexusCore.putContent(sw);
 			}
 			sw.setLevel(level);
@@ -132,7 +134,7 @@ public class DebugConfigParser
 			DebugSwitchKey key = DebugSwitchTool.makeClassSubjectKey(_locClass, attrName.getValue());
 			DebugSwitchContent sw = DebugNexusCore.getContent(key);
 			if (sw == null) {
-				sw = new DebugSwitchContent(key);
+				sw = DebugNexusCore.createSwitch(key);
 				DebugNexusCore.putContent(sw);
 			}
 			sw.setLevel(level);
@@ -146,9 +148,12 @@ public class DebugConfigParser
 				options = DebugNexusCore.createOptionsForClass(_locClass);
 			}
 			options.putOption(attrName.getValue(), nValue);
+		} else if (nameElement.equals(ELEMENT_CTRLSET)) {
+			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
+			DebugNexusCore.readingSwitchControlSet(attrName.getValue());
 		}
 	}
-
+	
 	@Override
 	protected void parseEndElement(QName nameElement, String strText) {
 		if (nameElement.equals(ELEMENT_CLASS)) {

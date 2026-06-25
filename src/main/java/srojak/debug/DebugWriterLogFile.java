@@ -31,6 +31,8 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterBase;
+import srojak.core.result.XResultCarrierOf;
+import srojak.core.result.XResultOf;
 import srojak.core.specialized.StringBox;
 import srojak.core.tools.EnvTool;
 import srojak.debug.impl.DebugNexusCore;
@@ -46,15 +48,21 @@ public class DebugWriterLogFile
 	private PrintStream _print;
 	private String _strAppName;
 	
-	protected DebugWriterLogFile(Path pathDir, Class<?> classApp)
+	public static final String PREFIX_DEBUG = "debug";
+	
+	protected DebugWriterLogFile(Path pathDir, Class<?> classApp, String strPrefix)
 			throws IOException {
 		super();
 		Objects.requireNonNull(pathDir, "pathDir");
 		Objects.requireNonNull(classApp, "classApp");
+		Objects.requireNonNull(strPrefix, "strPrefix");
+		if (strPrefix.isBlank()) {
+			strPrefix = PREFIX_DEBUG;
+		}
 		_pathDir = pathDir;
 		_strAppName = classApp.getName();
 		LocalDateTime dtNow = LocalDateTime.now();
-		Path pathFile = _pathDir.resolve(DatedFileNameMethods.formFileName("debug", "log", true, dtNow));
+		Path pathFile = _pathDir.resolve(DatedFileNameMethods.formFileName(strPrefix, "log", true, dtNow));
 		Files.createFile(pathFile);
 		OutputStream streamOut = Files.newOutputStream(pathFile);
 		_print = new PrintStream(streamOut);
@@ -103,21 +111,22 @@ public class DebugWriterLogFile
 	public void flush() {
 		_print.flush();
 	}
-
-	public static DebugWriterLogFile create(Path pathDir, Class<?> classApp)
+	
+	public static DebugWriterLogFile create(Path pathDir, Class<?> classApp, 
+			String strPrefix)
 			throws IOException {
-		return new DebugWriterLogFile(pathDir, classApp);
+		return new DebugWriterLogFile(pathDir, classApp, strPrefix);
+	}
+
+	public static XResultOf<DebugWriterLogFile> tryCreate(Path pathDir, Class<?> classApp, 
+			String strPrefix) {
+		XResultCarrierOf<DebugWriterLogFile> result = new XResultCarrierOf<DebugWriterLogFile>();
+		try {
+			result.setResult(new DebugWriterLogFile(pathDir, classApp, strPrefix));
+		} catch (IOException exc) {
+			result.caughtException(exc);
+		}
+		return result;
 	}
 	
-	public static DebugWriterLogFile tryCreate(Path pathDir, Class<?> classApp, StringBox boxFailure) {
-		Objects.requireNonNull(boxFailure, "boxFailure");
-		boxFailure.reset();
-		DebugWriterLogFile output = null;
-		try {
-			output = new DebugWriterLogFile(pathDir, classApp);
-		} catch (IOException exc) {
-			boxFailure.setContent(exc.getMessage());
-		}
-		return output;
-	}
 }

@@ -19,6 +19,8 @@ package srojak.debug.impl;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -29,6 +31,7 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
 import srojak.core.reflect.PackageClassLocator;
+import srojak.core.tools.StringMethods;
 import srojak.debug.DebugProperties;
 import srojak.debug.DebugPropertyKeys;
 import srojak.debug.DebugSwitch;
@@ -42,6 +45,7 @@ public class DebugNexusCore
 		implements DebugPropertyKeys {
 	private static final HashMap<DebugSwitchKey, DebugSwitchContent> _table;
 	private static final HashMap<PackageClassLocator, ClassDebugOptionMap> _mapClassOptions;
+	private static final List<SwitchControlSetRecord> _listControlSets;
 	private static final DebugProperties _properties;
 	public static final String PROPERTIES_FILE_NAME;
 	public static final DateTimeFormatter FORMAT_TIME_STAMP;
@@ -49,10 +53,12 @@ public class DebugNexusCore
 	private static ObsLevel _levelDefault;
 	private static boolean _bAutoFlush;
 	private static SwitchCaptureList _listCapture;
+	private static SwitchControlSetRecord _ctrlSetActive;
 	
 	static {
 		_table = new HashMap<DebugSwitchKey, DebugSwitchContent>();
 		_mapClassOptions = new HashMap<PackageClassLocator, ClassDebugOptionMap>();
+		_listControlSets = new LinkedList<SwitchControlSetRecord>();
 		_properties = new DebugProperties();
 		PROPERTIES_FILE_NAME = "debug.properties";
 		_writer = new ObservationWriterLevelFilterPrintStream(System.err);
@@ -60,6 +66,7 @@ public class DebugNexusCore
 		_levelDefault = ObsLevel.WARN;
 		_bAutoFlush = false;
 		_listCapture = null;
+		_ctrlSetActive = null;
 	}
 	
 	public static DebugProperties getProperties() {
@@ -74,8 +81,19 @@ public class DebugNexusCore
 		_bAutoFlush = bState;
 	}
 	
+	public static void readingSwitchControlSet(String strName) {
+		SwitchControlSetRecord record = new SwitchControlSetRecord(strName);
+		_listControlSets.add(record);
+		_ctrlSetActive = record;
+		_writer.writeDiagnostic("reading switch control set " + record.getName());
+	}
+	
 	public static DebugSwitchContent getContent(DebugSwitchKey key) {
 		return _table.get(key);
+	}
+	
+	public static DebugSwitchContent createSwitch(DebugSwitchKey key) {
+		return new DebugSwitchContent(key, _ctrlSetActive);
 	}
 	
 	public static void startConfigFile(Path pathFile) {
@@ -88,6 +106,7 @@ public class DebugNexusCore
 		if (_properties.isDiagNewSwitchEnabled()) {
 			_writer.writeDiagnostic("completed file " + pathFile);
 		}
+		_ctrlSetActive = null;
 	}
 	
 	public static void diagnosticTableWalk(TextMessageRelay relay) {
@@ -151,7 +170,7 @@ public class DebugNexusCore
 				DebugSwitchKey keyBase = new DebugSwitchKeyClass(locatorBase);
 				DebugSwitchContent swBase = _table.get(keyBase);
 				if (swBase == null) {
-					swBase = new DebugSwitchContent(keyBase);
+					swBase = new DebugSwitchContent(keyBase, _ctrlSetActive);
 					swBase.setLevel(swClass.getLevel());
 					swBase.setShowSourceLocations(swClass.showSourceLocations());
 					putNewContent(swBase, () -> "creating new DebugSwitch for " + keyBase
@@ -216,6 +235,19 @@ public class DebugNexusCore
 	
 	protected static void writeln(ObsLevel level, String strText) {
 		_writer.write(level, strText);
+		if (_bAutoFlush) {
+			_writer.flush();
+		}
+	}
+	
+	protected static void writeStackTrace(ObsLevel level, Throwable t) {
+		StackTraceElement[] frames = t.getStackTrace();
+		StringBuilder sb = new StringBuilder("Stack trace:");
+		for (StackTraceElement frame : frames) {
+			sb.append("\n    ");
+			sb.append(frame);
+		}
+		_writer.write(level,  sb.toString());
 		if (_bAutoFlush) {
 			_writer.flush();
 		}

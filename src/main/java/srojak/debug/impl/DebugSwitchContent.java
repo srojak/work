@@ -29,7 +29,7 @@ import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchKey;
-import srojak.debug.DebugSwitchKeyBase;
+import srojak.debug.SwitchControlSet;
 
 /**
  * @author Stephen
@@ -41,16 +41,27 @@ public final class DebugSwitchContent
 	private ObsLevel _level;
 	private boolean _bShowSource;
 	private SourceDetail _sdetail;
+	private SwitchControlSetRecord _setDefinedBy;
 	
 	/**
 	 * 
 	 */
-	public DebugSwitchContent(DebugSwitchKey key) {
+	protected DebugSwitchContent(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
 		_key = key;
 		_level = ObsLevel.NONE;
 		_bShowSource = false;
 		_sdetail = SourceDetail.NONE;
+		_setDefinedBy = null;
+	}
+	
+	public DebugSwitchContent(DebugSwitchKey key, SwitchControlSetRecord csr) {
+		Objects.requireNonNull(key, "key");
+		_key = key;
+		_level = ObsLevel.NONE;
+		_bShowSource = false;
+		_sdetail = SourceDetail.NONE;
+		_setDefinedBy = csr;
 	}
 
 	@Override
@@ -82,6 +93,11 @@ public final class DebugSwitchContent
 		_sdetail = bState ? SourceDetail.ALL : SourceDetail.CLASS_ONLY;
 	}
 	
+	@Override
+	public String getDefiningControlSet() {
+		return _setDefinedBy != null ? _setDefinedBy.getName() : "";
+	}
+
 	private void writeSourceLocation(StringBuilder sb, SourceLocation location, SourceDetail detail) {
 		sb.append(location.toString(detail));
 		sb.append(" ");
@@ -125,6 +141,27 @@ public final class DebugSwitchContent
 		}
 	}
 	
+	@Override
+	public void writeException(ObsLevel level, Exception exc, boolean bShowStack) {
+		if (isLevelAtLeast(level)) {
+			SourceLocation location = SourceLocation.caller();
+			StringBuilder sb = new StringBuilder();
+			writeSourceLocation(sb, location, SourceDetail.ALL);
+			if (exc == null) {
+				sb.append("null exception");
+			} else {
+				sb.append("caught ");
+				sb.append(exc.getClass().getSimpleName());
+				sb.append("\n  ");
+				sb.append(exc.getMessage());
+			}
+			DebugNexusCore.writeln(level, sb.toString());
+			if (exc != null && bShowStack) {
+				DebugNexusCore.writeStackTrace(level, exc);
+			}
+		}
+	}
+
 	private void writeTraceEnter(ObsLevel level, SourceLocation location, 
 			Consumer<StringBuilder> messageBuilder) {
 		StringBuilder sb = new StringBuilder();

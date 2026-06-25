@@ -27,6 +27,8 @@ import org.xml.sax.SAXException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.result.XResult;
+import srojak.core.result.XResultCarrierOf;
+import srojak.core.result.XResultOf;
 import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.DebugNexus;
 
@@ -42,6 +44,17 @@ public class DebugConfigMethods {
 	
 	public static void setShowStackOnException(boolean bState) {
 		_bShowStackOnException = bState;
+	}	
+	
+	public static XResultOf<DebugConfigReader> createReader() {
+		XResultCarrierOf<DebugConfigReader> result = new XResultCarrierOf<DebugConfigReader>();
+		try {
+			DebugConfigReader reader = new DebugConfigReader();
+			result.setResult(reader);
+		} catch (SAXException exc) {
+			result.caughtException(exc);
+		}
+		return result;
 	}
 	
 	private static void trapException(ObservationWriter writer, Exception exc) {

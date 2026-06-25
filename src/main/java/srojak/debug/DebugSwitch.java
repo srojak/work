@@ -51,6 +51,13 @@ public interface DebugSwitch {
 	boolean showSourceLocations();
 	
 	/**
+	 * Get the name of the control set tht defined this switch, if it was defined
+	 * by a control set.
+	 * @return The name of the defining control set, or an empty string.
+	 */
+	String getDefiningControlSet();
+	
+	/**
 	 * Test if the observation level assigned to the debug switch is at or above
 	 *   a given value.
 	 * @param level The test level to compare to the level assigned to the debug switch.
@@ -80,6 +87,14 @@ public interface DebugSwitch {
 	 */
 	void write(ObsLevel level, ObsPassThroughList listPassThrough, 
 			Function<ObsPassThroughList, String> message);
+	
+	/**
+	 * Write an exception at an observation level.
+	 * @param level The level at which to write the message.
+	 * @param exc The exception whose contents are to be written.
+	 * @param bShowStack If {@code true}, the stack trace will be written.
+	 */
+	void writeException(ObsLevel level, Exception exc, boolean bShowStack);
 	
 	/**
 	 * Write a trace message to enter a method.

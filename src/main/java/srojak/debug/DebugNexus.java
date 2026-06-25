@@ -123,7 +123,7 @@ public class DebugNexus
 		DebugSwitchContent swDebug = DebugNexusCore.getContent(key);
 		if (swDebug == null) {
 			DebugSwitchKeyBase keyReal = (DebugSwitchKeyBase) key;
-			swDebug = new DebugSwitchContent(keyReal);
+			swDebug = DebugNexusCore.createSwitch(keyReal);
 			swDebug.setLevel(DebugNexusCore.getDefaultLogLevel());
 			DebugNexusCore.putContent(swDebug);
 			gateNew.setGateState(true);
