@@ -30,15 +30,18 @@ public final class S2SymbolicDirection
 	private final String _strListAbbrev;
 	
 	public static final int ORDINAL_NONE = 1;
-	public static final int ORDINAL_RANDOM = 2;
+	public static final int ORDINAL_ANY = 2;
+	public static final int ORDINAL_RANDOM = 3;
 	
 	public static final S2SymbolicDirection None;
+	public static final S2SymbolicDirection Any;
 	public static final S2SymbolicDirection Random;
 	public static final List<S2SymbolicDirection> AllDirs;
 	
 	static {
 		ArrayList<S2SymbolicDirection> dirs = new ArrayList<S2SymbolicDirection>();
 		None = new S2SymbolicDirection("@", " ", ORDINAL_NONE, "None");
+		Any = new S2SymbolicDirection("*", ORDINAL_ANY, "Any");
 		Random = new S2SymbolicDirection("?", ORDINAL_RANDOM, "Random");
 		dirs.forEach(d -> register(d));
 		AllDirs = Collections.unmodifiableList(dirs);

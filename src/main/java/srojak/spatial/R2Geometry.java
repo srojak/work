@@ -1,5 +1,5 @@
 /**
- * Copyright © 2026 Stephen Rojak.
+  * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -13,34 +13,34 @@
  * 
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package srojak.spatial;
 
-import java.util.Objects;
+import srojak.numerics.IRandomSource;
+import srojak.numerics.RadiansMethods;
 
 /**
  * @author Stephen
  *
  */
-public class S2CoordsDirection
-		implements S2OriginAndDirection {
-	private final S2Coords _coords;
-	private final S2CompassDirection _direction;
-
-	public S2CoordsDirection(S2Coords coords, S2CompassDirection direction) {
-		Objects.requireNonNull(coords, "coords");
-		Objects.requireNonNull(direction, "direction");
-		_coords = coords;
-		_direction = direction;
-	}
+public class R2Geometry {
 	
-	@Override
-	public S2Coords getOrigin() {
-		return _coords;
-	}
-	
-	@Override
-	public S2CompassDirection getDirection() {
-		return _direction;
+	/**
+	 * 
+	 * @param random
+	 * @param dRadius
+	 * @param dOffset
+	 * @return
+	 * 
+	 * must take square root of random double used on radius to avoid bias where points
+	 * 		cluster near the center.
+	 * @see https://stackoverflow.com/questions/5837572/generate-a-random-point-within-a-circle-uniformly
+	 */
+	public static PolarCoords generateRandomPointInCircle(IRandomSource random, 
+			double dRadius, double dOffset) {
+		double dFirst = random.genDouble();
+		double dSecond = random.genDouble();
+		return new PolarCoords(dRadius * Math.sqrt(dFirst) + dOffset,
+				RadiansMethods.TWOPI * dSecond);
 	}
 }

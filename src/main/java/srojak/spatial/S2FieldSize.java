@@ -16,6 +16,8 @@
  */
 package srojak.spatial;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import srojak.debug.DebugNexus;
@@ -26,9 +28,8 @@ import srojak.debug.DebugSwitchTool;
  * @author Stephen
  *
  */
-public class S2FieldSize {
-	public final int width;
-	public final int height;
+public class S2FieldSize
+		extends S2Dimension {
 	
 	@SuppressWarnings("unused")
 	private static final DebugSwitch swDebugClass;
@@ -39,14 +40,7 @@ public class S2FieldSize {
 	}
 	
 	public S2FieldSize(int nWidth, int nHeight) {
-		if (nWidth <= 0) {
-			throw new IllegalArgumentException("nWidth");
-		}
-		if (nHeight <= 0) {
-			throw new IllegalArgumentException("nHeight");
-		}
-		width = nWidth;
-		height = nHeight;
+		super(nWidth, nHeight);
 	}
 	
 	private boolean isValueInBounds(int bound, int value) {
@@ -84,36 +78,32 @@ public class S2FieldSize {
 		return new S2Coords(boundValue(width, coords._x - offset.dx),
 				boundValue(height, coords._y - offset.dy));
 	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(width, height);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (obj instanceof S2FieldSize other) {
-			return width == other.width && height == other.height;
+	
+	public List<S2UnitRay> getUnitRaysInBoundsFor(S2Orientation orientation, 
+			S2Coords coords, boolean bAllowDiagonals)
+			throws InvalidLocationException {
+		Objects.requireNonNull(orientation, "orientation");
+		Objects.requireNonNull(coords, "coords");
+		if (!isInBounds(coords)) {
+			throw new InvalidLocationException(coords, "starting point is not valid");
 		}
-		else
-			return false;
+		List<S2CompassDirection> listDirections =
+				bAllowDiagonals ? S2CompassDirection.AllDirs : S2CompassDirection.CardinalDirs;
+		ArrayList<S2UnitRay> list = new ArrayList<S2UnitRay>(listDirections.size());
+		for (S2CompassDirection direction : listDirections) {
+			S2UnitRay ray = new S2UnitRay(coords, direction);
+			S2Coords coordEnd = ray.computeEndpoint(orientation);
+			if (isInBounds(coordEnd)) {
+				list.add(ray);
+			}
+		}
+		list.trimToSize();
+		return list;
 	}
 
 	@Override
 	protected Object clone() 
 			throws CloneNotSupportedException {
 		return new S2FieldSize(width, height);
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder("MapSize(");
-		sb.append(width);
-		sb.append(", ");
-		sb.append(height);
-		sb.append(')');
-		return sb.toString();
 	}
 }

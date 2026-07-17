@@ -16,6 +16,8 @@
  */
 package srojak.spatial;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import srojak.core.observe.ObsLevel;
@@ -23,6 +25,8 @@ import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
+import srojak.numerics.DoublePrecisionComparer;
+import srojak.numerics.OrderedComparison;
 
 /**
  * @author Stephen
@@ -60,5 +64,25 @@ public class S2FieldCalcs {
 		S2Rect rectAround = new S2Rect(new S2Coords(coordsTopLeft), offset);
 		swDebugClass.write(ObsLevel.DEBUG, "rect around = " + rectAround);
 		return rectAround;
+	}
+	
+	public List<S2Coords> getAllPointsInCircle(S2Coords coordsCenter, double dRadius) {
+		Objects.requireNonNull(coordsCenter, "coordsCenter");
+		final DoublePrecisionComparer comparerDbl = DoublePrecisionComparer.DEFAULT_COMPARER;
+		if (comparerDbl.compare(dRadius, OrderedComparison.LT, 1.0)) {
+			throw new IllegalArgumentException("dRadius must be at least 1.0");
+		}
+		double dRadiusSq = dRadius * dRadius;
+		// limit the set of points
+		S2Rect rectAround = getRectangleCenteredOn(coordsCenter, (int) Math.ceil(dRadius));
+		List<S2Coords> list = new LinkedList<S2Coords>();
+		for (S2Coords coords : rectAround.getAllPoints()) {
+			S2Offset offset = coordsCenter.getOffsetTo(coords);
+			if (comparerDbl.compare((double) offset.getDistanceSquare(),
+					OrderedComparison.LE, dRadiusSq)) {
+				list.add(coords);
+			}
+		}
+		return list;
 	}
 }

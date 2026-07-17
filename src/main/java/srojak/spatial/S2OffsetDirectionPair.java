@@ -1,5 +1,5 @@
 /**
- * Copyright © 2026 Stephen Rojak.
+  * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -13,7 +13,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package srojak.spatial;
 
 import java.util.Objects;
@@ -21,26 +21,38 @@ import java.util.Objects;
 /**
  * @author Stephen
  *
+ * It is the responsibility of the caller to ensure that the offset and direction
+ * 	belong together for the orientation in use.
  */
-public class S2CoordsDirection
-		implements S2OriginAndDirection {
-	private final S2Coords _coords;
+public class S2OffsetDirectionPair {
+	private final S2Offset _offset;
 	private final S2CompassDirection _direction;
-
-	public S2CoordsDirection(S2Coords coords, S2CompassDirection direction) {
-		Objects.requireNonNull(coords, "coords");
+	
+	public S2OffsetDirectionPair(S2Offset offset, S2CompassDirection direction) {
+		Objects.requireNonNull(offset, "offset");
 		Objects.requireNonNull(direction, "direction");
-		_coords = coords;
+		_offset = offset;
 		_direction = direction;
 	}
 	
-	@Override
-	public S2Coords getOrigin() {
-		return _coords;
+	public S2Offset getOffset() {
+		return _offset;
 	}
 	
-	@Override
 	public S2CompassDirection getDirection() {
 		return _direction;
+	}
+	
+	public S2Coords moveFrom(S2Coords coords) {
+		Objects.requireNonNull(coords, "coords");
+		return coords.getNewLocationFrom(_offset);
+	}
+	
+	public static S2OffsetDirectionPair makeOneUnitPair(S2Orientation orientation,
+			S2CompassDirection direction) {
+		Objects.requireNonNull(orientation, "orientation");
+		Objects.requireNonNull(direction, "direction");
+		S2Offset offset = orientation.offsetByOne(direction);
+		return new S2OffsetDirectionPair(offset, direction);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2026 Stephen Rojak.
+  * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -13,34 +13,25 @@
  * 
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package srojak.spatial;
 
-import java.util.Objects;
+import java.util.Comparator;
 
 /**
  * @author Stephen
  *
  */
-public class S2CoordsDirection
-		implements S2OriginAndDirection {
-	private final S2Coords _coords;
-	private final S2CompassDirection _direction;
+public class S2CoordsComparerRowWise
+		implements Comparator<S2Coords> {
 
-	public S2CoordsDirection(S2Coords coords, S2CompassDirection direction) {
-		Objects.requireNonNull(coords, "coords");
-		Objects.requireNonNull(direction, "direction");
-		_coords = coords;
-		_direction = direction;
-	}
-	
 	@Override
-	public S2Coords getOrigin() {
-		return _coords;
+	public int compare(S2Coords o1, S2Coords o2) {
+		int nCompar = Integer.compare(o1._y, o2._y);
+		if (nCompar == 0) {
+			nCompar = Integer.compare(o1._x, o2._x);
+		}
+		return nCompar;
 	}
-	
-	@Override
-	public S2CompassDirection getDirection() {
-		return _direction;
-	}
+
 }

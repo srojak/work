@@ -32,19 +32,24 @@ public class PolarCoords {
 		return RadiansMethods.normalizeAngle(Math.atan2(dy, dx));
 	}
 	
-	public static PolarCoords convertFromS2(double dx, double dy) {
+	public static PolarCoords convertFromR2(double dx, double dy) {
 		double dh = dx * dx + dy * dy;
 		double dRadius = Math.sqrt(dh);
 		return new PolarCoords(dRadius, calcTheta(dx, dy));
 	}
 	
+	public static PolarCoords convertFromR2(R2Coords coords) {
+		Objects.requireNonNull(coords, "coords");
+		return new PolarCoords(coords._x, coords._y);
+	}
+	
 	public static PolarCoords convertFromS2(int x, int y) {
-		return convertFromS2((double) x, (double) y);
+		return convertFromR2((double) x, (double) y);
 	}
 	
 	public static PolarCoords convertFrom(S2Coords coords) {
 		Objects.requireNonNull(coords, "coords");
-		return convertFromS2((double) coords._x, (double) coords._y);
+		return convertFromR2((double) coords._x, (double) coords._y);
 	}
 	
 	public PolarCoords(double dRadius, double dTheta) {
@@ -72,15 +77,20 @@ public class PolarCoords {
 	}
 	
 	public double getX() {
-		return _dRadius + Math.cos(_dTheta);
+		return _dRadius * Math.cos(_dTheta);
 	}
 	
 	public double getY() {
-		return _dRadius + Math.sin(_dTheta);
+		return _dRadius * Math.sin(_dTheta);
 	}
 	
 	@Override
 	public String toString() {
 		return String.format("polar(%.3f, %.3f)", _dRadius, _dTheta);
+	}
+	
+	public String formatInDegrees() {
+		double dT = getThetaInDegrees();
+		return String.format("polar(%.3f, %.1f\u00B0)", _dRadius, dT);
 	}
 }

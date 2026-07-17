@@ -19,6 +19,7 @@ package srojak.spatial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import srojak.core.Tuple;
 import srojak.core.containers.TupleContainer;
 import srojak.core.tools.KeyValueMethods;
 import srojak.numerics.CircleOctant;
+import srojak.numerics.CompassDegrees;
 import srojak.spatial.impl.S2DirectionMapping;
 
 /**
@@ -59,6 +61,12 @@ public abstract class S2OrientationBase
 	}
 
 	@Override
+	public S2CompassDirection getDirectionFromOctant(CircleOctant octant) {
+		Objects.requireNonNull(octant, "octant");
+		return _mapOctants.get(octant);
+	}
+
+	@Override
 	public S2Direction findNearestDirection(S2Offset offset) {
 		if (offset.dx == 0 && offset.dy == 0) {
 			return S2SymbolicDirection.None;
@@ -67,17 +75,32 @@ public abstract class S2OrientationBase
 		CircleOctant octant = CircleOctant.getOctantFor(dTheta);
 		return _mapOctants.get(octant);
 	}
-
-	@Override
-	public S2Direction findDirection(S2Offset offset) {
-		if (offset.dx == 0 && offset.dy == 0) {
-			return S2SymbolicDirection.None;
-		}
+	
+	protected S2CompassDirection findCompassDirectionInner(S2Offset offset) {
 		Tuple<Integer> tkey = new TupleContainer<Integer>(Integer.valueOf(Integer.signum(offset.dx)),
 				Integer.valueOf(Integer.signum(offset.dy)));
 		KeyValue<Tuple<Integer>, S2CompassDirection> loc
 			= KeyValueMethods.findFirstIn(tkey, _listLocators);
 		return loc.getValue();
+	}
+
+	@Override
+	public S2Direction findDirection(S2Offset offset) {
+		Objects.requireNonNull(offset, "offset");
+		if (offset.isZero()) {
+			return S2SymbolicDirection.None;
+		}
+		return findCompassDirectionInner(offset);
+	}
+
+	@Override
+	public S2CompassDirection findCompassDirection(S2Offset offset)
+			throws NoValidMoveException {
+		Objects.requireNonNull(offset, "offset");
+		if (offset.isZero()) {
+			throw new NoValidMoveException("offset is zero");
+		}
+		return findCompassDirectionInner(offset);
 	}
 
 	@Override
@@ -99,6 +122,15 @@ public abstract class S2OrientationBase
 		return new S2Offset(offsetBase.getX() * nDistance, offsetBase.getY() * nDistance);
 	}
 	
+	protected abstract S2Offset makeOffsetFrom(int dx, int dy);
+	
+	@Override
+	public S2Offset offset(double dRadians, float fDistance) {
+		int dx = (int) Math.round(fDistance + Math.cos(dRadians));
+		int dy = (int) Math.round(fDistance + Math.sin(dRadians));
+		return makeOffsetFrom(dx, dy);
+	}
+
 	protected abstract S2Rect findSideRect(S2CompassDirection direction, S2FieldSize szField, 
 			int nWidth, int nHeight);
 
@@ -120,5 +152,73 @@ public abstract class S2OrientationBase
 		}
 		return findSideRect(direction, szField, nWidth, nHeight);
 	}
+	
+	@Override
+	public CompassDegrees findDegreesFor(S2Offset offset) {
+		Objects.requireNonNull(offset, "offset");
+		// try to avoid complex calculations for simple moves
+		S2CompassDirection dirVert = getIncreasingVerticalDirection();
+		if (offset.dx == 0) {
+			if (offset.dy >= 0) {
+				return dirVert.getDegrees();
+			} else {
+				return dirVert.getOppositeDirection().getDegrees();
+			}
+		} else if (offset.dy == 0) {
+			S2CompassDirection dir = getIncreasingHorizontalDirection();
+			if (offset.dx > 0) {
+				return dir.getDegrees();
+			} else {
+				return dir.getOppositeDirection().getDegrees();
+			}
+		} else {
+			double dRadians = Math.atan2(offset.dy, offset.dx);
+			return CompassDegrees.convertFromRadians(dRadians);
+		}
+	}
+	
+	@Override
+	public S2UnitRay findUnitVector(S2Coords coordsFrom, S2Coords coordsTo) 
+			throws NoValidMoveException {
+		Objects.requireNonNull(coordsFrom, "coordsFrom");
+		Objects.requireNonNull(coordsTo, "coordsTo");
+		S2Offset offsetMove = coordsFrom.getOffsetTo(coordsTo);
+		if (!offsetMove.isAdjacent() || offsetMove.isZero()) {
+			throw new NoValidMoveException("coords are not adjacent");
+		}
+		S2Direction direction = findDirection(offsetMove);
+		return new S2UnitRay(coordsFrom, direction.getAsCompassDirection());
+	}
 
+	private S2RayFixedHeading computeVector(S2Coords coordsFrom, S2Coords coordsTo) {
+		S2Offset offsetMove = coordsFrom.getOffsetTo(coordsTo);
+		CompassDegrees bearing = findDegreesFor(offsetMove);
+		return new S2RayFixedHeading(coordsFrom, bearing, (float) offsetMove.getDistance());
+	}
+	
+	@Override
+	public S2RayFixedHeading findVector(S2Coords coordsFrom, S2Coords coordsTo) {
+		Objects.requireNonNull(coordsFrom, "coordsFrom");
+		Objects.requireNonNull(coordsTo, "coordsTo");
+		return computeVector(coordsFrom, coordsTo);
+	}
+
+	@Override
+	public List<S2RayFixedHeading> getVectorsFrom(Collection<S2Coords> coords) {
+		Objects.requireNonNull(coords, "coords");
+		int nCoords = coords.size();
+		ArrayList<S2RayFixedHeading> list = new ArrayList<S2RayFixedHeading>(nCoords > 1 ? nCoords - 1 : 0);
+		S2Coords coordsFrom = null;
+		Iterator<S2Coords> iterator = coords.iterator();
+		if (iterator.hasNext()) {
+			coordsFrom = iterator.next();
+		}
+		while (iterator.hasNext()) {
+			S2Coords coordsTo = iterator.next();
+			S2RayFixedHeading vector = computeVector(coordsFrom, coordsTo);
+			list.add(vector);
+			coordsFrom = coordsTo;
+		}
+		return list;
+	}
 }

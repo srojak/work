@@ -57,61 +57,6 @@ public abstract sealed class S2Direction
 		_AllDirs.add(direction);
 	}
 	
-	public static S2Direction findDirection(int dx, int dy) {
-		S2Direction direction = null;
-		switch (Integer.signum(dx)) {
-		case -1:
-			switch (Integer.signum(dy)) {
-			case -1:
-				direction = S2CompassDirection.NorthWest;
-				break;
-				
-			case 0:
-				direction = S2CompassDirection.West;
-				break;
-				
-			case 1:
-				direction = S2CompassDirection.SouthWest;
-				break;
-			}
-			break;
-			
-		case 0:
-			switch (Integer.signum(dy)) {
-			case -1:
-				direction = S2CompassDirection.North;
-				break;
-				
-			case 0:
-				direction = S2SymbolicDirection.None;
-				break;
-				
-			case 1:
-				direction = S2CompassDirection.South;
-				break;
-			}
-			break;
-			
-		case 1:
-			switch (Integer.signum(dy)) {
-			case -1:
-				direction = S2CompassDirection.NorthEast;
-				break;
-				
-			case 0:
-				direction = S2CompassDirection.East;
-				break;
-				
-			case 1:
-				direction = S2CompassDirection.SouthEast;
-				break;
-			}
-			break;
-			
-		}
-		return direction;
-	}
-	
 	public static List<S2Direction> getCompassList(boolean bIncludeBlank) {
 		ArrayList<S2Direction> list
 			= new ArrayList<S2Direction>(8 + (bIncludeBlank ? 1 : 0));

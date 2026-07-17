@@ -19,6 +19,7 @@ package srojak.spatial;
 import java.util.Objects;
 
 import srojak.core.field.LazyDouble;
+import srojak.core.field.LazyInt;
 
 /**
  * @author Stephen
@@ -27,12 +28,15 @@ import srojak.core.field.LazyDouble;
 public class S2Offset {
 	public final int dx;
 	public final int dy;
+	// sometimes one can avoid taking the square root
+	private final LazyInt _dist2;
 	private final LazyDouble _distance;
 	
 	public S2Offset(int nX, int nY) {
 		dx = nX;
 		dy = nY;
-		_distance = new LazyDouble(() -> Math.sqrt(dx * dx + dy * dy));
+		_dist2 = new LazyInt(() -> dx * dx + dy * dy);
+		_distance = new LazyDouble(() -> Math.sqrt((double) _dist2.get()));
 	}
 	
 	public int getX() {
@@ -43,8 +47,20 @@ public class S2Offset {
 		return dy;
 	}
 	
+	public int getDistanceSquare() {
+		return _dist2.get();
+	}
+	
 	public double getDistance() {
 		return _distance.get();
+	}
+	
+	public boolean isZero() {
+		return dx == 0 && dy == 0;
+	}
+	
+	public boolean isAdjacent() {
+		return dx >= -1 && dx <= 1 && dy >= -1 && dy <= 1;
 	}
 	
 	public double getSlope() {

@@ -18,6 +18,8 @@ package srojak.spatial;
 
 import java.util.Objects;
 
+import srojak.numerics.SlopeAndIntercept;
+
 /**
  * @author Stephen
  *
@@ -26,6 +28,8 @@ public class S2Line {
 	private final S2Coords _coordsFrom;
 	private final S2Coords _coordsTo;
 	private final S2Offset _offsetTo;
+	
+	private static final double _fuzzCalcY = 0.25d;
 	
 	public S2Line(S2Coords coordsStart, S2Coords coordsEnd) {
 		Objects.requireNonNull(coordsStart, "coordsStart");
@@ -56,6 +60,48 @@ public class S2Line {
 		return orientation.findDirection(_offsetTo);
 	}
 	
+	public boolean isPointOnLine(S2Coords coordPoint, boolean bSegmentBounded) {
+		Objects.requireNonNull(coordPoint, "coordPoint");
+		// take care of boundary cases
+		if (_coordsTo._y == _coordsFrom._y) {
+			if (coordPoint._y != _coordsTo._y) {
+				return false;
+			}
+		} else if (_coordsTo._x == _coordsFrom._x) {
+			if (coordPoint._x != _coordsTo._x) {
+				return false;
+			}
+		} else {
+			SlopeAndIntercept si = S2CoordsMethods.getSlopeAndIntercept(_coordsFrom, _coordsTo);
+			double py = coordPoint._y;
+			double ycalc = si.computeY((double) coordPoint._x);
+			if (Math.abs(py - ycalc) > _fuzzCalcY)
+				return false;
+		}
+		if (!bSegmentBounded) {
+			return true;
+		}
+		if (_coordsFrom._x <= _coordsTo._x) {
+			if (coordPoint._x < _coordsFrom._x || coordPoint._x > _coordsTo._x) {
+				return false;
+			}
+		} else {
+			if (coordPoint._x > _coordsFrom._x || coordPoint._x < _coordsTo._x) {
+				return false;
+			}
+		}
+		if (_coordsFrom._y <= _coordsTo._y) {
+			if (coordPoint._y < _coordsFrom._y || coordPoint._y > _coordsTo._y) {
+				return false;
+			}
+		} else {
+			if (coordPoint._y > _coordsFrom._y || coordPoint._y < _coordsTo._y) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param coordPoint
@@ -67,5 +113,10 @@ public class S2Line {
 		Objects.requireNonNull(coordPoint, "coordPoint");
 		return Math.abs(_offsetTo.dy * coordPoint._x - _offsetTo.dx * coordPoint._y
 				+ _coordsTo._x * _coordsFrom._y - _coordsTo._y * _coordsFrom._x);
+	}
+
+	@Override
+	public String toString() {
+		return "S2Line [" + _coordsFrom.toEnclosedString() + " to " + _coordsTo.toEnclosedString() + "]";
 	}
 }

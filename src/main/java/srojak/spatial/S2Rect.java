@@ -48,9 +48,10 @@ public class S2Rect {
 		_height = nHeight;
 	}
 	
-	public S2Rect(S2Coords coordsTopLeft, S2FieldSize szRect) {
+	public S2Rect(S2Coords coordsTopLeft, S2Dimension szRect) {
 		Objects.requireNonNull(coordsTopLeft, "coordsTopLeft");
 		_coordsStart = new S2Coords(coordsTopLeft);
+		// S2FieldSize will not accept negative dimensions.
 		_width = szRect.width;
 		_height = szRect.height;
 	}
@@ -58,6 +59,7 @@ public class S2Rect {
 	public S2Rect(S2Coords coordsTopLeft, S2Offset offset) {
 		Objects.requireNonNull(coordsTopLeft, "coordsTopLeft");
 		Objects.requireNonNull(offset, "offset");
+		checkSizeArgs(offset.dx, offset.dy);
 		_coordsStart = new S2Coords(coordsTopLeft);
 		_width = offset.dx;
 		_height = offset.dy;
@@ -239,6 +241,17 @@ public class S2Rect {
 		}
 	}
 	
+	public void overPeriphery(Consumer<S2Coords> visitor) {
+		for (int i = 0; i < _width; i++) {
+			visitor.accept(_coordsStart.getOffsetCoords(i, 0));
+			visitor.accept(_coordsStart.getOffsetCoords(i, _height));
+		}
+		for (int j = 1; j < _height - 1; j++) {
+			visitor.accept(_coordsStart.getOffsetCoords(0, j));
+			visitor.accept(_coordsStart.getOffsetCoords(_width, j));
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(_coordsStart, _height, _width);
@@ -272,5 +285,17 @@ public class S2Rect {
 			throw new IllegalArgumentException("nWidth negative");
 		if (nHeight < 0)
 			throw new IllegalArgumentException("nHeight negative");
+	}
+	
+	public static S2Rect normalize(int xLeft, int yTop, int nWidth, int nHeight) {
+		if (nWidth < 0) {
+			xLeft += nWidth;
+			nWidth = - nWidth;
+		}
+		if (nHeight < 0) {
+			yTop += nHeight;
+			nHeight = - nHeight;
+		}
+		return new S2Rect(xLeft, yTop, nWidth, nHeight);
 	}
 }

@@ -16,6 +16,7 @@
  */
 package srojak.spatial;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import srojak.core.tools.CollectionMethods;
+import srojak.numerics.CircleOctant;
 import srojak.numerics.CompassDegrees;
-import srojak.numerics.IRandomSource;
 
 /**
  * @author Stephen
@@ -35,6 +36,7 @@ public final class S2CompassDirection
 		implements S2CompassOrdinals {
 	private final CompassDegrees _degrees;
 	private final Code _code;
+	private final CircleOctant _graphicsOctant;
 	
 	public static final S2CompassDirection North;
 	public static final S2CompassDirection NorthEast;
@@ -50,28 +52,28 @@ public final class S2CompassDirection
 	
 	static {
 		LinkedList<S2CompassDirection> dirs = new LinkedList<S2CompassDirection>();
-		S2CompassDirection rd = new S2CompassDirection("N", OrdNorth, "North", Code.N);
+		S2CompassDirection rd = new S2CompassDirection("N", OrdNorth, "North", CircleOctant.UP, Code.N);
 		North = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("NE", OrdNorthEast, "N-East", Code.NE);
+		rd = new S2CompassDirection("NE", OrdNorthEast, "N-East", CircleOctant.UPPER_RIGHT, Code.NE);
 		NorthEast = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("E", OrdEast, "East", Code.E);
+		rd = new S2CompassDirection("E", OrdEast, "East", CircleOctant.RIGHT, Code.E);
 		East = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("SE", OrdSouthEast, "S-East", Code.SE);
+		rd = new S2CompassDirection("SE", OrdSouthEast, "S-East", CircleOctant.LOWER_RIGHT, Code.SE);
 		SouthEast = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("S", OrdSouth, "South", Code.S);
+		rd = new S2CompassDirection("S", OrdSouth, "South", CircleOctant.DOWN, Code.S);
 		South = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("SW", OrdSouthWest, "S-West", Code.SW);
+		rd = new S2CompassDirection("SW", OrdSouthWest, "S-West", CircleOctant.LOWER_LEFT, Code.SW);
 		SouthWest = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("W", OrdWest, "West", Code.W);
+		rd = new S2CompassDirection("W", OrdWest, "West", CircleOctant.LEFT, Code.W);
 		West = rd;
 		dirs.add(rd);
-		rd = new S2CompassDirection("NW", OrdNorthWest, "N-West", Code.NW);
+		rd = new S2CompassDirection("NW", OrdNorthWest, "N-West", CircleOctant.UPPER_LEFT, Code.NW);
 		NorthWest = rd;
 		dirs.add(rd);
 		dirs.forEach(d -> register(d));
@@ -88,10 +90,12 @@ public final class S2CompassDirection
 		_mapOpposites.put(NorthWest,  SouthEast);
 	}
 
-	protected S2CompassDirection(String strAbbrev, int ordinal, String strName, Code code) {
+	protected S2CompassDirection(String strAbbrev, int ordinal, String strName,
+			CircleOctant octant, Code code) {
 		super(strAbbrev, ordinal, strName);
 		_code = code;
 		_degrees = new CompassDegrees(45 * ordinal);
+		_graphicsOctant = octant;
 	}
 
 	@Override
@@ -113,6 +117,10 @@ public final class S2CompassDirection
 		return _code;
 	}
 	
+	public CircleOctant getGraphicsOctant() {
+		return _graphicsOctant;
+	}
+	
 	public boolean isCardinalDirection() {
 		return _code.isCardinal();
 	}
@@ -121,25 +129,51 @@ public final class S2CompassDirection
 		return _mapOpposites.get(this);
 	}
 	
+	public List<S2CompassDirection> findCardinalDirections() {
+		List<S2CompassDirection> list = null;
+		switch (_code) {
+		case NE:
+			list = List.of(East, North);
+			break;
+			
+		case SE:
+			list = List.of(East, South);
+			break;
+			
+		case SW:
+			list = List.of(West, South);
+			break;
+			
+		case NW:
+			list = List.of(West, North);
+			break;
+			
+		default:
+			list = List.of(this);
+			break;
+		}
+		return list;
+	}
+	
 	public static S2CompassDirection findDirectionFor(CompassDegrees cdg) {
 		Objects.requireNonNull(cdg, "cdg");
 		for (S2CompassDirection direction : AllDirs) {
-			int delta = cdg.getValue() - direction.getDegrees().getValue();
-			if (delta >= -22 && delta <= 23) {
+			float delta = cdg.getValue() - direction.getDegrees().getValue();
+			if (delta >= -22.5f && delta <= 22.5f) {
 				return direction;
 			}
 		}
 		return null;
 	}
 	
-	public static S2CompassDirection findDirectionWithin(CompassDegrees cdg, int nTolerance) {
+	public static S2CompassDirection findDirectionWithin(CompassDegrees cdg, float fTolerance) {
 		Objects.requireNonNull(cdg, "cdg");
-		if (nTolerance <= 0) {
-			throw new IllegalArgumentException("nTolerance must be positive");
+		if (fTolerance <= 0) {
+			throw new IllegalArgumentException("fTolerance must be positive");
 		}
 		for (S2CompassDirection direction : AllDirs) {
-			int delta = cdg.getValue() - direction.getDegrees().getValue();
-			if (Math.abs(delta) <= nTolerance) {
+			float delta = cdg.getValue() - direction.getDegrees().getValue();
+			if (Math.abs(delta) <= fTolerance) {
 				return direction;
 			}
 		}

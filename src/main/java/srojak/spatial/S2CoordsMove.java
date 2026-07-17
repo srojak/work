@@ -40,4 +40,9 @@ public class S2CoordsMove {
 	public SpatialMove getMove() {
 		return _move;
 	}
+
+	@Override
+	public String toString() {
+		return _move.toString() + " " + _coords.toEnclosedString();
+	}
 }

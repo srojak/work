@@ -50,6 +50,10 @@ public class S2Coords {
 		return _y;
 	}
 	
+	public R2Coords getR2Coords() {
+		return new R2Coords((double) _x, (double) _y);
+	}
+	
 	public S2Coords getOffsetCoords(int dx, int dy) {
 		return new S2Coords(_x + dx, _y + dy);
 	}
@@ -76,7 +80,7 @@ public class S2Coords {
 	
 	public boolean isAdjacentTo(S2Coords coords) {
 		Objects.requireNonNull(coords, "coords");
-		return (Math.abs(coords._x - _x) == 1 || Math.abs(coords._y - _y) == 1);
+		return (Math.abs(coords._x - _x) <= 1 && Math.abs(coords._y - _y) <= 1);
 	}
 	
 	public S2Direction getDirectionTo(S2Orientation orientation, S2Coords coords) {
@@ -91,19 +95,27 @@ public class S2Coords {
 		return new S2Coords(_x + offset.dx, _y + offset.dy);
 	}
 	
+	public S2Rect getRectangleCenteredOn(int nRadius) {
+		if (nRadius < 1) {
+			throw new IllegalArgumentException("nRadius must be at least 1");
+		}
+		S2Coords coordsTopLeft = new S2Coords(_x - nRadius,	_y - nRadius);
+		int nSide = (nRadius << 1) + 1;
+		S2Offset offset = new S2Offset(nSide, nSide);
+		return new S2Rect(coordsTopLeft, offset);
+		
+	}
+	
+	public S2Coords generateRandomPointInCircle(IRandomSource random, double dRadius) {
+		PolarCoords ptPolar = R2Geometry.generateRandomPointInCircle(random, dRadius, 0.0d);
+		S2Offset offset = S2Geometry.polarToOffset(ptPolar);
+		return getNewLocationFrom(offset);
+	}
+	
 	public S2Coords generateRandomPointInCircle(IRandomSource random, int nRadius) {
-		if (nRadius > _x) {
-			throw new IllegalArgumentException("too far to left edge");
-		}
-		if (nRadius > _y) {
-			throw new IllegalArgumentException("too far to top edge");
-		}
-		double dFirst = random.genDouble();
-		double dSecond = random.genDouble();
-		PolarCoords ptPolar = new PolarCoords(nRadius * Math.sqrt(dFirst),
-				RadiansMethods.TWOPI * dSecond);
-		return new S2Coords(_x + (int) Math.round(ptPolar.getX()),
-							_y + (int) Math.round(ptPolar.getY()));
+		PolarCoords ptPolar = R2Geometry.generateRandomPointInCircle(random, (double) nRadius, 0.0d);
+		S2Offset offset = S2Geometry.polarToOffset(ptPolar);
+		return getNewLocationFrom(offset);
 	}
 	
 	@Override

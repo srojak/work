@@ -18,7 +18,6 @@ package srojak.spatial;
 
 import java.util.Objects;
 
-import srojak.core.InvalidOperationException;
 import srojak.core.Lockable;
 import srojak.core.logic.LockGate;
 
@@ -27,16 +26,20 @@ import srojak.core.logic.LockGate;
  *
  */
 public class S2Segment
-		implements Lockable {
-	public S2Coords _coordsStart;
-	public S2Coords _coordsEnd;
-	public final LockGate _gateLock;
+		implements S2CoordsPair, Lockable {
+	private S2Coords _coordsStart;
+	private S2Coords _coordsEnd;
+	private final LockGate _gateLock;
+	private S2Offset _offsetTo;
+	
+	private static final double _fuzzCalcY = 0.25d;
 	
 	public S2Segment(S2Coords coordsStart, S2Coords coordsEnd, boolean bIsLocked) {
 		Objects.requireNonNull(coordsStart, "coordsStart");
-		Objects.requireNonNull(coordsStart, "_coordsEnd");
+		Objects.requireNonNull(coordsEnd, "coordsEnd");
 		_coordsStart = coordsStart;
 		_coordsEnd = coordsEnd;
+		_offsetTo = _coordsStart.getOffsetTo(_coordsEnd);
 		_gateLock = new LockGate();
 		if (bIsLocked) {
 			_gateLock.lock();
@@ -47,19 +50,42 @@ public class S2Segment
 		this(coordsStart, coordsEnd, false);
 	}
 	
+	public S2Segment(S2Coords coordsStart, S2Offset offset, boolean bIsLocked) {
+		Objects.requireNonNull(coordsStart, "coordsStart");
+		Objects.requireNonNull(offset, "offset");
+		_coordsStart = coordsStart;
+		_coordsEnd = coordsStart.getNewLocationFrom(offset);
+		_offsetTo = offset;
+		_gateLock = new LockGate();
+		if (bIsLocked) {
+			_gateLock.lock();
+		}
+	}
+	
+	public S2Segment(S2Coords coordsStart, S2Offset offset) {
+		this (coordsStart, offset, false);
+	}
+	
 	public S2Segment(S2Segment segSource) {
 		Objects.requireNonNull(segSource, "segSource");
 		_coordsStart = segSource._coordsStart;
 		_coordsEnd = segSource._coordsEnd;
+		_offsetTo = segSource._offsetTo;
 		_gateLock = new LockGate();
 	}
 	
+	@Override
 	public S2Coords getStart() {
 		return _coordsStart;
 	}
 	
+	@Override
 	public S2Coords getEnd() {
 		return _coordsEnd;
+	}
+	
+	S2Offset getOffset() {
+		return _offsetTo;
 	}
 	
 	@Override
@@ -76,26 +102,45 @@ public class S2Segment
 		Objects.requireNonNull(coords, "coords");
 		_gateLock.testLock("S2Segment");
 		_coordsStart = coords;
+		_offsetTo = _coordsStart.getOffsetTo(_coordsEnd);
 	}
 	
 	public void changeEnd(S2Coords coords) {
 		Objects.requireNonNull(coords, "coords");
 		_gateLock.testLock("S2Segment");
 		_coordsEnd = coords;	
+		_offsetTo = _coordsStart.getOffsetTo(_coordsEnd);
 	}
 	
-	public boolean merge(S2Segment segment) {
-		Objects.requireNonNull(segment, "segment");
-		_gateLock.testLock("S2Segment");
-		if (_coordsEnd.equals(segment._coordsStart)) {
-			_coordsEnd = segment._coordsEnd;
-			return true;
-		} else if (_coordsStart.equals(segment._coordsEnd)) {
-			_coordsStart = segment._coordsStart;
-			return true;
-		} else {
+	/**
+	 * 
+	 * @param coordPoint
+	 * @return
+	 * @see https://stackoverflow.com/questions/30559799/function-for-finding-the-distance-between-a-point-and-an-edge-in-java
+	 * @see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+	 */
+	public double getCoordDistanceNumerator(S2Coords coordPoint) {
+		Objects.requireNonNull(coordPoint, "coordPoint");
+		R2Coords rcdsEnd = _coordsEnd.getR2Coords();
+		R2Coords rcdsPoint = coordPoint.getR2Coords();
+		return Math.abs(_offsetTo.dy * rcdsPoint._x - _offsetTo.dx * rcdsPoint._y
+				+ rcdsEnd._x * _coordsStart._y - rcdsEnd._y * _coordsStart._x);
+	}
+	
+	public S2Rect getBoundingRect() {
+		int dx = _offsetTo.dx >= 0 ? _offsetTo.dx + 1 : _offsetTo.dx - 1;
+		int dy = _offsetTo.dy >= 0 ? _offsetTo.dy + 1 : _offsetTo.dy - 1;
+		return S2Rect.normalize(_coordsStart._x, _coordsStart._y, dx, dy);
+	}
+	
+	public boolean isPointOnSegment(S2Coords coordPoint) {
+		Objects.requireNonNull(coordPoint, "coordPoint");
+		S2Rect rectBound = getBoundingRect();
+		if (!rectBound.contains(coordPoint)) {
 			return false;
 		}
+		double dnumer = getCoordDistanceNumerator(coordPoint);
+		return dnumer < _fuzzCalcY;
 	}
 
 	@Override

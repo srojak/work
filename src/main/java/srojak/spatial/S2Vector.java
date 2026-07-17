@@ -16,61 +16,14 @@
 */
 package srojak.spatial;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import srojak.numerics.CompassDegrees;
 
 /**
  * @author Stephen
  *
  */
-public class S2Vector {
-	private final S2Coords _coordsStart;
-	private final S2CompassDirection _direction;
-	private final int _length;
+public interface S2Vector {
 
-	/**
-	 * 
-	 */
-	public S2Vector(S2Coords coordsStart, S2CompassDirection direction, int nLength) {
-		Objects.requireNonNull(coordsStart, "coordsStart");
-		Objects.requireNonNull(direction, "direction");
-		if (nLength < 0) {
-			throw new IllegalArgumentException("nLength is negative");
-		}
-		_coordsStart = coordsStart;
-		_direction = direction;
-		_length = nLength;
-	}
-
-	public S2Coords getStart() {
-		return _coordsStart;
-	}
-	
-	public S2CompassDirection getDirection() {
-		return _direction;
-	}
-	
-	public int getLength() {
-		return _length;
-	}
-	
-	public S2Coords getEnd(S2Orientation orientation) {
-		Objects.requireNonNull(orientation, "orientation");
-		S2Offset offset = orientation.offset(_direction, _length);
-		return _coordsStart.getOffsetCoords(offset);
-	}
-	
-	public List<S2CoordsMove> getCoordsAlong(S2Orientation orientation) {
-		Objects.requireNonNull(orientation, "orientation");
-		S2Offset offset = orientation.offsetByOne(_direction);
-		List<S2CoordsMove> list = new LinkedList<S2CoordsMove>();
-		list.add(new S2CoordsMove(SpatialMove.Start, _coordsStart));
-		S2Coords coords = _coordsStart;
-		for (int n = 0; n < _length; n++) {
-			coords = coords.getNewLocationFrom(offset);
-			list.add(new S2CoordsMove(SpatialMove.Move, coords));
-		}
-		return list;
-	}
+	CompassDegrees getHeading();
+	float getLength();
 }

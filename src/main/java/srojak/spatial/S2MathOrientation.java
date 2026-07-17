@@ -77,6 +77,11 @@ public class S2MathOrientation
 	}
 
 	@Override
+	protected S2Offset makeOffsetFrom(int dx, int dy) {
+		return new S2Offset(dx, dy);
+	}
+
+	@Override
 	protected S2Rect findSideRect(S2CompassDirection direction, S2FieldSize szField,
 			int nWidth, int nHeight) {
 		S2Coords origin = new S2Coords(0, 0);
