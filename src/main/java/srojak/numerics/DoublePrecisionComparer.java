@@ -3,6 +3,8 @@
  */
 package srojak.numerics;
 
+import java.util.Objects;
+
 /**
  * @author Stephen
  *
@@ -49,4 +51,16 @@ public interface DoublePrecisionComparer {
      *          and a value greater than {@code 0} if {@code d1} is numerically greater than {@code d2}.
 	 */
 	int compare(double d1, double d2);
+	
+	/**
+	 * Compares two numbers, applying the comparison tolerance.
+	 * @param d1 The first number to compare.
+	 * @param comparison The comparison to use, from the perspective of the first number.
+	 * @param d2 The second number to compare.
+	 * @return {@code true} if the required relationship is true.
+	 */
+	default public boolean compare(double d1, OrderedComparison comparison, double d2) {
+		Objects.requireNonNull(comparison, "comparison");
+		return comparison.evaluate(compare(d1, d2));
+	}
 }

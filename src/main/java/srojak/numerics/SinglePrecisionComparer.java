@@ -16,6 +16,8 @@
  */
 package srojak.numerics;
 
+import java.util.Objects;
+
 /**
  * @author Stephen
  *
@@ -61,4 +63,16 @@ public interface SinglePrecisionComparer {
      *          and a value greater than {@code 0} if {@code f1} is numerically greater than {@code f2}.
 	 */
 	int compare(float f1, float f2);
+	
+	/**
+	 * Compares two numbers, applying the comparison tolerance.
+	 * @param f1 The first number to compare.
+	 * @param comparison The comparison to use, from the perspective of the first number.
+	 * @param f2 The second number to compare.
+	 * @return {@code true} if the required relationship is true.
+	 */
+	default public boolean compare(float f1, OrderedComparison comparison, float f2) {
+		Objects.requireNonNull(comparison, "comparison");
+		return comparison.evaluate(compare(f1, f2));
+	}
 }
