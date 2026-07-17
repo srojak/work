@@ -14,34 +14,56 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+package srojak.core.logic;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
+public class FlagsInt 
+		implements FlagsIntTest {
+	private int _flags;
 	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
-
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
+	public FlagsInt() {
+		_flags = 0;
 	}
-
-	public ObservationWriterBase() {
-		
+	
+	public void set(int ... masks) {
+		for (int m : masks) {
+			_flags |= m;
+		}
+	}
+	
+	public void clear(int ... masks) {
+		for (int m : masks) {
+			_flags &= ~m;
+		}
 	}
 
 	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
+	public boolean test(int mask) {
+		return (_flags & mask) != 0;
 	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
+
+	@Override
+	public boolean testAnd(int maskFirst, int... masks) {
+		for (int m : masks) {
+			maskFirst |= m;
+		}
+		return (_flags & maskFirst) == maskFirst;
 	}
+
+	@Override
+	public boolean testOr(int maskFirst, int... masks) {
+		for (int m : masks) {
+			maskFirst |= m;
+		}
+		return (_flags & maskFirst) != 0;
+	}
+
+	@Override
+	public String toString() {
+		return "0x" + Integer.toHexString(_flags);
+	}
+
 }

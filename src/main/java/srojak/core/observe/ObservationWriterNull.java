@@ -34,6 +34,11 @@ public class ObservationWriterNull
 	}
 
 	@Override
+	public boolean isLevelAccepted(ObsLevel level) {
+		return true;
+	}
+
+	@Override
 	public void write(ObsLevel level, String strText) {
 		// does nothing
 	}
@@ -56,6 +61,17 @@ public class ObservationWriterNull
 
 	@Override
 	public void writeTimeStamp(ObsLevel level) {
+		// does nothing
+	}
+
+	@Override
+	public ObservationCollector createCollector(ObsLevel level) {
+		// create a collector, but do not make it active
+		return new ObservationCollectorObj(this, ObsLevel.NONE, SourceLocation.caller());
+	}
+
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
 		// does nothing
 	}
 

@@ -14,34 +14,50 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.impl;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Objects;
+
+import srojak.core.CycleDepthMonitor;
+import srojak.core.CycleDepthStop;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
-	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
+public class CycleDepthStopToken
+		implements CycleDepthStop {
+	private final String _strName;
+	private final int _nLimit;
 
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
+	/**
+	 * 
+	 */
+	public CycleDepthStopToken(String strName, int limit) {
+		Objects.requireNonNull(strName, "strName");
+		if (strName.isBlank()) {
+			throw new IllegalArgumentException("strName is blank");
+		}
+		if (limit <= 0) {
+			throw new IllegalArgumentException("limit must be positive");
+		}
+		_strName = strName;
+		_nLimit = limit;
 	}
 
 	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
+	public String getName() {
+		return _strName;
 	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
+
+	@Override
+	public int getLimit() {
+		return _nLimit;
 	}
+
+	@Override
+	public CycleDepthMonitor createMonitor() {
+		return new CycleDepthMonitorToken(this);
+	}
+
 }

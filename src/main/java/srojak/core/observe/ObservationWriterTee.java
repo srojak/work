@@ -38,6 +38,12 @@ public class ObservationWriterTee
 	}
 
 	@Override
+	public boolean isLevelAccepted(ObsLevel level) {
+		// always accepts input to pass down
+		return true;
+	}
+
+	@Override
 	public void write(ObsLevel level, String strText) {
 		_writer1.write(level, strText);
 		_writer2.write(level, strText);
@@ -76,6 +82,17 @@ public class ObservationWriterTee
 		sb.append(getDateAndTimeStamp());
 		_writer1.write(level, sb.toString());
 		_writer2.write(level, sb.toString());
+	}
+
+	@Override
+	public ObservationCollector createCollector(ObsLevel level) {
+		return new ObservationCollectorObj(this, level, SourceLocation.caller());
+	}
+
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+		_writer1.write(collector.getLevel(), strText);
+		_writer2.write(collector.getLevel(), strText);
 	}
 
 	@Override

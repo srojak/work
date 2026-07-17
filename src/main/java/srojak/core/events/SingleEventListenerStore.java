@@ -24,13 +24,13 @@ import java.util.function.Consumer;
  * @author Stephen
  *
  */
-public interface SingleEventListenerStore<T extends EventListener> {
+public interface SingleEventListenerStore<T extends EventListener>
+		extends Iterable<T> {
 	int getListenerCount();
 	void clear();
 	List<T> getListeners();
-	void forEach(Consumer<T> consumer);
-	void forEachReversed(Consumer<T> consumer);
+	void forEach(Consumer<? super T> consumer);
+	void forEachReversed(Consumer<? super T> consumer);
 	void add(T listener);
 	void remove(T listener);
-	
 }

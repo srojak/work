@@ -30,6 +30,11 @@ public abstract class ObservationWriterLevelFilterBase
 	public ObservationWriterLevelFilterBase() {
 		_levelWriter = ObsLevel.NOTICE;
 	}
+
+	@Override
+	public boolean isLevelAccepted(ObsLevel level) {
+		return isObsLevelAtLeast(level);
+	}
 	
 	public ObsLevel getObsLevel() {
 		return _levelWriter;
@@ -43,5 +48,13 @@ public abstract class ObservationWriterLevelFilterBase
 	public void setObsLevel(ObsLevel level) {
 		Objects.requireNonNull(level, "level");
 		_levelWriter = level;
+	}
+	
+	@Override
+	public abstract void write(ObsLevel level, String strText);
+	
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+		write(collector.getLevel(), strText);
 	}
 }

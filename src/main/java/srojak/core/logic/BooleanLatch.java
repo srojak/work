@@ -58,12 +58,18 @@ public class BooleanLatch
 		}
 	}
 	
-	public void setState(boolean bState) {
+	/**
+	 * Sets the state of the latch.
+	 * @param bState
+	 * @return
+	 */
+	public boolean setState(boolean bState) {
 		if (_bState == bState) {
-			return;
+			return false;
 		}
 		_bState = bState;
 		propagate();
+		return true;
 	}
 
 	@Override

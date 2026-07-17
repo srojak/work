@@ -41,6 +41,11 @@ public class ObservationWriterPrintStream
 	}
 
 	@Override
+	public boolean isLevelAccepted(ObsLevel level) {
+		return true;
+	}
+
+	@Override
 	public void write(ObsLevel level, String strText) {
 		_streamOut.println(level.getName() + ": " + strText);			
 	}
@@ -70,6 +75,11 @@ public class ObservationWriterPrintStream
 	@Override
 	public void writeTimeStamp(ObsLevel level) {
 		_streamOut.println(level.getName() + ": time " + getDateAndTimeStamp());
+	}
+
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+		write(collector.getLevel(), strText);
 	}
 
 	@Override

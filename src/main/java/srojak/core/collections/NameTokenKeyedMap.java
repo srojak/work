@@ -20,18 +20,19 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import srojak.core.keys.NamedKey;
+import srojak.core.NameToken;
+import srojak.core.NameTokenEquatable;
 
 /**
  * @author Stephen
  *
  */
-public class NameKeyedMap<E>
-		implements NameKeyedMapReadOnly<E> {
-	private final HashMap<NamedKey, E> _map;
+public class NameTokenKeyedMap<E extends NameTokenEquatable> 
+		implements NameTokenKeyedMapReadOnly<E> {
+	private final HashMap<NameToken, E> _map;
 	
-	public NameKeyedMap() {
-		_map = new HashMap<NamedKey, E>();
+	public NameTokenKeyedMap() {
+		_map = new HashMap<NameToken, E>();
 	}
 
 	@Override
@@ -45,12 +46,12 @@ public class NameKeyedMap<E>
 	}
 
 	@Override
-	public boolean containsKey(NamedKey key) {
+	public boolean containsKey(NameToken key) {
 		return _map.containsKey(key);
 	}
 
 	@Override
-	public E get(NamedKey key) {
+	public E get(NameToken key) {
 		return _map.get(key);
 	}
 
@@ -60,13 +61,12 @@ public class NameKeyedMap<E>
 		_map.values().forEach(consumer);	
 	}
 	
-	public E put(NamedKey key, E value) {
-		Objects.requireNonNull(key, "key");
+	public void add(E value) {
 		Objects.requireNonNull(value, "value");
-		return _map.put(key, value);
+		_map.put(value.getNameToken(), value);
 	}
-	
-	public E remove(NamedKey key) {
+
+	public E remove(NameToken key) {
 		return _map.remove(key);
 	}
 }

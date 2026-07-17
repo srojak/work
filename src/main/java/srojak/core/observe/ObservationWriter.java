@@ -24,8 +24,9 @@ import java.util.function.Consumer;
  *
  * Common interface all observation writers must provide.
  */
-public interface ObservationWriter {
-	
+public interface ObservationWriter
+		extends ObservationCommonWriter {
+
 	/**
 	 * Write a message at a given observation level.
 	 * @param level The observation level.
@@ -50,16 +51,18 @@ public interface ObservationWriter {
 			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder);
 	
 	/**
-	 * Write a diagnostic message.
-	 * @param strText The text of the message.
-	 */
-	void writeDiagnostic(String strText);
-	
-	/**
 	 * Write a time stamp at a given observation level.
 	 * @param level The observation level.
 	 */
 	void writeTimeStamp(ObsLevel level);
+	
+	/**
+	 * Create an observation collector at a given observation level.
+	 * @param level The observation level.
+	 * @return an observation collector, which will be active if {@code level} is a level
+	 * 		for which the writer is writing.
+	 */
+	ObservationCollector createCollector(ObsLevel level);
 	
 	/**
 	 * Flush the writer, if the underlying mechanism supports it.

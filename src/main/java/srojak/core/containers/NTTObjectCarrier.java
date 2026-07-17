@@ -14,68 +14,51 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.decorated;
+package srojak.core.containers;
 
 import java.util.Objects;
 
-import srojak.core.Lockable;
 import srojak.core.NameToken;
+import srojak.core.NameTokenTaggedObject;
 
 /**
  * @author Stephen
  *
  */
-public abstract class DecoratorBase
-		implements Decorator, Lockable {
+public class NTTObjectCarrier 
+		implements NameTokenTaggedObject {
 	private final NameToken _name;
-	private final DecoratorLockGate _gateLock;
-	
-	public DecoratorBase(NameToken token) {
-		Objects.requireNonNull(token, "token");
-		_name = token;
-		_gateLock = new DecoratorLockGate();
+	private final Object _object;
+
+	public NTTObjectCarrier(NameToken tokenName, Object obj) {
+		Objects.requireNonNull(tokenName, "tokenName");
+		Objects.requireNonNull(obj, "obj");
+		_name = tokenName;
+		_object = obj;
 	}
 
 	@Override
-	public NameToken getNameToken() {
+	public NameToken getNameTag() {
 		return _name;
 	}
-	
+
 	@Override
-	public boolean isNameTokenEqual(NameToken token) {
-		return token == null ? false : _name.equals(token);
+	public boolean isNameTagEqual(NameToken token) {
+		return _name.equals(token);
 	}
 
 	@Override
-	public boolean isLocked() {
-		return _gateLock.isLocked();
-	}
-	
-	@Override
-	public void lock() {
-		_gateLock.lock();;
-	}
-	
-	protected void testLock() {
-		_gateLock.testLock(_name);
-	}
-	
-	protected abstract Object getValueAsObject();
-	
-	protected abstract String getStringValue();
-
-	@Override
-	public int hashCode() {
-		return _name.hashCode();
+	public boolean isNameTagEqual(String strName) {
+		return _name.isNameEqual(strName);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return _name.equals(obj);
+	public Object getObject() {
+		return _object;
 	}
 
 	@Override
 	public String toString() {
-		return "decorator[name=" + _name.getName() + ", value=" + getStringValue() + "]";
+		return "ObjectCarrier [_name=" + _name + "]";
 	}
 }

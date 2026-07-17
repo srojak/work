@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -90,5 +91,11 @@ public class ListMethods {
 		ArrayList<T> list = new ArrayList<T>(array.length);
 		list.addAll(Arrays.asList(array));
 		return list;
+	}
+	
+	public static <T, R> List<R> transform(List<T> listSource, Function<T, R> fnTransform) {
+		Objects.requireNonNull(listSource, "listSource");
+		Objects.requireNonNull(fnTransform, "fnTransform");
+		return listSource.stream().map(fnTransform).toList();
 	}
 }

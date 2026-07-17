@@ -14,34 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+package srojak.core.logic;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
+public interface FlagsIntTest {
 	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
-
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
-	}
-
-	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
-	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
-	}
+	boolean test(int mask);
+	boolean testAnd(int maskFirst, int ... masks);
+	boolean testOr(int maskFirst, int ... masks);
 }

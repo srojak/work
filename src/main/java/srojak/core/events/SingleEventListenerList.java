@@ -17,9 +17,11 @@
 package srojak.core.events;
 
 import java.util.EventListener;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 
 /**
@@ -50,7 +52,12 @@ public class SingleEventListenerList<T extends EventListener>
 	}
 
 	@Override
-	public void forEach(Consumer<T> consumer) {
+	public Iterator<T> iterator() {
+		return _list.iterator();
+	}
+
+	@Override
+	public void forEach(Consumer<? super T> consumer) {
 		ListIterator<T> iter = _list.listIterator();
 		while (iter.hasNext()) {
 			T listener = iter.next();
@@ -60,12 +67,17 @@ public class SingleEventListenerList<T extends EventListener>
 	}
 
 	@Override
-	public void forEachReversed(Consumer<T> consumer) {
+	public void forEachReversed(Consumer<? super T> consumer) {
 		ListIterator<T> iter = _list.listIterator(_list.size());
 		while (iter.hasPrevious()) {
 			T listener = iter.previous();
 			consumer.accept(listener);
 		}
+	}
+
+	@Override
+	public Spliterator<T> spliterator() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

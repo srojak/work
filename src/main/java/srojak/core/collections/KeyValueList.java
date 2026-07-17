@@ -14,34 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.collections;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
+import java.util.List;
+
+import srojak.core.KeyValue;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
-	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
+public interface KeyValueList<K, V> 
+		extends List<KeyValue<K, V>> {
 
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
-	}
-
-	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
-	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
+	default public KeyValue<K, V> findByKey(K key) {
+		Iterator<KeyValue<K, V>> iterator = iterator();
+		while (iterator.hasNext()) {
+			KeyValue<K, V> pair = iterator.next();
+			if (pair.isKeyEqual(key)) {
+				return pair;
+			}
+		}
+		return null;
 	}
 }

@@ -75,7 +75,7 @@ public class DecoratedNamedObjectMap<V extends DecoratedNamed<?>>
 		Objects.requireNonNull(obj, "obj");
 		NameToken token = obj.getNameToken();
 		if (_map.containsKey(token)) {
-			throw new IllegalArgumentException("tokenKey already exists in map");
+			throw new IllegalArgumentException("tokenKey " + token + " already exists in map");
 		}
 		_map.put(token, obj);
 	}

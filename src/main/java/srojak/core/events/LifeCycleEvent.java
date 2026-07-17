@@ -26,6 +26,8 @@ public class LifeCycleEvent
 	private final int _id;
 	
 	public static final int ID_CLOSED = 1000;
+	public static final int ID_VALUE_CHANGED = 1001;
+	public static final int ID_DISPLAYABLE = 1002;
 
 	/**
 	 * @param source

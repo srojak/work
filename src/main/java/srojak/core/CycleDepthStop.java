@@ -14,34 +14,22 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import srojak.core.impl.CycleDepthStopToken;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
+public interface CycleDepthStop
+		extends Named {
+
+	public int getLimit();
 	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
-
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
-	}
-
-	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
-	}
+	public CycleDepthMonitor createMonitor();
 	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
+	public static CycleDepthStop create(String strName, int limit) {
+		return new CycleDepthStopToken(strName, limit);
 	}
 }

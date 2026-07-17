@@ -14,34 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.specialized;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import srojak.core.NameToken;
+import srojak.core.NameTokenEquatable;
+import srojak.core.NameTokenKeyedBase;
+import srojak.core.Named;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
-	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
+public class ResponsibilityKey
+		extends NameTokenKeyedBase
+		implements Named {
 
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
+	/**
+	 * @param tokenKey
+	 */
+	public ResponsibilityKey(NameToken tokenKey) {
+		super(tokenKey);
 	}
 
 	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
+	protected boolean isComparable(NameTokenEquatable other) {
+		return other instanceof ResponsibilityKey;
 	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
+
+	@Override
+	public String getName() {
+		return _tokenKey.getName();
 	}
 }

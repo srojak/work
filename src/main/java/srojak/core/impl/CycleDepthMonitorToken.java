@@ -14,34 +14,44 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.impl;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Objects;
+
+import srojak.core.CycleDepthException;
+import srojak.core.CycleDepthMonitor;
+import srojak.core.CycleDepthStop;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
+public class CycleDepthMonitorToken 
+		implements CycleDepthMonitor {
+	private final CycleDepthStop _stop;
+	private final int _depth;
 	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
-
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
+	private CycleDepthMonitorToken(CycleDepthStop stop, int nDepth) {
+		Objects.requireNonNull(stop, "stop");
+		_stop = stop;
+		_depth = nDepth;
+		if (_depth >= _stop.getLimit()) {
+			throw new CycleDepthException(_stop.getName(), "cycle depth stop exceeded");
+		}
 	}
-
-	public ObservationWriterBase() {
-		
+	
+	public CycleDepthMonitorToken(CycleDepthStop stop) {
+		this(stop, 0);
 	}
 
 	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
+	public int getDepth() {
+		return _depth;
 	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
+
+	@Override
+	public CycleDepthMonitor increment() {
+		return new CycleDepthMonitorToken(_stop, _depth + 1);
 	}
+
 }

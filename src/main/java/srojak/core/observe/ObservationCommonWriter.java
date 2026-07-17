@@ -16,32 +16,26 @@
  */
 package srojak.core.observe;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * @author Stephen
  *
+ * The minimum interface every write-to destination must offer
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
+public interface ObservationCommonWriter {
 	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
-
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
-	}
-
-	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
-	}
+	boolean isLevelAccepted(ObsLevel level);
 	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
-	}
+	/**
+	 * Write the contents of an observation collector.
+	 * @param collector The observation collector bearing the content.
+	 * @param locOrigin The location at which the collector was created.
+	 * @param strText The text content from the collector.
+	 */
+	void write(ObservationCollector collector, SourceLocation locOrigin, String strText);
+	
+	/**
+	 * Write a diagnostic message.
+	 * @param strText The text of the message.
+	 */
+	void writeDiagnostic(String strText);
 }
