@@ -86,10 +86,10 @@ public class DebuggingBooleanLatch
 	}
 
 	@Override
-	public void setState(boolean bState) {
+	public boolean setState(boolean bState) {
 		_swDebugClass.writeTraceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName()
 				+ ", set state to " + bState);
-		super.setState(bState);
+		return super.setState(bState);
 	}
 
 	private class DebugStateChangeListener

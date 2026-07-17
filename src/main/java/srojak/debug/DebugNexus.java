@@ -106,6 +106,14 @@ public class DebugNexus
 	}
 	
 	/**
+	 * Set the alert writer for the debug switches.
+	 * @param writer The writer to receive messages at {@code ObsLevel.ALERT} or higher.
+	 */
+	public void setAlertWriter(ObservationWriter writer) {
+		DebugNexusCore.setAlertWriter(writer);
+	}
+	
+	/**
 	 * Get the log directory, if defined.
 	 * @return A {@code Path} object identifying the log directory, or {@code null} if none is defined.
 	 */

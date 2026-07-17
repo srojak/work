@@ -30,8 +30,8 @@ import srojak.core.io.PrintStreamTextRelay;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.ObservationWriterPrintStream;
 import srojak.core.reflect.PackageClassLocator;
-import srojak.core.tools.StringMethods;
 import srojak.debug.DebugProperties;
 import srojak.debug.DebugPropertyKeys;
 import srojak.debug.DebugSwitch;
@@ -50,6 +50,7 @@ public class DebugNexusCore
 	public static final String PROPERTIES_FILE_NAME;
 	public static final DateTimeFormatter FORMAT_TIME_STAMP;
 	private static ObservationWriter _writer;
+	private static ObservationWriter _writerAlert;
 	private static ObsLevel _levelDefault;
 	private static boolean _bAutoFlush;
 	private static SwitchCaptureList _listCapture;
@@ -61,9 +62,10 @@ public class DebugNexusCore
 		_listControlSets = new LinkedList<SwitchControlSetRecord>();
 		_properties = new DebugProperties();
 		PROPERTIES_FILE_NAME = "debug.properties";
-		_writer = new ObservationWriterLevelFilterPrintStream(System.err);
+		_writer = new ObservationWriterLevelFilterPrintStream(System.out);
+		_writerAlert = new ObservationWriterPrintStream(System.err);
 		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-		_levelDefault = ObsLevel.WARN;
+		_levelDefault = ObsLevel.INFO;
 		_bAutoFlush = false;
 		_listCapture = null;
 		_ctrlSetActive = null;
@@ -150,6 +152,7 @@ public class DebugNexusCore
 	}
 	
 	public static void enableBaseClassSwitches(DebugSwitchKey keyClass) {
+		@SuppressWarnings("unused")
 		TextMessageRelay relayErr = new PrintStreamTextRelay(System.err);
 		boolean bDiagCascade = _properties.isPropertyValueYesOrTrue(DIAG_SWITCH_CASCADE);
 		DebugSwitchContent swClass = _table.get(keyClass);
@@ -225,6 +228,11 @@ public class DebugNexusCore
 		_writer = writer;
 	}
 	
+	public static void setAlertWriter(ObservationWriter writer) {
+		Objects.requireNonNull(writer, "writer");
+		_writerAlert = writer;
+	}
+	
 	public static ObsLevel getDefaultLogLevel() {
 		return _levelDefault;
 	}
@@ -237,6 +245,9 @@ public class DebugNexusCore
 		_writer.write(level, strText);
 		if (_bAutoFlush) {
 			_writer.flush();
+		}
+		if (ObsLevel.ALERT.isLevelAtLeast(level)) {
+			_writerAlert.write(level, strText);
 		}
 	}
 	

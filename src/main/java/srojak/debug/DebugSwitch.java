@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationCommonWriter;
 import srojak.core.observe.TraceLevel;
 
 /**
@@ -30,7 +32,8 @@ import srojak.core.observe.TraceLevel;
  *
  * the readonly interface to a debug switch.
  */
-public interface DebugSwitch {
+public interface DebugSwitch 
+		extends ObservationCommonWriter {
 	
 	/**
 	 * Get the key for the debug switch.
@@ -137,6 +140,14 @@ public interface DebugSwitch {
 	 */
 	void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
 			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder);
+	
+	/**
+	 * Create an observation collector at a given observation level.
+	 * @param level The observation level.
+	 * @return an observation collector, which will be active if {@code level} is a level
+	 * 		for which the switch is accepting.
+	 */
+	ObservationCollector createCollector(ObsLevel level);
 	
 	/**
 	 * Create a passthrough list for use with a call to write to this debug switch.

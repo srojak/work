@@ -24,12 +24,12 @@ import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchKey;
-import srojak.debug.SwitchControlSet;
 
 /**
  * @author Stephen
@@ -70,6 +70,11 @@ public final class DebugSwitchContent
 	}
 
 	@Override
+	public boolean isLevelAccepted(ObsLevel level) {
+		return true;
+	}
+
+	@Override
 	public ObsLevel getLevel() {
 		return _level;
 	}
@@ -80,6 +85,7 @@ public final class DebugSwitchContent
 
 	@Override
 	public boolean isLevelAtLeast(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
 		return _level.isLevelAtLeast(level);
 	}
 
@@ -248,6 +254,27 @@ public final class DebugSwitchContent
 			writeSourceLocation(sb, location, _sdetail);
 			messageBuilder.accept(sb, listPassThrough);
 			DebugNexusCore.writeln(level, sb.toString());
+		}
+	}
+
+	@Override
+	public void writeDiagnostic(String strText) {
+		DebugNexusCore.writeDiagnostic(strText);		
+	}
+
+	@Override
+	public ObservationCollector createCollector(ObsLevel level) {
+		SourceLocation loc = SourceLocation.caller();
+		return new DebugObsCollectorObj(this, loc, level);
+	}
+
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+		if (isLevelAtLeast(collector.getLevel())) {
+			StringBuilder sb = new StringBuilder();
+			writeSourceLocation(sb, locOrigin, _sdetail);
+			sb.append(strText);
+			DebugNexusCore.writeln(collector.getLevel(), sb.toString());
 		}
 	}
 

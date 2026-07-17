@@ -29,11 +29,12 @@ import java.util.function.Consumer;
 import srojak.core.io.DatedFileNameMethods;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterBase;
+import srojak.core.observe.SourceLocation;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
-import srojak.core.specialized.StringBox;
 import srojak.core.tools.EnvTool;
 import srojak.debug.impl.DebugNexusCore;
 
@@ -73,6 +74,11 @@ public class DebugWriterLogFile
 	}
 
 	@Override
+	public boolean isLevelAccepted(ObsLevel level) {
+		return true;
+	}
+
+	@Override
 	public void write(ObsLevel level, String strText) {
 		_print.print(level.getName());
 		_print.print(": ");
@@ -105,6 +111,11 @@ public class DebugWriterLogFile
 	@Override
 	public void writeTimeStamp(ObsLevel level) {
 		_print.println(level.getName() + ": time " + getDateAndTimeStamp());
+	}
+	
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+		write(collector.getLevel(), strText);
 	}
 	
 	@Override
