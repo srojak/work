@@ -18,34 +18,32 @@ package srojak.utest.conditions;
 
 import java.util.Objects;
 
-import srojak.core.NameToken;
-import srojak.core.field.SetOnce;
-import srojak.core.field.SetOnceConditions;
+import srojak.numerics.OrderedComparison;
+import srojak.numerics.SinglePrecisionComparer;
 
 /**
  * @author Stephen
  *
  */
-public abstract class UnitTestCondition {
-	private final SetOnce<String> _strCondition;
-	
-	private static final NameToken _tokenCondition = NameToken.factory("UintTestCondition");
-	
-	public UnitTestCondition() {
-		_strCondition = new SetOnce<String>(_tokenCondition, SetOnceConditions.DEFAULT);
+public class UnitTestFloatValueComparison 
+		extends UnitTestConditionFloatBase {
+	private OrderedComparison _comparison;
+	private float _expected;
+
+	/**
+	 * 
+	 */
+	public UnitTestFloatValueComparison(OrderedComparison comparison, float valueExpected) {
+		super();
+		Objects.requireNonNull(comparison, "comparison");
+		_comparison = comparison;
+		_expected = valueExpected;
+		setConditionDesc("is " + comparison + " " + _expected);
 	}
 
-	public UnitTestCondition(String strCondition) {
-		Objects.requireNonNull(strCondition, "strCondition");
-		_strCondition = new SetOnce<String>(_tokenCondition, SetOnceConditions.DEFAULT);
-		_strCondition.set(strCondition);
+	@Override
+	public boolean test(float actual, SinglePrecisionComparer comparer) {
+		return _comparison.evaluate(comparer.compare(actual, _expected));
 	}
-	
-	protected void setConditionDesc(String strCondition) {
-		_strCondition.set(strCondition);
-	}
-	
-	public String getConditionDesc() {
-		return _strCondition.get();
-	}
+
 }

@@ -18,13 +18,13 @@ package srojak.utest.impl;
 
 import java.util.Objects;
 
-import srojak.core.INamed;
+import srojak.core.Named;
 import srojak.core.observe.ObsLevel;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestOptions;
 
 public abstract class UnitTestSeriesBase
-		implements INamed {
+		implements Named {
 	private final String _strName;
 	protected final UnitTestOptions _options;
 	private int _nFailed;

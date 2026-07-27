@@ -23,6 +23,8 @@ import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
 import srojak.numerics.DoubleComparer;
 import srojak.numerics.DoublePrecisionComparer;
+import srojak.numerics.FloatComparer;
+import srojak.numerics.SinglePrecisionComparer;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 
@@ -35,6 +37,7 @@ public class UnitTestOptionsBase {
 	private boolean _bStopOnFailure;
 	private boolean _bShowStackOnExcepts;
 	private DoublePrecisionComparer _comparerDouble;
+	private SinglePrecisionComparer _comparerFloat;
 
 	public UnitTestOptionsBase() {
 		ObservationWriterLevelFilterPrintStream writer = new ObservationWriterLevelFilterPrintStream(System.err);
@@ -43,6 +46,7 @@ public class UnitTestOptionsBase {
 		_bStopOnFailure = false;	
 		_bShowStackOnExcepts = false;
 		_comparerDouble = new DoubleComparer(1.0e-10);
+		_comparerFloat = new FloatComparer((float) 1.0e-10);
 	}
 	
 	/**
@@ -102,6 +106,15 @@ public class UnitTestOptionsBase {
 	public void setDoubleComparer(DoublePrecisionComparer comparer) {
 		Objects.requireNonNull(comparer, "comparer");
 		_comparerDouble = comparer;
+	}
+	
+	public SinglePrecisionComparer getFloatComparer() {
+		return _comparerFloat;
+	}
+	
+	public void setFloatComparer(SinglePrecisionComparer comparer) {
+		Objects.requireNonNull(comparer, "comparer");
+		_comparerFloat = comparer;
 	}
 	
 	void writeMessage(ObsLevel level, String strText) {

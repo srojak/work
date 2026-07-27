@@ -18,7 +18,7 @@ package srojak.utest.impl;
 
 import java.util.Objects;
 
-import srojak.core.INamed;
+import srojak.core.Named;
 import srojak.core.observe.ObsLevel;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
@@ -28,7 +28,7 @@ import srojak.utest.UnitTestSeries;
  *
  */
 public abstract class UTestInstance 
-		implements INamed {
+		implements Named {
 	private final UnitTestSeries _utest;
 	private final String _strInstance;
 	private TestOutcome _outcome;

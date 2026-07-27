@@ -29,6 +29,7 @@ import srojak.utest.helpers.UnitTestConditionComparison;
 import srojak.utest.helpers.UnitTestEqualsMethods;
 import srojak.utest.impl.UTestCommonMessages;
 import srojak.utest.impl.UTestInstCondDouble;
+import srojak.utest.impl.UTestInstCondFloat;
 import srojak.utest.impl.UTestInstCondInt;
 import srojak.utest.impl.UTestInstCondLong;
 import srojak.utest.impl.UTestInstDyadic;
@@ -53,7 +54,7 @@ import srojak.utest.instances.UnitTestSupervisedVoid;
 public class UnitTestSeries
 		extends UnitTestSeriesBase {
 	
-	public static final ObsLevel LEVEL_NON_FAILURE = ObsLevel.NOTICE;
+	public static final ObsLevel LEVEL_NON_FAILURE = ObsLevel.INFO;
 	
 	/**
 	 * Constructor
@@ -90,7 +91,7 @@ public class UnitTestSeries
 		StringBuilder sb = UTestCommonMessages.startMessageLine(this);
 		sb.append(": ");
 		sb.append(strText);
-		writeMessageLine(ObsLevel.NOTICE, sb.toString());
+		writeMessageLine(ObsLevel.INFO, sb.toString());
 	}
 
 	/**
@@ -153,7 +154,7 @@ public class UnitTestSeries
 	}
 	
 	/**
-	 * Evaluate a test where the result is a {@code int} value.
+	 * Evaluate a test where the result is a {@code long} value.
 	 * @param strTest The name of the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param condition The condition to evaluate for the actual value.
@@ -164,6 +165,26 @@ public class UnitTestSeries
 			UnitTestConditionLong condition, long actual) {
 		UTestInstCondLong instance
 			= new UTestInstCondLong(this, strTest, strValueName);
+		instance.execute(condition, actual);
+		TestOutcome outcome = instance.getOutcome();
+		// instance writes
+		checkStopOnFailure(strTest, outcome);
+		return outcome;
+	}
+	
+	/**
+	 * Evaluate a test where the result is a {@code float} value.
+	 * @param strTest The name of the test instance.
+	 * @param strValueName The name of the value under test.
+	 * @param condition The condition to evaluate for the actual value.
+	 * @param actual The actual float value.
+	 * @return the {@code TestOutcome} for the test.
+	 */
+	public TestOutcome expectValueWhere(String strTest, String strValueName,
+			UnitTestConditionFloat condition, float actual) {
+		UTestInstCondFloat instance
+			= new UTestInstCondFloat(this, strTest, strValueName,
+					_options.getFloatComparer());
 		instance.execute(condition, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes

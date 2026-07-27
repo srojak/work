@@ -18,34 +18,36 @@ package srojak.utest.conditions;
 
 import java.util.Objects;
 
-import srojak.core.NameToken;
-import srojak.core.field.SetOnce;
-import srojak.core.field.SetOnceConditions;
+import srojak.numerics.ConditionSense;
+import srojak.numerics.SinglePrecisionComparer;
+import srojak.numerics.intervals.IntervalFloat;
 
 /**
  * @author Stephen
  *
  */
-public abstract class UnitTestCondition {
-	private final SetOnce<String> _strCondition;
-	
-	private static final NameToken _tokenCondition = NameToken.factory("UintTestCondition");
-	
-	public UnitTestCondition() {
-		_strCondition = new SetOnce<String>(_tokenCondition, SetOnceConditions.DEFAULT);
+public class UnitTestFloatIntervalComparison 
+		extends UnitTestConditionFloatBase {
+	private final IntervalFloat _interval;
+	private final ConditionSense _sense;
+
+	/**
+	 * 
+	 */
+	public UnitTestFloatIntervalComparison(ConditionSense sense, IntervalFloat interval) {
+		super();
+		Objects.requireNonNull(interval);
+		if (interval.isDegenerate()) {
+			throw new IllegalArgumentException("interval is degenerate");
+		}
+		_interval = interval;
+		_sense = sense;
+		setConditionDesc(sense.getVerb() + " in interval " + interval);
 	}
 
-	public UnitTestCondition(String strCondition) {
-		Objects.requireNonNull(strCondition, "strCondition");
-		_strCondition = new SetOnce<String>(_tokenCondition, SetOnceConditions.DEFAULT);
-		_strCondition.set(strCondition);
+	@Override
+	public boolean test(float actual, SinglePrecisionComparer comparer) {
+		return _sense.isExpectedResult(_interval.isInInterval(actual, comparer));
 	}
-	
-	protected void setConditionDesc(String strCondition) {
-		_strCondition.set(strCondition);
-	}
-	
-	public String getConditionDesc() {
-		return _strCondition.get();
-	}
+
 }
