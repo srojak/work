@@ -20,7 +20,7 @@ import java.awt.Component;
 
 import javax.swing.JList;
 
-import srojak.cdo.swing.base.LabelCellRendererBase;
+import srojak.cdo.swing.lists.LabelListCellRendererBase;
 import srojak.core.TextRepresentation;
 
 /**
@@ -29,7 +29,7 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public class SimpleListCellRenderer<E> 
-		extends LabelCellRendererBase<E> {
+		extends LabelListCellRendererBase<E> {
 	
 	public SimpleListCellRenderer(TextRepresentation repText) {
 		super(repText);

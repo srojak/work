@@ -16,15 +16,29 @@
  */
 package srojak.cdo;
 
-import java.awt.event.ItemListener;
+import java.awt.Point;
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public interface SendsItemEvents {
+public class PointOffset {
+	public final int _dx;
+	public final int _dy;
 	
-	 void addItemListener(ItemListener listener);
-	 
-	 void removeItemListener(ItemListener listener);
+	public PointOffset(int dx, int dy) {
+		_dx = dx;
+		_dy = dy;
+	}
+	
+	public Point moveFrom(Point ptFrom) {
+		Objects.requireNonNull(ptFrom, "ptFrom");
+		return new Point(ptFrom.x + _dx, ptFrom.y + _dy);
+	}
+
+	@Override
+	public String toString() {
+		return "PointOffset [dx=" + _dx + ", dy=" + _dy + "]";
+	}
 }

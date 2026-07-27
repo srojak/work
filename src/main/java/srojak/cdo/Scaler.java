@@ -25,7 +25,8 @@ import srojak.numerics.intervals.IntervalDouble;
  * @author Stephen
  *
  */
-public interface Scaler {
+public interface Scaler
+		extends ScaleChangeEventOriginator {
 	
 	/**
 	 * Get the current scale.
@@ -56,16 +57,4 @@ public interface Scaler {
 	 * @return The interval limiting the scale range, or {@code null} if there is no limit.
 	 */
 	IntervalDouble getLimits();
-	
-	/**
-	 * Add a {@code ScaleChangeListener} to the object.
-	 * @param listener The listener to add.
-	 */
-	void addScaleChangeListener(ScaleChangeListener listener);
-	
-	/**
-	 * Remove a {@code ScaleChangeListener} from the object.
-	 * @param listener The listener to remove.
-	 */
-	void removeScaleChangeListener(ScaleChangeListener listener);
 }

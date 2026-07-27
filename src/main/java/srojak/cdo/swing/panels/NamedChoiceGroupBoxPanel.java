@@ -23,7 +23,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -32,6 +34,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import srojak.cdo.GridBagConstraintsTool;
+import srojak.cdo.events.AWTEventMethods;
 import srojak.cdo.swing.functional.ControlModelManager;
 import srojak.cdo.swing.models.DefaultNamedChoiceModel;
 import srojak.cdo.swing.models.NameIdentifiedButtonModel;
@@ -40,9 +43,12 @@ import srojak.core.NameIdentifiedAndLabeled;
 import srojak.core.NameToken;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
+import srojak.core.events.NameAndStateChangeEvent;
+import srojak.core.events.NameAndStateChangeListener;
 import srojak.core.events.ObjectOwnershipEvent;
 import srojak.core.events.ObjectOwnershipListener;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.TraceLevel;
 import srojak.core.tools.ListMethods;
 import srojak.core.tools.StringMethods;
 import srojak.debug.DebugNexus;
@@ -59,7 +65,8 @@ import srojak.events.ObjectValueChangeListener;
  */
 @SuppressWarnings("serial")
 public class NamedChoiceGroupBoxPanel
-		extends GroupBoxPanel {
+		extends GroupBoxPanel
+		implements NamedChoicePanel {
 	private final CommonEventListenerStore _listeners;
 	private final LinkedList<NameIdentifiedButtonModel> _listButtons;
 	private final ControlModelManager<NamedChoiceModel> _model;
@@ -124,7 +131,9 @@ public class NamedChoiceGroupBoxPanel
 				model.addItemListener(_listenerModel);
 				model.addCollectionChangeListener(_listenerModel);
 				model.addObjectValueChangeListener(_listenerModel);
+				model.addNameAndStateChangeListener(_listenerModel);
 				
+				mergeRadioButtons(model.getChoices());
 			}
 
 			@Override
@@ -133,7 +142,8 @@ public class NamedChoiceGroupBoxPanel
 				model.removeChangeListener(_listenerModel);
 				model.removeItemListener(_listenerModel);
 				model.removeCollectionChangeListener(_listenerModel);
-				model.removeObjectValueChangeListener(_listenerModel);				
+				model.removeObjectValueChangeListener(_listenerModel);	
+				model.removeNameAndStateChangeListener(_listenerModel);
 			}
 			
 		});
@@ -144,10 +154,12 @@ public class NamedChoiceGroupBoxPanel
 		_toolGBC.setAnchor(GridBagConstraints.WEST);
 	}
 	
+	@Override
 	public NamedChoiceModel getModel() {
 		return _model.getModel();
 	}
 	
+	@Override
 	public void setModel(NamedChoiceModel model) {
 		_model.setModel(model);
 	}
@@ -164,9 +176,23 @@ public class NamedChoiceGroupBoxPanel
 			_ptNextLoc.x = 0;
 			_ptNextLoc.y++;
 		}
-		model.addActionListener(new ButtonActionListener());
+		ButtonActionListener listener = new ButtonActionListener();
+		model.addActionListener(listener);
+		model.addItemListener(listener);
 		NameIdentifiedButtonModel nib = new NameIdentifiedButtonModel(item.getName(), model);
 		_listButtons.add(nib);
+	}
+	
+	private void mergeRadioButtons(Collection<NameIdentifiedAndLabeled> items) {	
+		List<NameIdentifiedAndLabeled> listNew = new LinkedList<NameIdentifiedAndLabeled>();
+		for (NameIdentifiedAndLabeled item : items) {
+			if (!ListMethods.isTrueForAny(_listButtons, i -> i.isNameEqual(item.getName()))) {
+				listNew.add(item);
+			}
+		}
+		for (NameIdentifiedAndLabeled item : listNew) {
+			addRadioButton(item);
+		}
 	}
 	
 	private NameIdentifiedButtonModel findButtonModelByName(String strName) {
@@ -180,7 +206,7 @@ public class NamedChoiceGroupBoxPanel
 	}
 	
 	private class ButtonActionListener
-			implements ActionListener {
+			implements ActionListener, ItemListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -191,12 +217,26 @@ public class NamedChoiceGroupBoxPanel
 			NamedChoiceModel model = _model.getModel();
 			model.setSelectionByName(strName);
 		}
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			ButtonModel modelButton = (ButtonModel) e.getSource();
+			String strName = modelButton.getActionCommand();
+			_swDebugClass.buildAndWrite(ObsLevel.DEBUG, sb -> {
+				sb.append("panel ");
+				sb.append(getNameTag());
+				sb.append(" button ");
+				sb.append(strName);
+				sb.append(" ");
+				AWTEventMethods.formatItemEvent(sb, e);
+			});
+		}
 		
 	}
 	
 	private class ModelListener
 			implements ChangeListener, ItemListener, CollectionChangeListener,
-				ObjectValueChangeListener {
+				ObjectValueChangeListener, NameAndStateChangeListener {
 
 		@Override
 		public void stateChanged(ChangeEvent e) {
@@ -256,8 +296,31 @@ public class NamedChoiceGroupBoxPanel
 
 		@Override
 		public void update(ObjectValueChangeEvent event) {
-			// TODO Auto-generated method stub
+			_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> event.toDataString());
 			
+		}
+
+		@Override
+		public void stateChanged(NameAndStateChangeEvent event) {
+			NameIdentifiedButtonModel nib 
+				= findButtonModelByName(event.getName());
+			_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, 
+					() -> event.toDataString());
+			if (nib == null) {
+				return;
+			}
+			if (event.getState()) {
+				nib.setEnabled(true);
+			} else {
+				nib.setEnabled(false);
+				ButtonModel modelButton = nib.getModel();
+				_swDebugClass.write(ObsLevel.DEBUG2, 
+						() -> "button selected state is " + modelButton.isSelected());
+				if (modelButton.isSelected()) {
+					modelButton.setSelected(false);
+					_group.clearSelection();
+				}
+			}
 		}
 		
 	}

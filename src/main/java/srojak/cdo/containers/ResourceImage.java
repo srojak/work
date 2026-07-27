@@ -59,7 +59,7 @@ public class ResourceImage {
 		Objects.requireNonNull(strName, "strName");
 		_classOwner = classOwner;
 		_strName = strName;
-		_image = new SetOnce<Image>("Image", SetOnceConditions.DEFAULT);
+		_image = new SetOnce<Image>(SetOnceConditions.DEFAULT);
 	}
 	
 	public XResult load() {

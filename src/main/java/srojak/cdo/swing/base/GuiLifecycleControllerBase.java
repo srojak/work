@@ -47,9 +47,9 @@ import srojak.events.routed.RoutesStateChangeEvents;
  */
 public abstract class GuiLifecycleControllerBase
 		implements LifeCycleCloseable, RoutesStateChangeEvents {
+	protected final CommonEventListenerList _listeners;
 	private final InstanceKey _instanceEvent;
 	private final DecoratedNamedObjectMap<DxButtonModelFacade> _mapButtonModels;
-	private final CommonEventListenerList _listeners;
 	private final BooleanLatch _latchWindow;
 	
 	private static final DebugSwitch _swDebugClass;
@@ -103,14 +103,6 @@ public abstract class GuiLifecycleControllerBase
 		return _mapButtonModels.get(tokenKey);
 	}
 	
-	protected <T extends EventListener> void addListener(Class<T> t, T listener) {
-		_listeners.add(t,  listener);
-	}
-	
-	protected <T extends EventListener> void removeListener(Class<T> t, T listener) {
-		_listeners.remove(t, listener);
-	}
-	
 	protected <T extends EventListener> void forEachListener(Class<T> t, Consumer<T> consumer) {
 		_listeners.forEach(t, consumer);
 	}
@@ -132,6 +124,8 @@ public abstract class GuiLifecycleControllerBase
 			
 		});
 	}
+	
+	public abstract boolean hasDisplayable();
 	
 	protected void releaseIncomingListeners() {
 		_listeners.clear();

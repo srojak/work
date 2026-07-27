@@ -19,7 +19,7 @@ package srojak.cdo.swing;
 import javax.swing.ListSelectionModel;
 
 import srojak.cdo.swing.models.ModifiableListModel;
-import srojak.core.specialized.ListIndexRange;
+import srojak.mantle.ListIndexRange;
 
 /**
  * @author Stephen

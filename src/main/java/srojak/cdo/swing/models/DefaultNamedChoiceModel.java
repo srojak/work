@@ -21,6 +21,10 @@ import java.util.Objects;
 
 import srojak.cdo.swing.base.SelectionControlModelBase;
 import srojak.core.NameIdentifiedAndLabeled;
+import srojak.core.events.NameAndStateChangeEvent;
+import srojak.core.events.NameAndStateChangeListener;
+import srojak.events.CollectionSizeChangeEvent;
+import srojak.events.CollectionSizeChangeListener;
 import srojak.events.ObjectValueChangeEvent;
 import srojak.events.ObjectValueChangeListener;
 
@@ -37,6 +41,11 @@ public class DefaultNamedChoiceModel
 	}
 
 	@Override
+	public boolean hasSelection() {
+		return !isSelectionEmpty();
+	}
+
+	@Override
 	public NameIdentifiedAndLabeled getSelection() {
 		return getFirstSelectedItem();
 	}
@@ -48,6 +57,8 @@ public class DefaultNamedChoiceModel
 		ObjectValueChangeEvent event 
 				= new ObjectValueChangeEvent(this, selection);
 		_listeners.forEach(ObjectValueChangeListener.class, ls -> ls.update(event));
+		CollectionSizeChangeEvent eventSize = new CollectionSizeChangeEvent(this, getSelectionCount());
+		_listeners.forEach(CollectionSizeChangeListener.class, ls -> ls.sizeChanged(eventSize));
 	}
 
 	@Override
@@ -64,6 +75,20 @@ public class DefaultNamedChoiceModel
 	}
 
 	@Override
+	public void setChoiceEnabled(String strName, boolean bState) {
+		Objects.requireNonNull(strName, "strName");
+		NameIdentifiedAndLabeled item = findChoice(i -> i.isNameEqual(strName));
+		if (item != null) {
+			NameAndStateChangeEvent event = new NameAndStateChangeEvent(this, strName, bState);
+			_listeners.forEach(NameAndStateChangeListener.class, ls -> ls.stateChanged(event));
+			if (!bState) {
+				// is this item selected?
+				removeSelectionIfPresent(item);
+			}
+		}
+	}
+
+	@Override
 	public void addObjectValueChangeListener(ObjectValueChangeListener listener) {
 		_listeners.add(ObjectValueChangeListener.class, listener);		
 	}
@@ -71,5 +96,25 @@ public class DefaultNamedChoiceModel
 	@Override
 	public void removeObjectValueChangeListener(ObjectValueChangeListener listener) {
 		_listeners.remove(ObjectValueChangeListener.class, listener);
+	}
+
+	@Override
+	public void addNameAndStateChangeListener(NameAndStateChangeListener listener) {
+		_listeners.add(NameAndStateChangeListener.class, listener);
+	}
+
+	@Override
+	public void removeNameAndStateChangeListener(NameAndStateChangeListener listener) {
+		_listeners.remove(NameAndStateChangeListener.class, listener);
+	}
+
+	@Override
+	public void addCollectionSizeChangeListener(CollectionSizeChangeListener listener) {
+		_listeners.add(CollectionSizeChangeListener.class, listener);
+	}
+
+	@Override
+	public void removeCollectionSizeChangeListener(CollectionSizeChangeListener listener) {
+		_listeners.remove(CollectionSizeChangeListener.class, listener);
 	}
 }

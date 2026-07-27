@@ -21,9 +21,9 @@ import java.awt.Container;
 import java.util.List;
 import java.util.Objects;
 
-import srojak.core.functional.TreeDepthArgConsumer;
-import srojak.core.functional.TreeDepthConsumer;
-import srojak.core.functional.TreeDepthPredicate;
+import srojak.mantle.functional.TreeDepthArgConsumer;
+import srojak.mantle.functional.TreeDepthConsumer;
+import srojak.mantle.functional.TreeDepthPredicate;
 
 /**
  * @author Stephen

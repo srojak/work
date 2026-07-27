@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import javax.swing.AbstractListModel;
 
-import srojak.core.collections.SortedList;
+import srojak.mantle.collections.SortedList;
 
 /**
  * @author Stephen

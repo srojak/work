@@ -16,8 +16,10 @@
  */
 package srojak.cdo.swing;
 
+import java.awt.Dimension;
 import java.util.Objects;
 
+import javax.swing.JLabel;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -58,5 +60,11 @@ public class SwingUIMethods {
 			result.caughtException(exc);
 		}
 		return result;
+	}
+	
+	public static int estimateTextSizeAllowance(String strLargeText, int nPadding) {
+		JLabel label = new JLabel(strLargeText);
+		Dimension szPreferred = label.getPreferredSize();
+		return szPreferred.width + nPadding;
 	}
 }

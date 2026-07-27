@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing;
+package srojak.cdo.swing.frames;
 
 import java.awt.Image;
 import java.awt.Window;
@@ -49,8 +49,11 @@ public class AppFrameContainer {
 		return _imageIcon;
 	}
 	
-	public void makeVisible() {
+	public void prepare() {
 		_frame.pack();
+	}
+	
+	public void makeVisible() {
 		_frame.setVisible(true);		
 	}
     

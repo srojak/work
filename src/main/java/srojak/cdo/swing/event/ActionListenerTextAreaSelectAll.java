@@ -18,8 +18,6 @@ package srojak.cdo.swing.event;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.Icon;
-
 import srojak.cdo.TextMessageComponent;
 import srojak.cdo.swing.base.TextAreaAbstractActionBase;
 
@@ -27,7 +25,6 @@ import srojak.cdo.swing.base.TextAreaAbstractActionBase;
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
 public class ActionListenerTextAreaSelectAll
 		extends TextAreaAbstractActionBase {
 
@@ -36,23 +33,6 @@ public class ActionListenerTextAreaSelectAll
 	 */
 	public ActionListenerTextAreaSelectAll(TextMessageComponent text) {
 		super(text);
-	}
-
-	/**
-	 * @param text
-	 * @param name
-	 */
-	public ActionListenerTextAreaSelectAll(TextMessageComponent text, String name) {
-		super(text, name);
-	}
-
-	/**
-	 * @param text
-	 * @param name
-	 * @param icon
-	 */
-	public ActionListenerTextAreaSelectAll(TextMessageComponent text, String name, Icon icon) {
-		super(text, name, icon);
 	}
 
 	@Override

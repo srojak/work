@@ -17,6 +17,7 @@
 package srojak.cdo.events;
 
 import java.awt.ItemSelectable;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.Objects;
 
@@ -32,5 +33,50 @@ public class AWTEventMethods {
 		Objects.requireNonNull(objItem, "objItem");
 		return new ItemEvent(originator, ItemEvent.ITEM_STATE_CHANGED, objItem,
 				bIsSelected ? ItemEvent.SELECTED : ItemEvent.DESELECTED);
+	}
+	
+	private static void buildItemEventFormat(StringBuilder sb, ItemEvent event) {
+		if (event.getID() == ItemEvent.ITEM_STATE_CHANGED) {
+			sb.append("state change: state=");
+			switch (event.getStateChange()) {
+			case ItemEvent.SELECTED:
+				sb.append("SELECTED");
+				return;
+				
+			case ItemEvent.DESELECTED:
+				sb.append("DESELECTED");
+				return;
+				
+			default:
+				sb.append(event.getStateChange());
+				return;
+			}
+		} else {
+			sb.append("ID=");
+			sb.append(event.getID());
+			sb.append(", state=");
+			sb.append(event.getStateChange());
+			return;
+		}
+	}
+	
+	public static void formatItemEvent(StringBuilder sb, ItemEvent event) {
+		Objects.requireNonNull(sb, "sb");
+		Objects.requireNonNull(event, "event");
+		buildItemEventFormat(sb, event);
+	}
+	
+	public static String formatItemEvent(ItemEvent event) {
+		Objects.requireNonNull(event, "event");
+		StringBuilder sb = new StringBuilder();
+		buildItemEventFormat(sb, event);
+		return sb.toString();
+	}
+	
+	public static ActionEvent copyActionEvent(Object objRelay, ActionEvent event) {
+		Objects.requireNonNull(objRelay, "objRelay");
+		Objects.requireNonNull(event, "event");
+		return new ActionEvent(objRelay, event.getID(), event.getActionCommand(), 
+				event.getWhen(), event.getModifiers());			
 	}
 }

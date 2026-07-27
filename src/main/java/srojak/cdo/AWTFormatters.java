@@ -36,16 +36,16 @@ public class AWTFormatters {
 	
 	public static String formatPoint(Point pt) {
 		Objects.requireNonNull(pt);
-		return "x=" + pt.x + ",y=" + pt.y;
+		return "x=" + pt.x + ", y=" + pt.y;
 	}
 	
 	public static String formatDimension(Dimension dm) {
 		Objects.requireNonNull(dm);
-		return "width=" + dm.width + ",height=" + dm.height;
+		return "width=" + dm.width + ", height=" + dm.height;
 	}
 	
 	public static String formatRectangle(Rectangle r) {
 		Objects.requireNonNull(r);
-		return "x=" + r.x + ",y=" + r.y + ",width=" + r.width + ",height=" + r.height;
+		return "x=" + r.x + ", y=" + r.y + ", width=" + r.width + ", height=" + r.height;
 	}
 }

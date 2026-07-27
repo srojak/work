@@ -22,7 +22,7 @@ import java.util.Objects;
 import javax.swing.JList;
 
 import srojak.cdo.ColorPair;
-import srojak.cdo.swing.base.LabelCellRendererBase;
+import srojak.cdo.swing.lists.LabelListCellRendererBase;
 import srojak.core.TextRepresentation;
 
 /**
@@ -31,7 +31,7 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public class ColorListCellRenderer<E>
-		extends LabelCellRendererBase<E> {
+		extends LabelListCellRendererBase<E> {
 	private final ColorPair _colorsUnselected;
 	private final ColorPair _colorsSelected;
 

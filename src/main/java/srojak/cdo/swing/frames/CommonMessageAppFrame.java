@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.base;
+package srojak.cdo.swing.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -34,14 +34,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.ScrollPaneConstants;
 
-import srojak.cdo.swing.AppFrameContainer;
+import srojak.cdo.containers.ResourceImage;
 import srojak.cdo.swing.ExitControl;
 import srojak.cdo.swing.event.ActionListenerTextAreaCopy;
 import srojak.cdo.swing.event.ActionListenerTextAreaSelectAll;
 import srojak.cdo.swing.functional.AppFrameExitControl;
 import srojak.cdo.swing.panels.ScrollingMessagePanel;
 import srojak.cdo.swing.status.StatusBar;
+import srojak.cdo.swing.status.StatusBarTextItem;
 import srojak.core.TextMessageRelay;
+import srojak.core.result.XResult;
 /**
  * @author Stephen
  *
@@ -54,6 +56,7 @@ public class CommonMessageAppFrame
 	private final StatusBar _barStatus;
     private final ScrollingMessagePanel _areaText;
     private final AppFrameExitControl _ctlExit;
+    private final ResourceImage _resCommonIcon;
     
     public CommonMessageAppFrame(String strAppName) {
 		JFrame frameMain = new JFrame(strAppName);
@@ -75,6 +78,24 @@ public class CommonMessageAppFrame
         // put in status bar
         _barStatus = new StatusBar(StatusBar.ClassToken);
         boxLower.add(_barStatus);
+        
+        _resCommonIcon = new ResourceImage(CommonMessageAppFrame.class, "/CDOAppIcon.png");
+    }
+    
+    public void useCommonAppIcon() {
+    	XResult result = _resCommonIcon.load();
+    	if (result.isValid()) {
+    		_ctnrFrame.setIconImage(_resCommonIcon.getImage());
+    	}
+    }
+    
+    public StatusBarTextItem addStatusBarTextItem(int nWidth) {
+    	if (nWidth < 10) {
+    		throw new IllegalArgumentException("allowable width is too small");
+    	}
+    	StatusBarTextItem itemStatus = new StatusBarTextItem(nWidth, "Ready");
+        _barStatus.add(itemStatus);
+        return itemStatus;
     }
     
     protected ExitControl getExitControl() {
@@ -181,12 +202,18 @@ public class CommonMessageAppFrame
     	return _ctnrFrame.showSaveFileDialog(chooser);
     }
     
+    protected void doBeforeRendering() {
+       	// base class method does nothing
+    }
+    
     protected void doOnceRunning() {
     	// base class method does nothing
     }
 
 	@Override
 	public void run() {
+		_ctnrFrame.prepare();
+		doBeforeRendering();
 		_ctnrFrame.makeVisible();
 		doOnceRunning();
 	}

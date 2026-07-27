@@ -21,6 +21,7 @@
 module srojak.cdo.swing {
 	requires transitive java.desktop;
 	requires transitive srojak.core;
+	requires transitive srojak.mantle;
 	requires transitive srojak.numerics;
 	requires transitive srojak.valuestore;
 	requires transitive srojak.events;
@@ -32,8 +33,11 @@ module srojak.cdo.swing {
 	exports srojak.cdo.swing.collections;
 	exports srojak.cdo.swing.components;
 	exports srojak.cdo.swing.event;
+	exports srojak.cdo.swing.frames;
 	exports srojak.cdo.swing.functional;
+	exports srojak.cdo.swing.lists;
 	exports srojak.cdo.swing.models;
 	exports srojak.cdo.swing.panels;
 	exports srojak.cdo.swing.status;
+	exports srojak.cdo.swing.trees;
 }

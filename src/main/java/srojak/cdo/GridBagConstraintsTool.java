@@ -57,6 +57,14 @@ public class GridBagConstraintsTool {
 		_constraints.gridy = nY;
 	}
 	
+	/**
+	 * Controls where to place the component when the component is smaller than the space
+	 * allowed for it.
+	 * 
+	 * @param anchor The anchor constant to use.
+	 *  
+	 * @see java.awt.GridBagConstraints.anchor
+	 */
 	public void setAnchor(int anchor) {
 		_constraints.anchor = anchor;
 	}
@@ -72,6 +80,8 @@ public class GridBagConstraintsTool {
 	 * <li>VERTICAL: Make the component tall enough to fill its display area vertically, but do not change its width.
 	 * <li>BOTH: Make the component fill its display area entirely.
 	 * </ul>
+	 *  
+	 * @see java.awt.GridBagConstraints.fill
 	 */
 	public void setFill(int nFill) {
 		_constraints.fill = nFill;

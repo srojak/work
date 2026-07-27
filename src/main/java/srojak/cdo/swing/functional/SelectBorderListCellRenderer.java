@@ -23,7 +23,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.border.Border;
 
-import srojak.cdo.swing.base.LabelCellRendererBase;
+import srojak.cdo.swing.lists.LabelListCellRendererBase;
 import srojak.core.TextRepresentation;
 
 /**
@@ -32,7 +32,7 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public class SelectBorderListCellRenderer<E>
-		extends LabelCellRendererBase<E> {
+		extends LabelListCellRendererBase<E> {
 	private final Border _borderSelected;
 
 	private static final Border _borderEmpty = BorderFactory.createEmptyBorder();

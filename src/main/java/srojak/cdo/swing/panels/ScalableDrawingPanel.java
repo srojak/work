@@ -19,14 +19,14 @@ package srojak.cdo.swing.panels;
 import java.awt.Container;
 import java.awt.Dimension;
 
+import srojak.cdo.ScaleControl;
 import srojak.cdo.Scaler;
 import srojak.cdo.events.ScaleChangeEvent;
 import srojak.cdo.events.ScaleChangeListener;
+import srojak.cdo.swing.ScalableDrawingComponent;
 import srojak.cdo.swing.functional.CatalogScaleControl;
 import srojak.cdo.swing.functional.ScrollableParentControl;
 import srojak.core.NameToken;
-import srojak.numerics.DoubleMethods;
-import srojak.numerics.OrderedComparison;
 
 /**
  * @author Stephen
@@ -34,9 +34,10 @@ import srojak.numerics.OrderedComparison;
  */
 @SuppressWarnings("serial")
 public class ScalableDrawingPanel
-		extends NameTokenTagPanel {
-	private final CatalogScaleControl _scaler;
-	private final ScrollableParentControl _scroll;
+		extends NameTokenTagPanel
+		implements ScalableDrawingComponent {
+	protected final CatalogScaleControl _scaler;
+	protected final ScrollableParentControl _scroll;
 
 	/**
 	 * 
@@ -60,18 +61,19 @@ public class ScalableDrawingPanel
 		_scroll = new ScrollableParentControl(this);
 	}
 	
+	@Override
 	public ScrollableParentControl getScrollControl() {
 		return _scroll;
 	}
 	
+	@Override
 	public Scaler getScaler() {
 		return _scaler;
 	}
 
+	@Override
 	public void setScale(double dScale) {
-		if (dScale <= 0.0d) {
-			throw new IllegalArgumentException("scale is nonpositive");
-		}
+		ScaleControl.validateScalePositive(dScale, "dScale");
 		_scaler.setScale(dScale);
 		Container container = getParent();
 		if (container != null) {
@@ -80,10 +82,9 @@ public class ScalableDrawingPanel
 		}
 	}
 	
+	@Override
 	public void multiplyScaleBy(double dFactor) {
-		if (DoubleMethods.compare(OrderedComparison.LE, dFactor, 0.0d)) {
-			throw new IllegalArgumentException("dFactor is nonpositive");
-		}
+		ScaleControl.validateScalePositive(dFactor, "dFactor");
 		
 		double dScale = _scaler.getScale();
 		_scaler.setScale(dScale * dFactor);

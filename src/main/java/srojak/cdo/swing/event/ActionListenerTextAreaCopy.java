@@ -21,8 +21,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
-import javax.swing.Icon;
-
 import srojak.cdo.TextMessageComponent;
 import srojak.cdo.swing.base.TextAreaAbstractActionBase;
 
@@ -30,7 +28,6 @@ import srojak.cdo.swing.base.TextAreaAbstractActionBase;
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
 public class ActionListenerTextAreaCopy
 		extends TextAreaAbstractActionBase {
 
@@ -39,23 +36,6 @@ public class ActionListenerTextAreaCopy
 	 */
 	public ActionListenerTextAreaCopy(TextMessageComponent text) {
 		super(text);
-	}
-
-	/**
-	 * @param text
-	 * @param name
-	 */
-	public ActionListenerTextAreaCopy(TextMessageComponent text, String name) {
-		super(text, name);
-	}
-
-	/**
-	 * @param text
-	 * @param name
-	 * @param icon
-	 */
-	public ActionListenerTextAreaCopy(TextMessageComponent text, String name, Icon icon) {
-		super(text, name, icon);
 	}
 
 	@Override

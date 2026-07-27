@@ -19,6 +19,8 @@ package srojak.cdo.swing.functional;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.Objects;
@@ -28,15 +30,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
 import srojak.cdo.swing.base.GraphicsControlBase;
+import srojak.core.events.OperationCodes;
+import srojak.core.events.OperationStateChangeEvent;
+import srojak.core.events.OperationStateChangeListener;
+import srojak.core.events.OperationStateChangeOriginator;
+import srojak.core.logic.BooleanLatch;
 import srojak.core.tools.BitMethods;
 
 /**
  * @author Stephen
  *
+ * A control that recognizes when the owning component is made a child of a
+ * 		{@code JScrollPane} and provides information and events to the child about the parent.
  */
 public class ScrollableParentControl
-			extends GraphicsControlBase {
+			extends GraphicsControlBase
+			implements OperationStateChangeOriginator {
 	private final JComponent _owner;
+	private final BooleanLatch _latchIsScrolling;
+	private AdjustmentListener _listenerAdjust;
 	private JScrollPane _scrollPane;
 	private JViewport _viewport;
 
@@ -46,9 +58,11 @@ public class ScrollableParentControl
 	public ScrollableParentControl(JComponent owner) {
 		Objects.requireNonNull(owner, "owner");
 		_owner = owner;
+		_latchIsScrolling = new BooleanLatch();
 		_scrollPane = null;
 		_viewport = null;
 		_owner.addHierarchyListener(new ScrollParentListener());
+		_listenerAdjust = null;
 	}
 	
 	public boolean hasScrollPane() {
@@ -73,6 +87,25 @@ public class ScrollableParentControl
 		}
 	}
 	
+	public boolean isScrolling() {
+		return _latchIsScrolling.getState();
+	}
+	
+	private void sendOperationStateChange(int opcode, boolean bState) {
+		OperationStateChangeEvent event = new OperationStateChangeEvent(this, opcode, bState);
+		forEachListener(OperationStateChangeListener.class, ls -> ls.operationStateChanged(event));
+	}
+
+	@Override
+	public void addOperationStateChangeListener(OperationStateChangeListener listener) {
+		addListener(OperationStateChangeListener.class, listener);	
+	}
+
+	@Override
+	public void removeOperationStateChangeListener(OperationStateChangeListener listener) {
+		removeListener(OperationStateChangeListener.class, listener);			
+	}
+	
 	private class ScrollParentListener
 			implements HierarchyListener {
 
@@ -83,9 +116,32 @@ public class ScrollableParentControl
 				if (parent instanceof JViewport viewport) {
 					_viewport = viewport;
 					_scrollPane = (JScrollPane) viewport.getParent();
+					_listenerAdjust = new ScrollAdjustmentListener();
+					_scrollPane.getHorizontalScrollBar().addAdjustmentListener(_listenerAdjust);
+					_scrollPane.getVerticalScrollBar().addAdjustmentListener(_listenerAdjust);
 				} else {
+					_scrollPane.getHorizontalScrollBar().removeAdjustmentListener(_listenerAdjust);
+					_scrollPane.getVerticalScrollBar().removeAdjustmentListener(_listenerAdjust);
 					_scrollPane = null;
 					_viewport = null;
+				}
+			}
+		}
+		
+	}
+	
+	private class ScrollAdjustmentListener
+			implements AdjustmentListener, OperationCodes {
+
+		@Override
+		public void adjustmentValueChanged(AdjustmentEvent e) {
+			if (e.getValueIsAdjusting()) {
+				if (_latchIsScrolling.setState(true)) {
+					sendOperationStateChange(SCROLL, false);
+				}
+			} else {
+				if (_latchIsScrolling.setState(false)) {
+					sendOperationStateChange(SCROLL, true);
 				}
 			}
 		}

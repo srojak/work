@@ -125,6 +125,10 @@ public abstract class SelectionControlModelBase<T>
 		return ListMethods.findInList(_listItems, predicate);
 	}
 	
+	protected boolean isSelectionEmpty() {
+		return _listSelection.isEmpty();
+	}
+	
 	protected int getSelectionCount() {
 		return _listSelection.size();
 	}
@@ -148,6 +152,16 @@ public abstract class SelectionControlModelBase<T>
 		_listSelection.addLast(entry);
 		ItemEvent event = AWTEventMethods.createItemSelectionEvent(this, entry, true);
 		_listeners.forEach(ItemListener.class, ls -> ls.itemStateChanged(event));
+	}
+	
+	protected boolean removeSelectionIfPresent(T entry) {
+		if (_listSelection.remove(entry)) {
+			ItemEvent event = AWTEventMethods.createItemSelectionEvent(this, entry, false);
+			_listeners.forEach(ItemListener.class, ls -> ls.itemStateChanged(event));
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

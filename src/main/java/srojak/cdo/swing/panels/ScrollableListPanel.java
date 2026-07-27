@@ -36,7 +36,7 @@ import srojak.cdo.swing.models.ModifiableListModel;
 import srojak.core.NameToken;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
-import srojak.core.specialized.ListIndexRange;
+import srojak.mantle.ListIndexRange;
 
 /**
  * @author Stephen
@@ -86,6 +86,8 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 		_model.addListDataListener(new RelayListDataListener());
 		_list.getSelectionModel().addListSelectionListener(new RelayListSelectionListener());
 	}
+	
+	// if a setListModel is ever added, it needs to be able to relay changes to derived classes.
 	
 	@Override
 	public ModifiableListModel<V> getListModel() {

@@ -35,6 +35,7 @@ import srojak.core.events.CommonEventListenerStore;
 import srojak.core.tools.BitMethods;
 import srojak.events.CollectionChangeEvent;
 import srojak.events.CollectionChangeListener;
+import srojak.events.CollectionSizeChangeListener;
 import srojak.events.ObjValueChangeEvent;
 
 /**
@@ -83,6 +84,7 @@ public class DefaultColorBoxSelectModelMk1
 		_listeners.forEach(CollectionChangeListener.class, ls -> ls.collectionChanged(event));
 	}
 	
+	@SuppressWarnings("unused")
 	private void addColorChoice(ColorSelectionProvider color) {
 		_listColors.addLast(color);
 		CollectionChangeEvent event
@@ -171,6 +173,16 @@ public class DefaultColorBoxSelectModelMk1
 	@Override
 	public void removeCollectionChangeListener(CollectionChangeListener listener) {
 		_listeners.remove(CollectionChangeListener.class, listener);
+	}
+
+	@Override
+	public void addCollectionSizeChangeListener(CollectionSizeChangeListener listener) {
+		_listeners.add(CollectionSizeChangeListener.class, listener);
+	}
+
+	@Override
+	public void removeCollectionSizeChangeListener(CollectionSizeChangeListener listener) {
+		_listeners.remove(CollectionSizeChangeListener.class, listener);
 	}
 
 }

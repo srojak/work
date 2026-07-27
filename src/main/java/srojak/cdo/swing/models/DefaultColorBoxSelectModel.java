@@ -17,17 +17,14 @@
 package srojak.cdo.swing.models;
 
 import java.awt.Color;
-import java.awt.event.ItemListener;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
-
-import javax.swing.event.ChangeListener;
 
 import srojak.cdo.ColorSelectionProvider;
 import srojak.cdo.events.ColorValueChangeListener;
 import srojak.cdo.swing.base.SelectionControlModelBase;
-import srojak.events.CollectionChangeListener;
+import srojak.events.CollectionSizeChangeEvent;
+import srojak.events.CollectionSizeChangeListener;
 import srojak.events.ObjValueChangeEvent;
 
 /**
@@ -54,6 +51,9 @@ public class DefaultColorBoxSelectModel
 		ObjValueChangeEvent<Color> event 
 			= new ObjValueChangeEvent<Color>(this, color.getSelectionColor());
 		_listeners.forEach(ColorValueChangeListener.class, ls -> ls.update(event));
+		CollectionSizeChangeEvent eventSize = new CollectionSizeChangeEvent(this,
+				super.getSelectionCount());
+		_listeners.forEach(CollectionSizeChangeListener.class, ls -> ls.sizeChanged(eventSize));
 	}
 
 	@Override
@@ -64,5 +64,21 @@ public class DefaultColorBoxSelectModel
 	@Override
 	public void removeColorValueChangeListener(ColorValueChangeListener listener) {
 		_listeners.remove(ColorValueChangeListener.class, listener);
+	}
+
+	@Override
+	public void addCollectionSizeChangeListener(CollectionSizeChangeListener listener) {
+		_listeners.add(CollectionSizeChangeListener.class, listener);
+	}
+
+	@Override
+	public void removeCollectionSizeChangeListener(CollectionSizeChangeListener listener) {
+		_listeners.remove(CollectionSizeChangeListener.class, listener);
+	}
+
+	@Override
+	public void setChoices(Collection<? extends ColorSelectionProvider> providers) {
+		// TODO Auto-generated method stub
+		
 	}
 }

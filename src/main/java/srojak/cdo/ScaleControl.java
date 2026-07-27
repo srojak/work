@@ -17,6 +17,8 @@
 package srojak.cdo;
 
 import java.awt.Dimension;
+import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Objects;
 
 import srojak.cdo.events.ScaleChangeEvent;
@@ -39,12 +41,22 @@ public class ScaleControl
 	private double _dScale;
 	private IntervalDouble _dintvRange;
 	private Dimension _dmScaledSurface;
+
+	protected static final DecimalFormat _formatScale;
+	
+	static {
+		_formatScale = new DecimalFormat("#,##0.0##");
+	}
+	
+	public static void validateScalePositive(double dArg, String strName) {
+		if (DoubleMethods.compare(OrderedComparison.LE, dArg, 0.0d)) {
+			throw new IllegalArgumentException(strName + " must be positive");
+		}
+	}
 	
 	public ScaleControl(double dOriginalScale, Dimension dmSurface) {
 		Objects.requireNonNull(dmSurface, "dmSurface");
-		if (DoubleMethods.compare(OrderedComparison.LE, dOriginalScale, 0.0d)) {
-			throw new IllegalArgumentException("dOriginalScale must be positive");
-		}
+		validateScalePositive(dOriginalScale, "dOriginalScale");
 		
 		_listeners = new SingleEventListenerList<ScaleChangeListener>();
 		_dScale = dOriginalScale;
@@ -124,17 +136,23 @@ public class ScaleControl
 		return dNewScale;
 	}
 	
-	public final void setScale(double dNewScale) {
-		if (DoubleMethods.compare(OrderedComparison.LE, dNewScale, 0.0d)) {
-			throw new IllegalArgumentException("dNewScale must be positive");
+	private synchronized void setScaleAndPropagate(double dNewScale) {
+		_dScale = dNewScale;
+		_dmScaledSurface = GraphicsUnits.scale(_dmSurface, _dScale);
+		List<ScaleChangeListener> list = _listeners.getListeners();
+		if (!list.isEmpty()) {
+			// having a ConcurrentModificationException
+			ScaleChangeEvent event = new ScaleChangeEvent(this, _dScale);
+			list.forEach(ls -> ls.scaleChanged(event));
 		}
+	}
+	
+	public final void setScale(double dNewScale) {
+		validateScalePositive(dNewScale, "dNewScale");
 		if (_dintvRange != null) {
 			dNewScale = applyLimits(dNewScale);
 		}
-		_dScale = dNewScale;
-		_dmScaledSurface = GraphicsUnits.scale(_dmSurface, _dScale);
-		ScaleChangeEvent event = new ScaleChangeEvent(this, _dScale);
-		_listeners.forEach(ls -> ls.scaleChanged(event));
+		setScaleAndPropagate(dNewScale);
 	}
 
 }

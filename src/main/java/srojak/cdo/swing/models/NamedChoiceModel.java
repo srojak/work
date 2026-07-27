@@ -24,6 +24,7 @@ import srojak.cdo.CanBeEnabled;
 import srojak.cdo.swing.CDOControlModel;
 import srojak.cdo.swing.event.ChangeEventOriginator;
 import srojak.core.NameIdentifiedAndLabeled;
+import srojak.core.events.NameAndStateChangeOriginator;
 import srojak.events.CollectionChangeEventOriginator;
 import srojak.events.ObjectValueChangeEventOriginator;
 
@@ -33,11 +34,14 @@ import srojak.events.ObjectValueChangeEventOriginator;
  */
 public interface NamedChoiceModel 
 		extends CDOControlModel, CanBeEnabled, ChangeEventOriginator, 
-			CollectionChangeEventOriginator, ObjectValueChangeEventOriginator, ItemSelectable {
+			CollectionChangeEventOriginator, ObjectValueChangeEventOriginator,
+			NameAndStateChangeOriginator, ItemSelectable {
 
 	List<NameIdentifiedAndLabeled> getChoices();
 	void setChoices(Collection<? extends NameIdentifiedAndLabeled> items);
+	boolean hasSelection();
 	NameIdentifiedAndLabeled getSelection();
 	void setSelection(NameIdentifiedAndLabeled selection);
 	void setSelectionByName(String strName);
+	void setChoiceEnabled(String strName, boolean bState);
 }

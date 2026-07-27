@@ -16,33 +16,35 @@
  */
 package srojak.cdo.swing.functional;
 
-import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Consumer;
 
+import srojak.cdo.swing.DataComponent;
 import srojak.cdo.swing.DxButtonModelFacadeBearing;
-import srojak.cdo.swing.models.DxButtonModelFacade;
-import srojak.core.containers.Receptor;
+import srojak.cdo.swing.DxButtonModelPublisher;
+import srojak.cdo.swing.collections.ButtonModelFacadeMap;
+import srojak.mantle.Receptor;
 
 /**
  * @author Stephen
  *
  */
-public class OrchReceptor<T>
+public class OrchReceptor<T extends DataComponent>
 		extends Receptor<T> {
-	private final Consumer<Collection<DxButtonModelFacade>> _consumerButtonModels;
+	private final ButtonModelFacadeMap _mapButtonModels;
 	
-	public OrchReceptor(Consumer<Collection<DxButtonModelFacade>> consumerButtonModels) {
-		super();
-		Objects.requireNonNull(consumerButtonModels, "consumerButtonModels");
-		_consumerButtonModels = consumerButtonModels;
+	public OrchReceptor(Class<T> classValue, ButtonModelFacadeMap mapButtonModels) {
+		super(classValue);
+		Objects.requireNonNull(mapButtonModels, "mapButtonModels");
+		_mapButtonModels = mapButtonModels;
 	}
 
 	@Override
 	protected void afterReceiving(T value) {
 		super.afterReceiving(value);
 		if (value instanceof DxButtonModelFacadeBearing facadeBearing) {
-			_consumerButtonModels.accept(facadeBearing.getButtonModelList());
+			_mapButtonModels.addAll(facadeBearing.getButtonModelList());
+		} else if (value instanceof DxButtonModelPublisher pub) {
+			_mapButtonModels.addAll(pub.getButtonModelList());
 		}
 	}
 }

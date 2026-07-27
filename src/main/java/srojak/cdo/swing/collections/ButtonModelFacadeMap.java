@@ -14,33 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.base;
+package srojak.cdo.swing.collections;
 
-import java.util.Objects;
-
-import javax.swing.JLabel;
-import javax.swing.ListCellRenderer;
-
-import srojak.cdo.swing.CellRendererSettings;
-import srojak.core.TextRepresentation;
+import srojak.cdo.swing.models.DxButtonModelFacade;
+import srojak.core.decorated.DecoratedNamedObjectMap;
+import srojak.core.observe.TraceLevel;
+import srojak.debug.DebugNexus;
+import srojak.debug.DebugSwitch;
+import srojak.debug.DebugSwitchTool;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public abstract class LabelCellRendererBase<E>
-		extends JLabel
-		implements CellRendererSettings, ListCellRenderer<E> {
-	private final TextRepresentation _rtext;
-
-	protected LabelCellRendererBase(TextRepresentation repText) {
-		Objects.requireNonNull(repText, "repText");
-		_rtext = repText;
-		setOpaque(true);
-	}
+public class ButtonModelFacadeMap 
+		extends DecoratedNamedObjectMap<DxButtonModelFacade> {
 	
-	protected void setTextFrom(E item) {
-		setText(_rtext.getTextFor(item));
+	private static final DebugSwitch _swDebugClass;
+	
+	static {
+		DebugNexus debug = new DebugNexus();
+		Class<?> classThis = ButtonModelFacadeMap.class;
+		_swDebugClass = debug.getSwitch(DebugSwitchTool.makeClassKey(classThis));
+	}
+
+	public ButtonModelFacadeMap() {
+		super();
+		_swDebugClass.writeTraceEnter(TraceLevel.HIGH);
 	}
 }

@@ -16,6 +16,8 @@
  */
 package srojak.cdo.swing.components;
 
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.util.Objects;
 
@@ -25,12 +27,13 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
-import srojak.core.io.FileExistence;
+import srojak.cdo.swing.FileChooserAction;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
+import srojak.mantle.io.FileExistence;
 
 /**
  * @author Stephen
@@ -39,7 +42,10 @@ import srojak.debug.DebugSwitchTool;
 @SuppressWarnings("serial")
 public class FileChooserConfirming
 		extends JFileChooser {
-	private FileExistence _fexists;
+	private FileExistence _fexOpen;
+	private FileExistence _fexSave;
+	private FileExistence _fexCustom;
+	private FileExistence _fexActive;
 	private boolean _bInferExt;
 	
 	private static final DebugSwitch _swDebugClass;
@@ -55,7 +61,10 @@ public class FileChooserConfirming
 	 */
 	public FileChooserConfirming() {
 		super();
-		_fexists = FileExistence.Any;
+		_fexOpen = FileExistence.MustExist;
+		_fexSave = FileExistence.ConfirmIfExists;
+		_fexCustom = FileExistence.Any;
+		_fexActive = FileExistence.Any;
 		_bInferExt = true;
 	}
 
@@ -64,7 +73,10 @@ public class FileChooserConfirming
 	 */
 	public FileChooserConfirming(String currentDirectoryPath) {
 		super(currentDirectoryPath);
-		_fexists = FileExistence.Any;
+		_fexOpen = FileExistence.MustExist;
+		_fexSave = FileExistence.ConfirmIfExists;
+		_fexCustom = FileExistence.Any;
+		_fexActive = FileExistence.Any;
 		_bInferExt = true;
 	}
 
@@ -73,7 +85,10 @@ public class FileChooserConfirming
 	 */
 	public FileChooserConfirming(File currentDirectory) {
 		super(currentDirectory);
-		_fexists = FileExistence.Any;
+		_fexOpen = FileExistence.MustExist;
+		_fexSave = FileExistence.ConfirmIfExists;
+		_fexCustom = FileExistence.Any;
+		_fexActive = FileExistence.Any;
 		_bInferExt = true;
 	}
 
@@ -82,7 +97,10 @@ public class FileChooserConfirming
 	 */
 	public FileChooserConfirming(FileSystemView fsv) {
 		super(fsv);
-		_fexists = FileExistence.Any;
+		_fexOpen = FileExistence.MustExist;
+		_fexSave = FileExistence.ConfirmIfExists;
+		_fexCustom = FileExistence.Any;
+		_fexActive = FileExistence.Any;
 		_bInferExt = true;
 	}
 
@@ -92,7 +110,10 @@ public class FileChooserConfirming
 	 */
 	public FileChooserConfirming(File currentDirectory, FileSystemView fsv) {
 		super(currentDirectory, fsv);
-		_fexists = FileExistence.Any;
+		_fexOpen = FileExistence.MustExist;
+		_fexSave = FileExistence.ConfirmIfExists;
+		_fexCustom = FileExistence.Any;
+		_fexActive = FileExistence.Any;
 		_bInferExt = true;
 	}
 
@@ -102,17 +123,74 @@ public class FileChooserConfirming
 	 */
 	public FileChooserConfirming(String currentDirectoryPath, FileSystemView fsv) {
 		super(currentDirectoryPath, fsv);
-		_fexists = FileExistence.Any;
+		_fexOpen = FileExistence.MustExist;
+		_fexSave = FileExistence.ConfirmIfExists;
+		_fexCustom = FileExistence.Any;
+		_fexActive = FileExistence.Any;
 		_bInferExt = true;
 	}
 	
-	public FileExistence getFileExistenceBehavior() {
-		return _fexists;
+	@Override
+	public int showOpenDialog(Component parent) 
+			throws HeadlessException {
+		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "OpenDialog");
+		_fexActive = _fexOpen;
+		int nReturn = super.showOpenDialog(parent);
+		_swDebugClass.writeTraceReturn(TraceLevel.HIGH, () -> "returning " + nReturn);
+		return nReturn;
+	}
+
+	@Override
+	public int showSaveDialog(Component parent) 
+			throws HeadlessException {
+		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "SaveDialog");
+		_fexActive = _fexSave;
+		int nReturn = super.showSaveDialog(parent);
+		_swDebugClass.writeTraceReturn(TraceLevel.HIGH, () -> "returning " + nReturn);
+		return nReturn;
+	}
+
+	@Override
+	public int showDialog(Component parent, String approveButtonText) 
+			throws HeadlessException {
+		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "CustomDialog");
+		_fexActive = _fexCustom;
+		int nReturn = super.showDialog(parent, approveButtonText);
+		_swDebugClass.writeTraceReturn(TraceLevel.HIGH, () -> "returning " + nReturn);
+		return nReturn;
+	}
+
+	public FileExistence getFileExistenceBehavior(FileChooserAction act) {
+		Objects.requireNonNull(act, "act");
+		switch (act) {
+		case Open:
+			return _fexOpen;
+			
+		case Save:
+			return _fexSave;
+			
+		case Custom:
+			break;
+		}
+		return _fexCustom;
 	}
 	
-	public void setFileExistenceBehavior(FileExistence fex) {
+	public void setFileExistenceBehavior(FileChooserAction act, FileExistence fex) {
+		Objects.requireNonNull(act, "act");
 		Objects.requireNonNull(fex, "fex");
-		_fexists = fex;
+		switch (act) {
+		case Open:
+			_fexOpen = fex;
+			break;
+			
+		case Save:
+			_fexSave = fex;
+			break;
+			
+		case Custom:
+			_fexCustom = fex;
+			break;
+		}
 	}
 	
 	public boolean getInferExtension() {
@@ -158,7 +236,7 @@ public class FileChooserConfirming
 		File fileSelected = getSelectedFile();
 		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "path = \""
 				+ fileSelected.getAbsolutePath() + "\"");
-		switch (_fexists) {
+		switch (_fexActive) {
 		case Any:
 			break;
 			

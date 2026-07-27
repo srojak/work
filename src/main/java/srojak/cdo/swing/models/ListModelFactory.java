@@ -19,7 +19,7 @@ package srojak.cdo.swing.models;
 import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.collections.SortedList;
+import srojak.mantle.collections.SortedList;
 
 /**
  * @author Stephen
