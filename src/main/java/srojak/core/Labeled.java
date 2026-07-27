@@ -21,6 +21,6 @@ package srojak.core;
  *
  */
 public interface Labeled<T>
-		extends LabeledObject, Wrapped<T> {
+		extends LabeledObject, WrappedEquatable<T> {
 
 }

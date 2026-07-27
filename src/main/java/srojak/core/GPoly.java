@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.functional;
+package srojak.core;
 
 /**
  * @author Stephen
  *
  */
-@FunctionalInterface
-public interface TreeDepthConsumer<N> {
-	
-	void accept(int depth, N node);
+public interface GPoly 
+	extends CommonCollectionSize {
+
+	int[] getArrayOfX();
+	int[] getArrayOfY();
 }

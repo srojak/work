@@ -16,14 +16,11 @@
  */
 package srojak.core.field;
 
-import srojak.core.NameTokenBearing;
-
 /**
  * @author Stephen
  *
  */
-public interface SetOnceConditions
-		extends NameTokenBearing {
+public interface SetOnceConditions {
 	boolean hasBeenSet();
 	boolean allowsNonNullValue();
 	

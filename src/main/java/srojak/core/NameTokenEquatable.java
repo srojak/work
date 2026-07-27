@@ -22,7 +22,6 @@ package srojak.core;
  * The object with this interface is equatable based on its NameToken.
  */
 public interface NameTokenEquatable
-		extends NameTokenBearing {
-	int hashCode();
-	boolean equals(Object obj);
+		extends NameTokenBearing, SelfEquatable {
+
 }

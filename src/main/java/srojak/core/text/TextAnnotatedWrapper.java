@@ -50,18 +50,18 @@ public class TextAnnotatedWrapper<T>
 	}
 
 	@Override
+	public Object getWrappedObject() {
+		return _object;
+	}
+
+	@Override
 	public Class<?> getValueClass() {
 		return _object.getClass();
 	}
 
 	@Override
-	public T getValue() {
+	public T getWrapped() {
 		return _object;
-	}
-
-	@Override
-	public boolean isValueEqual(T value) {
-		return _object.equals(value);
 	}
 
 	@Override

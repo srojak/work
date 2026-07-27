@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.functional;
+package srojak.core;
 
 /**
  * @author Stephen
  *
  */
-@FunctionalInterface
-public interface LeftComparator<T> {
+public interface WrappedEquatable<T>
+		extends Wrapped<T> {
 
-	int compare(T o1, Object o2);
-
+	boolean isValueEqual(T value);
+	int hashCode();
+	boolean equals(Object obj);
 }

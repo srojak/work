@@ -34,11 +34,8 @@ public class SetOnceInt
 		_value = 0;
 	}
 
-	/**
-	 * @param strName
-	 */
-	public SetOnceInt(String strName) {
-		super(strName);
+	public SetOnceInt() {
+		super();
 		_value = 0;
 	}
 

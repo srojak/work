@@ -16,40 +16,33 @@
  */
 package srojak.core;
 
-import java.util.Objects;
-
 /**
  * @author Stephen
  *
  */
-public final class OnceFlag 
-		implements NameTokenBearing {
-	private final NameToken _tokenName;
+public sealed class OnceFlag 
+		permits OnceFlagNamed {
 	private boolean _bState;
 	
-	public OnceFlag(NameToken name) {
-		Objects.requireNonNull(name, "name");
-		_tokenName = name;
+	public OnceFlag() {
 		_bState = false;
-	}
-	
-	@Override
-	public NameToken getNameToken() {
-		return _tokenName;
-	}
-
-	@Override
-	public boolean isNameTokenEqual(NameToken token) {
-		return token == null ? false : _tokenName.equals(token);
 	}
 
 	public boolean getState() {
 		return _bState;
 	}
 	
+	public boolean isNamed() {
+		return false;
+	}
+	
+	protected void throwStateException() {
+		throw new IllegalStateException("flag already set");
+	}
+	
 	public void set() {
 		if (_bState) {
-			throw new IllegalStateException("flag " + _tokenName.getName() + " already set");
+			throwStateException();
 		}
 		_bState = true;
 	}

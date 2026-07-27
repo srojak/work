@@ -30,17 +30,17 @@ public class SetOnce<T>
 	private final boolean _bAllowsNull;	
 	private T _value;
 	
+	public SetOnce(int options) {
+		super();
+		_value = null;
+		_bAllowsNull = BitMethods.test(options, ALLOWS_NULL);
+	}
+	
 	/**
 	 * @param token
 	 */
 	public SetOnce(NameToken token, int options) {
 		super(token);
-		_value = null;
-		_bAllowsNull = BitMethods.test(options, ALLOWS_NULL);
-	}
-	
-	public SetOnce(String strName, int options) {
-		super(strName);
 		_value = null;
 		_bAllowsNull = BitMethods.test(options, ALLOWS_NULL);
 	}

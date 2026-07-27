@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import srojak.core.NameToken;
 import srojak.core.OnceFlag;
+import srojak.core.OnceFlagNamed;
 
 /**
  * @author Stephen
@@ -29,26 +30,17 @@ public abstract class SetOnceBase
 		implements SetOnceConditions {
 	private final OnceFlag _flag;
 	
-	/**
-	 * 
-	 */
+	public SetOnceBase() {
+		_flag = new OnceFlag();
+	}
+	
 	public SetOnceBase(NameToken token) {
 		Objects.requireNonNull(token, "token");
-		_flag = new OnceFlag(token);
+		_flag = new OnceFlagNamed(token);
 	}
 	
 	public SetOnceBase(String strName) {
-		_flag = new OnceFlag(NameToken.factory(strName));
-	}
-
-	@Override
-	public NameToken getNameToken() {
-		return _flag.getNameToken();
-	}
-
-	@Override
-	public boolean isNameTokenEqual(NameToken token) {
-		return token == null ? false : _flag.isNameTokenEqual(token);
+		_flag = new OnceFlagNamed(NameToken.factory(strName));
 	}
 
 	@Override
@@ -58,15 +50,13 @@ public abstract class SetOnceBase
 	
 	public void faultIfAlreadySet() {
 		if (_flag.getState()) {
-			throw new IllegalStateException("value for " + _flag.getNameToken().getName()
-					+ " has already been set");
+			throw new IllegalStateException("value has already been set");
 		}
 	}
 	
 	protected void gettingValue() {
 		if (!_flag.getState()) {
-			throw new IllegalStateException("value for " + _flag.getNameToken().getName()
-					+ " has never been set");
+			throw new IllegalStateException("value has never been set");
 		}
 	}
 

@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.collections;
-
-import java.util.List;
+package srojak.core;
 
 /**
  * @author Stephen
  *
  */
-public interface TypedList<E> 
-		extends List<E> {
-	Class<E> getElementClass();
-	boolean isElementAssignableFrom(Class<?> classOther);
+public interface EqualityComparer<T> {
+
+	boolean isEqual(T o1, T o2);
+	int hashCodeForType(T obj);
 }

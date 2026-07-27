@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.io;
+package srojak.core;
 
 /**
  * @author Stephen
  *
  */
-public enum FileExistence {
-	Any,
-	MustExist,
-	MustNotExist,
-	ConfirmIfExists
+public interface WrappedObject {
+
+	Object getWrappedObject();
 }

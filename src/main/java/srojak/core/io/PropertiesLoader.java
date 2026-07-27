@@ -23,9 +23,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
 
+import srojak.core.functional.IOSupplier;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
-import srojak.core.specialized.StringBox;
 
 /**
  * @author Stephen
@@ -43,20 +43,6 @@ public class PropertiesLoader {
 			result.caughtException(exc);
 		}
 		return result;
-	}
-	
-	@SuppressWarnings("unused")
-	private static boolean tryLoadFrom(Properties properties,
-			IOSupplier<InputStream> opener, StringBox boxFailure)
-	{
-		boxFailure.reset();
-		try (InputStream stream = opener.get()) {
-			properties.load(stream);
-			return true;
-		} catch (IOException exc) {
-			boxFailure.setContent(exc.getMessage());
-			return false;
-		}
 	}
 
 	public static XResult loadFromResource(Properties properties, ClassLoader loaderClass,

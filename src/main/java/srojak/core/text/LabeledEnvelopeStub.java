@@ -31,7 +31,7 @@ public class LabeledEnvelopeStub<T>
 	}
 
 	@Override
-	public T getValue() {
+	public T getWrapped() {
 		return null;
 	}
 
@@ -43,6 +43,11 @@ public class LabeledEnvelopeStub<T>
 	@Override
 	public boolean hasObject() {
 		return false;
+	}
+
+	@Override
+	public Object getWrappedObject() {
+		return null;
 	}
 
 	@Override

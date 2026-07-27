@@ -40,7 +40,12 @@ public class LabeledEnvelope<T>
 	}
 
 	@Override
-	public T getValue() {
+	public Object getWrappedObject() {
+		return _item;
+	}
+
+	@Override
+	public T getWrapped() {
 		return _item;
 	}
 	

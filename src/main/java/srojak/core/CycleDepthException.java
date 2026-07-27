@@ -25,6 +25,12 @@ public class CycleDepthException
 	private final String _strStopName;
 
 	public static final String UNDEFINED = "?undef";
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2298402732676147510L;
+
 	/**
 	 * 
 	 */

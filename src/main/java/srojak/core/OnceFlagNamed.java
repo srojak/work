@@ -16,20 +16,43 @@
  */
 package srojak.core;
 
-import srojak.core.impl.CycleDepthStopToken;
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public interface CycleDepthStop
-		extends Named {
+public final class OnceFlagNamed 
+		extends OnceFlag
+		implements NameTokenBearing {
+	private final NameToken _tokenName;
 
-	public int getLimit();
+	/**
+	 * @param name
+	 */
+	public OnceFlagNamed(NameToken name) {
+		super();
+		Objects.requireNonNull(name, "name");
+		_tokenName = name;
+	}
 	
-	public CycleDepthMonitor createMonitor();
-	
-	public static CycleDepthStop create(String strName, int limit) {
-		return new CycleDepthStopToken(strName, limit);
+	@Override
+	public boolean isNamed() {
+		return true;
+	}
+
+	@Override
+	public NameToken getNameToken() {
+		return _tokenName;
+	}
+
+	@Override
+	public boolean isNameTokenEqual(NameToken token) {
+		return token == null ? false : _tokenName.equals(token);
+	}
+
+	@Override
+	protected void throwStateException() {
+		throw new IllegalStateException("flag " + _tokenName.getName() + " already set");
 	}
 }

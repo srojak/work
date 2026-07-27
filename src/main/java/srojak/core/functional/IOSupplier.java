@@ -16,12 +16,15 @@
  */
 package srojak.core.functional;
 
+import java.io.IOException;
+
 /**
  * @author Stephen
  *
  */
 @FunctionalInterface
-public interface TreeDepthArgConsumer<N, U> {
+public interface IOSupplier<T> {
+	
+    T get() throws IOException;
 
-	void accept(int depth, N node, U arg);
 }

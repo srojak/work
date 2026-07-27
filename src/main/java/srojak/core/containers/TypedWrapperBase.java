@@ -18,52 +18,29 @@ package srojak.core.containers;
 
 import java.util.Objects;
 
-import srojak.core.SelectableObject;
+import srojak.core.Wrapped;
 
 /**
  * @author Stephen
  *
  */
-public class SelectableWrapper<T>
-		implements SelectableObject {
-	private boolean _bSelected;
-	private final T _item;
+public class TypedWrapperBase<T> 
+		implements Wrapped<T> {
+	protected final T _objWrapped;
 	
-	public SelectableWrapper(T item) {
-		Objects.requireNonNull(item, "item");
-		_item = item;
-		_bSelected = false;
+	public TypedWrapperBase(T obj) {
+		Objects.requireNonNull(obj, "obj");
+		_objWrapped = obj;
 	}
 
 	@Override
-	public boolean isSelected() {
-		return _bSelected;
+	public Object getWrappedObject() {
+		return _objWrapped;
 	}
 
 	@Override
-	public void setSelected(boolean bState) {
-		_bSelected = bState;
-	}
-	
-	public T getValue() {
-		return _item;
+	public T getWrapped() {
+		return _objWrapped;
 	}
 
-	@Override
-	public int hashCode() {
-		return _item.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (obj instanceof @SuppressWarnings("rawtypes") SelectableWrapper other) {
-			return _item.equals(other.getValue());
-		} else {
-			return _item.equals(obj);
-		}
-	}
 }

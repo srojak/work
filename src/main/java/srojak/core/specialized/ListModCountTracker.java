@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.collections;
+package srojak.core.specialized;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;

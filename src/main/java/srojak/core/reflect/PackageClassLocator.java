@@ -18,7 +18,8 @@ package srojak.core.reflect;
 
 import java.util.Objects;
 
-import srojak.core.specialized.StringBox;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
 
 /**
  * @author Stephen
@@ -86,16 +87,18 @@ public class PackageClassLocator
 		return validateInner();
 	}
 	
-	public boolean tryValidate(StringBox boxFailure) {
-		Objects.requireNonNull(boxFailure, "boxFailure");
-		boxFailure.reset();
+	public XResult tryValidate() {
+		XResultStatusCarrier result = new XResultStatusCarrier();
 		boolean bResult = false;
 		try {
 			bResult = validateInner();
+			if (bResult) {
+				result.setValid();
+			}
 		} catch (ClassNotFoundException ex) {
-			boxFailure.setContent(ex.getMessage());
+			result.caughtException(ex);
 		}
-		return bResult;
+		return result;
 	}
 
 	@Override

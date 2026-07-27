@@ -20,10 +20,8 @@ package srojak.core;
  * @author Stephen
  *
  */
-public interface Wrapped<T> {
+public interface Wrapped<T> 
+		extends WrappedObject {
 	
-	T getValue();
-	boolean isValueEqual(T value);
-	int hashCode();
-	boolean equals(Object obj);
+	T getWrapped();
 }

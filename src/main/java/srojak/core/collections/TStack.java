@@ -17,8 +17,10 @@
 package srojak.core.collections;
 
 
-import java.util.*;
+import java.util.LinkedList;
 import java.util.function.Consumer;
+
+import srojak.core.EmptyCollectionException;
 
 /**
  * @author Stephen
@@ -44,7 +46,9 @@ public class TStack<T>
 
 	@Override
 	public T peek() {
-		assert !_stack.isEmpty() : "stack is empty";
+		if (_stack.isEmpty()) {
+			throw new EmptyCollectionException("stack is empty");
+		}
 		return _stack.get(0);
 	}
 
@@ -76,7 +80,9 @@ public class TStack<T>
 	}
 	
 	public T pop() {
-		assert !_stack.isEmpty() : "stack is empty";
+		if (_stack.isEmpty()) {
+			throw new EmptyCollectionException("stack is empty");
+		}
 		return _stack.removeFirst();
 	}
 }
