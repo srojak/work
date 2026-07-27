@@ -33,7 +33,6 @@ import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.debug.impl.DebugSwitchContent;
 import srojak.xml.stream.XmlElementAttribute;
-import srojak.xml.stream.XmlStreamEventsDictionary;
 import srojak.xml.stream.XmlStreamInputBuilder;
 import srojak.xml.stream.XmlStreamParserBase;
 
@@ -48,7 +47,6 @@ public class DebugConfigParser
 	private String _strPackageName;
 	private PackageClassLocator _locClass;
 
-	private static final XmlStreamEventsDictionary EVENTS;
 	private static final QName ELEMENT_CTRLSET;
 	private static final QName ELEMENT_PACKAGE;
 	private static final QName ELEMENT_CLASS;
@@ -62,7 +60,6 @@ public class DebugConfigParser
 	private static final String[] BOOL_TRUE;
 	
 	static {
-		EVENTS = new XmlStreamEventsDictionary();
 		ELEMENT_CTRLSET = new QName("SwitchControlSet");
 		ELEMENT_PACKAGE = new QName("Package");
 		ELEMENT_CLASS = new QName("Class");
@@ -169,7 +166,7 @@ public class DebugConfigParser
 
 	@Override
 	protected void parseOther(int nEventType) {
-		String strEvent = EVENTS.getNameForCode(nEventType);
+		String strEvent = DICT_EVENTS.getNameForCode(nEventType);
 		_writer.write(ObsLevel.WARN, "unexpected event type " + strEvent);
 	}
 	

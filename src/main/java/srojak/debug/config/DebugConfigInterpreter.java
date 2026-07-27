@@ -77,6 +77,7 @@ public class DebugConfigInterpreter {
 			return;
 		}
 		PackageClassLocator locClass = new PackageClassLocator(strPackageName, strName);
+		@SuppressWarnings("unused")
 		ObsLevel level = ObsLevel.WARN;
 		if (strLevel != null) {
 			try {
@@ -91,6 +92,7 @@ public class DebugConfigInterpreter {
 	
 	protected void InterpretClassSubjectElement(Element elemSubject, PackageClassLocator locClass) {
 		String strName = elemSubject.getAttribute("name");
+		@SuppressWarnings("unused")
 		String strLevel = elemSubject.getAttribute("level");
 		if (strName == null) {
 			_writer.write(ObsLevel.ERROR, "Subject in class " + locClass + " has no name");
