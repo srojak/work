@@ -87,7 +87,7 @@ public class S2GraphicsOrientation
 			int nWidth, int nHeight) {
 		S2Coords origin = new S2Coords(0, 0);
 		S2Offset offset = new S2Offset(0, 0);
-		switch (direction.getDirectionCode()) {
+		switch (direction.getCompassPoint()) {
 		case N:
 			offset = new S2Offset(szField.width, nHeight);
 			break;

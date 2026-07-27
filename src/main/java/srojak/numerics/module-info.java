@@ -22,7 +22,9 @@ module srojak.numerics {
 	requires transitive srojak.core;
 	requires transitive srojak.debug;
 	exports srojak.numerics;
+	exports srojak.numerics.compass;
 	exports srojak.numerics.function;
 	exports srojak.numerics.intervals;
 	exports srojak.numerics.vertices;
+	exports srojak.numerics.weighted;
 }

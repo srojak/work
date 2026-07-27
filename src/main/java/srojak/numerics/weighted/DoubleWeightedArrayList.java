@@ -1,5 +1,5 @@
 /**
-  * Copyright © 2026 Stephen Rojak.
+ * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -13,21 +13,40 @@
  * 
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
-*/
-package srojak.spatial;
+ */
+package srojak.numerics.weighted;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Stephen
  *
  */
-public interface S2CompassOrdinals {
-	
-	public static final int OrdNorth = 0;
-	public static final int OrdNorthEast = 1;
-	public static final int OrdEast = 2;
-	public static final int OrdSouthEast = 3;
-	public static final int OrdSouth = 4;
-	public static final int OrdSouthWest = 5;
-	public static final int OrdWest = 6;
-	public static final int OrdNorthWest = 7;
+@SuppressWarnings("serial")
+public class DoubleWeightedArrayList 
+		extends ArrayList<DoubleWeighted> 
+		implements DoubleWeightedList {
+
+	/**
+	 * 
+	 */
+	public DoubleWeightedArrayList() {
+		super();
+	}
+
+	/**
+	 * @param initialCapacity
+	 */
+	public DoubleWeightedArrayList(int initialCapacity) {
+		super(initialCapacity);
+	}
+
+	/**
+	 * @param c
+	 */
+	public DoubleWeightedArrayList(Collection<? extends DoubleWeighted> c) {
+		super(c);
+	}
+
 }

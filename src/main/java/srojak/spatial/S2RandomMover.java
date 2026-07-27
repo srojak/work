@@ -23,8 +23,8 @@ import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
-import srojak.numerics.CompassDegrees;
 import srojak.numerics.IRandomSource;
+import srojak.numerics.compass.CompassDegrees;
 
 /**
  * @author Stephen
@@ -35,7 +35,6 @@ public class S2RandomMover {
 	private final S2Orientation _orient;
 	private final S2FieldSize _szField;
 	
-	@SuppressWarnings("unused")
 	private static final DebugSwitch _swDebugClass;
 	
 	static {

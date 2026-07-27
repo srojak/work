@@ -23,11 +23,19 @@ package srojak.numerics;
 public class RadiansMethods {
 		
 	public static final double TWOPI;
-	public static final double HALFPI;
+	public static final double PiOver2;
+	
+	public static final double PiOver16;
+	public static final double PiOver8;
+	public static final double PiOver4;
 	
 	static {
 		TWOPI = Math.PI * 2.0d;
-		HALFPI = Math.PI * 0.5d;
+		PiOver2 = Math.PI * 0.5d;
+		
+		PiOver16 = Math.PI / 16.0d;
+		PiOver8 = Math.PI / 8.0d;
+		PiOver4 = Math.PI / 4.0d;
 	}
 	
 	/**

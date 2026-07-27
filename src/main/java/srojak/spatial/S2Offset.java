@@ -32,6 +32,8 @@ public class S2Offset {
 	private final LazyInt _dist2;
 	private final LazyDouble _distance;
 	
+	public static final S2Offset Zero = new S2Offset(0, 0);
+	
 	public S2Offset(int nX, int nY) {
 		dx = nX;
 		dy = nY;

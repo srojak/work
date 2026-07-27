@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import srojak.numerics.CircleOctant;
-import srojak.numerics.CompassDegrees;
+import srojak.numerics.compass.CompassDegrees;
 
 /**
  * @author Stephen

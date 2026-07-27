@@ -14,24 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics;
+package srojak.numerics.compass;
 
+import java.text.DecimalFormat;
 import java.util.Objects;
 
-import srojak.core.IntComparable;
+import srojak.core.FloatComparable;
+import srojak.numerics.SinglePrecisionComparer;
 
 /**
  * @author Stephen
  *
  */
 public class CompassDegrees
-		implements Comparable<CompassDegrees>, IntComparable {
-	private int _value;
+		implements Comparable<CompassDegrees>, FloatComparable {
+	private float _value;
 	
-	public static final int LIMIT = 360;	
+	public static final float LIMIT = 360.0f;	
 	public static final String DEGREES = "\u00B0";
+
+	private static final DecimalFormat _formatLength = new DecimalFormat("###0.0##");
 	
-	public CompassDegrees(int valueInitial) {
+	public CompassDegrees(float valueInitial) {
 		_value = valueInitial;
 	}
 	
@@ -40,70 +44,72 @@ public class CompassDegrees
 	}
 	
 	public void normalize() {
-		if (_value >= LIMIT) {
-			_value %= LIMIT;
-		} else if (_value < 0) {
-			_value = Math.floorMod(_value, LIMIT) + LIMIT;
+		if (_value >= LIMIT || _value < 0) {
+			_value = (_value % LIMIT + LIMIT) % LIMIT;
 		}
 	}
 	
-	public int getValue() {
+	public float getValue() {
 		return _value;
 	}
 	
-	public CompassDegrees add(int operand) {
+	public CompassDegrees add(float operand) {
 		CompassDegrees cdResult = new CompassDegrees(0);
 		cdResult._value = _value + operand;
 		return cdResult;
 	}
 	
-	public CompassDegrees addAndNormalize(int operand) {
+	public CompassDegrees addAndNormalize(float operand) {
 		CompassDegrees cdResult = add(operand);
 		cdResult.normalize();
 		return cdResult;
 	}
 	
-	public CompassDegrees subtract(int operand) {
+	public CompassDegrees subtract(float operand) {
 		CompassDegrees cdResult = new CompassDegrees(0);
 		cdResult._value = _value - operand;
 		return cdResult;
 	}
 	
-	public CompassDegrees subtractAndNormalize(int operand) {
+	public CompassDegrees subtractAndNormalize(float operand) {
 		CompassDegrees cdResult = subtract(operand);
 		cdResult.normalize();
 		return cdResult;
 	}
 	
+	public double convertToRadians() {
+		return _value * Math.PI / 180.0;
+	}
+	
 	public static CompassDegrees convertFromRadians(double dRadians) {
-		CompassDegrees cdResult = new CompassDegrees((int) (180.0 * dRadians / Math.PI));
+		CompassDegrees cdResult = new CompassDegrees((float) (180.0 * dRadians / Math.PI));
 		return cdResult;
 	}
 	
 	public CompassDegrees toNearest4Point() {
 		normalize();
 		float q = _value / 90.0f;
-		return new CompassDegrees((int) Math.round(q) * 90);
+		return new CompassDegrees((int) Math.round(q) * 90.0f);
 	}
 	
 	public CompassDegrees toNearest8Point() {
 		normalize();
 		float q = _value / 45.0f;
-		return new CompassDegrees((int) Math.round(q) * 45);
+		return new CompassDegrees((int) Math.round(q) * 45.0f);
 	}
 
 	@Override
 	public int hashCode() {
-		return _value;
+		return Float.hashCode(_value);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null) {
 			if (obj instanceof CompassDegrees other) {
-				return _value == other._value;
+				return SinglePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, other._value);
 			} else if (obj instanceof Number objNumber) {
-				return _value == objNumber.intValue();
+				return SinglePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, objNumber.floatValue());
 			}
 		}
 		return false;
@@ -112,18 +118,18 @@ public class CompassDegrees
 	@Override
 	public int compareTo(CompassDegrees o) {
 		Objects.requireNonNull(o, "o");
-		return Integer.compare(_value,  o._value);
+		return SinglePrecisionComparer.DEFAULT_COMPARER.compare(_value, o._value);
 	}
 
 	@Override
-	public int compareTo(int other) {
-		return Integer.compare(_value,  other);
+	public int compareTo(float other) {
+		return SinglePrecisionComparer.DEFAULT_COMPARER.compare(_value, other);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(_value);
+		sb.append(_formatLength.format(_value));
 		sb.append(DEGREES);
 		if (!isNormalized()) {
 			sb.append("\u2020");

@@ -36,7 +36,6 @@ public class DoubleComparer
 		_epsilon = epsilon;
 	}
 
-	
 	/**
 	 * Gets the current comparison tolerance value.
 	 * @return The current comparison tolerance value.

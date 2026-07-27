@@ -29,7 +29,7 @@ import srojak.core.Tuple;
 import srojak.core.containers.TupleContainer;
 import srojak.core.tools.KeyValueMethods;
 import srojak.numerics.CircleOctant;
-import srojak.numerics.CompassDegrees;
+import srojak.numerics.compass.CompassDegrees;
 import srojak.spatial.impl.S2DirectionMapping;
 
 /**

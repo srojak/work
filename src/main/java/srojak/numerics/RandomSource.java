@@ -24,9 +24,11 @@ import java.util.Random;
 public class RandomSource
 		implements IRandomSource {
     private Random _generator;
+    private DoublePrecisionComparer _comparer;
     
     public RandomSource() {
     	_generator = new Random();
+    	_comparer = DoublePrecisionComparer.DEFAULT_COMPARER;
     }
     
     public void setSeed(long lnSeed) {
@@ -51,5 +53,13 @@ public class RandomSource
 	@Override
 	public double genGaussian() {
 		return _generator.nextGaussian();
+	}
+
+	@Override
+	public double genExponential(double dLambda) {
+		if (_comparer.compare(dLambda, 0.0d) <= 0) {
+			throw new IllegalArgumentException("dLambda must be positive");
+		}
+		return dLambda * Math.exp(- dLambda * _generator.nextDouble());
 	}
 }

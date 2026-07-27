@@ -19,6 +19,7 @@ package srojak.spatial;
 import srojak.core.observe.ObsLevel;
 import srojak.debug.DebugSwitch;
 import srojak.numerics.DoublePrecisionComparer;
+import srojak.numerics.compass.CompassOrdinals;
 
 /**
  * @author Stephen
@@ -26,7 +27,7 @@ import srojak.numerics.DoublePrecisionComparer;
  */
 public abstract class S2CoordsDirectedVisitorBase<A>
 		extends S2CoordVisitorBase
-		implements S2CompassOrdinals {
+		implements CompassOrdinals {
 	
 	// transient work variables
 	private S2OffsetDirectionPair _odHoriz;

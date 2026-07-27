@@ -14,30 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics;
-
 /**
  * @author Stephen
  *
  */
-public interface IRandomSource {
-	Boolean genBoolean();
-	int genIntInRange(int nBound);
-	
-	/**
-	 * Generate a uniformly distributed random number.
-	 * @return A random number in the interval [0.0, 1.0).
-	 */
-	double genDouble();
-	double genGaussian();
-	
-	/**
-	 * Generate an exponentially distributed random number.
-	 * @param dLambda The parameter, which must be positive.
-	 * 		Higher values cause the PDF(x) to fall away faster as x increases.
-	 * @return An exponentially distributed random number. 
-	 * 
-	 * @see https://en.wikipedia.org/wiki/Exponential_distribution
-	 */
-	double genExponential(double dLambda);
-}
+package srojak.numerics.weighted;

@@ -27,12 +27,10 @@ public enum CircleOctant {
 	UPPER_RIGHT(1, 0.25),
 	UP(2, 0.5),
 	UPPER_LEFT(3, 0.75),
-	LEFT(4, 1.0),
+	LEFT(4, -1.0),
 	LOWER_LEFT(5, -0.75),
 	DOWN(6, -0.5),
 	LOWER_RIGHT(7, -0.25);
-	
-	private static final double A4 = Math.PI / 4.0;
 	
 	private final int _index;
 	private final double _factor;
@@ -46,12 +44,16 @@ public enum CircleOctant {
 		return _index == nValue;
 	}
 	
+	/**
+	 * 
+	 * @return The value over the interval [-pi, pi) where 0 is east in math orientation.
+	 */
 	public double getAngleTo() {
 		return _factor;
 	}
 	
 	public static CircleOctant getOctantFor(double dRadians) {
-		double dd = Math.round(RadiansMethods.normalizeAngle(dRadians) / A4);
+		double dd = Math.round(RadiansMethods.normalizeAngle(dRadians) / RadiansMethods.PiOver4);
 		int n = ((int) dd + 8) % 8;
 		return ArrayMethods.findFirst(CircleOctant.values(), i -> i.isIndexEqual(n));
 	}

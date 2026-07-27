@@ -20,24 +20,24 @@ package srojak.numerics;
  * @author Stephen
  *
  */
-public interface IRandomSource {
-	Boolean genBoolean();
-	int genIntInRange(int nBound);
+public class SlopeAndIntercept {
+	private final double _dSlope;
+	private final double _dIntercept;
 	
-	/**
-	 * Generate a uniformly distributed random number.
-	 * @return A random number in the interval [0.0, 1.0).
-	 */
-	double genDouble();
-	double genGaussian();
+	public SlopeAndIntercept(double dSlope, double dIntercept) {
+		_dSlope = dSlope;
+		_dIntercept = dIntercept;
+	}
 	
-	/**
-	 * Generate an exponentially distributed random number.
-	 * @param dLambda The parameter, which must be positive.
-	 * 		Higher values cause the PDF(x) to fall away faster as x increases.
-	 * @return An exponentially distributed random number. 
-	 * 
-	 * @see https://en.wikipedia.org/wiki/Exponential_distribution
-	 */
-	double genExponential(double dLambda);
+	public double getSlope() {
+		return _dSlope;
+	}
+	
+	public double getIntercept() {
+		return _dIntercept;
+	}
+	
+	public double computeY(double dx) {
+		return _dSlope * dx + _dIntercept;
+	}
 }

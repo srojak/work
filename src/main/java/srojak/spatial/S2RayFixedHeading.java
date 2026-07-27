@@ -18,8 +18,8 @@ package srojak.spatial;
 
 import java.util.Objects;
 
-import srojak.numerics.CompassDegrees;
 import srojak.numerics.SinglePrecisionComparer;
+import srojak.numerics.compass.CompassDegrees;
 
 /**
  * @author Stephen

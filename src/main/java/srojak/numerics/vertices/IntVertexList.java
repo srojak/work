@@ -20,14 +20,14 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Objects;
 
-import srojak.core.CommonCollectionSize;
+import srojak.core.GPoly;
 
 /**
  * @author Stephen
  *
  */
 public class IntVertexList
-		implements CommonCollectionSize {
+		implements GPoly {
 	private final LinkedList<IntVertex> _list;
 	
 	/**
@@ -64,6 +64,7 @@ public class IntVertexList
 		return listScaled;
 	}
 	
+	@Override
 	public int[] getArrayOfX() {
 		int[] array = new int[_list.size()];
 		int index = 0;
@@ -74,6 +75,7 @@ public class IntVertexList
 		return array;
 	}
 	
+	@Override
 	public int[] getArrayOfY() {
 		int[] array = new int[_list.size()];
 		int index = 0;

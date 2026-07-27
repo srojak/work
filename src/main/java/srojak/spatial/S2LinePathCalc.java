@@ -25,13 +25,14 @@ import srojak.core.observe.ObsLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
+import srojak.numerics.compass.CompassOrdinals;
 
 /**
  * @author Stephen
  *
  */
 public class S2LinePathCalc 
-		implements S2LinePath, S2CompassOrdinals {
+		implements S2LinePath, CompassOrdinals {
 	private final S2Orientation _orientation;
 	private ToIntFunction<S2Coords> _fnWeight;
 	

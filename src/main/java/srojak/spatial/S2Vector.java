@@ -16,7 +16,7 @@
 */
 package srojak.spatial;
 
-import srojak.numerics.CompassDegrees;
+import srojak.numerics.compass.CompassDegrees;
 
 /**
  * @author Stephen
