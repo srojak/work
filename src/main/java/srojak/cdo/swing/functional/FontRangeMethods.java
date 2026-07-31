@@ -14,16 +14,26 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.events;
+package srojak.cdo.swing.functional;
 
-import java.awt.Color;
+import java.util.Objects;
 
-import srojak.events.ObjValueChangeListener;
+import javax.swing.SpinnerNumberModel;
+
+import srojak.cdo.FontRange;
+import srojak.numerics.intervals.IntervalInt;
 
 /**
  * @author Stephen
  *
  */
-public interface ColorValueChangeListener
-		extends ObjValueChangeListener<Color> {
+public class FontRangeMethods {
+
+	public static SpinnerNumberModel makeSpinnerModel(FontRange rangeFont) {
+		Objects.requireNonNull(rangeFont, "rangeFont");
+		IntervalInt range = rangeFont.getSizeRange();
+		return new SpinnerNumberModel(rangeFont.getSize(),
+				range.getMinimumValue(),
+				range.getMaximumValue(), 1);
+	}
 }

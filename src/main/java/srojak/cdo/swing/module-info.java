@@ -40,4 +40,5 @@ module srojak.cdo.swing {
 	exports srojak.cdo.swing.panels;
 	exports srojak.cdo.swing.status;
 	exports srojak.cdo.swing.trees;
+	exports srojak.cdo.swing.workers;
 }

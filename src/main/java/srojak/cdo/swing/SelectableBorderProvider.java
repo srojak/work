@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.models;
+package srojak.cdo.swing;
 
-import java.awt.Color;
+import javax.swing.border.Border;
 
 /**
  * @author Stephen
  *
  */
-public interface ColorBoxSelectModel
-		extends ColorBoxSelectModelBase<Color> {
-	
+public interface SelectableBorderProvider {
+
+	Border getNormalBorder();
+	Border getSelectedBorder();
 }

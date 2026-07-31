@@ -16,13 +16,28 @@
  */
 package srojak.cdo.swing.models;
 
-import java.awt.Color;
+import java.awt.ItemSelectable;
+import java.util.Collection;
+import java.util.List;
+
+import srojak.cdo.CanBeEnabled;
+import srojak.cdo.swing.CDOControlModel;
+import srojak.cdo.swing.event.ChangeEventOriginator;
+import srojak.events.CollectionChangeEventOriginator;
+import srojak.events.ObjectValueChangeEventOriginator;
 
 /**
  * @author Stephen
  *
+ * @param <C> A type that either is a {@code Color} or an object bearing color.
  */
-public interface ColorBoxSelectModel
-		extends ColorBoxSelectModelBase<Color> {
-	
+public interface ColorBoxSelectModelBase<C> 
+		extends CDOControlModel, CanBeEnabled, ObjectValueChangeEventOriginator, 
+			ChangeEventOriginator, CollectionChangeEventOriginator, ItemSelectable {
+
+	List<C> getChoices();
+	void setChoices(Collection<? extends C> providers);
+	C getSelection();
+	void setSelection(C color);
+	void setSelection(int index);
 }

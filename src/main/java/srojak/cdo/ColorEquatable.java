@@ -18,8 +18,6 @@ package srojak.cdo;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,14 +25,13 @@ import java.util.Objects;
  *
  */
 @SuppressWarnings("serial")
-public class ColorSelfSelectProvider
-	extends Color
-	implements ColorSelectionProvider {
+public class ColorEquatable
+	extends Color {
 
 	/**
 	 * @param rgb
 	 */
-	public ColorSelfSelectProvider(int rgb) {
+	public ColorEquatable(int rgb) {
 		super(rgb);
 	}
 
@@ -42,7 +39,7 @@ public class ColorSelfSelectProvider
 	 * @param rgba
 	 * @param hasalpha
 	 */
-	public ColorSelfSelectProvider(int rgba, boolean hasalpha) {
+	public ColorEquatable(int rgba, boolean hasalpha) {
 		super(rgba, hasalpha);
 	}
 
@@ -51,7 +48,7 @@ public class ColorSelfSelectProvider
 	 * @param g
 	 * @param b
 	 */
-	public ColorSelfSelectProvider(int r, int g, int b) {
+	public ColorEquatable(int r, int g, int b) {
 		super(r, g, b);
 	}
 
@@ -60,7 +57,7 @@ public class ColorSelfSelectProvider
 	 * @param g
 	 * @param b
 	 */
-	public ColorSelfSelectProvider(float r, float g, float b) {
+	public ColorEquatable(float r, float g, float b) {
 		super(r, g, b);
 	}
 
@@ -69,7 +66,7 @@ public class ColorSelfSelectProvider
 	 * @param components
 	 * @param alpha
 	 */
-	public ColorSelfSelectProvider(ColorSpace cspace, float[] components, float alpha) {
+	public ColorEquatable(ColorSpace cspace, float[] components, float alpha) {
 		super(cspace, components, alpha);
 		// TODO Auto-generated constructor stub
 	}
@@ -80,7 +77,7 @@ public class ColorSelfSelectProvider
 	 * @param b
 	 * @param a
 	 */
-	public ColorSelfSelectProvider(int r, int g, int b, int a) {
+	public ColorEquatable(int r, int g, int b, int a) {
 		super(r, g, b, a);
 	}
 
@@ -90,26 +87,31 @@ public class ColorSelfSelectProvider
 	 * @param b
 	 * @param a
 	 */
-	public ColorSelfSelectProvider(float r, float g, float b, float a) {
+	public ColorEquatable(float r, float g, float b, float a) {
 		super(r, g, b, a);
 	}
 	
-	public ColorSelfSelectProvider(Color colorOrig) {
+	public ColorEquatable(Color colorOrig) {
 		super(colorOrig.getRGB());
 	}
 
 	@Override
-	public Color getSelectionColor() {
-		return this;
+	public int hashCode() {
+		return Objects.hash(getRGB(), getAlpha());
 	}
 
-	public static List<ColorSelfSelectProvider> fromColors(Color first, Color ... rest) {
-		Objects.requireNonNull(first, "first");
-		LinkedList<ColorSelfSelectProvider> list = new LinkedList<ColorSelfSelectProvider>();
-		list.add(new ColorSelfSelectProvider(first));
-		for (Color color : rest) {
-			list.add(new ColorSelfSelectProvider(color));
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (obj instanceof ColorEquatable other) {
+			return getRGB() == other.getRGB() && getAlpha() == other.getAlpha();
+		} else if (obj instanceof Color other) {
+			return getRGB() == other.getRGB() && getAlpha() == other.getAlpha();
+		} else {
+			return false;
 		}
-		return list;
 	}
 }

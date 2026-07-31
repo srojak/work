@@ -17,43 +17,43 @@
 package srojak.cdo;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+
+import srojak.core.keys.NamedKey;
 
 /**
  * @author Stephen
  *
  */
-public class ColorMethods {
+public class ColorPaletteManager {
+	private final HashMap<NamedKey, Color> _map;
 
-	public static Color changeAlpha(Color color, int alpha) {
-		Objects.requireNonNull(color, "color");
-		return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+	public ColorPaletteManager() {
+		_map = new HashMap<NamedKey, Color>();
 	}
 	
-	public static boolean areColorsEqual(Color color1, Color color2, int fuzzColor, 
-			boolean bConsiderAlpha) {
-		if (fuzzColor < 0) {
-			fuzzColor = 0;
+	public void putColor(NamedKey key, Color color) {
+		Objects.requireNonNull(key, "key");
+		Objects.requireNonNull(color, "color");
+		_map.put(key, color);
+	}
+	
+	public Color getColor(NamedKey key) {
+		Objects.requireNonNull(key, "key");
+		Color color = _map.get(key);
+		if (color == null) {
+			throw new NoSuchElementException("key " + key.getName() + " not found");
 		}
-		if (color1 == null || color2 == null) {
-			return false;
-		} else if (color1 == color2) {
-			return true;
+		return color;
+	}
+	
+	public void changeColor(NamedKey key, Color color) {
+		Objects.requireNonNull(key, "key");
+		Objects.requireNonNull(color, "color");
+		if (_map.replace(key, color) == null) {
+			throw new NoSuchElementException("key " + key.getName() + " not found");
 		}
-		if (Math.abs(color1.getRed() - color2.getRed()) > fuzzColor) {
-			return false;
-		}
-		if (Math.abs(color1.getGreen() - color2.getGreen()) > fuzzColor) {
-			return false;
-		}
-		if (Math.abs(color1.getBlue() - color2.getBlue()) > fuzzColor) {
-			return false;
-		}
-		if (bConsiderAlpha) {
-			if (Math.abs(color1.getAlpha() - color2.getAlpha()) > fuzzColor) {
-				return false;
-			}
-		}
-		return true;
 	}
 }

@@ -16,59 +16,45 @@
  */
 package srojak.cdo.swing.components;
 
-import java.awt.Color;
 import java.util.Objects;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
+import srojak.cdo.swing.SelectableBorderProvider;
 
 /**
  * @author Stephen
  *
  */
 @SuppressWarnings("serial")
-public class ResponsiveRect 
-		extends JPanel {
-	private Object _data;
+public class ResponsiveBorderRect 
+		extends ResponsiveRect {
+	private SelectableBorderProvider _provBorder;
 
 	/**
 	 * 
 	 */
-	public ResponsiveRect() {
+	public ResponsiveBorderRect(SelectableBorderProvider providerBorder) {
 		super();
-		_data = null;
-		setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
-		setOpaque(true);
+		Objects.requireNonNull(providerBorder, "providerBorder");
+		_provBorder = providerBorder;
+		setBorder(_provBorder.getNormalBorder());
 	}
 
 	/**
 	 * @param isDoubleBuffered
 	 */
-	public ResponsiveRect(boolean isDoubleBuffered) {
+	public ResponsiveBorderRect(boolean isDoubleBuffered, SelectableBorderProvider providerBorder) {
 		super(isDoubleBuffered);
-		_data = null;
-		setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
-		setOpaque(true);
+		Objects.requireNonNull(providerBorder, "providerBorder");
+		_provBorder = providerBorder;
+		setBorder(_provBorder.getNormalBorder());
 	}
 	
-	public boolean hasData() {
-		return _data != null;
-	}
-	
-	public Object getData() {
-		return _data;
-	}
-	
-	public void setData(Object objData) {
-		Objects.requireNonNull(objData, "objData");
-		_data = objData;
-	}
-	
-	public void clearData() {
-		_data = null;
-	}
-	
+	@Override
 	public void setSelected(boolean bState) {
-		// base class method does nothing
+		if (bState) {
+			setBorder(_provBorder.getSelectedBorder());
+		} else {
+			setBorder(_provBorder.getNormalBorder());
+		}
 	}
 }

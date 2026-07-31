@@ -22,6 +22,7 @@ import java.awt.Color;
  * @author Stephen
  *
  */
+@Deprecated
 public interface ColorSelectionProvider {
 	Color getSelectionColor();
 	

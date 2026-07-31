@@ -27,16 +27,15 @@ import java.util.Objects;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import srojak.cdo.ColorSelectionProvider;
 import srojak.cdo.events.AWTEventMethods;
-import srojak.cdo.events.ColorValueChangeListener;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
 import srojak.core.tools.BitMethods;
 import srojak.events.CollectionChangeEvent;
 import srojak.events.CollectionChangeListener;
 import srojak.events.CollectionSizeChangeListener;
-import srojak.events.ObjValueChangeEvent;
+import srojak.events.ObjectValueChangeEvent;
+import srojak.events.ObjectValueChangeListener;
 
 /**
  * @author Stephen
@@ -45,15 +44,15 @@ import srojak.events.ObjValueChangeEvent;
 public class DefaultColorBoxSelectModelMk1 
 		implements ColorBoxSelectModel {
 	private final CommonEventListenerStore _listeners;
-	private final LinkedList<ColorSelectionProvider> _listColors;
-	private ColorSelectionProvider _colorSelected;
+	private final LinkedList<Color> _listColors;
+	private Color _colorSelected;
 	private int _flags;
 	
 	public static final int F_ENABLED = 0x1;
 	
 	public DefaultColorBoxSelectModelMk1() {
 		_listeners = new CommonEventListenerList();
-		_listColors = new LinkedList<ColorSelectionProvider>();
+		_listColors = new LinkedList<Color>();
 		_colorSelected = null;
 		_flags = 0;
 	}
@@ -85,7 +84,7 @@ public class DefaultColorBoxSelectModelMk1
 	}
 	
 	@SuppressWarnings("unused")
-	private void addColorChoice(ColorSelectionProvider color) {
+	private void addColorChoice(Color color) {
 		_listColors.addLast(color);
 		CollectionChangeEvent event
 				= new CollectionChangeEvent(this, CollectionChangeEvent.VERB_ADD, color);
@@ -93,12 +92,12 @@ public class DefaultColorBoxSelectModelMk1
 	}
 
 	@Override
-	public List<ColorSelectionProvider> getChoices() {
+	public List<Color> getChoices() {
 		return _listColors;
 	}
 
 	@Override
-	public void setChoices(Collection<? extends ColorSelectionProvider> providers) {
+	public void setChoices(Collection<? extends Color> providers) {
 		Objects.requireNonNull(providers, "providers");
 		clearPriorChoices();
 		_listColors.addAll(providers);
@@ -109,12 +108,12 @@ public class DefaultColorBoxSelectModelMk1
 	}
 
 	@Override
-	public ColorSelectionProvider getSelection() {
+	public Color getSelection() {
 		return _colorSelected;
 	}
 
 	@Override
-	public void setSelection(ColorSelectionProvider color) {
+	public void setSelection(Color color) {
 		if (!_listColors.contains(color)) {
 			throw new IllegalArgumentException("color is not in choice set");
 		}
@@ -125,9 +124,15 @@ public class DefaultColorBoxSelectModelMk1
 		_colorSelected = color;
 		ItemEvent eventItem = AWTEventMethods.createItemSelectionEvent(this, _colorSelected, true);
 		_listeners.forEach(ItemListener.class, ls -> ls.itemStateChanged(eventItem));
-		ObjValueChangeEvent<Color> event 
-			= new ObjValueChangeEvent<Color>(this, _colorSelected.getSelectionColor());
-		_listeners.forEach(ColorValueChangeListener.class, ls -> ls.update(event));
+		ObjectValueChangeEvent event 
+			= new ObjectValueChangeEvent(this, _colorSelected);
+		_listeners.forEach(ObjectValueChangeListener.class, ls -> ls.update(event));
+	}
+
+	@Override
+	public void setSelection(int index) {
+		Color c = _listColors.get(index);
+		setSelection(c);
 	}
 
 	@Override
@@ -136,13 +141,13 @@ public class DefaultColorBoxSelectModelMk1
 	}
 
 	@Override
-	public void addColorValueChangeListener(ColorValueChangeListener listener) {
-		_listeners.add(ColorValueChangeListener.class, listener);
+	public void addObjectValueChangeListener(ObjectValueChangeListener listener) {
+		_listeners.add(ObjectValueChangeListener.class, listener);
 	}
 
 	@Override
-	public void removeColorValueChangeListener(ColorValueChangeListener listener) {
-		_listeners.remove(ColorValueChangeListener.class, listener);
+	public void removeObjectValueChangeListener(ObjectValueChangeListener listener) {
+		_listeners.remove(ObjectValueChangeListener.class, listener);
 	}
 
 	@Override

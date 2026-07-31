@@ -51,7 +51,6 @@ import srojak.core.logic.BooleanLatch;
 import srojak.events.ObjectValueChangeEvent;
 import srojak.events.ObjectValueChangeListener;
 import srojak.numerics.CircleOctant;
-import srojak.numerics.RadiansMethods;
 import srojak.numerics.compass.CompassPoint;
 
 /**

@@ -16,13 +16,20 @@
  */
 package srojak.cdo.swing.models;
 
-import java.awt.Color;
+import srojak.cdo.ColorPair;
 
 /**
  * @author Stephen
  *
  */
-public interface ColorBoxSelectModel
-		extends ColorBoxSelectModelBase<Color> {
-	
+public class DefaultColorPairBoxSelectModel 
+		extends DefaultColorBoxSelectModelBase<ColorPair>
+		implements ColorPairBoxSelectModel {
+
+	/**
+	 * 
+	 */
+	public DefaultColorPairBoxSelectModel() {
+		super();
+	}
 }

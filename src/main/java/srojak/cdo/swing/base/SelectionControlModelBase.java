@@ -125,6 +125,10 @@ public abstract class SelectionControlModelBase<T>
 		return ListMethods.findInList(_listItems, predicate);
 	}
 	
+	protected T getChoiceByIndex(int index) {
+		return _listItems.get(index);
+	}
+	
 	protected boolean isSelectionEmpty() {
 		return _listSelection.isEmpty();
 	}

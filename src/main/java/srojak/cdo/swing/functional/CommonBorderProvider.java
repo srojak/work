@@ -14,42 +14,46 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.components;
+package srojak.cdo.swing.functional;
 
 import java.awt.Color;
 import java.util.Objects;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+
+import srojak.cdo.ColorHSB;
 import srojak.cdo.swing.SelectableBorderProvider;
-import srojak.cdo.swing.functional.CommonBorderProvider;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class ResponsiveColorRect
-		extends ResponsiveBorderRect {
+public class CommonBorderProvider
+		implements SelectableBorderProvider {
+	private Border _borderNormal;
+	private Border _borderSelected;
 	
-	private static SelectableBorderProvider getBorderProvider(Color color) {
-		Objects.requireNonNull(color, "color");
-		return new CommonBorderProvider(color);
-	}
-	
-	/**
-	 * 
-	 */
-	public ResponsiveColorRect(Color color) {
-		super(getBorderProvider(color));
-		setData(color);
-		setBackground(color);
+	public CommonBorderProvider(Color colorBase) {
+		Objects.requireNonNull(colorBase, "colorBase");
+		ColorHSB hsb = ColorHSB.fromColor(colorBase);
+		if (hsb.getBrightness() < 0.33f) {
+			_borderNormal = BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2);
+		} else {
+			_borderNormal = BorderFactory.createLineBorder(Color.DARK_GRAY, 2);
+		}
+		_borderSelected = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	}
 
-	/**
-	 * @param isDoubleBuffered
-	 */
-	public ResponsiveColorRect(boolean isDoubleBuffered, Color color) {
-		super(isDoubleBuffered, getBorderProvider(color));
-		setData(color);
-		setBackground(color);
+	@Override
+	public Border getNormalBorder() {
+		return _borderNormal;
 	}
+
+	@Override
+	public Border getSelectedBorder() {
+		return _borderSelected;
+	}
+
 }

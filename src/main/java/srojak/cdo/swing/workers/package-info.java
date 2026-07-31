@@ -14,14 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.events;
-
 /**
  * @author Stephen
  *
  */
-public interface ColorValueChangeEventOriginator {
-
-	void addColorValueChangeListener(ColorValueChangeListener listener);
-	void removeColorValueChangeListener(ColorValueChangeListener listener);
-}
+package srojak.cdo.swing.workers;

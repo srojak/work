@@ -14,15 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.models;
+package srojak.cdo.swing.workers;
 
-import java.awt.Color;
+import java.awt.GraphicsEnvironment;
+import java.util.List;
+
+import javax.swing.SwingWorker;
+
+import srojak.core.tools.ListMethods;
 
 /**
  * @author Stephen
  *
  */
-public interface ColorBoxSelectModel
-		extends ColorBoxSelectModelBase<Color> {
-	
+public class GetAvailableFontsWorker 
+		extends SwingWorker<List<String>, Integer> {
+
+	@Override
+	protected List<String> doInBackground() throws Exception {
+		String[] strFonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getAvailableFontFamilyNames();
+		List<String> list = ListMethods.makeListOf(strFonts);
+		return list;
+	}
+
 }

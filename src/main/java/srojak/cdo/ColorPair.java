@@ -23,8 +23,7 @@ import java.util.Objects;
  * @author Stephen
  *
  */
-public class ColorPair
-		implements ColorSelectionProvider {
+public class ColorPair {
 	private final Color _colorBack;
 	private final Color _colorFore;
 	
@@ -44,11 +43,6 @@ public class ColorPair
 	}
 
 	@Override
-	public Color getSelectionColor() {
-		return _colorBack;
-	}
-
-	@Override
 	public int hashCode() {
 		return Objects.hash(_colorBack, _colorFore);
 	}
@@ -56,8 +50,8 @@ public class ColorPair
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ColorPair other) {
-			return _colorBack.equals(other._colorBack)
-					&& _colorFore.equals(other._colorFore);
+			return ColorMethods.areColorsEqual(_colorBack, other._colorBack, 0, true)
+					&& ColorMethods.areColorsEqual(_colorFore, other._colorFore, 0, true);
 		}
 		return false;
 	}

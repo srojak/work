@@ -14,42 +14,18 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.components;
+package srojak.cdo;
 
 import java.awt.Color;
-import java.util.Objects;
 
-import srojak.cdo.swing.SelectableBorderProvider;
-import srojak.cdo.swing.functional.CommonBorderProvider;
+import srojak.core.keys.NamedKey;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class ResponsiveColorRect
-		extends ResponsiveBorderRect {
-	
-	private static SelectableBorderProvider getBorderProvider(Color color) {
-		Objects.requireNonNull(color, "color");
-		return new CommonBorderProvider(color);
-	}
-	
-	/**
-	 * 
-	 */
-	public ResponsiveColorRect(Color color) {
-		super(getBorderProvider(color));
-		setData(color);
-		setBackground(color);
-	}
+public interface ColorPalette {
 
-	/**
-	 * @param isDoubleBuffered
-	 */
-	public ResponsiveColorRect(boolean isDoubleBuffered, Color color) {
-		super(isDoubleBuffered, getBorderProvider(color));
-		setData(color);
-		setBackground(color);
-	}
+	Color getColor(NamedKey key);
+	void setColor(NamedKey key, Color color);
 }

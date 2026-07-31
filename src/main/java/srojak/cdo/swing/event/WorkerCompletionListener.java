@@ -14,15 +14,29 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.models;
+package srojak.cdo.swing.event;
 
-import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.SwingWorker;
 
 /**
  * @author Stephen
  *
  */
-public interface ColorBoxSelectModel
-		extends ColorBoxSelectModelBase<Color> {
+public abstract class WorkerCompletionListener 
+		implements PropertyChangeListener {
 	
+	protected abstract void workerCompleted();
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if ("state".equals(evt.getPropertyName())) {
+			if (SwingWorker.StateValue.DONE == evt.getNewValue()) {
+				workerCompleted();
+			}
+		}
+	}
+
 }
