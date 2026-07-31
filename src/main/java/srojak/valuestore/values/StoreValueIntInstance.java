@@ -24,7 +24,7 @@ import srojak.valuestore.StoreValueInt;
  *
  */
 public class StoreValueIntInstance
-		extends StoreValueBase
+		extends StoreValueScalarBase
 		implements StoreValueInt {
 	private int _nValue;
 	

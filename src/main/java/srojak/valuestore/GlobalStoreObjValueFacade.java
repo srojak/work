@@ -21,7 +21,8 @@ import srojak.core.keys.NamedKey;
 /**
  * @author Stephen
  *
- * The interface that a global store facade holding {@code double} data must provide.
+ * The interface that a global store facade holding object data must provide.
+ * 
  * @param <V> The type of the value objects stored in the global store.
  */
 public interface GlobalStoreObjValueFacade<V> 

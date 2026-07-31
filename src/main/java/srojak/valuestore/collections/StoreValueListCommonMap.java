@@ -14,14 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.valuestore;
+package srojak.valuestore.collections;
+
+import java.util.Objects;
+
+import srojak.core.keys.NamedKey;
+import srojak.core.reflect.PackageClassLocator;
+import srojak.valuestore.GlobalStoreListCollection;
+import srojak.valuestore.StoreValueListCommon;
 
 /**
  * @author Stephen
  *
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+@SuppressWarnings("serial")
+public class StoreValueListCommonMap 
+		extends StoreValueMap<StoreValueListCommon> 
+		implements GlobalStoreListCollection {
+
+	/**
+	 * @param locator
+	 */
+	public StoreValueListCommonMap(PackageClassLocator locator) {
+		super(locator);
+	}
+
+	@Override
+	public StoreValueListCommon get(NamedKey key) {
+		return super.get(key);
+	}
+
+	@Override
+	public void define(StoreValueListCommon list) {
+		Objects.requireNonNull(list, "list");
+		super.put(list.getKey(), list);
+	}
+
 }

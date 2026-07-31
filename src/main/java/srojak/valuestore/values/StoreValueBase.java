@@ -27,7 +27,7 @@ import srojak.valuestore.StoreValue;
  */
 public abstract class StoreValueBase
 		implements StoreValue {
-	private final NamedKey _key;
+	protected final NamedKey _key;
 	
 	public StoreValueBase(NamedKey key) {
 		Objects.requireNonNull(key, "key");
@@ -47,11 +47,6 @@ public abstract class StoreValueBase
 	@Override
 	public boolean canSet() {
 		return true;
-	}
-
-	@Override
-	public StoreValueCalculationBase getCalculation() {
-		return null;
 	}
 
 	@Override

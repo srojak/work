@@ -16,12 +16,21 @@
  */
 package srojak.valuestore;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * @author Stephen
  *
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+public interface StoreValueList<T>
+		extends StoreValueListCommon {
+
+	List<T> getValues();
+	List<T> getValuesWhere(Predicate<T> predicate);
+	T getValueAt(int index);
+	boolean addValue(T value);
+	boolean addMultiValues(Collection<? extends T> values);
+	boolean removeValue(T value);
 }

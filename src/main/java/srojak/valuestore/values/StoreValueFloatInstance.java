@@ -24,7 +24,7 @@ import srojak.valuestore.StoreValueFloat;
  *
  */
 public class StoreValueFloatInstance 
-		extends StoreValueBase 
+		extends StoreValueScalarBase 
 		implements StoreValueFloat {
 	private float _fValue;
 

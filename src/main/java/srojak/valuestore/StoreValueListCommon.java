@@ -16,12 +16,14 @@
  */
 package srojak.valuestore;
 
+import srojak.core.Lockable;
+import srojak.mantle.ClassIdentifiedListCommon;
+
 /**
  * @author Stephen
  *
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+public interface StoreValueListCommon 
+		extends StoreValue, Lockable, ClassIdentifiedListCommon {
+
 }

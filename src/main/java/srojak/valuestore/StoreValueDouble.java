@@ -21,7 +21,7 @@ package srojak.valuestore;
  *
  */
 public interface StoreValueDouble
-		extends StoreValue {
+		extends StoreScalarValue {
 	double getValue();
 	void setValue(double value);
 }

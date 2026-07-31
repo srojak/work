@@ -23,7 +23,7 @@ import srojak.core.keys.NamedKey;
  *
  */
 public abstract class StoreValueDerivedBase
-		extends StoreValueBase {
+		extends StoreValueScalarBase {
 
 	protected StoreValueDerivedBase(NamedKey key) {
 		super(key);

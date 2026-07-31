@@ -16,12 +16,16 @@
  */
 package srojak.valuestore;
 
+import srojak.core.keys.NamedKey;
+
 /**
  * @author Stephen
  *
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+public interface GlobalStoreListCollection
+		extends StoreValueKeyed {
+
+	StoreValueListCommon get(NamedKey key);
+	
+	void define(StoreValueListCommon list);
 }

@@ -24,7 +24,7 @@ import srojak.valuestore.StoreValueLong;
  *
  */
 public class StoreValueLongInstance 
-		extends StoreValueBase 
+		extends StoreValueScalarBase 
 		implements StoreValueLong {
 	private long _lnValue;
 

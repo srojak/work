@@ -24,7 +24,7 @@ import srojak.valuestore.StoreValueDouble;
  *
  */
 public class StoreValueDoubleInstance 
-		extends StoreValueBase 
+		extends StoreValueScalarBase 
 		implements StoreValueDouble {
 	private double _dValue;
 

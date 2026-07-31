@@ -16,7 +16,7 @@
  */
 package srojak.valuestore.collections;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Objects;
 
 import srojak.core.keys.NamedKey;
@@ -31,7 +31,7 @@ import srojak.valuestore.StoreValueKeyed;
  */
 @SuppressWarnings("serial")
 public class StoreValueList<V extends StoreValue> 
-		extends ArrayList<V>
+		extends LinkedList<V>
 		implements StoreValueKeyed {
 	private final PackageClassLocator _locator;
 	

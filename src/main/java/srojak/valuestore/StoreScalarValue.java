@@ -16,12 +16,15 @@
  */
 package srojak.valuestore;
 
+import srojak.valuestore.values.StoreValueCalculationBase;
+
 /**
  * @author Stephen
  *
+ * the interface that any object holding a value in a global store must provide.
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+public interface StoreScalarValue
+		extends StoreValue {
+	
+	StoreValueCalculationBase getCalculation();
 }

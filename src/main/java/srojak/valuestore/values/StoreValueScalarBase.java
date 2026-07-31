@@ -14,14 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.valuestore;
+package srojak.valuestore.values;
+
+import srojak.core.keys.NamedKey;
+import srojak.valuestore.StoreScalarValue;
 
 /**
  * @author Stephen
  *
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+public abstract class StoreValueScalarBase 
+		extends StoreValueBase 
+		implements StoreScalarValue {
+
+	/**
+	 * @param key
+	 */
+	public StoreValueScalarBase(NamedKey key) {
+		super(key);
+	}
+
+	@Override
+	public StoreValueCalculationBase getCalculation() {
+		return null;
+	}
 }

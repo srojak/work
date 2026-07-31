@@ -21,7 +21,7 @@ package srojak.valuestore;
  *
  */
 public interface StoreValueFloat 
-		extends StoreValue {
+		extends StoreScalarValue {
 	float getValue();
 	void setValue(float value);
 

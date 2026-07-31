@@ -19,7 +19,6 @@ package srojak.valuestore;
 import java.util.Objects;
 
 import srojak.core.keys.NamedKey;
-import srojak.core.reflect.PackageClassLocator;
 
 /**
  * @author Stephen
@@ -59,11 +58,4 @@ public abstract class GlobalStoreLongFacadeBase extends GlobalStoreFacadeBase
 			throw new StoreKeyNotFoundException(getClassLocator(), key.toString());
 		storeValue.setValue(value);		
 	}
-
-	@Override
-	protected StoreValueKeyed initializeStore(PackageClassLocator locator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

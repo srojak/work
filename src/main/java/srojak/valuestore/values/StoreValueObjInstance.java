@@ -26,7 +26,7 @@ import srojak.valuestore.StoreValueObj;
  *
  */
 public class StoreValueObjInstance<T>
-		extends StoreValueBase
+		extends StoreValueScalarBase
 		implements StoreValueObj<T> {
 	public final boolean _bAllowsNull;
 	public T _value;

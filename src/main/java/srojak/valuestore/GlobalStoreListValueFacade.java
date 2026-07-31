@@ -16,12 +16,19 @@
  */
 package srojak.valuestore;
 
+import srojak.core.keys.NamedKey;
+
 /**
  * @author Stephen
  *
+ * The interface that a global store facade holding object data must provide.
  */
-public interface StoreValueObj<T>
-		extends StoreScalarValue {
-	T getValue();
-	void setValue(T value);
+public interface GlobalStoreListValueFacade 
+		extends GlobalStoreCommon {
+
+	StoreValueListCommon getList(NamedKey key);
+	
+	<V> StoreValueList<V> getListAs(NamedKey key, Class<V> classElement);
+	
+	<V> StoreValueList<V> addList(NamedKey key, StoreValueList<V> list);
 }

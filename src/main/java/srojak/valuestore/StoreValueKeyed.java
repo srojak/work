@@ -16,6 +16,7 @@
  */
 package srojak.valuestore;
 
+import srojak.core.CommonCollectionSize;
 import srojak.core.keys.NamedKey;
 import srojak.core.reflect.PackageClassLocator;
 
@@ -24,7 +25,8 @@ import srojak.core.reflect.PackageClassLocator;
  *
  * The interface that all stores of any type must provide to be accepted into the global store.
  */
-public interface StoreValueKeyed {
+public interface StoreValueKeyed
+		extends CommonCollectionSize {
 	
 	/**
 	 * Gets the key for the global store.
@@ -37,18 +39,6 @@ public interface StoreValueKeyed {
 	 * @return the {@code String} name of the key.
 	 */
 	String getLocatorName();
-	
-	/**
-	 * Is the store empty?
-	 * @return {@code true} if empty.
-	 */
-	boolean isEmpty();
-	
-	/**
-	 * Get the number of items in the store.
-	 * @return the number of items in the store.
-	 */
-	int size();
 	
 	/**
 	 * Test for the existence of the key in the store.
