@@ -31,6 +31,7 @@ import srojak.numerics.compass.CompassOrdinals;
  * @author Stephen
  *
  */
+@Deprecated
 public class S2LinePathCalc 
 		implements S2LinePath, CompassOrdinals {
 	private final S2Orientation _orientation;

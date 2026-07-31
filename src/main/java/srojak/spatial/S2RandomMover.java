@@ -103,4 +103,11 @@ public class S2RandomMover {
 		S2CompassDirection dir = getRandomDirection();
 		return _orient.offset(dir, nDistance);
 	}
+	
+	public S2Coords walkOneSquare(S2Coords coordsFrom, S2CompassDirection direction) {
+		Objects.requireNonNull(coordsFrom, "coordsFrom");
+		Objects.requireNonNull(direction, "direction");
+		S2Offset offset = _orient.offsetByOne(direction);
+		return coordsFrom.getNewLocationFrom(offset);
+	}
 }
