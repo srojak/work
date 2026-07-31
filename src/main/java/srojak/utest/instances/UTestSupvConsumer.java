@@ -21,6 +21,7 @@ import java.util.Objects;
 import srojak.utest.TestMethodConsuming;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -36,14 +37,14 @@ public class UTestSupvConsumer<T>
 	/**
 	 * Constructor.
 	 * @param utest The {@code UnitTestSeries} that created this instance.
-	 * @param strInstance The name of the test instance.
+	 * @param idInstance The identifier of the test instance.
 	 * @param outcomeTryBlock The outcome that should be asserted if the code gets through
 	 *     the try block without throwing an exception.
 	 * @param methodTest The test consumer callback.
 	 */
-	public UTestSupvConsumer(UnitTestSeries utest, String strInstance, 
+	public UTestSupvConsumer(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
 			TestOutcome outcomeTryBlock, TestMethodConsuming<T> methodTest) {
-		super(utest, strInstance, outcomeTryBlock);
+		super(utest, idInstance, outcomeTryBlock);
 		Objects.requireNonNull(methodTest, "methodTest");
 		_method = methodTest;
 	}

@@ -1,5 +1,5 @@
 /**
-  * Copyright © 2026 Stephen Rojak.
+ * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -14,33 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.utest.impl;
+package srojak.utest.identifiers;
 
 import java.util.Objects;
 
-import srojak.utest.UnitTestSeries;
-import srojak.utest.identifiers.TestInstanceIdentifier;
+import srojak.utest.TestIdentifier;
 
 /**
  * @author Stephen
  *
  */
-public abstract class UTestInstValueBase
-		extends UTestInstance {
-	private final String _strValueName;
+public class SingleNameTestIdentifier 
+		implements TestIdentifier {
+	private final String _strName;
 	
-	public UTestInstValueBase(UnitTestSeries utest, TestInstanceIdentifier idInstance,
-			String strValueName) {
-		super(utest, idInstance);
-		Objects.requireNonNull(strValueName);
-		_strValueName = strValueName;
+	public SingleNameTestIdentifier(String strName) {
+		Objects.requireNonNull(strName, "strName");
+		if (strName.isBlank()) {
+			throw new IllegalArgumentException("strName is blank");
+		}
+		_strName = strName;
 	}
-	
+
 	@Override
-	protected StringBuilder getInitialString() {
-		StringBuilder sb = super.getInitialString();
-		sb.append(_strValueName);
-		sb.append(' ');
-		return sb;
+	public String getText() {
+		return _strName;
+	}
+
+	@Override
+	public TestInstanceIdentifier createInstance() {
+		return new TestInstanceIdentifier(_strName);
 	}
 }

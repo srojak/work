@@ -21,6 +21,7 @@ import java.util.Objects;
 import srojak.utest.TestMethodMonadic;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -42,9 +43,9 @@ public class UTestSupvFunction<T, R>
 	 *     the try block without throwing an exception.
 	 * @param methodTest The test function callback.
 	 */
-	public UTestSupvFunction(UnitTestSeries utest, String strInstance, 
+	public UTestSupvFunction(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
 			TestOutcome outcomeTryBlock, TestMethodMonadic<T, R> methodTest) {
-		super(utest, strInstance, outcomeTryBlock);
+		super(utest, idInstance, outcomeTryBlock);
 		Objects.requireNonNull(methodTest, "methodTest");
 		_method = methodTest;
 	}

@@ -27,6 +27,7 @@ import java.util.function.BiPredicate;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.helpers.UnitTestClassElementMethods;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 import srojak.utest.impl.UTestInstValueBase;
 
 /**
@@ -48,9 +49,9 @@ public class UTestInstCollComparer<E>
 	 * @param strValueName The name of the value under test.
 	 * @param methods The container with methods to use for the test.
 	 */
-	public UTestInstCollComparer(UnitTestSeries utest, String strInstance, 
+	public UTestInstCollComparer(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
 			String strValueName, UnitTestClassElementMethods<E> methods) {
-		super(utest, strInstance, strValueName);
+		super(utest, idInstance, strValueName);
 		Objects.requireNonNull(methods, "methods");
 		_methods = methods;
 		_listFails = new LinkedList<String>();

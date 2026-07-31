@@ -21,6 +21,7 @@ import java.util.Objects;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.helpers.UnitTestEqualsMethods;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -39,9 +40,9 @@ public class UTestInstEquals<T>
 	 * @param strValueName The name of the value under test.
 	 * @param methods
 	 */
-	public UTestInstEquals(UnitTestSeries utest, String strInstance, String strValueName,
-			UnitTestEqualsMethods<T> methods) {
-		super(utest, strInstance, strValueName);
+	public UTestInstEquals(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
+			String strValueName, UnitTestEqualsMethods<T> methods) {
+		super(utest, idInstance, strValueName);
 		Objects.requireNonNull(methods, "methods");
 		_methods = methods;
 	}

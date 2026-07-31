@@ -17,6 +17,7 @@
 package srojak.utest.impl;
 
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -35,6 +36,15 @@ public class UTestCommonMessages {
 		StringBuilder sb = startMessageLine(utest);
 		sb.append(", test ");
 		sb.append(strTest);
+		sb.append(": ");
+		return sb;
+	}
+	
+	public static StringBuilder startTestMessageLine(UnitTestSeries utest,
+			TestInstanceIdentifier ident) {
+		StringBuilder sb = startMessageLine(utest);
+		sb.append(", ");
+		sb.append(ident.getText());
 		sb.append(": ");
 		return sb;
 	}

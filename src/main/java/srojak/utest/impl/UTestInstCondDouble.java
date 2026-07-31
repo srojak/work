@@ -22,6 +22,7 @@ import srojak.numerics.DoublePrecisionComparer;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestConditionDouble;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -36,9 +37,9 @@ public class UTestInstCondDouble
 	 * @param strInstance
 	 * @param strValueName
 	 */
-	public UTestInstCondDouble(UnitTestSeries utest, String strInstance,
+	public UTestInstCondDouble(UnitTestSeries utest, TestInstanceIdentifier idInstance,
 			String strValueName, DoublePrecisionComparer comparer) {
-		super(utest, strInstance, strValueName);
+		super(utest, idInstance, strValueName);
 		Objects.requireNonNull(comparer, "comparer");
 		_comparer = comparer;
 	}

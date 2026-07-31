@@ -19,6 +19,7 @@ package srojak.utest.impl;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestConditionLong;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -32,8 +33,8 @@ public class UTestInstCondLong
 	 * @param strInstance
 	 * @param strValueName
 	 */
-	public UTestInstCondLong(UnitTestSeries utest, String strInstance, String strValueName) {
-		super(utest, strInstance, strValueName);
+	public UTestInstCondLong(UnitTestSeries utest, TestInstanceIdentifier idInstance, String strValueName) {
+		super(utest, idInstance, strValueName);
 		// TODO Auto-generated constructor stub
 	}
 

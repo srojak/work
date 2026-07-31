@@ -24,5 +24,6 @@ module srojak.utest {
 	exports srojak.utest;
 	exports srojak.utest.conditions;
 	exports srojak.utest.helpers;
+	exports srojak.utest.identifiers;
 	exports srojak.utest.instances;
 }

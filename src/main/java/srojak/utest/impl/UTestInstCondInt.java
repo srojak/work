@@ -19,6 +19,7 @@ package srojak.utest.impl;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestConditionInt;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -32,8 +33,9 @@ public class UTestInstCondInt
 	 * @param strInstance
 	 * @param strValueName
 	 */
-	public UTestInstCondInt(UnitTestSeries utest, String strInstance, String strValueName) {
-		super(utest, strInstance, strValueName);
+	public UTestInstCondInt(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
+			String strValueName) {
+		super(utest, idInstance, strValueName);
 	}
 
 	public void execute(UnitTestConditionInt condition, int nActual) {

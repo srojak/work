@@ -18,32 +18,30 @@ package srojak.utest.impl;
 
 import java.util.Objects;
 
-import srojak.core.Named;
 import srojak.core.observe.ObsLevel;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
  *
  */
-public abstract class UTestInstance 
-		implements Named {
+public abstract class UTestInstance {
 	private final UnitTestSeries _utest;
-	private final String _strInstance;
+	private final TestInstanceIdentifier _idInstance;
 	private TestOutcome _outcome;
 	
-	public UTestInstance(UnitTestSeries utest, String strInstance) {
+	public UTestInstance(UnitTestSeries utest, TestInstanceIdentifier idInstance) {
 		Objects.requireNonNull(utest);
-		Objects.requireNonNull(strInstance);
+		Objects.requireNonNull(idInstance);
 		_utest = utest;
-		_strInstance = strInstance;
+		_idInstance = idInstance;
 		_outcome = TestOutcome.NONE;
 	}
 
-	@Override
-	public String getName() {
-		return _strInstance;
+	public TestInstanceIdentifier getIdentifier() {
+		return _idInstance;
 	}
 	
 	public final TestOutcome getOutcome() {
@@ -58,11 +56,11 @@ public abstract class UTestInstance
 	}
 	
 	protected StringBuilder getInitialString() {
-		return UTestCommonMessages.startTestMessageLine(_utest, _strInstance);
+		return UTestCommonMessages.startTestMessageLine(_utest, _idInstance);
 	}
 
 	protected void checkStopOnFailure() {
-		_utest.checkStopOnFailure(_strInstance, _outcome);
+		_utest.checkStopOnFailure(_idInstance, _outcome);
 	}
 	
 	protected void writeMessage(ObsLevel level, String strText) {

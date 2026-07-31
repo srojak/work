@@ -23,6 +23,7 @@ import java.util.Objects;
 import srojak.core.observe.ObsLevel;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 import srojak.utest.impl.UTestInstance;
 
 /**
@@ -41,9 +42,9 @@ public abstract class UTestSupvInstance
 	 * @param outcomeTryBlock The outcome that should be asserted if the code gets through
 	 *     the try block without throwing an exception.
 	 */
-	public UTestSupvInstance(UnitTestSeries utest, String strInstance,
+	public UTestSupvInstance(UnitTestSeries utest, TestInstanceIdentifier idInstance,
 			TestOutcome outcomeTryBlock) {
-		super(utest, strInstance);
+		super(utest, idInstance);
 		if (outcomeTryBlock == TestOutcome.NONE) {
 			throw new IllegalStateException("outcomeTryBlock: not a valid outcome");
 		}

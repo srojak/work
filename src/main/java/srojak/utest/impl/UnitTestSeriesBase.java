@@ -22,6 +22,7 @@ import srojak.core.Named;
 import srojak.core.observe.ObsLevel;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestOptions;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 public abstract class UnitTestSeriesBase
 		implements Named {
@@ -70,14 +71,14 @@ public abstract class UnitTestSeriesBase
 		((UnitTestOptionsBase)_options).writeOutcomeMessage(outcome, strLine);
 	}
 	
-	protected void checkStopOnFailure(String strInstance, TestOutcome outcome) {
+	protected void checkStopOnFailure(TestInstanceIdentifier idInstance, TestOutcome outcome) {
 		if (outcome == TestOutcome.FAIL) {
 			_nFailed++;
 			if (_options.getStopOnFailure()) {
 				StringBuilder sb = new StringBuilder("*STOP: Test series ");
 				sb.append(_strName);
-				sb.append(" test ");
-				sb.append(strInstance);
+				sb.append(' ');
+				sb.append(idInstance.getText());
 				sb.append(" failed");
 				writeMessageDirect(ObsLevel.ALERT, sb.toString());
 				System.exit(2);

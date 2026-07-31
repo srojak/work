@@ -22,6 +22,7 @@ import srojak.numerics.SinglePrecisionComparer;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestConditionFloat;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -36,9 +37,9 @@ public class UTestInstCondFloat
 	 * @param strInstance
 	 * @param strValueName
 	 */
-	public UTestInstCondFloat(UnitTestSeries utest, String strInstance, 
+	public UTestInstCondFloat(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
 			String strValueName, SinglePrecisionComparer comparer) {
-		super(utest, strInstance, strValueName);
+		super(utest, idInstance, strValueName);
 		Objects.requireNonNull(comparer, "comparer");
 		_comparer = comparer;
 	}

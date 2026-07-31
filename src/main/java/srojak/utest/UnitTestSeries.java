@@ -27,6 +27,7 @@ import srojak.utest.conditions.StringCondition;
 import srojak.utest.helpers.UnitTestClassElementMethods;
 import srojak.utest.helpers.UnitTestConditionComparison;
 import srojak.utest.helpers.UnitTestEqualsMethods;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 import srojak.utest.impl.UTestCommonMessages;
 import srojak.utest.impl.UTestInstCondDouble;
 import srojak.utest.impl.UTestInstCondFloat;
@@ -96,15 +97,17 @@ public class UnitTestSeries
 
 	/**
 	 * Evaluate a test where the expected value of an object reference is compared to {@value null}.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param sense the comparison sense of the test.
 	 * @param actual The actual object reference.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectNull(String strTest, String strValueName,
+	public TestOutcome expectNull(TestIdentifier idTest, String strValueName,
 			ConditionSense sense, Object actual) {
-		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, strTest);
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, idInstance);
 		sb.append(strValueName);
 		sb.append(' ');
 		sb.append(sense.getVerb());
@@ -112,120 +115,132 @@ public class UnitTestSeries
 		TestOutcome outcome = TestOutcome.evaluate(() -> sense.isExpectedResult(actual == null));
 		sb.append(outcome);
 		writeOutcomeMessage(outcome, sb.toString());
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a {@code boolean} value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param expected The expected boolean value.
 	 * @param actual The actual boolean value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectValue(String strTest, String strValueName, boolean expected, boolean actual) {
+	public TestOutcome expectValue(TestIdentifier idTest, String strValueName, boolean expected, boolean actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstDyadicBool instance
-			= new UTestInstDyadicBool(this, strTest, strValueName);
+			= new UTestInstDyadicBool(this, idInstance, strValueName);
 		instance.execute(expected, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a {@code int} value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param condition The condition to evaluate for the actual value.
 	 * @param actual The actual integer value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectValueWhere(String strTest, String strValueName,
+	public TestOutcome expectValueWhere(TestIdentifier idTest, String strValueName,
 			UnitTestConditionInt condition, int actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstCondInt instance
-			= new UTestInstCondInt(this, strTest, strValueName);
+			= new UTestInstCondInt(this, idInstance, strValueName);
 		instance.execute(condition, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a {@code long} value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param condition The condition to evaluate for the actual value.
 	 * @param actual The actual long integer value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectValueWhere(String strTest, String strValueName,
+	public TestOutcome expectValueWhere(TestIdentifier idTest, String strValueName,
 			UnitTestConditionLong condition, long actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstCondLong instance
-			= new UTestInstCondLong(this, strTest, strValueName);
+			= new UTestInstCondLong(this, idInstance, strValueName);
 		instance.execute(condition, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a {@code float} value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param condition The condition to evaluate for the actual value.
 	 * @param actual The actual float value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectValueWhere(String strTest, String strValueName,
+	public TestOutcome expectValueWhere(TestIdentifier idTest, String strValueName,
 			UnitTestConditionFloat condition, float actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstCondFloat instance
-			= new UTestInstCondFloat(this, strTest, strValueName,
+			= new UTestInstCondFloat(this, idInstance, strValueName,
 					_options.getFloatComparer());
 		instance.execute(condition, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a {@code double} value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param condition The condition to evaluate for the actual value.
 	 * @param actual The actual double value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectValueWhere(String strTest, String strValueName,
+	public TestOutcome expectValueWhere(TestIdentifier idTest, String strValueName,
 			UnitTestConditionDouble condition, double actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstCondDouble instance
-			= new UTestInstCondDouble(this, strTest, strValueName,
+			= new UTestInstCondDouble(this, idInstance, strValueName,
 					_options.getDoubleComparer());
 		instance.execute(condition, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a {@code String} value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param condition The string condition to evaluate for the actual value.
 	 * @param expected The expected value, which is an input to the condition.
 	 * @param actual The actual String value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public TestOutcome expectString(String strTest, String strValueName,
+	public TestOutcome expectString(TestIdentifier idTest, String strValueName,
 			StringCondition condition, String expected, String actual) {
+		Objects.requireNonNull(idTest, "idTest");
 		Objects.requireNonNull(condition, "condition");
 		Objects.requireNonNull(expected, "expected");
-		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, strTest);
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, idInstance);
 		sb.append(strValueName);
 		sb.append(' ');
 		sb.append(condition);
@@ -243,25 +258,27 @@ public class UnitTestSeries
 			outcome = TestOutcome.evaluate(() -> condition.evaluate(expected, actual));
 		}
 		writeOutcomeMessage(outcome, sb.toString());
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is an enum value.
 	 * @param <T> The type of the enum value.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param sense the comparison sense of the test.
 	 * @param expected The expected value.
 	 * @param actual The actual value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public <T extends Enum<T>> TestOutcome expectEnumValue(String strTest, String strValueName,
+	public <T extends Enum<T>> TestOutcome expectEnumValue(TestIdentifier idTest, String strValueName,
 			ConditionSense sense, T expected, T actual) {
+		Objects.requireNonNull(idTest, "idTest");
 		Objects.requireNonNull(sense, "sense");
 		Objects.requireNonNull(expected, "expected");
-		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, strTest);
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, idInstance);
 		sb.append(strValueName);
 		sb.append(' ');
 		sb.append(sense.getVerb());
@@ -278,29 +295,31 @@ public class UnitTestSeries
 			outcome = TestOutcome.evaluate(() -> sense.isExpectedResult(expected.equals(actual)));
 		}
 		writeOutcomeMessage(outcome, sb.toString());
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test for equality where the result is an object.
 	 * @param <T> The type of the object being evaluated.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param methods The container with methods to use for the test.
 	 * @param expected The expected value.
 	 * @param actual The actual value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public <T> TestOutcome expectValueEquals(String strTest, String strValueName,
+	public <T> TestOutcome expectValueEquals(TestIdentifier idTest, String strValueName,
 			UnitTestEqualsMethods<T> methods, T expected, T actual)
 	{
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstEquals<T> instance
-			= new UTestInstEquals<T>(this, strTest, strValueName, methods);
+			= new UTestInstEquals<T>(this, idInstance, strValueName, methods);
 		instance.areEqual(expected, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
@@ -308,60 +327,66 @@ public class UnitTestSeries
 	 * Evaluate a test for inequality where the result is an object.
 	 * The {@code equals( )} method of the object will be used.
 	 * @param <T> The type of the object being evaluated.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param methods The container with methods to use for the test.
 	 * @param expected The expected value.
 	 * @param actual The actual value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public <T> TestOutcome expectValueNotEquals(String strTest, String strValueName,
+	public <T> TestOutcome expectValueNotEquals(TestIdentifier idTest, String strValueName,
 			UnitTestEqualsMethods<T> methods, T expected, T actual)
 	{
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstEquals<T> instance
-			= new UTestInstEquals<T>(this, strTest, strValueName, methods);
+			= new UTestInstEquals<T>(this, idInstance, strValueName, methods);
 		instance.areNotEqual(expected, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is a value that can be compared to another.
 	 * @param <T> The type of the result, which must implement {@code Comparable<T>}.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param comparison The {@code ValueComparison} defining the comparison.
 	 * @param expected The expected value.
 	 * @param actual The actual value.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public <T extends Comparable<T>> TestOutcome expectValue(String strTest, String strValueName,
+	public <T extends Comparable<T>> TestOutcome expectValue(TestIdentifier idTest, String strValueName,
 			OrderedComparison comparison, T expected, T actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
 		UTestInstDyadic<T> instance 
-			= new UTestInstDyadic<T>(this, strTest, strValueName,
+			= new UTestInstDyadic<T>(this, idInstance, strValueName,
 					new UnitTestConditionComparison<T>(comparison));
 		instance.execute(expected, actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Evaluate a test where the result is an object of a specific type.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param classExpected The {@code Class} of the expected type.
 	 * @param actual The actual object produced by the test.
 	 * @return the {@code TestOutcome} for the test.
 	 * @throws NullPointerException if classExpected is {@value null}.
 	 */
-	public TestOutcome expectType(String strTest, String strValueName, 
+	public TestOutcome expectType(TestIdentifier idTest, String strValueName, 
 			Class<?> classExpected, Object actual) {
+		Objects.requireNonNull(idTest, "idTest");
 		Objects.requireNonNull(classExpected, "classExpected");
-		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, strTest);
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, idInstance);
 		sb.append(strValueName);
 		sb.append(" is of type ");
 		sb.append(classExpected.getTypeName());
@@ -373,28 +398,30 @@ public class UnitTestSeries
 		}
 		sb.append(outcome);
 		writeOutcomeMessage(outcome, sb.toString());
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Create a comparing test instance for a collection.
 	 * @param <E> The type of the elements in the collection.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param methods The container with methods to use for the test.
 	 * @return The test instance object that will perform the test.
 	 */
-	public <E> UnitTestCollectionComparer<E> createCollectionComparer(String strTest, 
+	public <E> UnitTestCollectionComparer<E> createCollectionComparer(TestIdentifier idTest, 
 			String strValueName, UnitTestClassElementMethods<E> methods) {
+		Objects.requireNonNull(idTest, "idTest");
 		Objects.requireNonNull(methods, "methods");
-		return new UTestInstCollComparer<E>(this, strTest, strValueName, methods);
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		return new UTestInstCollComparer<E>(this, idInstance, strValueName, methods);
 	}
 	
 	/**
 	 * Test all elements of an collection for a condition.
 	 * @param <E> The type of the elements in the collection.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param strValueName The name of the value under test.
 	 * @param methods The container with methods to use for the test.
 	 * @param strExpected A description of the expected condition.
@@ -402,32 +429,36 @@ public class UnitTestSeries
 	 * @param actual The actual collection produced by the test.
 	 * @return the {@code TestOutcome} for the test.
 	 */
-	public <E> TestOutcome expectAllElementsToHave(String strTest,
+	public <E> TestOutcome expectAllElementsToHave(TestIdentifier idTest,
 			String strValueName, UnitTestClassElementMethods<E> methods,
 			String strExpected,	Predicate<E> predicateExpected, Collection<E> actual) {
+		Objects.requireNonNull(idTest, "idTest");
 		Objects.requireNonNull(predicateExpected, "predicateExpected");
 		Objects.requireNonNull(methods, "methods");
-		UTestInstItemHas<E> instance = new UTestInstItemHas<E>(this, strTest, strValueName,
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		UTestInstItemHas<E> instance = new UTestInstItemHas<E>(this, idInstance, strValueName,
 				methods, strExpected, predicateExpected);
 		instance.executeOver(actual);
 		TestOutcome outcome = instance.getOutcome();
 		// instance writes
-		checkStopOnFailure(strTest, outcome);
+		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
 	
 	/**
 	 * Create a supervised test instance for a test returning an object of a specific type.
 	 * @param <T> The type of the object returned from the test.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param outcomeTryBlock The {@code TestOutcome} if the code completes without throwing
 	 * 		an exception.
 	 * @param methodTest The expression to execute to perform the text.
 	 * @return The test instance object that will perform the test.
 	 */
-	public <T> UnitTestSupervisedVoid<T> createVoidInstance(String strTest,
+	public <T> UnitTestSupervisedVoid<T> createVoidInstance(TestIdentifier idTest,
 			TestOutcome outcomeTryBlock, TestMethodProducing<T> methodTest) {
-		return new UTestSupvVoid<T>(this, strTest, outcomeTryBlock, methodTest);	
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		return new UTestSupvVoid<T>(this, idInstance, outcomeTryBlock, methodTest);	
 	}
 	
 	/**
@@ -435,29 +466,33 @@ public class UnitTestSeries
 	 * 		and returning an object of a specific type.
 	 * @param <T> The type of the parameter.
 	 * @param <R> The type of the object returned from the test. 
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param outcomeTryBlock The {@code TestOutcome} if the code completes without throwing
 	 * 		an exception.
 	 * @param methodTest The expression to execute to perform the text.
 	 * @return The test instance object that will perform the test.
 	 */
-	public <T, R> UnitTestSupervisedFunction<T, R>  createMonadicInstance(String strTest,
+	public <T, R> UnitTestSupervisedFunction<T, R>  createMonadicInstance(TestIdentifier idTest,
 			TestOutcome outcomeTryBlock, TestMethodMonadic<T, R> methodTest) {
-		return new UTestSupvFunction<T, R>(this, strTest, outcomeTryBlock, methodTest);
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		return new UTestSupvFunction<T, R>(this, idInstance, outcomeTryBlock, methodTest);
 	}
 	
 	/**
 	 * Create a supervised test instance for a test taking a parameter of a specific type
 	 * 
 	 * @param <T> The type of the parameter.
-	 * @param strTest The name of the test instance.
+	 * @param idTest The identifier for the test instance.
 	 * @param outcomeTryBlock The {@code TestOutcome} if the code completes without throwing
 	 * 		an exception.
 	 * @param methodTest The expression to execute to perform the text.
 	 * @return The test instance object that will perform the test.
 	 */
-	public <T> UnitTestSupervisedConsumer<T> createConsumerInstance(String strTest,
+	public <T> UnitTestSupervisedConsumer<T> createConsumerInstance(TestIdentifier idTest,
 			TestOutcome outcomeTryBlock, TestMethodConsuming<T> methodTest) {
-		return new UTestSupvConsumer<T>(this, strTest, outcomeTryBlock, methodTest);
+		Objects.requireNonNull(idTest, "idTest");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		return new UTestSupvConsumer<T>(this, idInstance, outcomeTryBlock, methodTest);
 	}
 }

@@ -18,6 +18,7 @@ package srojak.utest.impl;
 
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -31,8 +32,8 @@ public class UTestInstDyadicBool
 	 * @param strInstance
 	 * @param strValueName
 	 */
-	public UTestInstDyadicBool(UnitTestSeries utest, String strInstance, String strValueName) {
-		super(utest, strInstance, strValueName);
+	public UTestInstDyadicBool(UnitTestSeries utest, TestInstanceIdentifier idInstance, String strValueName) {
+		super(utest, idInstance, strValueName);
 	}
 	
 	public void execute(boolean bExpected, boolean bActual) {

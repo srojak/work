@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.helpers.UnitTestClassElementMethods;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -46,9 +47,9 @@ public class UTestInstItemHas<T>
 	 * @param strExpected A description of the expected condition.
 	 * @param predicateExpected A predicate that tests for the expected condition.
 	 */
-	public UTestInstItemHas(UnitTestSeries utest, String strInstance, String strValueName,
+	public UTestInstItemHas(UnitTestSeries utest, TestInstanceIdentifier idInstance, String strValueName,
 			UnitTestClassElementMethods<T> methods, String strExpect, Predicate<T> predicate) {
-		super(utest, strInstance, strValueName);
+		super(utest, idInstance, strValueName);
 		Objects.requireNonNull(strExpect, "strCharacteristic");
 		if (strExpect.isEmpty()) {
 			throw new IllegalArgumentException("strCharacteristic is empty");
@@ -82,8 +83,8 @@ public class UTestInstItemHas<T>
 		LinkedList<String> listFails = new LinkedList<String>();
 		StringBuilder sb = getInitialString();
 		sb.append("collection of ");
-		sb.append(_methods.getClass().getSimpleName());
-		sb.append("expecting ");
+		sb.append(_methods.getElementClass().getSimpleName());
+		sb.append(" expecting ");
 		sb.append(_strExpect);
 		Iterator<T> iter = actual.iterator();
 		for (int index = 0; ; index++) {

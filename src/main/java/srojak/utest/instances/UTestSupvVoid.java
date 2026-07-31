@@ -21,6 +21,7 @@ import java.util.Objects;
 import srojak.utest.TestMethodProducing;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -41,9 +42,9 @@ public class UTestSupvVoid<T>
 	 *     the try block without throwing an exception.
 	 * @param methodTest The test supplier callback.
 	 */
-	public UTestSupvVoid(UnitTestSeries utest, String strInstance, 
+	public UTestSupvVoid(UnitTestSeries utest, TestInstanceIdentifier idInstance, 
 			TestOutcome outcomeTryBlock, TestMethodProducing<T> methodTest) {
-		super(utest, strInstance, outcomeTryBlock);
+		super(utest, idInstance, outcomeTryBlock);
 		Objects.requireNonNull(methodTest, "methodTest");
 		_method = methodTest;
 	}

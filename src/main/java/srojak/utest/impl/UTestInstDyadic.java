@@ -19,6 +19,7 @@ package srojak.utest.impl;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.helpers.UnitTestConditionDyadic;
+import srojak.utest.identifiers.TestInstanceIdentifier;
 
 /**
  * @author Stephen
@@ -32,9 +33,9 @@ public class UTestInstDyadic<T>
 	 * @param utest
 	 * @param strInstance
 	 */
-	public UTestInstDyadic(UnitTestSeries utest, String strInstance,
+	public UTestInstDyadic(UnitTestSeries utest, TestInstanceIdentifier idInstance,
 			String strValueName, UnitTestConditionDyadic<T> condition) {
-		super(utest, strInstance, strValueName);
+		super(utest, idInstance, strValueName);
 		_condition = condition;
 	}
 
