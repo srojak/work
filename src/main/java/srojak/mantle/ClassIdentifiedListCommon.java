@@ -14,36 +14,17 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.collections;
+package srojak.mantle;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-
-import srojak.mantle.ClassIdentifiedListCommon;
+import srojak.core.ClassIdentifiedElements;
+import srojak.core.CommonCollectionSize;
 
 /**
  * @author Stephen
  *
  */
-public interface TypedList<E> 
-		extends List<E>, ClassIdentifiedListCommon {
-	
-	boolean isElementAssignableFrom(Class<?> classOther);
-	
-	default public List<E> where(Predicate<E> predicate) {
-		Objects.requireNonNull(predicate, "predicate");
-		ArrayList<E> listSub = new ArrayList<E>(size());
-		Iterator<E> iterator = iterator();
-		while (iterator.hasNext()) {
-			E item = iterator.next();
-			if (predicate.test(item)) {
-				listSub.add(item);
-			}
-		}
-		listSub.trimToSize();
-		return listSub;
-	}
+public interface ClassIdentifiedListCommon
+		extends CommonCollectionSize, ClassIdentifiedElements {
+
+	boolean contains(Object obj);
 }
