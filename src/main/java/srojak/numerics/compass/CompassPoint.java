@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import srojak.numerics.CircleOctant;
-import srojak.numerics.RadiansMethods;
 
 /**
  * @author Stephen

@@ -19,6 +19,7 @@ package srojak.core.observe;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Stephen
@@ -37,6 +38,12 @@ public final class SourceLocation
 	
 	public static SourceLocation caller() {
 		return new SourceLocation(Thread.currentThread().getStackTrace()[3]);
+	}
+	
+	public static SourceLocation caller(int offset) {
+		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+		Objects.checkIndex(offset, stack.length);
+		return new SourceLocation(stack[offset]);
 	}
 	
 	private SourceLocation(StackTraceElement element) {

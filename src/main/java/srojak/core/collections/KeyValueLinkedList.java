@@ -18,6 +18,7 @@ package srojak.core.collections;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import srojak.core.KeyValue;
 
@@ -29,19 +30,50 @@ import srojak.core.KeyValue;
 public class KeyValueLinkedList<K, V> 
 		extends LinkedList<KeyValue<K, V>>
 		implements KeyValueList<K, V> {
+	private final Class<?> _classValues;
 
 	/**
 	 * 
 	 */
-	public KeyValueLinkedList() {
+	public KeyValueLinkedList(Class<?> classValues) {
 		super();
+		Objects.requireNonNull(classValues, "classValues");
+		_classValues = classValues;
 	}
 
 	/**
 	 * @param c
 	 */
-	public KeyValueLinkedList(Collection<? extends KeyValue<K, V>> c) {
+	public KeyValueLinkedList(Class<?> classValues, Collection<? extends KeyValue<K, V>> c) {
 		super(c);
+		Objects.requireNonNull(classValues, "classValues");
+		_classValues = classValues;
 	}
 
+	@Override
+	public Class<?> getElementClass() {
+		return _classValues;
+	}
+
+	@Override
+	public boolean replace(KeyValue<K, V> pairNew) {
+		KeyValue<K, V> pair = findByKey(pairNew.getKey());
+		if (pair == null) {
+			return false;
+		} else {
+			remove(pair);
+			add(pairNew);
+			return true;
+		}
+	}
+
+	@Override
+	public boolean addOrReplace(KeyValue<K, V> pairNew) {
+		KeyValue<K, V> pair = findByKey(pairNew.getKey());
+		if (pair != null) {
+			remove(pair);
+		}
+		add(pairNew);
+		return true;
+	}
 }

@@ -16,41 +16,16 @@
  */
 package srojak.core.collections;
 
-import java.util.Iterator;
-import java.util.List;
-
-import srojak.core.KeyValue;
+import srojak.core.ClassIdentifiedElements;
+import srojak.core.CommonCollectionSize;
 
 /**
  * @author Stephen
  *
+ * @param <K> The type of the key, not the type of the elements
  */
-public interface KeyValueList<K, V> 
-		extends List<KeyValue<K, V>>, KeyedAbstractCollection<K> {
-	
-	boolean replace(KeyValue<K, V> pairNew);
-	
-	boolean addOrReplace(KeyValue<K, V> pairNew);
+public interface KeyedAbstractCollection<K> 
+		extends CommonCollectionSize, ClassIdentifiedElements {
 
-	default public KeyValue<K, V> findByKey(K key) {
-		Iterator<KeyValue<K, V>> iterator = iterator();
-		while (iterator.hasNext()) {
-			KeyValue<K, V> pair = iterator.next();
-			if (pair.isKeyEqual(key)) {
-				return pair;
-			}
-		}
-		return null;
-	}
-	
-	default public boolean containsKey(K key) {
-		Iterator<KeyValue<K, V>> iterator = iterator();
-		while (iterator.hasNext()) {
-			KeyValue<K, V> pair = iterator.next();
-			if (pair.isKeyEqual(key)) {
-				return true;
-			}
-		}
-		return false;
-	}
+	boolean containsKey(K key);
 }

@@ -18,6 +18,7 @@ package srojak.core.collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import srojak.core.KeyValue;
 
@@ -29,26 +30,59 @@ import srojak.core.KeyValue;
 public class KeyValueArrayList<K, V>
 		extends ArrayList<KeyValue<K, V>> 
 		implements KeyValueList<K, V> {
+	private final Class<?> _classValues;
 
 	/**
 	 * 
 	 */
-	public KeyValueArrayList() {
+	public KeyValueArrayList(Class<?> classValues) {
 		super();
+		Objects.requireNonNull(classValues, "classValues");
+		_classValues = classValues;
 	}
 
 	/**
 	 * @param c
 	 */
-	public KeyValueArrayList(Collection<? extends KeyValue<K, V>> c) {
+	public KeyValueArrayList(Class<?> classValues, Collection<? extends KeyValue<K, V>> c) {
 		super(c);
+		Objects.requireNonNull(classValues, "classValues");
+		_classValues = classValues;
 	}
 
 	/**
 	 * @param initialCapacity
 	 */
-	public KeyValueArrayList(int initialCapacity) {
+	public KeyValueArrayList(Class<?> classValues, int initialCapacity) {
 		super(initialCapacity);
+		Objects.requireNonNull(classValues, "classValues");
+		_classValues = classValues;
 	}
 
+	@Override
+	public Class<?> getElementClass() {
+		return _classValues;
+	}
+
+	@Override
+	public boolean replace(KeyValue<K, V> pairNew) {
+		KeyValue<K, V> pair = findByKey(pairNew.getKey());
+		if (pair == null) {
+			return false;
+		} else {
+			remove(pair);
+			add(pairNew);
+			return true;
+		}
+	}
+
+	@Override
+	public boolean addOrReplace(KeyValue<K, V> pairNew) {
+		KeyValue<K, V> pair = findByKey(pairNew.getKey());
+		if (pair != null) {
+			remove(pair);
+		}
+		add(pairNew);
+		return true;
+	}
 }

@@ -20,17 +20,7 @@ package srojak.core;
  * @author Stephen
  *
  */
-public interface CommonCollectionSize {
-	
-	/**
-	 * Is the collection empty?
-	 * @return {@code true} if empty.
-	 */
-	boolean isEmpty();
-	
-	/**
-	 * Get the number of items in the collection.
-	 * @return the number of items in the collection.
-	 */
-	int size();
+public interface ClassIdentifiedElements {
+
+	Class<?> getElementClass();
 }
