@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import srojak.core.collections.OwnerReferenceList;
-import srojak.core.events.EventingListChangeEvent;
-import srojak.core.events.EventingListChangeListener;
+import srojak.core.events.ListChangeVerbEvent;
+import srojak.core.events.ListChangeVerbListener;
 
 /**
  * @author Stephen
@@ -31,7 +31,7 @@ import srojak.core.events.EventingListChangeListener;
  */
 public class ChangeEventingListRelay<E>
 		implements ChangeEventingList<E> {
-	private OwnerReferenceList<EventingListChangeListener> _listeners;
+	private OwnerReferenceList<ListChangeVerbListener> _listeners;
 	private ChangeRelay _relay;
 	private ChangeEventingList<E> _listBound;
 
@@ -39,7 +39,7 @@ public class ChangeEventingListRelay<E>
 	 * 
 	 */
 	public ChangeEventingListRelay() {
-		_listeners = new OwnerReferenceList<EventingListChangeListener>();
+		_listeners = new OwnerReferenceList<ListChangeVerbListener>();
 		_relay = new ChangeRelay();
 		_listBound = null;
 	}
@@ -50,8 +50,8 @@ public class ChangeEventingListRelay<E>
 		}
 		_listBound = list;
 		_listBound.addChangeListener(this, _relay);
-		EventingListChangeEvent event
-			= new EventingListChangeEvent(this, EventingListChangeEvent.VERB_BIND);
+		ListChangeVerbEvent event
+			= new ListChangeVerbEvent(this, ListChangeVerbEvent.VERB_BIND);
 		_listeners.forEach(ls -> ls.listChanged(event));
 	}
 	
@@ -59,8 +59,8 @@ public class ChangeEventingListRelay<E>
 		if (_listBound != null) {
 			_listBound.removeChangeListeners(this);
 			_listBound = null;
-			EventingListChangeEvent event
-			= new EventingListChangeEvent(this, EventingListChangeEvent.VERB_UNBIND);
+			ListChangeVerbEvent event
+			= new ListChangeVerbEvent(this, ListChangeVerbEvent.VERB_UNBIND);
 			_listeners.forEach(ls -> ls.listChanged(event));
 		}
 	}
@@ -70,12 +70,12 @@ public class ChangeEventingListRelay<E>
 	}
 
 	@Override
-	public void addChangeListener(Object owner, EventingListChangeListener listener) {
+	public void addChangeListener(Object owner, ListChangeVerbListener listener) {
 		_listeners.add(owner, listener);
 	}
 
 	@Override
-	public boolean removeChangeListener(Object owner, EventingListChangeListener listener) {
+	public boolean removeChangeListener(Object owner, ListChangeVerbListener listener) {
 		return _listeners.remove(owner, listener);
 	}
 
@@ -239,10 +239,10 @@ public class ChangeEventingListRelay<E>
 	}
 
 	private class ChangeRelay
-			implements EventingListChangeListener {
+			implements ListChangeVerbListener {
 
 		@Override
-		public void listChanged(EventingListChangeEvent e) {
+		public void listChanged(ListChangeVerbEvent e) {
 			_listeners.forEach(ls -> ls.listChanged(e));		
 		}		
 	}

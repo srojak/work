@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.mantle.restbl;
+
+import java.util.function.ObjIntConsumer;
+
+import srojak.core.ClassIdentifiedElements;
+import srojak.core.CommonCollectionSize;
+import srojak.core.Named;
+
 /**
  * @author Stephen
  *
- * Objects at this level can use the debugging facility.
- * 
- * The dependency on srojak.numerics is to prevent the latter from depending on this module.
  */
-module srojak.mantle {
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.debug;
-	exports srojak.mantle;
-	exports srojak.mantle.collections;
-	exports srojak.mantle.decorated;
-	exports srojak.mantle.functional;
-	exports srojak.mantle.impl to srojak.utest.mantle;
-	exports srojak.mantle.io;
-	exports srojak.mantle.reflect;
-	exports srojak.mantle.restbl;
+public interface ResultTableCommon
+		extends Named, CommonCollectionSize, ClassIdentifiedElements {
+
+	void overAllCommon(ObjIntConsumer<Object> consumer);
 }

@@ -26,8 +26,8 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 import srojak.core.collections.OwnerReferenceList;
-import srojak.core.events.EventingListChangeEvent;
-import srojak.core.events.EventingListChangeListener;
+import srojak.core.events.ListChangeVerbEvent;
+import srojak.core.events.ListChangeVerbListener;
 
 /**
  * @author Stephen
@@ -37,7 +37,7 @@ public class ChangeEventingArrayList<T>
 		extends ArrayList<T>
 		implements ChangeEventingList<T> {
 
-	private OwnerReferenceList<EventingListChangeListener> _listeners;
+	private OwnerReferenceList<ListChangeVerbListener> _listeners;
 	/**
 	 * 
 	 */
@@ -48,7 +48,7 @@ public class ChangeEventingArrayList<T>
 	 */
 	public ChangeEventingArrayList() {
 		super();
-		_listeners = new OwnerReferenceList<EventingListChangeListener>();
+		_listeners = new OwnerReferenceList<ListChangeVerbListener>();
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class ChangeEventingArrayList<T>
 	 */
 	public ChangeEventingArrayList(Collection<? extends T> c) {
 		super(c);
-		_listeners = new OwnerReferenceList<EventingListChangeListener>();
+		_listeners = new OwnerReferenceList<ListChangeVerbListener>();
 	}
 	
 	/**
@@ -64,26 +64,26 @@ public class ChangeEventingArrayList<T>
 	 */
 	public ChangeEventingArrayList(int initialCapacity) {
 		super(initialCapacity);
-		_listeners = new OwnerReferenceList<EventingListChangeListener>();
+		_listeners = new OwnerReferenceList<ListChangeVerbListener>();
 	}
 
 	private void raiseChangeEvent(int nVerb) {
-		EventingListChangeEvent event = new EventingListChangeEvent(this, nVerb);
+		ListChangeVerbEvent event = new ListChangeVerbEvent(this, nVerb);
 		_listeners.forEach(ls -> ls.listChanged(event));
 	}
 
 	private void raiseChangeEvent(int nVerb, Object objItem) {
-		EventingListChangeEvent event = new EventingListChangeEvent(this, nVerb, objItem);
+		ListChangeVerbEvent event = new ListChangeVerbEvent(this, nVerb, objItem);
 		_listeners.forEach(ls -> ls.listChanged(event));
 	}
 	
 	@Override
-	public void addChangeListener(Object owner, EventingListChangeListener listener) {
+	public void addChangeListener(Object owner, ListChangeVerbListener listener) {
 		_listeners.add(owner, listener);
 	}
 	
 	@Override
-	public boolean removeChangeListener(Object owner, EventingListChangeListener listener) {
+	public boolean removeChangeListener(Object owner, ListChangeVerbListener listener) {
 		return _listeners.remove(owner, listener);
 	}
 
@@ -100,7 +100,7 @@ public class ChangeEventingArrayList<T>
 	@Override
 	public T set(int index, T element) {
 		T elementWas = super.set(index, element);
-		raiseChangeEvent(EventingListChangeEvent.VERB_SET_ITEM, element);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_SET_ITEM, element);
 		return elementWas;
 	}
 
@@ -108,7 +108,7 @@ public class ChangeEventingArrayList<T>
 	public boolean add(T e) {
 		boolean bResult = super.add(e);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_ADD, e);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, e);
 		}
 		return bResult;
 	}
@@ -116,14 +116,14 @@ public class ChangeEventingArrayList<T>
 	@Override
 	public void add(int index, T element) {
 		super.add(index, element);
-		raiseChangeEvent(EventingListChangeEvent.VERB_ADD, element);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, element);
 	}
 
 	@Override
 	public T remove(int index) {
 		T element = super.remove(index);
 		if (element != null) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, element);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, element);
 		}
 		return element;
 	}
@@ -132,7 +132,7 @@ public class ChangeEventingArrayList<T>
 	public boolean remove(Object o) {
 		boolean bResult = super.remove(o);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, o);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, o);
 		}
 		return bResult;
 	}
@@ -140,7 +140,7 @@ public class ChangeEventingArrayList<T>
 	@Override
 	public void clear() {
 		super.clear();
-		raiseChangeEvent(EventingListChangeEvent.VERB_CLEAR);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_CLEAR);
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class ChangeEventingArrayList<T>
 	public boolean addAll(Collection<? extends T> c) {
 		boolean bResult = super.addAll(c);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_ADD_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_ADD_MULT);
 		}
 		return bResult;
 	}
@@ -174,7 +174,7 @@ public class ChangeEventingArrayList<T>
 	public boolean addAll(int index, Collection<? extends T> c) {
 		boolean bResult = super.addAll(index, c);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_ADD_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_ADD_MULT);
 		}
 		return bResult;
 	}
@@ -183,7 +183,7 @@ public class ChangeEventingArrayList<T>
 	protected void removeRange(int fromIndex, int toIndex) {
 		super.removeRange(fromIndex, toIndex);
 		if (fromIndex < toIndex) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE_MULT);
 		}
 	}
 
@@ -191,7 +191,7 @@ public class ChangeEventingArrayList<T>
 	public boolean removeAll(Collection<?> c) {
 		boolean bResult = super.removeAll(c);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE_MULT);
 		}
 		return bResult;
 	}
@@ -200,7 +200,7 @@ public class ChangeEventingArrayList<T>
 	public boolean retainAll(Collection<?> c) {
 		boolean bResult = super.retainAll(c);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE_MULT);
 		}
 		return bResult;
 	}
@@ -209,7 +209,7 @@ public class ChangeEventingArrayList<T>
 	public boolean removeIf(Predicate<? super T> filter) {
 		boolean bResult = super.removeIf(filter);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE_MULT);
 		}
 		return bResult;
 	}
@@ -217,12 +217,12 @@ public class ChangeEventingArrayList<T>
 	@Override
 	public void replaceAll(UnaryOperator<T> operator) {
 		super.replaceAll(operator);
-		raiseChangeEvent(EventingListChangeEvent.VERB_REPLACE_MULT);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REPLACE_MULT);
 	}
 
 	@Override
 	public void sort(Comparator<? super T> c) {
 		super.sort(c);
-		raiseChangeEvent(EventingListChangeEvent.VERB_SORT);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_SORT);
 	}
 }

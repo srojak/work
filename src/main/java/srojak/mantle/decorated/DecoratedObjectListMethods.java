@@ -14,23 +14,27 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.mantle.decorated;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * @author Stephen
  *
- * Objects at this level can use the debugging facility.
- * 
- * The dependency on srojak.numerics is to prevent the latter from depending on this module.
  */
-module srojak.mantle {
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.debug;
-	exports srojak.mantle;
-	exports srojak.mantle.collections;
-	exports srojak.mantle.decorated;
-	exports srojak.mantle.functional;
-	exports srojak.mantle.impl to srojak.utest.mantle;
-	exports srojak.mantle.io;
-	exports srojak.mantle.reflect;
-	exports srojak.mantle.restbl;
+public class DecoratedObjectListMethods {
+
+	public <D extends DecoratedObject<?>> List<D> findAllWhere(Collection<D> collection,
+			Predicate<D> predicate) {
+		List<D> list = new LinkedList<D>();
+		collection.forEach(i -> {
+			if (predicate.test(i)) {
+				list.add(i);
+			}
+		});
+		return list;
+	}
 }

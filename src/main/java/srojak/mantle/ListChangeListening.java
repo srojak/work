@@ -16,13 +16,13 @@
  */
 package srojak.mantle;
 
-import srojak.core.events.EventingListChangeListener;
+import srojak.core.events.ListChangeVerbListener;
 /**
  * @author Stephen
  *
  */
 public interface ListChangeListening {
-	void addChangeListener(Object owner, EventingListChangeListener listener);
-	boolean removeChangeListener(Object owner, EventingListChangeListener listener);
+	void addChangeListener(Object owner, ListChangeVerbListener listener);
+	boolean removeChangeListener(Object owner, ListChangeVerbListener listener);
 	boolean removeChangeListeners(Object owner);
 }

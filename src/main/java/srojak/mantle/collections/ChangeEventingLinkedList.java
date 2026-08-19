@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import srojak.core.collections.OwnerReferenceList;
-import srojak.core.events.EventingListChangeEvent;
-import srojak.core.events.EventingListChangeListener;
+import srojak.core.events.ListChangeVerbEvent;
+import srojak.core.events.ListChangeVerbListener;
 
 /**
  * @author Stephen
@@ -33,7 +33,7 @@ import srojak.core.events.EventingListChangeListener;
 public class ChangeEventingLinkedList<T>
 		extends LinkedList<T> 
 		implements ChangeEventingList<T> {
-	private OwnerReferenceList<EventingListChangeListener> _listeners;
+	private OwnerReferenceList<ListChangeVerbListener> _listeners;
 
 	/**
 	 * 
@@ -45,7 +45,7 @@ public class ChangeEventingLinkedList<T>
 	 */
 	public ChangeEventingLinkedList() {
 		super();
-		_listeners = new OwnerReferenceList<EventingListChangeListener>();		
+		_listeners = new OwnerReferenceList<ListChangeVerbListener>();		
 	}
 
 	/**
@@ -53,26 +53,26 @@ public class ChangeEventingLinkedList<T>
 	 */
 	public ChangeEventingLinkedList(Collection<? extends T> c) {
 		super(c);
-		_listeners = new OwnerReferenceList<EventingListChangeListener>();		
+		_listeners = new OwnerReferenceList<ListChangeVerbListener>();		
 	}
 
 	private void raiseChangeEvent(int nVerb) {
-		EventingListChangeEvent event = new EventingListChangeEvent(this, nVerb);
+		ListChangeVerbEvent event = new ListChangeVerbEvent(this, nVerb);
 		_listeners.forEach(ls -> ls.listChanged(event));
 	}
 
 	private void raiseChangeEvent(int nVerb, Object objItem) {
-		EventingListChangeEvent event = new EventingListChangeEvent(this, nVerb, objItem);
+		ListChangeVerbEvent event = new ListChangeVerbEvent(this, nVerb, objItem);
 		_listeners.forEach(ls -> ls.listChanged(event));
 	}
 	
 	@Override
-	public void addChangeListener(Object owner, EventingListChangeListener listener) {
+	public void addChangeListener(Object owner, ListChangeVerbListener listener) {
 		_listeners.add(owner, listener);
 	}
 	
 	@Override
-	public boolean removeChangeListener(Object owner, EventingListChangeListener listener) {
+	public boolean removeChangeListener(Object owner, ListChangeVerbListener listener) {
 		return _listeners.remove(owner, listener);
 	}
 
@@ -89,33 +89,33 @@ public class ChangeEventingLinkedList<T>
 	@Override
 	public T removeFirst() {
 		T item = super.removeFirst();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public T removeLast() {
 		T item = super.removeLast();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public void addFirst(T e) {
 		super.addFirst(e);
-		raiseChangeEvent(EventingListChangeEvent.VERB_ADD, e);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, e);
 	}
 
 	@Override
 	public void addLast(T e) {
 		super.addLast(e);
-		raiseChangeEvent(EventingListChangeEvent.VERB_ADD, e);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, e);
 	}
 
 	@Override
 	public boolean add(T e) {
 		if (super.add(e)) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_ADD, e);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, e);
 			return true;
 		} else {
 			return false;
@@ -125,7 +125,7 @@ public class ChangeEventingLinkedList<T>
 	@Override
 	public boolean remove(Object o) {
 		if (super.remove(o)) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, o);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, o);
 			return true;
 		} else {
 			return false;
@@ -136,7 +136,7 @@ public class ChangeEventingLinkedList<T>
 	public boolean addAll(Collection<? extends T> c) {
 		boolean bResult = super.addAll(c);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_ADD_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_ADD_MULT);
 		}
 		return bResult;
 	}
@@ -145,7 +145,7 @@ public class ChangeEventingLinkedList<T>
 	public boolean addAll(int index, Collection<? extends T> c) {
 		boolean bResult = super.addAll(index, c);
 		if (bResult) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_ADD_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_ADD_MULT);
 		}
 		return bResult;
 	}
@@ -153,74 +153,74 @@ public class ChangeEventingLinkedList<T>
 	@Override
 	public void clear() {
 		super.clear();
-		raiseChangeEvent(EventingListChangeEvent.VERB_CLEAR);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_CLEAR);
 	}
 
 	@Override
 	public T set(int index, T element) {
 		T elementWas = super.set(index, element);
-		raiseChangeEvent(EventingListChangeEvent.VERB_SET_ITEM, element);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_SET_ITEM, element);
 		return elementWas;
 	}
 
 	@Override
 	public void add(int index, T element) {
 		super.add(index, element);
-		raiseChangeEvent(EventingListChangeEvent.VERB_ADD, element);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, element);
 	}
 
 	@Override
 	public T remove(int index) {
 		T item = super.remove(index);
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public T poll() {
 		T item = super.poll();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public T remove() {
 		T item = super.remove();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public T pollFirst() {
 		T item = super.pollFirst();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public T pollLast() {
 		T item = super.pollLast();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public void push(T e) {
 		super.push(e);
-		raiseChangeEvent(EventingListChangeEvent.VERB_ADD, e);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_ADD, e);
 	}
 
 	@Override
 	public T pop() {
 		T item = super.pop();
-		raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, item);
+		raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, item);
 		return item;
 	}
 
 	@Override
 	public boolean removeFirstOccurrence(Object o) {
 		if (super.removeFirstOccurrence(o)) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, o);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, o);
 			return true;
 		} else {
 			return false;
@@ -230,7 +230,7 @@ public class ChangeEventingLinkedList<T>
 	@Override
 	public boolean removeLastOccurrence(Object o) {
 		if (super.removeLastOccurrence(o)) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE, o);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE, o);
 			return true;
 		} else {
 			return false;
@@ -266,7 +266,7 @@ public class ChangeEventingLinkedList<T>
 	protected void removeRange(int fromIndex, int toIndex) {
 		super.removeRange(fromIndex, toIndex);
 		if (fromIndex < toIndex) {
-			raiseChangeEvent(EventingListChangeEvent.VERB_REMOVE_MULT);
+			raiseChangeEvent(ListChangeVerbEvent.VERB_REMOVE_MULT);
 		}
 	}
 }

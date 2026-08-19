@@ -14,23 +14,39 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.mantle.decorated;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Stephen
  *
- * Objects at this level can use the debugging facility.
- * 
- * The dependency on srojak.numerics is to prevent the latter from depending on this module.
  */
-module srojak.mantle {
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.debug;
-	exports srojak.mantle;
-	exports srojak.mantle.collections;
-	exports srojak.mantle.decorated;
-	exports srojak.mantle.functional;
-	exports srojak.mantle.impl to srojak.utest.mantle;
-	exports srojak.mantle.io;
-	exports srojak.mantle.reflect;
-	exports srojak.mantle.restbl;
+@SuppressWarnings("serial")
+public class DecoratedNamedObjectArrayList<V>
+		extends ArrayList<DecoratedNamed<V>>
+		implements DecoratedNamedObjectList<V> {
+
+	/**
+	 * 
+	 */
+	public DecoratedNamedObjectArrayList() {
+		super();
+	}
+
+	/**
+	 * @param c
+	 */
+	public DecoratedNamedObjectArrayList(Collection<? extends DecoratedNamed<V>> c) {
+		super(c);
+	}
+
+	/**
+	 * @param initialCapacity
+	 */
+	public DecoratedNamedObjectArrayList(int initialCapacity) {
+		super(initialCapacity);
+	}
+
 }
