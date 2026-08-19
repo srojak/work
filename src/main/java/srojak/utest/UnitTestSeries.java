@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.result.XResult;
 import srojak.numerics.ConditionSense;
 import srojak.numerics.OrderedComparison;
 import srojak.utest.conditions.StringCondition;
@@ -427,7 +428,7 @@ public class UnitTestSeries
 	 * @param strExpected A description of the expected condition.
 	 * @param predicateExpected A predicate that tests for the expected condition.
 	 * @param actual The actual collection produced by the test.
-	 * @return the {@code TestOutcome} for the test.
+	 * @return The {@code TestOutcome} for the test.
 	 */
 	public <E> TestOutcome expectAllElementsToHave(TestIdentifier idTest,
 			String strValueName, UnitTestClassElementMethods<E> methods,
@@ -443,6 +444,39 @@ public class UnitTestSeries
 		// instance writes
 		checkStopOnFailure(idInstance, outcome);
 		return outcome;
+	}
+	
+	/**
+	 * Test a result of an operation for a condition.
+	 * @param idTest The identifier for the test instance.
+	 * @param strOperationName The name of the operation producing the result.
+	 * @param condition The expected condition of the result.
+	 * @param actual The actual result value.
+	 * @return The {@code TestOutcome} for the test.
+	 */
+	public TestOutcome expectResult(TestIdentifier idTest,
+			String strOperationName, UnitTestConditionXResult condition, XResult actual) {
+		Objects.requireNonNull(idTest, "idTest");
+		Objects.requireNonNull(condition, "condition");
+		TestInstanceIdentifier idInstance = idTest.createInstance();
+		StringBuilder sb = UTestCommonMessages.startTestMessageLine(this, idInstance);
+		sb.append(strOperationName);
+		sb.append(' ');
+		sb.append(condition.getConditionDesc());
+		sb.append("? ");
+		TestOutcome outcome = TestOutcome.NONE;
+		if (actual == null) {
+			sb.append("actual is null");
+			outcome = TestOutcome.FAIL;
+		} else {
+			sb.append("actual=\"");
+			sb.append(actual);
+			sb.append("\"");
+			outcome = TestOutcome.evaluate(() -> condition.test(actual));
+		}
+		writeOutcomeMessage(outcome, sb.toString());
+		checkStopOnFailure(idInstance, outcome);
+		return outcome;		
 	}
 	
 	/**

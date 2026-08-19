@@ -29,7 +29,7 @@ import srojak.core.field.SetOnceConditions;
 public abstract class UnitTestCondition {
 	private final SetOnce<String> _strCondition;
 	
-	private static final NameToken _tokenCondition = NameToken.factory("UintTestCondition");
+	private static final NameToken _tokenCondition = NameToken.factory("UnitTestCondition");
 	
 	public UnitTestCondition() {
 		_strCondition = new SetOnce<String>(_tokenCondition, SetOnceConditions.DEFAULT);

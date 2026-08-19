@@ -108,6 +108,26 @@ ERROR: Test seriesListHavingTestSample, test bad list: names collection of NameT
 
 This is where the formatting method from the element methods class is used.
 
+## Test Methods Producing XResult Values
+
+### Where the Expected Outcome Is Expected to be Success
+
+```
+		XResult result = reader.readFrom(TABLE_FILE);
+		series.expectResult(idTest, "parse", UnitTestConditionXResult.passed(), result);
+
+```
+
+For value-carrying subtypes of XResult, the result can be tested for success first, after which the values can be tested
+using other test methods.
+
+### Where the Expected Outcome Is to Catch an Exception
+
+```
+		XResult result = reader.readFrom(TABLE_FILE);
+		series.expectResult(idTest, "parse", 
+				UnitTestConditionXResult.caughtException(SAXException.class), result);
+```
 
 ## Test Methods That Can Throw Exceptions
 

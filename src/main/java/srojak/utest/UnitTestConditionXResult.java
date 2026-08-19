@@ -14,32 +14,26 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.utest.identifiers;
+package srojak.utest;
 
-import srojak.core.specialized.IntegerCounter;
-import srojak.utest.TestIdentifier;
+import srojak.core.result.XResult;
+import srojak.utest.conditions.UnitTestConditionXResultFail;
+import srojak.utest.conditions.UnitTestConditionXResultPass;
 
 /**
  * @author Stephen
  *
  */
-public class SequentialTestIdentifier 
-		implements TestIdentifier {
-	private final IntegerCounter _counter;
+public interface UnitTestConditionXResult {
+
+	String getConditionDesc();
+	boolean test(XResult actual);
 	
-	public SequentialTestIdentifier() {
-		_counter = new IntegerCounter();
+	public static UnitTestConditionXResult passed() {
+		return new UnitTestConditionXResultPass();
 	}
-
-	@Override
-	public String getText() {
-		return "#counter";
+	
+	public static UnitTestConditionXResult caughtException(Class<?> classException) {
+		return new UnitTestConditionXResultFail(classException);
 	}
-
-	@Override
-	public TestInstanceIdentifier createInstance() {
-		_counter.increment();
-		return new TestInstanceIdentifier("#" + _counter.getValue());
-	}
-
 }
