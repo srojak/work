@@ -17,6 +17,7 @@
 package srojak.debug;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -227,6 +228,22 @@ public class DebugNexus
 					DebugSwitch sw = DebugNexusCore.getContent(k);
 					consumer.accept(sw);
 				});
+	}
+	
+	/**
+	 * Get a sorted list of keys for all of the debug switches.
+	 * @return A list of all keys.
+	 */
+	public List<DebugSwitchKey> getSortedSwitchKeys() {
+		return DebugNexusCore.getAllSwitchKeysAsStream().sorted().toList();
+	}
+	
+	/**
+	 * Get a sorted list of keys for all of the class options.
+	 * @return A list of all keys.
+	 */
+	public List<PackageClassLocator> getSortedClassOptionKeys() {
+		return DebugNexusCore.getAllClassOptionKeysAsStream().sorted().toList();
 	}
 	
 	private ClassDebugOptionMap fetchClassOptions(PackageClassLocator locClass) {

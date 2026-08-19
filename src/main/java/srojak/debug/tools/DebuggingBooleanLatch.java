@@ -43,7 +43,7 @@ public class DebuggingBooleanLatch
 	static {
 		DebugNexus debug = new DebugNexus();
 		Class<?> classThis = DebuggingBooleanLatch.class;	
-		_swDebugClass = debug.getSwitch(DebugSwitchTool.makeClassKey(classThis), ObsLevel.LOWEST, false);
+		_swDebugClass = debug.getSwitch(DebugSwitchTool.makeClassKey(classThis), ObsLevel.FINEST, false);
 	}
 	
 	/**

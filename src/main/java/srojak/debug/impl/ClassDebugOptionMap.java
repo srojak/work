@@ -56,6 +56,12 @@ public class ClassDebugOptionMap
 		return entry != null ? entry.getValue() : 0;
 	}
 
+	@Override
+	public boolean isOptionValueNonZero(String strName) {
+		ClassDebugOptionEntry entry = _mapOptions.get(strName);
+		return entry != null && entry.getValue() != 0;
+	}
+
 	public void putOption(String strName, int nValue) {
 		ClassDebugOptionEntry entry = _mapOptions.get(strName);
 		if (entry == null) {

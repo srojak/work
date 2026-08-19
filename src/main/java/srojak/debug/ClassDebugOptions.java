@@ -28,5 +28,6 @@ public interface ClassDebugOptions {
 	PackageClassLocator getOwner();
 	boolean hasOption(String strName);
 	int getOptionValue(String strName);
+	boolean isOptionValueNonZero(String strName);
 	List<DebugOptionNameValue> getOptions();
 }

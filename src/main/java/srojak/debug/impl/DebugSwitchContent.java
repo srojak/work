@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
@@ -111,6 +112,7 @@ public final class DebugSwitchContent
 
 	@Override
 	public void write(ObsLevel level, String strMessage) {
+		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			if (strMessage == null) {
@@ -126,6 +128,7 @@ public final class DebugSwitchContent
 
 	@Override
 	public void write(ObsLevel level, Supplier<String> message) {
+		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
@@ -138,6 +141,7 @@ public final class DebugSwitchContent
 	@Override
 	public void write(ObsLevel level, ObsPassThroughList listPassThrough,
 			Function<ObsPassThroughList, String> message) {
+		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
@@ -149,6 +153,7 @@ public final class DebugSwitchContent
 	
 	@Override
 	public void writeException(ObsLevel level, Exception exc, boolean bShowStack) {
+		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
@@ -177,16 +182,6 @@ public final class DebugSwitchContent
 		messageBuilder.accept(sb);
 		DebugNexusCore.writeln(level, sb.toString());
 	}
-	
-	private void writeTraceReturn(ObsLevel level, SourceLocation location, 
-			Consumer<StringBuilder> messageBuilder) {
-		StringBuilder sb = new StringBuilder();
-		writeSourceLocation(sb, location, _sdetail);
-		sb.append("return from ");
-		sb.append(location.getMethodName());
-		messageBuilder.accept(sb);
-		DebugNexusCore.writeln(ObsLevel.TRACE, sb.toString());
-	}
 
 	@Override
 	public void writeTraceEnter(TraceLevel level) {
@@ -212,6 +207,20 @@ public final class DebugSwitchContent
 	}
 
 	@Override
+	public void writeTraceEnter(TraceLevel level, ObsPassThroughList listPassThrough,
+			Function<ObsPassThroughList, String> message) {
+		Objects.requireNonNull(level, "level");
+		ObsLevel levelObs = level.getObsLevel();
+		if (isLevelAtLeast(levelObs)) {
+			SourceLocation location = SourceLocation.caller();
+			writeTraceEnter(levelObs, location, sb -> {
+				sb.append(' ');
+				sb.append(message.apply(listPassThrough));
+			});
+		}
+	}
+
+	@Override
 	public void writeTraceReturn(TraceLevel level) {
 		Objects.requireNonNull(level, "level");
 		ObsLevel levelObs = level.getObsLevel();
@@ -233,9 +242,34 @@ public final class DebugSwitchContent
 			});
 		}		
 	}
+	
+	private void writeTraceReturn(ObsLevel level, SourceLocation location, 
+			Consumer<StringBuilder> messageBuilder) {
+		StringBuilder sb = new StringBuilder();
+		writeSourceLocation(sb, location, _sdetail);
+		sb.append("return from ");
+		sb.append(location.getMethodName());
+		messageBuilder.accept(sb);
+		DebugNexusCore.writeln(ObsLevel.TRACE, sb.toString());
+	}
+
+	@Override
+	public void writeTraceReturn(TraceLevel level, ObsPassThroughList listPassThrough,
+			Function<ObsPassThroughList, String> message) {
+		Objects.requireNonNull(level, "level");
+		ObsLevel levelObs = level.getObsLevel();
+		if (isLevelAtLeast(levelObs)) {
+			SourceLocation location = SourceLocation.caller();
+			writeTraceReturn(levelObs, location, sb -> {
+				sb.append(' ');
+				sb.append(message.apply(listPassThrough));
+			});
+		}
+	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> messageBuilder) {
+		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
@@ -246,8 +280,21 @@ public final class DebugSwitchContent
 	}
 
 	@Override
+	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> messageBuilder) {
+		ObsLevel.validateEventLevel(level);
+		if (isLevelAtLeast(level)) {
+			SourceLocation location = SourceLocation.caller();
+			StringBuilder sb = new StringBuilder();
+			writeSourceLocation(sb, location, _sdetail);
+			messageBuilder.accept(sb, i);
+			DebugNexusCore.writeln(level, sb.toString());
+		}
+	}
+
+	@Override
 	public void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
 			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder) {
+		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
@@ -264,6 +311,7 @@ public final class DebugSwitchContent
 
 	@Override
 	public ObservationCollector createCollector(ObsLevel level) {
+		ObsLevel.validateEventLevel(level);
 		SourceLocation loc = SourceLocation.caller();
 		return new DebugObsCollectorObj(this, loc, level);
 	}

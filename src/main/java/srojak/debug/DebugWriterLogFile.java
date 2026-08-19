@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 import srojak.core.io.DatedFileNameMethods;
 import srojak.core.observe.ObsLevel;
@@ -90,6 +91,14 @@ public class DebugWriterLogFile
 		StringBuilder sb = new StringBuilder(level.getName());
 		sb.append(": ");
 		message.accept(sb);
+		_print.println(sb.toString());
+	}
+
+	@Override
+	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
+		StringBuilder sb = new StringBuilder(level.getName());
+		sb.append(": ");
+		message.accept(sb, i);
 		_print.println(sb.toString());
 	}
 

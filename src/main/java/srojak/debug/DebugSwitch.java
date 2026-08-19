@@ -19,6 +19,7 @@ package srojak.debug;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
@@ -113,6 +114,15 @@ public interface DebugSwitch
 	void writeTraceEnter(TraceLevel level, Supplier<String> message);
 	
 	/**
+	 * Write a trace message to enter a method with additional text.
+	 * @param level The trace level at which to write the message.
+	 * @param listPassThrough The observable passthrough list carrying additional data.
+	 * @param message The function to write the message.
+	 */
+	void writeTraceEnter(TraceLevel level, ObsPassThroughList listPassThrough, 
+			Function<ObsPassThroughList, String> message);
+	
+	/**
 	 * Write a trace message to return from a method.
 	 * @param level The trace level at which to write the message.
 	 */
@@ -126,11 +136,28 @@ public interface DebugSwitch
 	void writeTraceReturn(TraceLevel level, Supplier<String> message);
 	
 	/**
+	 * Write a trace message to return from a method with additional text.
+	 * @param level The trace level at which to write the message.
+	 * @param listPassThrough The observable passthrough list carrying additional data.
+	 * @param message The function to write the message.
+	 */
+	void writeTraceReturn(TraceLevel level, ObsPassThroughList listPassThrough, 
+			Function<ObsPassThroughList, String> message);
+	
+	/**
 	 * Build and write a message at an observation level.
 	 * @param level The level at which to write the message.
 	 * @param messageBuilder The consumer to build the message.
 	 */
 	void buildAndWrite(ObsLevel level, Consumer<StringBuilder> messageBuilder);
+	
+	/**
+	 * Build and write a message at a given observation level.
+	 * @param level The observation level.
+	 * @param i The {@code int} value to pass through to the callback.
+	 * @param message The callback to build the message.
+	 */
+	void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> messageBuilder);
 	
 	/**
 	 * Build and write a message at an observation level.
