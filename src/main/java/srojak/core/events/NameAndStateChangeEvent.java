@@ -31,8 +31,8 @@ public class NameAndStateChangeEvent
 		implements Named {
 	private final String _strName;
 	
-	public NameAndStateChangeEvent(Object source, String strName, boolean bState) {
-		super(source, bState);
+	public NameAndStateChangeEvent(Object source, String strName, int id, boolean bState) {
+		super(source, id, bState);
 		Objects.requireNonNull(strName, "strName");
 		_strName = strName;
 	}

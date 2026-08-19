@@ -22,12 +22,19 @@ package srojak.core.events;
  */
 @SuppressWarnings("serial")
 public class StateChangeEvent
-		extends CoreEvent {
+		extends CoreEvent
+		implements StateChangeCodes {
+	private final int _id;
 	private final boolean _bState;
 
-	public StateChangeEvent(Object source, boolean bState) {
+	public StateChangeEvent(Object source, int id, boolean bState) {
 		super(source);
+		_id = id;
 		_bState = bState;
+	}
+	
+	public int getID() {
+		return  _id;
 	}
 	
 	public boolean getState() {
@@ -36,6 +43,8 @@ public class StateChangeEvent
 
 	@Override
 	protected void formatData(StringBuilder sb) {
+		sb.append(", ID = ");
+		sb.append(_id);
 		sb.append(", state = ");
 		sb.append(_bState);
 	}

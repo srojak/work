@@ -23,5 +23,9 @@ package srojak.core.result;
 public interface XResultInt
 	extends XResult {
 
+	/**
+	 * Get the result of successful completion of an operation.
+	 * @return The result returned by the operation.
+	 */
 	int getResult();
 }

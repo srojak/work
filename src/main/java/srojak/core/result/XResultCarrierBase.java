@@ -32,11 +32,22 @@ public abstract class XResultCarrierBase
 	private Exception _exception;
 
 	protected XResultCarrierBase(SourceLocation source) {
+		Objects.requireNonNull(source, "source");
 		_origin = source;
 		_bValid = false;
 		_exception = null;
 	}
 	
+	/**
+	 * Used by the originating method to capture an exception thrown when
+	 * 		performing an operation and make it available within the result.
+	 * 
+	 * Generally, methods should not capture all possible exceptions and roll them into the result.
+	 * A method that is performing an operation that can throw checked exceptions should catch and
+	 * record only those exceptions, allowing unchecked exceptions to bubble up normally.
+	 * 
+	 * @param exc The exception that was captured.
+	 */
 	public void caughtException(Exception exc) {
 		Objects.requireNonNull(exc, "exc");
 		_exception = exc;
@@ -46,6 +57,13 @@ public abstract class XResultCarrierBase
 		_bValid = true;
 	}
 	
+	/**
+	 * Copy another result into this result.
+	 * 
+	 * A method would use this to overlay another result from a method it called that failed
+	 * 		so that the caller has the actual origin and exception from the source of the exception.
+	 * @param result The result from the subordinate method.
+	 */
 	public void copyFrom(XResult result) {
 		Objects.requireNonNull(result, "result");
 		_origin = result.getOriginator();
@@ -53,21 +71,40 @@ public abstract class XResultCarrierBase
 		_exception = result.getException();
 	}
 
+	/**
+	 * Get the source location where the result object was created.
+	 * This will usually be in the method where an exception could be thrown,
+	 * 		but not at the line where the exception could occur.
+	 * @return The source location where the result object was created.
+	 */
 	@Override
 	public SourceLocation getOriginator() {
 		return _origin;
 	}
 
+	/**
+	 * Did the requested operation succeed?
+	 * @return {@code true} if the operation was successful.
+	 */
 	@Override
 	public boolean isValid() {
 		return _bValid;
 	}
 
+	/**
+	 * Get the exception, if any, that was thrown performing the requested operation.
+	 * @return The captured exception, or {@code null} if there was none.
+	 */
 	@Override
 	public Exception getException() {
 		return _exception;
 	}
 
+	/**
+	 * Was there an exception of the specified type thrown?
+	 * @param classException The class of the exception of interest.
+	 * @return {@code true} if there was an exception and it is of the given class or a supertype.
+	 */
 	@Override
 	public boolean isExceptionOfType(Class<?> classException) {
 		Objects.requireNonNull(classException, "classException");

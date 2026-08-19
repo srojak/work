@@ -19,9 +19,14 @@ package srojak.core.result;
 /**
  * @author Stephen
  *
+ * @param <T> The type of object returned by successful completion of the originating method.
  */
 public interface XResultOf<T>
 	extends XResult {
 
+	/**
+	 * Get the result of successful completion of an operation.
+	 * @return The result returned by the operation.
+	 */
 	T getResult();
 }

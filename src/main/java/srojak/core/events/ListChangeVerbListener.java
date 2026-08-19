@@ -16,42 +16,13 @@
  */
 package srojak.core.events;
 
+import java.util.EventListener;
+
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class SequentialEvent
-		extends CoreEvent {
-	private final int _id;
-	private final long _sequence;
-	
-	public static final int ID_SYNC = 100;
-	public static final int ID_CHANGE = 101;
-
-	/**
-	 * @param source
-	 */
-	public SequentialEvent(Object source, int id, long sequence) {
-		super(source);
-		_id = id;
-		_sequence = sequence;
-	}
-	
-	public int getID() {
-		return  _id;
-	}
-	
-	public long getSequence() {
-		return _sequence;
-	}
-
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", ID = ");
-		sb.append(_id);
-		sb.append(", seq=");
-		sb.append(_sequence);
-	}
-
+public interface ListChangeVerbListener
+		extends EventListener {
+	void listChanged(ListChangeVerbEvent e);
 }

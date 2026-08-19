@@ -16,8 +16,6 @@
  */
 package srojak.core.result;
 
-import java.util.Objects;
-
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -29,6 +27,9 @@ public class XResultCarrierOf<T>
 		implements XResultOf<T> {
 	private T _result;
 	
+	/**
+	 * Constructor.
+	 */
 	public XResultCarrierOf() {
 		super(SourceLocation.caller());
 		_result = null;
@@ -39,7 +40,6 @@ public class XResultCarrierOf<T>
 	 */
 	public XResultCarrierOf(SourceLocation source) {
 		super(source);
-		Objects.requireNonNull(source, "source");
 		_result = null;
 	}
 

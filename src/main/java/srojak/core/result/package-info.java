@@ -16,6 +16,7 @@
  */
 /**
  * @author Stephen
- *
+ * 
+ * Provides results from methods that capture and forward exceptions.
  */
 package srojak.core.result;

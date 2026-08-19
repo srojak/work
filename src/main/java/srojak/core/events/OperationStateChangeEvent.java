@@ -27,7 +27,7 @@ public class OperationStateChangeEvent
 	private final int _opcode;
 
 	public OperationStateChangeEvent(Object source, int opcode, boolean bState) {
-		super(source, bState);
+		super(source, ID_OPERATION, bState);
 		_opcode = opcode;
 	}
 	

@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Objects;
 
+import srojak.core.events.StateChangeCodes;
 import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
 
@@ -52,7 +53,7 @@ public class BooleanLatch
 		StateChangeEvent event = null;
 		while (iter.hasNext()) {
 			if (event == null) {
-				event = new StateChangeEvent(this, _bState);
+				event = new StateChangeEvent(this, StateChangeCodes.ID_SELF, _bState);
 			}
 			iter.next().stateChanged(event);
 		}

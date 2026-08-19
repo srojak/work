@@ -24,6 +24,7 @@ import srojak.core.LifeCycleEventOriginating;
 import srojak.core.SingletonReadOnly;
 import srojak.core.events.LifeCycleEvent;
 import srojak.core.events.LifeCycleListener;
+import srojak.core.events.StateChangeCodes;
 import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
 import srojak.core.observe.ObsLevel;
@@ -76,7 +77,7 @@ public class SingletonContainer<T>
 	private void releaseCurrent() {
 		if (_obj != null) {
 			if (!_listenersState.isEmpty()) {
-				StateChangeEvent event = new StateChangeEvent(this, false);
+				StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.ID_SELF, false);
 				_listenersState.forEach(ls -> ls.stateChanged(event));
 			}
 			if (_obj instanceof AutoCloseable objClose) {
@@ -122,7 +123,7 @@ public class SingletonContainer<T>
 			objLC.addLifeCycleListener(_listenerLife);
 		}
 		if (!_listenersState.isEmpty()) {
-			StateChangeEvent event = new StateChangeEvent(this, true);
+			StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.ID_SELF, true);
 			_listenersState.forEach(ls -> ls.stateChanged(event));
 		}
 	}

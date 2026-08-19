@@ -23,20 +23,19 @@ package srojak.core.specialized;
  */
 public class IntegerCounter {
 	private int _value;
-
-	/**
-	 * Value constructor.
-	 * @param value The initial value of the counter.
-	 */
-	public IntegerCounter(int value) {
-		_value = value;
-	}
 	
 	/**
 	 * Default constructor.
 	 */
 	public IntegerCounter() {
-		this(0);
+		_value = 0;
+	}
+	
+	/**
+	 * Reset the counter.
+	 */
+	public void reset() {
+		_value = 0;
 	}
 	
 	/**

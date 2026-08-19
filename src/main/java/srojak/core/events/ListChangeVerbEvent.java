@@ -22,7 +22,7 @@ package srojak.core.events;
  *
  */
 @SuppressWarnings("serial")
-public class EventingListChangeEvent
+public class ListChangeVerbEvent
 		extends CoreEvent {
 	private int _nVerb;
 	private Object _objItem;
@@ -44,13 +44,13 @@ public class EventingListChangeEvent
 	/**
 	 * @param source
 	 */
-	public EventingListChangeEvent(Object source, int verb) {
+	public ListChangeVerbEvent(Object source, int verb) {
 		super(source);
 		_nVerb = verb;
 		_objItem = null;
 	}
 	
-	public EventingListChangeEvent(Object source, int verb, Object item) {
+	public ListChangeVerbEvent(Object source, int verb, Object item) {
 		super(source);
 		_nVerb = verb;
 		_objItem = item;	

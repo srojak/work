@@ -22,7 +22,6 @@ module srojak.core {
 	exports srojak.core;
 	exports srojak.core.collections;
 	exports srojak.core.containers;
-	exports srojak.core.decorated;
 	exports srojak.core.events;
 	exports srojak.core.field;
 	exports srojak.core.functional;

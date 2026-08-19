@@ -14,44 +14,31 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.tools;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class SequentialEvent
-		extends CoreEvent {
-	private final int _id;
-	private final long _sequence;
+public class EnumTool<E extends Enum<?>> {
+	private final E[] _values;
 	
-	public static final int ID_SYNC = 100;
-	public static final int ID_CHANGE = 101;
-
-	/**
-	 * @param source
-	 */
-	public SequentialEvent(Object source, int id, long sequence) {
-		super(source);
-		_id = id;
-		_sequence = sequence;
-	}
-	
-	public int getID() {
-		return  _id;
-	}
-	
-	public long getSequence() {
-		return _sequence;
+	public EnumTool(Class<E> classEnum) {
+		Objects.requireNonNull(classEnum, "classEnum");
+		_values = classEnum.getEnumConstants();
 	}
 
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", ID = ");
-		sb.append(_id);
-		sb.append(", seq=");
-		sb.append(_sequence);
+	public E findFirst(Predicate<? super E> predicate) {
+		Objects.requireNonNull(predicate, "predicate");
+		return Arrays.stream(_values).filter(predicate).findFirst().orElse(null);
 	}
-
+	
+	public E findFirstByName(Predicate<String> predicate) {
+		Objects.requireNonNull(predicate, "predicate");
+		return Arrays.stream(_values).filter(v -> predicate.test(v.name())).findFirst().orElse(null);
+	}
 }

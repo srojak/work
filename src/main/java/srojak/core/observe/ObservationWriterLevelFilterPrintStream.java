@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 /**
  * @author Stephen
@@ -52,6 +53,16 @@ public class ObservationWriterLevelFilterPrintStream
 			StringBuilder sb = new StringBuilder(level.getName());
 			sb.append(": ");
 			message.accept(sb);
+			_streamOut.println(sb.toString());
+		}
+	}
+
+	@Override
+	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
+		if (isObsLevelAtLeast(level)) {
+			StringBuilder sb = new StringBuilder(level.getName());
+			sb.append(": ");
+			message.accept(sb, i);
 			_streamOut.println(sb.toString());
 		}
 	}

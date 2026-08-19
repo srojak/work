@@ -16,8 +16,6 @@
  */
 package srojak.core.result;
 
-import java.util.Objects;
-
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -29,6 +27,9 @@ public class XResultLongCarrier
 		implements XResultLong {
 	private long _result;
 	
+	/**
+	 * Constructor.
+	 */
 	public XResultLongCarrier() {
 		super(SourceLocation.caller());
 		_result = -1L;
@@ -39,7 +40,6 @@ public class XResultLongCarrier
 	 */
 	public XResultLongCarrier(SourceLocation source) {
 		super(source);
-		Objects.requireNonNull(source, "source");
 		_result = -1L;
 	}
 

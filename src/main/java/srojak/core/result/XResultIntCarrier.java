@@ -16,8 +16,6 @@
  */
 package srojak.core.result;
 
-import java.util.Objects;
-
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -29,6 +27,9 @@ public class XResultIntCarrier
 		implements XResultInt {
 	private int _result;
 	
+	/**
+	 * Constructor.
+	 */
 	public XResultIntCarrier() {
 		super(SourceLocation.caller());
 		_result = -1;
@@ -39,7 +40,6 @@ public class XResultIntCarrier
 	 */
 	public XResultIntCarrier(SourceLocation source) {
 		super(source);
-		Objects.requireNonNull(source, "source");
 		_result = -1;
 	}
 

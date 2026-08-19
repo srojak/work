@@ -34,24 +34,97 @@ public class ObsLevel
 	private final int _level;
 	private final String _strName;
 	
+	/**
+	 * The level at which no entries would be received when filtering.
+	 * Not valid for origination.
+	 */
 	public static final ObsLevel NONE;
+	
+	/**
+	 * Fatal to the program.
+	 */
 	public static final ObsLevel FATAL;
+	
+	/**
+	 * Severe but not fatal.
+	 */
 	public static final ObsLevel SEVERE;
+	
+	/**
+	 * Triggers the alert mechanism.
+	 */
 	public static final ObsLevel ALERT;
+	
+	/**
+	 * High importance but not indicative of problems.
+	 */
 	public static final ObsLevel NOTICE;
+	
+	/**
+	 * Notifications that an error has occurred.
+	 */
 	public static final ObsLevel ERROR;
+	
+	/**
+	 * Warning messages.
+	 */
 	public static final ObsLevel WARN;
+	
+	/**
+	 * Low importance informational messages.
+	 */
 	public static final ObsLevel INFO;
+	
+	/**
+	 * Detail level informational messages.
+	 */
 	public static final ObsLevel DETAIL;
+	
+	/**
+	 * Highest level trace messages.
+	 */
 	public static final ObsLevel TRACE;
+	
+	/**
+	 * Highest level debug messages.
+	 */
 	public static final ObsLevel DEBUG;
+	
+	/**
+	 * Mid-level trace messages.
+	 */
 	public static final ObsLevel TRACE2;
+	
+	/**
+	 * Mid-level debug messages.
+	 */
 	public static final ObsLevel DEBUG2;
+	
+	/**
+	 * Low-level trace messages.
+	 */
 	public static final ObsLevel TRACE3;
+	
+	/**
+	 * Low-level debug messages.
+	 */
 	public static final ObsLevel DEBUG3;
-	public static final ObsLevel LOW;
-	public static final ObsLevel LOWER;
-	public static final ObsLevel LOWEST;
+	
+	/**
+	 * A debug level below {@code DEBUG3}.
+	 */
+	public static final ObsLevel FINE;
+	
+	/**
+	 * A debug level below {@code FINE}.
+	 */
+	public static final ObsLevel FINER;
+	
+	/**
+	 * The lowest predefined debug level.
+	 */
+	public static final ObsLevel FINEST;
+	
 	private static final HashMap<String, ObsLevel> mapAll;
 	
 	static {
@@ -71,9 +144,9 @@ public class ObsLevel
 		DEBUG2 = makeLevel(list, "DEBUG2", 01400);
 		TRACE3 = makeLevel(list, "TRACE3", 01500);
 		DEBUG3 = makeLevel(list, "DEBUG3", 01600);
-		LOW = makeLevel(list, "LOW", 02000);
-		LOWER = makeLevel(list, "LOWER", 02400);
-		LOWEST = makeLevel(list, "LOWEST", 03000);
+		FINE = makeLevel(list, "FINE", 02000);
+		FINER = makeLevel(list, "FINER", 02400);
+		FINEST = makeLevel(list, "FINEST", 03000);
 		HashMap<String, ObsLevel> map = new HashMap<String, ObsLevel>();
 		for (ObsLevel level : list) {
 			map.put(level.getName(), level);
@@ -117,6 +190,10 @@ public class ObsLevel
 	 */
 	public boolean isLevelAtLeast(ObsLevel other) {
 		return _level >= other._level;
+	}
+	
+	public boolean isValidForWriting() {
+		return _level > 0;
 	}
 	
 	@Override
@@ -220,5 +297,12 @@ public class ObsLevel
 		ObsLevel level = new ObsLevel(nLevel, strName);
 		mapAll.put(level.getName(), level);
 		return level;
+	}
+	
+	public static void validateEventLevel(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
+		if (!level.isValidForWriting()) {
+			throw new IllegalArgumentException("level not valid");
+		}
 	}
 }

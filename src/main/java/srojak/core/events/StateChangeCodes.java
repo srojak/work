@@ -20,38 +20,20 @@ package srojak.core.events;
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class SequentialEvent
-		extends CoreEvent {
-	private final int _id;
-	private final long _sequence;
+public interface StateChangeCodes {
 	
-	public static final int ID_SYNC = 100;
-	public static final int ID_CHANGE = 101;
-
 	/**
-	 * @param source
+	 * The state is the overall state of the object.
 	 */
-	public SequentialEvent(Object source, int id, long sequence) {
-		super(source);
-		_id = id;
-		_sequence = sequence;
-	}
+	public static final int ID_SELF = 10;
 	
-	public int getID() {
-		return  _id;
-	}
+	/**
+	 * The state is the state of an operation.
+	 */
+	public static final int ID_OPERATION = 11;
 	
-	public long getSequence() {
-		return _sequence;
-	}
-
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", ID = ");
-		sb.append(_id);
-		sb.append(", seq=");
-		sb.append(_sequence);
-	}
-
+	/**
+	 * The state is the state of an element in a defined set.
+	 */
+	public static final int ID_CHOICE = 12;
 }

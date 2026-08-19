@@ -16,8 +16,6 @@
  */
 package srojak.core.result;
 
-import java.util.Objects;
-
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -27,6 +25,9 @@ import srojak.core.observe.SourceLocation;
 public class XResultStatusCarrier
 		extends XResultCarrierBase {
 	
+	/**
+	 * Constructor.
+	 */
 	public XResultStatusCarrier() {
 		super(SourceLocation.caller());
 	}
@@ -36,9 +37,12 @@ public class XResultStatusCarrier
 	 */
 	public XResultStatusCarrier(SourceLocation source) {
 		super(source);
-		Objects.requireNonNull(source, "source");
 	}
 	
+	/**
+	 * Mark the object valid, indicating that the operation succeeded.
+	 * This should be the last action the caller performs within the try block.
+	 */
 	public void setValid() {
 		markValid();
 	}

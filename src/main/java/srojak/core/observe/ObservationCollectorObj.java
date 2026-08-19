@@ -135,6 +135,13 @@ public class ObservationCollectorObj
 	}
 
 	@Override
+	public ObservationCollector appendFormat(String format, Object... args) {
+		SourceLocation loc = SourceLocation.caller();
+		_sb.append(ObsWriterMethods.formatSafely(loc, format, args));
+		return this;
+	}
+
+	@Override
 	public void alsoWriteTo(PrintStream output) {
 		Objects.requireNonNull(output, "output");
 		output.println(_sb.toString());

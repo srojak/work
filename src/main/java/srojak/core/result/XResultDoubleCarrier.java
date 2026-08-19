@@ -16,8 +16,6 @@
  */
 package srojak.core.result;
 
-import java.util.Objects;
-
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -29,6 +27,9 @@ public class XResultDoubleCarrier
 		implements XResultDouble {
 	private double _result;
 
+	/**
+	 * Constructor.
+	 */
 	public XResultDoubleCarrier() {
 		super(SourceLocation.caller());
 		_result = Double.NaN;
@@ -39,7 +40,6 @@ public class XResultDoubleCarrier
 	 */
 	public XResultDoubleCarrier(SourceLocation source) {
 		super(source);
-		Objects.requireNonNull(source, "source");
 		_result = Double.NaN;
 	}
 

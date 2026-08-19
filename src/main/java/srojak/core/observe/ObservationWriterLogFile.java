@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 /**
  * @author Stephen
@@ -65,6 +66,16 @@ public class ObservationWriterLogFile
 			StringBuilder sb = new StringBuilder(level.getName());
 			sb.append(": ");
 			message.accept(sb);
+			_print.println(sb.toString());
+		}
+	}
+
+	@Override
+	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
+		if (isObsLevelAtLeast(level)) {
+			StringBuilder sb = new StringBuilder(level.getName());
+			sb.append(": ");
+			message.accept(sb, i);
 			_print.println(sb.toString());
 		}
 	}

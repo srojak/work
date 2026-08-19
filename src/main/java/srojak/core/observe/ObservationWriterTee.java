@@ -19,6 +19,7 @@ package srojak.core.observe;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 /**
  * @author Stephen
@@ -64,6 +65,15 @@ public class ObservationWriterTee
 		StringBuilder sb = new StringBuilder(level.getName());
 		sb.append(": ");
 		messageBuilder.accept(sb, listPassThrough);
+		_writer1.write(level, sb.toString());
+		_writer2.write(level, sb.toString());
+	}
+
+	@Override
+	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
+		StringBuilder sb = new StringBuilder(level.getName());
+		sb.append(": ");
+		message.accept(sb, i);
 		_writer1.write(level, sb.toString());
 		_writer2.write(level, sb.toString());
 	}

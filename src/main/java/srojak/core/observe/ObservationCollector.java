@@ -45,6 +45,7 @@ public interface ObservationCollector {
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
 	public ObservationCollector append(char[] str, int offset, int len);
+	public ObservationCollector appendFormat(String format, Object... args);
 	/**
 	 * If called, must be called before commit.
 	 * @param output

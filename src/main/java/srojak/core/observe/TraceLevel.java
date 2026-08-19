@@ -19,6 +19,7 @@ package srojak.core.observe;
 /**
  * @author Stephen
  *
+ * Provides three levels of tracing.
  */
 public enum TraceLevel {
 	HIGH(1, ObsLevel.TRACE),

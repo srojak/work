@@ -18,6 +18,7 @@ package srojak.core.observe;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 /**
  * @author Stephen
@@ -40,6 +41,14 @@ public interface ObservationWriter
 	 * @param message The callback to build the message.
 	 */
 	void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message);
+	
+	/**
+	 * Build a message and write it at a given observation level.
+	 * @param level The observation level.
+	 * @param i The {@code int} value to pass through to the callback.
+	 * @param message The callback to build the message.
+	 */
+	void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message);
 	
 	/**
 	 * Build and write a message at an observation level.

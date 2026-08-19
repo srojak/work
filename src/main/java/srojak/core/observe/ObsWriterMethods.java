@@ -14,44 +14,42 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.observe;
+
+import java.util.IllegalFormatException;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class SequentialEvent
-		extends CoreEvent {
-	private final int _id;
-	private final long _sequence;
-	
-	public static final int ID_SYNC = 100;
-	public static final int ID_CHANGE = 101;
+public class ObsWriterMethods {
 
 	/**
-	 * @param source
+	 * 
+	 * @param loc
+	 * @param format
+	 * @param args
+	 * @return
 	 */
-	public SequentialEvent(Object source, int id, long sequence) {
-		super(source);
-		_id = id;
-		_sequence = sequence;
+	public static String formatSafely(SourceLocation loc, String format, Object... args) {
+		// eats IllegalFormatException
+		try {
+			return String.format(format, args);
+		} catch (IllegalFormatException exc) {
+			return "Illegal format at "
+					+ loc.toString(SourceDetail.CLASS_METHOD_LINE)
+					+ ": " + exc.getMessage();
+		}
 	}
 	
-	public int getID() {
-		return  _id;
+	/**
+	 * 
+	 * @param format
+	 * @param args
+	 * @return
+	 */
+	public static String formatSafely(String format, Object... args) {
+		SourceLocation loc = SourceLocation.caller();
+		return formatSafely(loc, format, args);
 	}
-	
-	public long getSequence() {
-		return _sequence;
-	}
-
-	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", ID = ");
-		sb.append(_id);
-		sb.append(", seq=");
-		sb.append(_sequence);
-	}
-
 }

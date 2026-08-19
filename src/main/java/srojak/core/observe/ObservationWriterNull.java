@@ -18,6 +18,7 @@ package srojak.core.observe;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 /**
  * @author Stephen
@@ -45,6 +46,11 @@ public class ObservationWriterNull
 
 	@Override
 	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message) {
+		// does nothing
+	}
+
+	@Override
+	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
 		// does nothing
 	}
 

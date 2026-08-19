@@ -14,44 +14,37 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.observe;
+
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class SequentialEvent
-		extends CoreEvent {
-	private final int _id;
-	private final long _sequence;
+public class ObsLevelSwitchCommon 
+		implements ObsLevelSwitch {
+	protected ObsLevel _level;
+	protected boolean _bIsActive;
 	
-	public static final int ID_SYNC = 100;
-	public static final int ID_CHANGE = 101;
-
-	/**
-	 * @param source
-	 */
-	public SequentialEvent(Object source, int id, long sequence) {
-		super(source);
-		_id = id;
-		_sequence = sequence;
-	}
-	
-	public int getID() {
-		return  _id;
-	}
-	
-	public long getSequence() {
-		return _sequence;
+	public ObsLevelSwitchCommon() {
+		_level = ObsLevel.NONE;
+		_bIsActive = false;
 	}
 
 	@Override
-	protected void formatData(StringBuilder sb) {
-		sb.append(", ID = ");
-		sb.append(_id);
-		sb.append(", seq=");
-		sb.append(_sequence);
+	public ObsLevel getLevel() {
+		return _level;
 	}
 
+	@Override
+	public boolean isActive() {
+		return _bIsActive;
+	}
+
+	void set(ObsLevel level, boolean bIsActive) {
+		Objects.requireNonNull(level, "level");
+		_level = level;
+		_bIsActive = bIsActive;
+	}
 }

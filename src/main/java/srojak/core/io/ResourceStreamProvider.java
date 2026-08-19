@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.events;
+package srojak.core.io;
 
-import java.util.EventListener;
+import java.io.InputStream;
 
 /**
  * @author Stephen
  *
  */
-public interface EventingListChangeListener
-		extends EventListener {
-	void listChanged(EventingListChangeEvent e);
+public interface ResourceStreamProvider {
+
+	InputStream getResource();
 }

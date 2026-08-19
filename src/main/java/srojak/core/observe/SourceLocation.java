@@ -24,6 +24,7 @@ import java.util.Objects;
 /**
  * @author Stephen
  *
+ * Identifies a source location from the stack.
  */
 public final class SourceLocation
 		implements SourceDetailFlags {
@@ -32,14 +33,27 @@ public final class SourceLocation
 	private final String _strMethod;
 	private final int _nLine;
 	
+	/**
+	 * Get the source location from the immediate caller.
+	 * @return A source location object.
+	 */
 	public static SourceLocation here() {
 		return new SourceLocation(Thread.currentThread().getStackTrace()[2]);
 	}
 	
+	/**
+	 * Get the source location from the caller's caller.
+	 * @return A source location object.
+	 */
 	public static SourceLocation caller() {
 		return new SourceLocation(Thread.currentThread().getStackTrace()[3]);
 	}
 	
+	/**
+	 * Get the source location from a specified level backward.
+	 * @param offset The number of stack levels to go down.
+	 * @return A source location object.
+	 */
 	public static SourceLocation caller(int offset) {
 		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 		Objects.checkIndex(offset, stack.length);
