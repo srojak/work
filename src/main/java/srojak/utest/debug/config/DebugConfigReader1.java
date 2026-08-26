@@ -25,15 +25,17 @@ import org.xml.sax.SAXException;
 import srojak.core.InvalidOperationException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.result.XResult;
 import srojak.core.specialized.IntegerCounter;
 import srojak.debug.AppDebugMethods;
 import srojak.debug.ClassDebugOptions;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
-import srojak.debug.config.DebugConfigReader;
+import srojak.debug.config.DebugConfigReader2Pass;
 import srojak.numerics.ConditionSense;
 import srojak.numerics.OrderedComparison;
+import srojak.utest.TestIdentifier;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestConditionInt;
 import srojak.utest.UnitTestSeries;
@@ -64,19 +66,23 @@ public class DebugConfigReader1 {
 		writer.setObsLevel(ObsLevel.DEBUG);
 		series.getOptions().setObservationWriter(writer);
 		
-		AppDebugMethods.readDebugPropertiesFromCurrentDir(2);
-		boolean bCreated = AppDebugMethods.tryCreateLogFile(DebugConfigReader1.class);
-		series.expectValue("create log file", "result", true, bCreated);
+		XResult result = AppDebugMethods.readDebugPropertiesFromCurrentDir();
+		if (!result.isValid()) {
+			System.err.println("cannot load properties: " + result.getException().getMessage());
+			System.exit(2);
+		}
+		result = AppDebugMethods.tryCreateLogFile(DebugConfigReader1.class);
+		series.expectValue(TestIdentifier.name("create log file"), "result", true, result.isValid());
 		AppDebugMethods.setAutoFlush(true);
 		
 		swDebugClass.write(ObsLevel.NOTICE, "Reading config file");
 		
 		DebugNexus debug = new DebugNexus();
 		
-		UnitTestSupervisedVoid<DebugConfigReader> test1
-			= series.<DebugConfigReader>createVoidInstance("read config file", 
+		UnitTestSupervisedVoid<DebugConfigReader2Pass> test1
+			= series.<DebugConfigReader2Pass>createVoidInstance(TestIdentifier.name("read config file"), 
 					TestOutcome.PASS, () -> {
-						DebugConfigReader reader = new DebugConfigReader();
+						DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
 						reader.readFrom("switches.xml");		
 						return reader;
 					});
@@ -92,21 +98,25 @@ public class DebugConfigReader1 {
 			counter.increment(1);
 		});
 		series.writeMessageLine(ObsLevel.NOTICE, sb.toString());
-		series.expectValue("switch count", "# switches", OrderedComparison.GT, 0, counter.getValue());
+		series.expectValue(TestIdentifier.name("switch count"), "# switches", 
+				OrderedComparison.GT, 0, counter.getValue());
 		
 		DebugSwitch sw1 = debug.getSwitch(
 				DebugSwitchTool.makeClassKey("srojak.map", "MapSquareGridArray"));
-		series.expectNull("debug switch", "MapSquareGridArray", ConditionSense.IS_NOT, sw1);
-		series.expectValue("debug switch", "locations", true, sw1.showSourceLocations());
+		series.expectNull(TestIdentifier.name("debug switch"), "MapSquareGridArray", 
+				ConditionSense.IS_NOT, sw1);
+		series.expectValue(TestIdentifier.name("debug switch"), "locations", 
+				true, sw1.showSourceLocations());
 		
 		ClassDebugOptions options = debug.getClassOptions(DebugConfigReader1.class);
-		series.expectNull("debug options", "DebugConfigReader1", ConditionSense.IS_NOT, options);
-		series.expectValueWhere("debug options", "option3",
+		series.expectNull(TestIdentifier.name("debug options"), "DebugConfigReader1", 
+				ConditionSense.IS_NOT, options);
+		series.expectValueWhere(TestIdentifier.name("debug options"), "option3",
 				UnitTestConditionInt.makeValueCondition(OrderedComparison.EQ, 1),
 				options.getOptionValue("option3"));
 		
 		UnitTestSupervisedConsumer<DebugNexus> testSetOptionValue
-				= series.createConsumerInstance("debug options", TestOutcome.FAIL,
+				= series.createConsumerInstance(TestIdentifier.name("debug options"), TestOutcome.FAIL,
 						n -> {
 							n.setClassOption(DebugConfigReader1.class, "option3", 2);
 						});
@@ -117,9 +127,9 @@ public class DebugConfigReader1 {
 	}
 
 	@SuppressWarnings("unused")
-	private static DebugConfigReader readFile(String strFile)
+	private static DebugConfigReader2Pass readFile(String strFile)
 			throws SAXException, IOException, XMLStreamException {
-		DebugConfigReader reader = new DebugConfigReader();
+		DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
 		reader.readFrom("switches.xml");		
 		return reader;
 	}

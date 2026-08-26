@@ -20,8 +20,9 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
 import srojak.core.specialized.IntegerCounter;
 import srojak.debug.DebugNexus;
-import srojak.debug.config.DebugConfigReader;
+import srojak.debug.config.DebugConfigReader2Pass;
 import srojak.numerics.OrderedComparison;
+import srojak.utest.TestIdentifier;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.instances.UnitTestSupervisedVoid;
@@ -44,10 +45,10 @@ public class ConfigReaderBadElement {
 		writer.setObsLevel(ObsLevel.DEBUG);
 		series.getOptions().setObservationWriter(writer);
 		
-		UnitTestSupervisedVoid<DebugConfigReader> test1
-			= series.<DebugConfigReader>createVoidInstance("read config file", 
+		UnitTestSupervisedVoid<DebugConfigReader2Pass> test1
+			= series.<DebugConfigReader2Pass>createVoidInstance(TestIdentifier.name("read config file"), 
 					TestOutcome.PASS, () -> {
-						DebugConfigReader reader = new DebugConfigReader();
+						DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
 						reader.readFrom("badelem.xml");		
 						return reader;
 					});
@@ -61,7 +62,8 @@ public class ConfigReaderBadElement {
 			counter.increment(1);
 		});
 		series.writeMessageLine(ObsLevel.NOTICE, sb.toString());
-		series.expectValue("switch count", "# switches", OrderedComparison.GT, 0, counter.getValue());
+		series.expectValue(TestIdentifier.name("switch count"), "# switches", 
+				OrderedComparison.GT, 0, counter.getValue());
 
 		series.complete();
 	}
