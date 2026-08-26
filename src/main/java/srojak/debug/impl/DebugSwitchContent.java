@@ -109,21 +109,25 @@ public final class DebugSwitchContent
 		sb.append(location.toString(detail));
 		sb.append(" ");
 	}
+	
+	private void write(SourceLocation locOrigin, ObsLevel level, String strMessage) {
+		if (isLevelAtLeast(level)) {
+			if (strMessage == null) {
+				strMessage = "(null)";
+				DebugNexusCore.writeDiagnostic("passed null message string at " + locOrigin);
+			}
+			StringBuilder sb = new StringBuilder();
+			writeSourceLocation(sb, locOrigin, _sdetail);
+			sb.append(strMessage);
+			DebugNexusCore.writeln(level, sb.toString());
+		}
+	}
 
 	@Override
 	public void write(ObsLevel level, String strMessage) {
 		ObsLevel.validateEventLevel(level);
-		if (isLevelAtLeast(level)) {
-			SourceLocation location = SourceLocation.caller();
-			if (strMessage == null) {
-				strMessage = "(null)";
-				DebugNexusCore.writeDiagnostic("passed null message string at " + location);
-			}
-			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location, _sdetail);
-			sb.append(strMessage);
-			DebugNexusCore.writeln(level, sb.toString());
-		}
+		SourceLocation location = SourceLocation.caller();
+		write(location, level, strMessage);
 	}
 
 	@Override
@@ -266,17 +270,21 @@ public final class DebugSwitchContent
 			});
 		}
 	}
+	
+	private void buildAndWrite(SourceLocation locOrigin, ObsLevel level, Consumer<StringBuilder> messageBuilder) {
+		if (isLevelAtLeast(level)) {
+			StringBuilder sb = new StringBuilder();
+			writeSourceLocation(sb, locOrigin, _sdetail);
+			messageBuilder.accept(sb);
+			DebugNexusCore.writeln(level, sb.toString());
+		}
+	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> messageBuilder) {
 		ObsLevel.validateEventLevel(level);
-		if (isLevelAtLeast(level)) {
-			SourceLocation location = SourceLocation.caller();
-			StringBuilder sb = new StringBuilder();
-			writeSourceLocation(sb, location, _sdetail);
-			messageBuilder.accept(sb);
-			DebugNexusCore.writeln(level, sb.toString());
-		}
+		SourceLocation location = SourceLocation.caller();
+		buildAndWrite(location, level, messageBuilder);
 	}
 
 	@Override
@@ -348,4 +356,17 @@ public final class DebugSwitchContent
 		return sb.toString();
 	}
 
+	// methods for DebugSwitchObservationWriter
+	
+	public void writeWithLocation(SourceLocation locOrigin, ObsLevel level, String strMessage) {
+		Objects.requireNonNull(locOrigin, "locOrigin");
+		ObsLevel.validateEventLevel(level);
+		write(locOrigin, level, strMessage);
+	}
+	
+	public void buildAndWriteWithLocation(SourceLocation locOrigin, ObsLevel level, Consumer<StringBuilder> messageBuilder) {
+		Objects.requireNonNull(locOrigin, "locOrigin");
+		ObsLevel.validateEventLevel(level);
+		buildAndWrite(locOrigin, level, messageBuilder);
+	}
 }

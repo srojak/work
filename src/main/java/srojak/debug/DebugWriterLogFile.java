@@ -46,9 +46,10 @@ import srojak.debug.impl.DebugNexusCore;
 public class DebugWriterLogFile
 		extends ObservationWriterBase
 		implements ObservationWriter {
-	private Path _pathDir;
-	private PrintStream _print;
-	private String _strAppName;
+	private final Path _pathDir;
+	private final Path _pathFile;
+	private final PrintStream _print;
+	private final String _strAppName;
 	
 	public static final String PREFIX_DEBUG = "debug";
 	
@@ -64,14 +65,23 @@ public class DebugWriterLogFile
 		_pathDir = pathDir;
 		_strAppName = classApp.getName();
 		LocalDateTime dtNow = LocalDateTime.now();
-		Path pathFile = _pathDir.resolve(DatedFileNameMethods.formFileName(strPrefix, "log", true, dtNow));
-		Files.createFile(pathFile);
-		OutputStream streamOut = Files.newOutputStream(pathFile);
+		_pathFile = _pathDir.resolve(DatedFileNameMethods.formFileName(strPrefix, "log", true, dtNow));
+		Files.createFile(_pathFile);
+		OutputStream streamOut = Files.newOutputStream(_pathFile);
 		_print = new PrintStream(streamOut);
 		_print.println("Java version " + EnvTool.getJavaVersion());
 		_print.println("log created for " + _strAppName + " on "
 				+ DebugNexusCore.FORMAT_TIME_STAMP.format(dtNow));
-		System.out.println("Created log file " + pathFile);
+		// TODO functionally organize, create a writer for the announcement
+		System.out.println("Created log file " + _pathFile);
+	}
+	
+	public Path getDirectoryPath() {
+		return _pathDir;
+	}
+	
+	public Path getFilePath() {
+		return _pathFile;
 	}
 
 	@Override

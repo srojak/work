@@ -86,6 +86,6 @@ public class ClassDebugOptionEntry
 
 	@Override
 	public String toString() {
-		return "(_name=\"" + _name + "\", _value=" + _value + ")";
+		return "(name=\"" + _name + "\", value=" + _value + ")";
 	}
 }

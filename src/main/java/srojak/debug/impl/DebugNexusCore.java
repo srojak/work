@@ -87,7 +87,9 @@ public class DebugNexusCore
 		SwitchControlSetRecord record = new SwitchControlSetRecord(strName);
 		_listControlSets.add(record);
 		_ctrlSetActive = record;
-		_writer.writeDiagnostic("reading switch control set " + record.getName());
+		// TODO how can this be announced at startup?
+		System.out.println("reading switch control set " + record.getName());
+		_writer.writeDiagnostic("reading switch control set \"" + record.getName() + "\"");
 	}
 	
 	public static DebugSwitchContent getContent(DebugSwitchKey key) {

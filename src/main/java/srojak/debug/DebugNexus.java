@@ -29,6 +29,7 @@ import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.result.XResult;
+import srojak.core.specialized.IntegerCounter;
 import srojak.core.tools.BitMethods;
 import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
