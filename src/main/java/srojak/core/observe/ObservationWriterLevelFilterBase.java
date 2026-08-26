@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 public abstract class ObservationWriterLevelFilterBase
 		extends ObservationWriterBase
-		implements ObservationWriter {
+		implements ObservationWriter, HasObsLevel {
 	private ObsLevel _levelWriter;
 	
 	public ObservationWriterLevelFilterBase() {
@@ -36,6 +36,7 @@ public abstract class ObservationWriterLevelFilterBase
 		return isObsLevelAtLeast(level);
 	}
 	
+	@Override
 	public ObsLevel getObsLevel() {
 		return _levelWriter;
 	}
@@ -45,6 +46,7 @@ public abstract class ObservationWriterLevelFilterBase
 		return _levelWriter.isLevelAtLeast(obsEvent);
 	}
 	
+	@Override
 	public void setObsLevel(ObsLevel level) {
 		Objects.requireNonNull(level, "level");
 		_levelWriter = level;

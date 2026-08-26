@@ -17,12 +17,15 @@
 package srojak.core.events;
 
 import java.util.EventListener;
+import java.util.EventObject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Spliterator;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author Stephen
@@ -62,8 +65,7 @@ public class SingleEventListenerList<T extends EventListener>
 		while (iter.hasNext()) {
 			T listener = iter.next();
 			consumer.accept(listener);
-		}
-		
+		}	
 	}
 
 	@Override
@@ -72,6 +74,32 @@ public class SingleEventListenerList<T extends EventListener>
 		while (iter.hasPrevious()) {
 			T listener = iter.previous();
 			consumer.accept(listener);
+		}
+	}
+
+	@Override
+	public <E extends EventObject> void sendToAll(Supplier<E> makeEvent, BiConsumer<T, E> activator) {
+		ListIterator<T> iter = _list.listIterator();
+		E event = null;
+		while (iter.hasNext()) {
+			T listener = iter.next();
+			if (event == null) {
+				event = makeEvent.get();
+			}
+			activator.accept(listener, event);
+		}		
+	}
+
+	@Override
+	public <E extends EventObject> void sendToAllReversed(Supplier<E> makeEvent, BiConsumer<T, E> activator) {
+		ListIterator<T> iter = _list.listIterator(_list.size());
+		E event = null;
+		while (iter.hasPrevious()) {
+			T listener = iter.previous();
+			if (event == null) {
+				event = makeEvent.get();
+			}
+			activator.accept(listener, event);
 		}
 	}
 

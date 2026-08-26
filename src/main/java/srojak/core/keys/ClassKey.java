@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.keys;
 
 import java.util.Objects;
 
@@ -22,23 +22,40 @@ import java.util.Objects;
  * @author Stephen
  *
  */
-public abstract class ObservationWriterContainerBase
-		implements HasSingleObservationWriter {
-	private ObservationWriter _writer;
+public class ClassKey {
+	private final Class<?> _classRef;
 	
-	public ObservationWriterContainerBase(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
+	public ClassKey(Class<?> classRef) {
+		Objects.requireNonNull(classRef, "classRef");
+		_classRef = classRef;
 	}
 	
-	@Override
-	public ObservationWriter getObservationWriter() {
-		return _writer;
+	public Class<?> getReferencedClass() {
+		return _classRef;
 	}
-	
+
 	@Override
-	public void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
+	public int hashCode() {
+		return _classRef.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (obj instanceof ClassKey other) {
+			return _classRef == other._classRef;
+		} else if (obj instanceof Class<?> other) {
+			return _classRef == other;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return _classRef.toString();
 	}
 }

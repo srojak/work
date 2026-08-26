@@ -14,26 +14,26 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.core;
+
 /**
  * @author Stephen
  *
  */
-module srojak.core {
-	exports srojak.core;
-	exports srojak.core.collections;
-	exports srojak.core.containers;
-	exports srojak.core.data;
-	exports srojak.core.events;
-	exports srojak.core.field;
-	exports srojak.core.functional;
-	exports srojak.core.io;
-	exports srojak.core.keys;
-	exports srojak.core.logic;
-	exports srojak.core.mutable;
-	exports srojak.core.observe;
-	exports srojak.core.reflect;
-	exports srojak.core.result;
-	exports srojak.core.specialized;
-	exports srojak.core.text;
-	exports srojak.core.tools;
+public interface InputLocation {
+	
+	/**
+	 * Return the line number where the current input fragment ends,
+	 * returns -1 if none is available.
+	 * @return the current line number
+	 */
+	int getLineNumber();
+
+	/**
+	 * Return the column number where the current input fragment ends,
+	 * returns -1 if none is available.
+	 * @return the current column number
+	 */
+	int getColumnNumber();
+
 }

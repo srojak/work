@@ -17,8 +17,11 @@
 package srojak.core.events;
 
 import java.util.EventListener;
+import java.util.EventObject;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author Stephen
@@ -31,6 +34,8 @@ public interface SingleEventListenerStore<T extends EventListener>
 	List<T> getListeners();
 	void forEach(Consumer<? super T> consumer);
 	void forEachReversed(Consumer<? super T> consumer);
+	<E extends EventObject> void sendToAll(Supplier<E> makeEvent, BiConsumer<T, E> activator);
+	<E extends EventObject> void sendToAllReversed(Supplier<E> makeEvent, BiConsumer<T, E> activator);
 	void add(T listener);
 	void remove(T listener);
 }

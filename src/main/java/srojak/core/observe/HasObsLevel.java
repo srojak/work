@@ -14,15 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.observe;
 
 /**
  * @author Stephen
  *
  */
-public interface Tuple<V> {
-	
-	V getFirstValue();
-	
-	V getSecondValue();
+public interface HasObsLevel {
+
+	ObsLevel getObsLevel();
+	void setObsLevel(ObsLevel level);
 }

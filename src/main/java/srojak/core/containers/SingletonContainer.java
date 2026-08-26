@@ -128,6 +128,17 @@ public class SingletonContainer<T>
 		}
 	}
 	
+	public synchronized T take() {
+		if (_obj != null) {
+			T obj = _obj;
+			releaseCurrent();
+			_obj = null;
+			return obj;
+		} else {
+			return null;
+		}
+	}
+	
 	@Override
 	public void addStateChangeListener(StateChangeListener listener) {
 		Objects.requireNonNull(listener, "listener");

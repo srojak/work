@@ -14,26 +14,33 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.core.data;
+
+import java.util.Objects;
+
 /**
  * @author Stephen
  *
  */
-module srojak.core {
-	exports srojak.core;
-	exports srojak.core.collections;
-	exports srojak.core.containers;
-	exports srojak.core.data;
-	exports srojak.core.events;
-	exports srojak.core.field;
-	exports srojak.core.functional;
-	exports srojak.core.io;
-	exports srojak.core.keys;
-	exports srojak.core.logic;
-	exports srojak.core.mutable;
-	exports srojak.core.observe;
-	exports srojak.core.reflect;
-	exports srojak.core.result;
-	exports srojak.core.specialized;
-	exports srojak.core.text;
-	exports srojak.core.tools;
+public enum DataErrorSeverity {
+
+	FATAL(10),
+	ERROR(5),
+	WARN(3),
+	INFO(1);
+	
+	private final int _ordinal;
+	
+	private DataErrorSeverity(int ordinal) {
+		_ordinal = ordinal;
+	}
+	
+	public int getOrdinal() {
+		return _ordinal;
+	}
+	
+	public boolean isSeverityAtLeast(DataErrorSeverity severityRef) {
+		Objects.requireNonNull(severityRef, "severityRef");
+		return _ordinal >= severityRef._ordinal;
+	}
 }

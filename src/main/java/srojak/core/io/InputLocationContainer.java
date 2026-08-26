@@ -14,26 +14,50 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.core.io;
+
+import srojak.core.InputLocation;
+
 /**
  * @author Stephen
  *
  */
-module srojak.core {
-	exports srojak.core;
-	exports srojak.core.collections;
-	exports srojak.core.containers;
-	exports srojak.core.data;
-	exports srojak.core.events;
-	exports srojak.core.field;
-	exports srojak.core.functional;
-	exports srojak.core.io;
-	exports srojak.core.keys;
-	exports srojak.core.logic;
-	exports srojak.core.mutable;
-	exports srojak.core.observe;
-	exports srojak.core.reflect;
-	exports srojak.core.result;
-	exports srojak.core.specialized;
-	exports srojak.core.text;
-	exports srojak.core.tools;
+public class InputLocationContainer 
+		implements InputLocation {
+	private final int _nLine;
+	private final int _nColumn;
+	
+	public InputLocationContainer(int nLine, int nColumn) {
+		_nLine = nLine;
+		_nColumn = nColumn;
+	}
+
+	@Override
+	public int getLineNumber() {
+		return _nLine;
+	}
+
+	@Override
+	public int getColumnNumber() {
+		return _nColumn;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[line=");
+		if (_nLine < 0) {
+			sb.append('?');
+		} else {
+			sb.append(_nLine);
+		}
+		sb.append(", col=");
+		if (_nColumn < 0) {
+			sb.append('?');
+		} else {
+			sb.append(_nColumn);
+		}
+		sb.append(']');
+		return sb.toString();
+	}
 }
