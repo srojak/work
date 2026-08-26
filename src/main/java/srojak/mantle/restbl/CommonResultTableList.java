@@ -14,15 +14,36 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.io;
+package srojak.mantle.restbl;
+
+import java.util.LinkedList;
+
+import srojak.core.tools.ListMethods;
 
 /**
  * @author Stephen
  *
  */
-public enum FileExistence {
-	Any,
-	MustExist,
-	MustNotExist,
-	ConfirmIfExists
+@SuppressWarnings("serial")
+public class CommonResultTableList 
+		extends LinkedList<ResultTableCommon> {
+
+	public CommonResultTableList() {
+		super();
+	}
+	
+	public ResultTableCommon getTable(String strName) {
+		return ListMethods.findInList(this, t -> t.getName().equals(strName));
+	}
+	
+	public <T> ResultTable<T> getTableAs(String strName) {
+		ResultTableCommon tableCommon = getTable(strName);
+		if (tableCommon != null) {
+			@SuppressWarnings("unchecked")
+			ResultTable<T> table = (ResultTable<T>) tableCommon;
+			return table;
+		} else {
+			return null;
+		}
+	}
 }
