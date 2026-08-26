@@ -22,6 +22,9 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
+
+import srojak.core.result.XResultCarrierOf;
+import srojak.core.result.XResultOf;
 /**
  * @author Stephen
  *
@@ -33,12 +36,22 @@ public class XmlSchemaTool {
 		_factory = SchemaFactory.newDefaultInstance();
 	}
 	
-	public Schema readSchema(StreamSource source) 
+	public Schema readSchemaDirect(StreamSource source) 
 			throws SAXException {
 		return _factory.newSchema(source);
 	}
 	
-	public Validator readAndCreatevalidator(StreamSource source)
+	public XResultOf<Schema> readSchema(StreamSource source) {
+		XResultCarrierOf<Schema> result = new XResultCarrierOf<Schema>();
+		try {
+			result.setResult(_factory.newSchema(source));
+		} catch (SAXException exc) {
+			result.caughtException(exc);
+		}
+		return result;
+	}
+	
+	public Validator readAndCreateValidator(StreamSource source)
 			throws SAXException {
 		Schema schema = _factory.newSchema(source);
 		return schema.newValidator();

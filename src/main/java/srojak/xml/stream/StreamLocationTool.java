@@ -24,7 +24,7 @@ import javax.xml.stream.Location;
  */
 public class StreamLocationTool {
 	
-	public static StringBuilder FormatLineAndColumn(StringBuilder sb, Location loc) {
+	public static StringBuilder formatLineAndColumn(StringBuilder sb, Location loc) {
 		sb.append("Loc(line=");
 		sb.append(loc.getLineNumber());
 		sb.append(", col=");
@@ -37,9 +37,9 @@ public class StreamLocationTool {
 		return sb;
 	}
 	
-	public static String FormatLineAndColumn(Location loc) {
+	public static String formatLineAndColumn(Location loc) {
 		StringBuilder sb = new StringBuilder();
-		FormatLineAndColumn(sb, loc);
+		formatLineAndColumn(sb, loc);
 		return sb.toString();
 	}
 }

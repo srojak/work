@@ -45,7 +45,7 @@ public class XmlParseEventResponsePrinting
 	public void onStartDocument(XMLEvent event) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Start document, loc=");
-		StreamLocationTool.FormatLineAndColumn(sb, event.getLocation());
+		StreamLocationTool.formatLineAndColumn(sb, event.getLocation());
 		_msgOut.writeln(sb.toString());
 	}
 
@@ -53,9 +53,9 @@ public class XmlParseEventResponsePrinting
 	public void onEndDocument(XMLEvent event, XmlEventParserState state) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("End document, loc=");
-		StreamLocationTool.FormatLineAndColumn(sb, event.getLocation());
+		StreamLocationTool.formatLineAndColumn(sb, event.getLocation());
 		sb.append(", depth=");
-		sb.append(state.getElementStack().depth());
+		sb.append(state.getElementStack().size());
 		_msgOut.writeln(sb.toString());
 	}
 
@@ -64,11 +64,11 @@ public class XmlParseEventResponsePrinting
 		TStackReadOnly<QName> stackElements = state.getElementStack();
 		StringBuilder sb = new StringBuilder();
 		sb.append("Depth=");
-		sb.append(stackElements.depth());
+		sb.append(stackElements.size());
 		sb.append(" Start Element <");
 		sb.append(stackElements.peek());
 		sb.append(">, ");
-		StreamLocationTool.FormatLineAndColumn(sb, event.getLocation());
+		StreamLocationTool.formatLineAndColumn(sb, event.getLocation());
 		_msgOut.writeln(sb.toString());
 	}
 
@@ -77,7 +77,7 @@ public class XmlParseEventResponsePrinting
 		TStackReadOnly<QName> stackElements = state.getElementStack();
 		StringBuilder sb = new StringBuilder();
 		sb.append("Depth=");
-		sb.append(stackElements.depth());
+		sb.append(stackElements.size());
 		sb.append(" End Element <");
 		sb.append(stackElements.peek());
 		sb.append(">");
@@ -97,7 +97,7 @@ public class XmlParseEventResponsePrinting
 			sb.append("\"");
 		}
 		sb.append(", ");
-		StreamLocationTool.FormatLineAndColumn(sb, attrib.getLocation());
+		StreamLocationTool.formatLineAndColumn(sb, attrib.getLocation());
 		_msgOut.writeln(sb.toString());
 	}
 
@@ -105,7 +105,7 @@ public class XmlParseEventResponsePrinting
 	public void onElementText(String strText, XmlEventParserState state) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Text: Element <");
-		sb.append(state.getElementName());
+		sb.append(state.getCurrentElementName());
 		sb.append(">, \"");
 		sb.append(strText);
 		sb.append("\"");
@@ -116,7 +116,7 @@ public class XmlParseEventResponsePrinting
 	public void onComment(Comment event) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Comment, ");
-		StreamLocationTool.FormatLineAndColumn(sb, event.getLocation());
+		StreamLocationTool.formatLineAndColumn(sb, event.getLocation());
 		_msgOut.writeln(sb.toString());
 		_msgOut.writeln("!-- " + event.getText());
 	}

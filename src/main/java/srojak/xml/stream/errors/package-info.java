@@ -14,23 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
-
-import javax.xml.namespace.QName;
-
-import srojak.core.collections.TStackReadOnly;
-import srojak.xml.XmlElementContext;
 /**
  * @author Stephen
  *
- * Parser state information passed to response objects.
  */
-public interface XmlEventParserState
-		extends XmlElementContext {
-	TStackReadOnly<QName> getElementStack();
-	// TODO remove duplication
-	boolean hasCurrentElement();
-	QName getCurrentElementName();
-	boolean isAtElementStart();
-	boolean ignoreExtraWhiteSpace();
-}
+package srojak.xml.stream.errors;

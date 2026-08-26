@@ -14,17 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml;
 
-import javax.xml.namespace.*;
-import javax.xml.stream.events.*;
+import javax.xml.namespace.QName;
+
+import srojak.core.data.DataErrorSeverity;
+
 /**
  * @author Stephen
  *
  */
-public interface IXmlParseTextFilter {	
-	String readCharacters(Characters event, XmlEventParserState state);
-	String filterCharacters(XmlStreamParserState state, boolean bIgnoreExtraWhiteSpace, String strChars);
-	String interpretText(QName nameElement, String strText, int nOrdinal, XmlEventParserState state);
-	String interpretText(QName nameElement, String strText, int nOrdinal, XmlStreamParserState state);
+public interface XmlParseErrorDescr {
+
+	boolean hasElementName();
+	QName getElementName();
+	DataErrorSeverity getSeverity();
+	String getText();
 }

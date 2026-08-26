@@ -14,38 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.events.Characters;
-
 /**
  * @author Stephen
  *
  */
-public class XmlParseTextNullFilter 
-		implements IXmlParseTextFilter {
-
-	@Override
-	public String readCharacters(Characters event, XmlEventParserState state) {
-		String strText = event.getData();
-		return strText;
-	}
-
-	@Override
-	public String filterCharacters(XmlStreamParserState state, boolean bIgnoreExtraWhiteSpace,
-				String strChars) {
-		return strChars;
-	}
-
-	@Override
-	public String interpretText(QName nameElement, String strText, int nOrdinal, XmlEventParserState state) {
-		return strText;
-	}
-
-	@Override
-	public String interpretText(QName nameElement, String strText, int nOrdinal, XmlStreamParserState state) {
-		return strText;
-	}
-
-}
+package srojak.xml.filters;

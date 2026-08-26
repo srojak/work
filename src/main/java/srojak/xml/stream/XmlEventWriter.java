@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 import srojak.core.collections.TStack;
+import srojak.xml.XmlIndenter;
 /**
  * @author Stephen
  *

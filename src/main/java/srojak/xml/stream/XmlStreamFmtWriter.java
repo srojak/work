@@ -21,6 +21,7 @@ import java.io.*;
 import javax.xml.stream.*;
 
 import srojak.core.collections.TStack;
+import srojak.xml.XmlIndenter;
 
 /**
  * @author Stephen

@@ -18,19 +18,18 @@ package srojak.xml.stream;
 
 import javax.xml.namespace.QName;
 
-import srojak.core.collections.TStackReadOnly;
-import srojak.xml.XmlElementContext;
+import srojak.xml.XmlParseTextFilter;
+
 /**
  * @author Stephen
  *
- * Parser state information passed to response objects.
  */
-public interface XmlEventParserState
-		extends XmlElementContext {
-	TStackReadOnly<QName> getElementStack();
-	// TODO remove duplication
-	boolean hasCurrentElement();
-	QName getCurrentElementName();
-	boolean isAtElementStart();
-	boolean ignoreExtraWhiteSpace();
+public interface XmlStreamParserStateWithChars 
+		extends XmlStreamParserState {
+
+	XmlParseTextFilter getTextFilter();
+	void setTextFilter(XmlParseTextFilter filter);
+	void clearCharacters();
+	void saveCharacters(String strChars);
+	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
 }

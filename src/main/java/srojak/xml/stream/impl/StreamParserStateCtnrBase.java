@@ -21,33 +21,31 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 
-import srojak.core.collections.TQueue;
 import srojak.core.collections.TStack;
 import srojak.core.collections.TStackReadOnly;
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.XmlParserOptions;
+import srojak.xml.XmlElementContext;
 import srojak.xml.stream.XmlStreamParserState;
 
 /**
  * @author Stephen
  *
  */
-public class XmlStreamParserStateContainer 
-		implements XmlStreamParserState {
+public abstract class StreamParserStateCtnrBase 
+		implements XmlStreamParserState, XmlElementContext {
 	private final TStack<QName> _stackElements;
-	private final TQueue<String> _queuePendingText;
 	private boolean _bIsActive;
 	private Location _locCurrent;
 	private QName _nameCurrent;
 	private boolean _bAtElementStart;
+	private int _nEventTypePrior;
 	
-	public XmlStreamParserStateContainer() {
+	protected StreamParserStateCtnrBase() {
 		_stackElements = new TStack<QName>();
-		_queuePendingText = new TQueue<String>();
 		_bIsActive = false;
 		_locCurrent = XmlSourceLocation.NULL;
 		_nameCurrent = null;
 		_bAtElementStart = false;
+		_nEventTypePrior = 0;
 	}
 
 	@Override
@@ -87,22 +85,22 @@ public class XmlStreamParserStateContainer
 	
 	@Override
 	public int getPriorEventType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return _nEventTypePrior;
 	}
-
+	
 	public void reset() {
 		_bIsActive = false;
 		_locCurrent = XmlSourceLocation.NULL;
 		_nameCurrent = null;
 		_bAtElementStart = false;		
+		_nEventTypePrior = 0;
 	}
 	
 	public void start() {
 		_bIsActive = true;
 		_nameCurrent = null;
 		_stackElements.clear();
-		_queuePendingText.clear();
+		_nEventTypePrior = 0;
 	}
 	
 	public void setCurrentLocation(Location location) {
@@ -117,41 +115,21 @@ public class XmlStreamParserStateContainer
 		_bAtElementStart = false;
 	}
 	
-	public void saveCharacters(String strChars) {
-		_queuePendingText.enqueue(strChars);
-	}
-	
-	public void gatherCollectedText(XmlParserOptions options, StringBuilder sbText) {
-		XmlParseTextFilter filterText = options.getTextFilter();
-		int nSeq = 0;
-		while (!_queuePendingText.isEmpty()) {
-			String strText = _queuePendingText.dequeue();
-			strText = filterText.interpretText(_nameCurrent, strText, nSeq++, this);
-			sbText.append(strText);
-		}
+	public void setPriorEventType(int nEventType) {
+		_nEventTypePrior = nEventType;
 	}
 	
 	public void startElement(QName nameElement) {
 		Objects.requireNonNull(nameElement, "nameElement");
-		_queuePendingText.clear();
 		_bAtElementStart = true;
 		_nameCurrent = nameElement;
 		_stackElements.push(nameElement);
 	}
 	
-	public void endElement(QName nameElementRead, XmlParserOptions options, StringBuilder sbText) {
+	public void endElement(QName nameElementRead) {
 		Objects.requireNonNull(nameElementRead, "nameElementRead");
-		Objects.requireNonNull(options, "options");
 		@SuppressWarnings("unused")
 		QName nameStored = _stackElements.peek();
-		if (_bAtElementStart) {
-			gatherCollectedText(options, sbText);
-		}
-		_queuePendingText.clear();
 		_bAtElementStart = false;
-	}
-	
-	protected TQueue<String> getPendingTextQueue() {
-		return _queuePendingText;
 	}
 }

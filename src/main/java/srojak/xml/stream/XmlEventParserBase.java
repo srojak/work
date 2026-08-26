@@ -29,6 +29,8 @@ import javax.xml.stream.events.XMLEvent;
 import srojak.core.collections.TQueue;
 import srojak.core.collections.TStack;
 import srojak.core.collections.TStackReadOnly;
+import srojak.xml.XmlParseTextFilter;
+import srojak.xml.filters.XmlParseTextNullFilter;
 
 
 /**
@@ -38,7 +40,7 @@ import srojak.core.collections.TStackReadOnly;
 public abstract class XmlEventParserBase 
 		implements XmlEventParserState {
 	private XmlStreamInputBuilder _builderEvent;
-	private IXmlParseTextFilter _filterText;
+	private XmlParseTextFilter _filterText;
 	private TStack<QName> _stackElements;
 	private TQueue<String> _queuePendingText;
 	private QName _nameElement;
@@ -68,8 +70,13 @@ public abstract class XmlEventParserBase
 	}
 
 	@Override
-	public QName getElementName() {
+	public QName getCurrentElementName() {
 		return _nameElement;
+	}
+
+	@Override
+	public String getCurrentNameText() {
+		return _nameElement == null ? "" : _nameElement.toString();
 	}
 
 	@Override
@@ -82,11 +89,11 @@ public abstract class XmlEventParserBase
 		return _bIgnoreExtraWhiteSpace;
 	}
 	
-	public IXmlParseTextFilter getTextFilter() {
+	public XmlParseTextFilter getTextFilter() {
 		return _filterText;
 	}
 	
-	public void setTextFilter(IXmlParseTextFilter filter) {
+	public void setTextFilter(XmlParseTextFilter filter) {
 		_filterText = filter;
 	}
 	

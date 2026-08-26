@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.filters;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.Characters;
 
 import srojak.core.TextMessageRelay;
+import srojak.xml.XmlElementContext;
+import srojak.xml.XmlParseTextFilter;
+import srojak.xml.stream.XmlEventParserState;
 
 /**
  * @author Stephen
  *
  */
 public class XmlParseTextFilterPrinting
-		implements IXmlParseTextFilter {
+		implements XmlParseTextFilter {
 	private TextMessageRelay _msgOut;
 	private boolean _bShowCharsRead;
 	
@@ -39,21 +42,19 @@ public class XmlParseTextFilterPrinting
 	}
 
 	@Override
-	public String readCharacters(Characters event, XmlEventParserState state) {
+	public String readCharacters(Characters event, XmlElementContext context) {
 		String strText = event.getData();
 		StringBuilder sb = new StringBuilder();
 		boolean bAppend = false;
-		if (state.isAtElementStart()) {
+		if (context.isAtElementStart()) {
 			sb.append("TXF Element <");
-			sb.append(state.getElementName());
+			sb.append(context.getCurrentElementName());
 			sb.append(">,");
 			bAppend = true;
 		} else {
 			sb.append("X");
 			if (strText.isBlank()) {
-				if (state.ignoreExtraWhiteSpace()) {
-					return null;
-				}
+				// TODO decide what happens here
 			}
 		}
 		if (_bShowCharsRead) {
@@ -76,13 +77,13 @@ public class XmlParseTextFilterPrinting
 	}
 
 	@Override
-	public String filterCharacters(XmlStreamParserState state, boolean bIgnoreExtraWhiteSpace,
+	public String filterCharacters(XmlElementContext context, boolean bIgnoreExtraWhiteSpace,
 			String strChars) {
 		StringBuilder sb = new StringBuilder();
 		boolean bAppend = false;
-		if (state.isAtElementStart()) {
+		if (context.isAtElementStart()) {
 			sb.append("TXF Element <");
-			sb.append(state.getCurrentElementName());
+			sb.append(context.getCurrentElementName());
 			sb.append(">,");
 			bAppend = true;
 		} else {
@@ -112,11 +113,10 @@ public class XmlParseTextFilterPrinting
 		return null;
 	}
 
-	@Override
 	public String interpretText(QName nameElement, String strText, int nOrdinal, XmlEventParserState state) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("TXF Element <");
-		sb.append(state.getElementName());
+		sb.append(state.getCurrentElementName());
 		sb.append("> seq=");
 		sb.append(nOrdinal);
 		sb.append(" Chars");
@@ -134,10 +134,10 @@ public class XmlParseTextFilterPrinting
 	}
 
 	@Override
-	public String interpretText(QName nameElement, String strText, int nOrdinal, XmlStreamParserState state) {
+	public String interpretText(QName nameElement, String strText, int nOrdinal, XmlElementContext context) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("TXF Element <");
-		sb.append(state.getCurrentElementName());
+		sb.append(context.getCurrentElementName());
 		sb.append("> seq=");
 		sb.append(nOrdinal);
 		sb.append(" Chars");
@@ -158,7 +158,7 @@ public class XmlParseTextFilterPrinting
 	public void onTextCData(Characters event, XmlEventParserState state) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Element <");
-		sb.append(state.getElementName());
+		sb.append(state.getCurrentElementName());
 		sb.append(">, [CDATA [");
 		String strText = event.getData();
 		sb.append(strText);

@@ -23,5 +23,7 @@ module srojak.xml {
 	requires transitive srojak.core;
 	exports srojak.xml;
 	exports srojak.xml.dom;
+	exports srojak.xml.filters;
 	exports srojak.xml.stream;
+	exports srojak.xml.stream.errors;
 }

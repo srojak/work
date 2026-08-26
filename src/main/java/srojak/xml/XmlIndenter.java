@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml;
 
 import java.util.function.Consumer;
 
@@ -58,7 +58,7 @@ public class XmlIndenter {
 	private StringBuilder formIndent() {
 		StringBuilder sb = new StringBuilder();
 		StringBuilderTool.appendLine(sb);
-		int nChars = _stack.depth() * _nIndent;
+		int nChars = _stack.size() * _nIndent;
 		if (nChars > 0) {
 			StringBuilderTool.appendChars(sb, ' ', nChars);
 		}

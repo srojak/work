@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.stream.errors;
 
 import java.util.Objects;
 
@@ -22,9 +22,13 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import srojak.core.data.DataErrorSeverity;
+import srojak.core.events.SingleEventListenerList;
+import srojak.core.events.SingleEventListenerStore;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.xml.stream.XmlStreamLocationSnap;
 
 /**
  * @author Stephen
@@ -32,9 +36,11 @@ import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
  */
 public class XmlStreamErrorHandler 
 		implements ErrorHandler {
+	private final SingleEventListenerStore<XmlStreamErrorListener> _listeners;
 	private ObservationWriter _writer;
 	
 	public XmlStreamErrorHandler() {
+		_listeners = new SingleEventListenerList<XmlStreamErrorListener>();
 		_writer = new ObservationWriterLevelFilterPrintStream(System.err);
 	}
 	
@@ -55,16 +61,32 @@ public class XmlStreamErrorHandler
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
 		_writer.write(ObsLevel.WARN, createMessage(exception));
+		XmlStreamLocationSnap location = new XmlStreamLocationSnap(exception);
+		XmlStreamErrorEvent event = new XmlStreamErrorEvent(this, location, DataErrorSeverity.WARN, exception.getMessage());
+		_listeners.forEach(ls -> ls.receive(event));
 	}
 
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
 		_writer.write(ObsLevel.ERROR, createMessage(exception));
+		XmlStreamLocationSnap location = new XmlStreamLocationSnap(exception);
+		XmlStreamErrorEvent event = new XmlStreamErrorEvent(this, location, DataErrorSeverity.ERROR, exception.getMessage());
+		_listeners.forEach(ls -> ls.receive(event));
 	}
 
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
 		_writer.write(ObsLevel.ALERT, createMessage(exception));
+		XmlStreamLocationSnap location = new XmlStreamLocationSnap(exception);
+		XmlStreamErrorEvent event = new XmlStreamErrorEvent(this, location, DataErrorSeverity.FATAL, exception.getMessage());
+		_listeners.forEach(ls -> ls.receive(event));
 	}
 
+	public void addStreamErrorListener(XmlStreamErrorListener listener) {
+		_listeners.add(listener);
+	}
+	
+	public void removeStreamErrorListener(XmlStreamErrorListener listener) {
+		_listeners.remove(listener);
+	}
 }

@@ -20,16 +20,20 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 
 import srojak.core.collections.TStackReadOnly;
+import srojak.xml.XmlElementContext;
 
 /**
  * @author Stephen
  *
  */
-public interface XmlStreamParserState {
+public interface XmlStreamParserState
+		extends XmlElementContext {
 	boolean isActive();
 	Location getCurentLocation();
+	// TODO remove duplication
 	TStackReadOnly<QName> getElementStack();
 	boolean hasCurrentElement();
 	QName getCurrentElementName();
 	boolean isAtElementStart();
+	int getPriorEventType();
 }

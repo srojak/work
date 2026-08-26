@@ -16,21 +16,16 @@
  */
 package srojak.xml.stream;
 
-import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
-import srojak.core.collections.TStackReadOnly;
-import srojak.xml.XmlElementContext;
 /**
  * @author Stephen
  *
- * Parser state information passed to response objects.
  */
-public interface XmlEventParserState
-		extends XmlElementContext {
-	TStackReadOnly<QName> getElementStack();
-	// TODO remove duplication
-	boolean hasCurrentElement();
-	QName getCurrentElementName();
-	boolean isAtElementStart();
-	boolean ignoreExtraWhiteSpace();
+@FunctionalInterface
+public interface XmlStreamParseFunction {
+	
+	void apply(XMLStreamReader reader)
+		throws XMLStreamException;
 }

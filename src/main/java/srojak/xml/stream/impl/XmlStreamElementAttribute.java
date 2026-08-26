@@ -19,14 +19,14 @@ package srojak.xml.stream.impl;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
-import srojak.xml.stream.XmlElementAttribute;
+import srojak.xml.stream.StreamElementAttribute;
 
 /**
  * @author Stephen
  *
  */
-public class StreamElementAttribute 
-		implements XmlElementAttribute {
+public class XmlStreamElementAttribute 
+		implements StreamElementAttribute {
 	private final QName _name;
 	private final String _strNamespace;
 	private final String _strPrefix;
@@ -35,7 +35,7 @@ public class StreamElementAttribute
 	private final String _strValue;
 	private final boolean _bIsSpecified;
 	
-	public StreamElementAttribute(XMLStreamReader reader, int index) {
+	public XmlStreamElementAttribute(XMLStreamReader reader, int index) {
 		if (!reader.isStartElement())
 			throw new IllegalStateException("reader is not in a valid state");
 		_name = reader.getAttributeName(index);

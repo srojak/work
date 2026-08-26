@@ -16,21 +16,29 @@
  */
 package srojak.xml.stream;
 
-import javax.xml.namespace.QName;
+import java.util.Objects;
 
-import srojak.core.collections.TStackReadOnly;
-import srojak.xml.XmlElementContext;
+import javax.xml.stream.Location;
+
+import srojak.core.io.InputLocationContainer;
+
 /**
  * @author Stephen
  *
- * Parser state information passed to response objects.
  */
-public interface XmlEventParserState
-		extends XmlElementContext {
-	TStackReadOnly<QName> getElementStack();
-	// TODO remove duplication
-	boolean hasCurrentElement();
-	QName getCurrentElementName();
-	boolean isAtElementStart();
-	boolean ignoreExtraWhiteSpace();
+public class XmlInputLocationContainer
+		extends InputLocationContainer {
+	
+	/**
+	 * @param nLine
+	 * @param nColumn
+	 */
+	public XmlInputLocationContainer(int nLine, int nColumn) {
+		super(nLine, nColumn);
+		// TODO Auto-generated constructor stub
+	}
+
+	public XmlInputLocationContainer(Location locSource) {
+		super(locSource.getLineNumber(), locSource.getColumnNumber());
+	}
 }

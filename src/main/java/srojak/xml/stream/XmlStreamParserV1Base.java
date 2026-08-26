@@ -24,7 +24,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import srojak.xml.stream.impl.StreamElementAttribute;
+import srojak.xml.XmlParseTextFilter;
+import srojak.xml.stream.impl.XmlParseMethods;
 import srojak.xml.stream.impl.XmlStreamParserStateContainer;
 
 /*
@@ -32,14 +33,21 @@ import srojak.xml.stream.impl.XmlStreamParserStateContainer;
  * 
  * @see https://docs.oracle.com/javase/8/docs/api/javax/xml/stream/XMLStreamReader.html
  */
-public abstract class XmlStreamParserBase
+public abstract class XmlStreamParserV1Base
 		implements XMLStreamConstants {
 	private final XmlStreamInputBuilder _builderStream;
 	private final XmlParserOptions _options;
 	private final XmlStreamParserStateContainer _state;
+	private XMLStreamReader _reader;
 	private int _nEventTypePrior;
+	
+	protected static final XmlStreamEventsDictionary DICT_EVENTS;
+	
+	static {
+		DICT_EVENTS = new XmlStreamEventsDictionary();
+	}
 
-	public XmlStreamParserBase(XmlStreamInputBuilder builder) {
+	public XmlStreamParserV1Base(XmlStreamInputBuilder builder) {
 		Objects.requireNonNull(builder, "builder");
 		_builderStream = builder;
 		_options = new XmlParserOptions();
@@ -59,7 +67,7 @@ public abstract class XmlStreamParserBase
 		return _nEventTypePrior;
 	}
 	
-	protected XmlElementAttribute findAttributeByName(XmlElementAttribute[] attributes,
+	protected StreamElementAttribute findAttributeByName(StreamElementAttribute[] attributes,
 			QName nameAttribute) {
 		for (int index = 0; index < attributes.length; index++) {
 			if (attributes[index].getName().equals(nameAttribute)) {
@@ -77,7 +85,8 @@ public abstract class XmlStreamParserBase
 		
 	}
 	
-	protected void parseStartElement(QName nameElement, XmlElementAttribute[] attributes) {
+	protected void parseStartElement(QName nameElement, StreamElementAttribute[] attributes) 
+			throws XMLStreamException {
 		
 	}
 	
@@ -93,30 +102,26 @@ public abstract class XmlStreamParserBase
 		
 	}
 	
+	protected String getElementText() 
+			throws XMLStreamException {
+		return _reader.getElementText();
+	}
+	
 	private void getCharacters(XMLStreamReader reader, StringBuilder sb) {
 		char[] charText = reader.getTextCharacters();
 		sb.append(charText);
 	}
 	
-	private XmlElementAttribute[] getAttributes(XMLStreamReader reader) {
-		int nCount = reader.getAttributeCount();
-		XmlElementAttribute[] array = new XmlElementAttribute[nCount];
-		for (int index = 0; index < nCount; index++) {
-			array[index] = new StreamElementAttribute(reader, index);
-		}
-		return array;
-	}
-	
 	public final void parse(InputStream input) 
 			throws XMLStreamException {
-		XMLStreamReader reader = _builderStream.createStreamReader(input);
+		_reader = _builderStream.createStreamReader(input);
 		_nEventTypePrior = 0;
 		parseInit();
-		while (reader.hasNext()) {
-			int nEvent = reader.next();
-			_state.setCurrentLocation(reader.getLocation());
+		while (_reader.hasNext()) {
+			int nEvent = _reader.next();
+			_state.setCurrentLocation(_reader.getLocation());
 			QName nameCurrent;
-			IXmlParseTextFilter filter;
+			XmlParseTextFilter filter;
 			switch (nEvent) {
 			case START_DOCUMENT:
 				break;
@@ -130,13 +135,16 @@ public abstract class XmlStreamParserBase
 				break;
 				
 			case START_ELEMENT:
-				nameCurrent = reader.getName();
-				_state.startElement(nameCurrent);
-				parseStartElement(nameCurrent, getAttributes(reader));
+				nameCurrent = _reader.getName();
+				{
+					_state.startElement(nameCurrent);
+					StreamElementAttribute[] attribs = XmlParseMethods.getAttributes(_reader);
+					parseStartElement(nameCurrent, attribs);
+				}
 				break;
 				
 			case END_ELEMENT:
-				nameCurrent = reader.getName();
+				nameCurrent = _reader.getName();
 				{
 					StringBuilder sbText = new StringBuilder();
 					_state.endElement(nameCurrent, _options, sbText);
@@ -149,7 +157,7 @@ public abstract class XmlStreamParserBase
 				filter = _options.getTextFilter();
 				{
 					StringBuilder sbChars = new StringBuilder();
-					getCharacters(reader, sbChars);
+					getCharacters(_reader, sbChars);
 					String strText = filter.filterCharacters(_state, 
 							_options.ignoreExtraWhiteSpace(), sbChars.toString());
 					_state.saveCharacters(strText);
@@ -160,7 +168,7 @@ public abstract class XmlStreamParserBase
 				filter = _options.getTextFilter();
 				{
 					StringBuilder sbChars = new StringBuilder();
-					getCharacters(reader, sbChars);
+					getCharacters(_reader, sbChars);
 					String strText = filter.filterCharacters(_state, 
 							_options.ignoreExtraWhiteSpace(), sbChars.toString());
 					_state.saveCharacters(strText);
@@ -168,7 +176,7 @@ public abstract class XmlStreamParserBase
 				break;
 				
 			case COMMENT:
-				parseComment(reader.getText());
+				parseComment(_reader.getText());
 				break;
 				
 			default:
@@ -179,6 +187,7 @@ public abstract class XmlStreamParserBase
 			_nEventTypePrior = nEvent;
 			
 		}
+		_reader = null;
 		_state.reset();
 	}
 }

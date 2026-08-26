@@ -14,20 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
-
-import javax.xml.namespace.QName;
+package srojak.xml.stream.impl;
 
 /**
  * @author Stephen
  *
  */
-public interface XmlElementAttribute {
-	QName getName();
-	String getNamespace();
-	String getPrefix();
-	String getType();
-	boolean hasValue();
-	String getValue();
-	boolean isSpecified();
+public class StreamParserStateBasicCtnr 
+		extends StreamParserStateCtnrBase {
+
+	/**
+	 * 
+	 */
+	public StreamParserStateBasicCtnr() {
+		super();
+	}
+
 }
