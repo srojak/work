@@ -36,9 +36,9 @@ import srojak.debug.DebugNexus;
  * @author Stephen
  *
  */
+@Deprecated
 public class DebugConfigMethods {
 		
-	public static final String SWITCHES = "switches.xml";
 	private static final DebugNexus _nexus = new DebugNexus();
 	private static boolean _bShowStackOnException = false;
 	
@@ -46,10 +46,10 @@ public class DebugConfigMethods {
 		_bShowStackOnException = bState;
 	}	
 	
-	public static XResultOf<DebugConfigReader> createReader() {
-		XResultCarrierOf<DebugConfigReader> result = new XResultCarrierOf<DebugConfigReader>();
+	public static XResultOf<DebugConfigReader2Pass> createReader() {
+		XResultCarrierOf<DebugConfigReader2Pass> result = new XResultCarrierOf<DebugConfigReader2Pass>();
 		try {
-			DebugConfigReader reader = new DebugConfigReader();
+			DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
 			result.setResult(reader);
 		} catch (SAXException exc) {
 			result.caughtException(exc);
@@ -74,12 +74,12 @@ public class DebugConfigMethods {
 		}
 	}
 
-	public static XResult readConfigFile(String strFile, boolean bFileMustExist) {
+	public static XResult readConfigFileTwoPass(String strFile, boolean bFileMustExist) {
 		Objects.requireNonNull(strFile, "strFile");
 		XResultStatusCarrier result = new XResultStatusCarrier();
 		ObservationWriter writer = _nexus.getWriter();
 		try {
-			DebugConfigReader reader = new DebugConfigReader();
+			DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
 			reader.readFrom(strFile);
 			result.setValid();
 		} catch (NoSuchFileException exc) {

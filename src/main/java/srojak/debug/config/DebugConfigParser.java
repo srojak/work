@@ -20,159 +20,66 @@ import java.util.Objects;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamException;
 
+import srojak.core.containers.SingletonContainer;
+import srojak.core.data.DataErrorSeverity;
 import srojak.core.observe.InvalidObservationLevelException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterNull;
 import srojak.core.reflect.PackageClassLocator;
-import srojak.core.tools.StringMethods;
+import srojak.core.result.XResultInt;
+import srojak.core.result.XResultOf;
 import srojak.debug.DebugSwitchKey;
 import srojak.debug.DebugSwitchTool;
+import srojak.debug.config.impl.ClassElementProduct;
+import srojak.debug.config.impl.PackageElementProduct;
 import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.debug.impl.DebugSwitchContent;
-import srojak.xml.stream.XmlElementAttribute;
-import srojak.xml.stream.XmlStreamInputBuilder;
-import srojak.xml.stream.XmlStreamParserBase;
+import srojak.xml.stream.StreamElementAttribute;
+import srojak.xml.stream.StreamElementAttributeSet;
+import srojak.xml.stream.XmlStreamActionParserBase;
 
 /**
  * @author Stephen
  *
  */
-public class DebugConfigParser
-		extends XmlStreamParserBase {
-	private ObservationWriter _writer;
+public class DebugConfigParser 
+		extends XmlStreamActionParserBase 
+		implements DebugConfigNames {
+	private final SingletonContainer<PackageElementProduct> _ctnrPackage;
+	private final SingletonContainer<ClassElementProduct> _ctnrClass;
 	private ObsLevel _levelDefault;
-	private String _strPackageName;
-	private PackageClassLocator _locClass;
-
-	private static final QName ELEMENT_CTRLSET;
-	private static final QName ELEMENT_PACKAGE;
-	private static final QName ELEMENT_CLASS;
-	private static final QName ELEMENT_SUBJECT;
-	private static final QName ELEMENT_OPTION;
-	private static final QName ATTRIB_NAME;
-	private static final QName ATTRIB_LEVEL;
-	private static final QName ATTRIB_LOCS;
-	private static final QName ATTRIB_CASCADE;
-	private static final QName ATTRIB_VALUE;
-	private static final String[] BOOL_TRUE;
-	
-	static {
-		ELEMENT_CTRLSET = new QName("SwitchControlSet");
-		ELEMENT_PACKAGE = new QName("Package");
-		ELEMENT_CLASS = new QName("Class");
-		ELEMENT_SUBJECT = new QName("Subject");
-		ELEMENT_OPTION = new QName("Option");
-		ATTRIB_NAME = new QName("name");
-		ATTRIB_LEVEL = new QName("level");
-		ATTRIB_LOCS = new QName("locs");
-		ATTRIB_CASCADE = new QName("cascade");
-		ATTRIB_VALUE = new QName("value");
-		BOOL_TRUE = new String[] { "t", "true" };
-	}
 	
 	/**
-	 * @param builder
+	 * 
 	 */
-	public DebugConfigParser(XmlStreamInputBuilder builder) {
-		super(builder);
-		_writer = new ObservationWriterNull();
-		_levelDefault = ObsLevel.WARN;
+	public DebugConfigParser() {
+		super();
+		_ctnrPackage = new SingletonContainer<PackageElementProduct>();
+		_ctnrClass = new SingletonContainer<ClassElementProduct>();
+		_levelDefault = ObsLevel.INFO;
 	}
 	
-	public ObservationWriter getObservationWriter() {
-		return _writer;
+	public ObsLevel getDefaultObsLevel() {
+		return _levelDefault;
 	}
 	
-	public void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
+	public void setDefaultObsLevel(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
+		_levelDefault = level;
 	}
 
 	@Override
 	protected void parseInit() {
-		_strPackageName = null;
-		_locClass = null;
-	}
-
-	@Override
-	protected void parseEndDocument() {
-		super.parseEndDocument();
-	}
-
-	@Override
-	protected void parseStartElement(QName nameElement, XmlElementAttribute[] attributes) {
-		if (nameElement.equals(ELEMENT_PACKAGE)) {
-			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
-			_strPackageName = attrName.getValue();
-		} else if (nameElement.equals(ELEMENT_CLASS)) {
-			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
-			_locClass = new PackageClassLocator(_strPackageName, attrName.getValue());
-			ObsLevel level = readObsLevel(nameElement, attributes, _levelDefault);
-			boolean bShowSource = readBooleanAttribValue(ATTRIB_LOCS, attributes);
-			boolean bCascade = readBooleanAttribValue(ATTRIB_CASCADE, attributes);
-			DebugSwitchKey key = DebugSwitchTool.makeClassKey(_locClass);
-			DebugSwitchContent sw = DebugNexusCore.getContent(key);
-			if (sw == null) {
-				sw = DebugNexusCore.createSwitch(key);
-				DebugNexusCore.putContent(sw);
-			}
-			sw.setLevel(level);
-			sw.setShowSourceLocations(bShowSource);
-			if (bCascade) {
-				DebugNexusCore.enableBaseClassSwitches(key);
-			}
-		} else if (nameElement.equals(ELEMENT_SUBJECT)) {
-			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
-			ObsLevel level = readObsLevel(nameElement, attributes, _levelDefault);
-			boolean bShowSource = readBooleanAttribValue(ATTRIB_LOCS, attributes);
-			DebugSwitchKey key = DebugSwitchTool.makeClassSubjectKey(_locClass, attrName.getValue());
-			DebugSwitchContent sw = DebugNexusCore.getContent(key);
-			if (sw == null) {
-				sw = DebugNexusCore.createSwitch(key);
-				DebugNexusCore.putContent(sw);
-			}
-			sw.setLevel(level);
-			sw.setShowSourceLocations(bShowSource);
-		} else if (nameElement.equals(ELEMENT_OPTION)) {
-			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
-			XmlElementAttribute attrValue = findAttributeByName(attributes, ATTRIB_VALUE);
-			int nValue = Integer.parseInt(attrValue.getValue());
-			ClassDebugOptionMap options = DebugNexusCore.getOptionsForClass(_locClass);
-			if (options == null) {
-				options = DebugNexusCore.createOptionsForClass(_locClass);
-			}
-			options.putOption(attrName.getValue(), nValue);
-		} else if (nameElement.equals(ELEMENT_CTRLSET)) {
-			XmlElementAttribute attrName = findAttributeByName(attributes, ATTRIB_NAME);
-			DebugNexusCore.readingSwitchControlSet(attrName.getValue());
-		}
+		_ctnrPackage.clear();
+		_ctnrClass.clear();
 	}
 	
-	@Override
-	protected void parseEndElement(QName nameElement, String strText) {
-		if (nameElement.equals(ELEMENT_CLASS)) {
-			_locClass = null;
-		} else if (nameElement.equals(ELEMENT_PACKAGE))
-			_strPackageName = null;
-	}
-
-	@Override
-	protected void parseComment(String strText) {
-		super.parseComment(strText);
-	}
-
-	@Override
-	protected void parseOther(int nEventType) {
-		String strEvent = DICT_EVENTS.getNameForCode(nEventType);
-		_writer.write(ObsLevel.WARN, "unexpected event type " + strEvent);
-	}
-	
-	private ObsLevel readObsLevel(QName nameElement, XmlElementAttribute[] attributes,
+	private ObsLevel readObsLevel(QName nameElement, StreamElementAttributeSet attribs,
 			ObsLevel levelDefault) {
-		XmlElementAttribute attrLevel = findAttributeByName(attributes, ATTRIB_LEVEL);
+		StreamElementAttribute attrLevel = attribs.findAttributeByName(ATTRIB_LEVEL);
 		ObsLevel level = levelDefault;
 		if (attrLevel != null) {
 			String strLevel = attrLevel.getValue();
@@ -180,36 +87,118 @@ public class DebugConfigParser
 				level = ObsLevel.parse(strLevel);
 			} catch (InvalidObservationLevelException exc) {
 				Location loc = super.getParserState().getCurentLocation();
-				_writer.write(ObsLevel.WARN, 
+				ObservationWriter writer = getObservationWriter();
+				writer.write(ObsLevel.WARN, 
 						String.format("line %d, element %s, attribute %s: unrecognized value \"%s\"",
 								loc.getLineNumber(), nameElement, ATTRIB_LEVEL, strLevel));
 			}
 		}
 		return level;
 	}
-	
-	private boolean readBooleanAttribValue(QName nameAttribute,
-			XmlElementAttribute[] attributes) {
-		XmlElementAttribute attrib = findAttributeByName(attributes, nameAttribute);
-		if (attrib != null && attrib.hasValue()) {
-			String strValue = attrib.getValue();
-			if (StringMethods.forAnyOfArray(strValue, (s, t) -> s.equals(t), BOOL_TRUE)) {
-				return true;
+
+	@Override
+	protected void parseStartElement(QName nameElement, StreamElementAttributeSet attribs)
+			throws XMLStreamException {
+		if (nameElement.equals(ELEMENT_PACKAGE)) {
+			StreamElementAttribute attrName = attribs.findAttributeByName(ATTRIB_NAME);
+			Location location = getParserState().getCurentLocation();
+			XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
+			if (result.isValid()) {
+				PackageElementProduct product = new PackageElementProduct(ELEMENT_PACKAGE, location, result.getResult());
+				_ctnrPackage.set(product);
+			} else {
+				recordElementParseError(location, ELEMENT_PACKAGE, DataErrorSeverity.ERROR, "element has no name");
 			}
-		}
-		return false;
-	}
-	
-	@SuppressWarnings("unused")
-	private boolean readShowSourceLocations(QName nameElement, XmlElementAttribute[] attributes) {
-		XmlElementAttribute attrLocs = findAttributeByName(attributes, ATTRIB_LOCS);
-		if (attrLocs != null && attrLocs.hasValue()) {
-			String strLocs = attrLocs.getValue();
-			if (StringMethods.forAnyOfArray(strLocs, (s, t) -> s.equals(t), 
-					BOOL_TRUE)) {
-				return true;
+		} else if (nameElement.equals(ELEMENT_CLASS)) {
+			if (!_ctnrPackage.isEmpty()) {
+				Location location = getParserState().getCurentLocation();
+				String strPackageName = _ctnrPackage.get().getPackageName();
+				PackageClassLocator locator = null;
+				XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
+				if (result.isValid()) {
+					locator = new PackageClassLocator(strPackageName, result.getResult());
+				} else {
+					recordElementParseError(location, ELEMENT_CLASS, DataErrorSeverity.ERROR, "element has no name");
+					return;
+				}
+				ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
+				boolean bShowSource = attribs.readBooleanAttribValue(ATTRIB_LOCS);
+				boolean bCascade = attribs.readBooleanAttribValue(ATTRIB_CASCADE);
+				ClassElementProduct product = new ClassElementProduct(ELEMENT_CLASS, location, locator);
+				_ctnrClass.set(product);
+				DebugSwitchKey key = DebugSwitchTool.makeClassKey(locator);
+				DebugSwitchContent sw = DebugNexusCore.getContent(key);
+				if (sw == null) {
+					sw = DebugNexusCore.createSwitch(key);
+					DebugNexusCore.putContent(sw);
+				}
+				sw.setLevel(level);
+				sw.setShowSourceLocations(bShowSource);
+				if (bCascade) {
+					DebugNexusCore.enableBaseClassSwitches(key);
+				}
 			}
+		} else if (nameElement.equals(ELEMENT_SUBJECT)) {
+			if (!_ctnrClass.isEmpty()) {
+				Location location = getParserState().getCurentLocation();
+				PackageClassLocator locClass = _ctnrClass.get().getClassLocator();
+				String strSubjectName = null;
+				XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
+				if (result.isValid()) {
+					strSubjectName = result.getResult();
+				} else {
+					recordElementParseError(location, ELEMENT_SUBJECT, DataErrorSeverity.ERROR, "element has no name");
+					return;
+				}
+				ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
+				boolean bShowSource = attribs.readBooleanAttribValue(ATTRIB_LOCS);
+				DebugSwitchKey key = DebugSwitchTool.makeClassSubjectKey(locClass, strSubjectName);
+				DebugSwitchContent sw = DebugNexusCore.getContent(key);
+				if (sw == null) {
+					sw = DebugNexusCore.createSwitch(key);
+					DebugNexusCore.putContent(sw);
+				}
+				sw.setLevel(level);
+				sw.setShowSourceLocations(bShowSource);
+			}
+		} else if (nameElement.equals(ELEMENT_OPTION)) {
+			if (!_ctnrClass.isEmpty()) {
+				Location location = getParserState().getCurentLocation();
+				PackageClassLocator locClass = _ctnrClass.get().getClassLocator();
+				String strOptionName = null;
+				XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
+				if (result.isValid()) {
+					strOptionName = result.getResult();
+				} else {
+					recordElementParseError(location, ELEMENT_OPTION, DataErrorSeverity.ERROR, "element has no name");
+					return;
+				}
+				int nValue = 0;
+				XResultInt resultValue = attribs.readIntAttribValue(ATTRIB_VALUE);				
+				if (resultValue.isValid()) {
+					nValue = resultValue.getResult();
+				} else {
+					recordElementParseError(location, ELEMENT_OPTION, DataErrorSeverity.ERROR, strOptionName + " has no value");
+					return;
+				}
+				ClassDebugOptionMap options = DebugNexusCore.getOptionsForClass(locClass);
+				if (options == null) {
+					options = DebugNexusCore.createOptionsForClass(locClass);
+				}
+				options.putOption(strOptionName, nValue);
+			}
+		} else if (nameElement.equals(ELEMENT_CTRLSET)) {
+			StreamElementAttribute attrName = attribs.findAttributeByName(ATTRIB_NAME);
+			DebugNexusCore.readingSwitchControlSet(attrName.getValue());
 		}
-		return false;
 	}
+
+	@Override
+	protected void parseEndElement(QName nameElement, String strElementText) {
+		if (nameElement.equals(ELEMENT_CLASS)) {
+			_ctnrClass.clear();
+		} else if (nameElement.equals(ELEMENT_PACKAGE))
+			_ctnrPackage.clear();
+	}
+
 }

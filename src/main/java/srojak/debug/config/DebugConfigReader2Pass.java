@@ -37,30 +37,31 @@ import srojak.debug.DebugConfigSchema;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.xml.XmlSchemaTool;
 import srojak.xml.stream.XmlParserOptions;
-import srojak.xml.stream.XmlStreamErrorHandler;
 import srojak.xml.stream.XmlStreamInputBuilder;
+import srojak.xml.stream.errors.XmlStreamErrorHandler;
 
 /**
  * @author Stephen
  *
  */
-public class DebugConfigReader {
+public class DebugConfigReader2Pass {
 	private final XmlStreamInputBuilder _builderStream;
 	private XmlStreamErrorHandler _handlerErrors;
-	private DebugConfigParser _parser;
+	private DebugConfigParserV1 _parser;
 	
 	private static Schema _schema = null;
 	
-	public DebugConfigReader() 
+	public DebugConfigReader2Pass() 
 			throws SAXException {
 		if (_schema == null) {
-			InputStream stream = DebugConfigSchema.getSchema();
+			DebugConfigSchema sourceSchema = new DebugConfigSchema();
+			InputStream stream = sourceSchema.getResource();
 			XmlSchemaTool toolSchema = new XmlSchemaTool();
-			_schema = toolSchema.readSchema(new StreamSource(stream));
+			_schema = toolSchema.readSchemaDirect(new StreamSource(stream));
 		}
 		_builderStream = new XmlStreamInputBuilder();
 		_handlerErrors = new XmlStreamErrorHandler();
-		_parser = new DebugConfigParser(_builderStream);
+		_parser = new DebugConfigParserV1(_builderStream);
 	}
 	
 	public XmlParserOptions getParserOptions() {
