@@ -14,41 +14,39 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.data;
+package srojak.core.observe.writers;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.SourceLocation;
 
 /**
  * @author Stephen
  *
  */
-public enum DataErrorSeverity {
+public abstract class ObservationWriterBase
+		implements ObservationWriter {
+	
+	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
 
-	FATAL(10, ObsLevel.FATAL),
-	ERROR(5, ObsLevel.ERROR),
-	WARN(3, ObsLevel.WARN),
-	INFO(1, ObsLevel.DETAIL);
-	
-	private final int _ordinal;
-	private final ObsLevel _levelObs;
-	
-	private DataErrorSeverity(int ordinal, ObsLevel level) {
-		_ordinal = ordinal;
-		_levelObs = level;
+	static {
+		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
+	}
+
+	public ObservationWriterBase() {
+		
+	}
+
+	@Override
+	public ObservationCollector createCollector(ObsLevel level) {
+		return new ObservationCollectorObj(this, level, SourceLocation.caller());
 	}
 	
-	public int getOrdinal() {
-		return _ordinal;
-	}
-	
-	public ObsLevel mapToObsLevel() {
-		return _levelObs;
-	}
-	
-	public boolean isSeverityAtLeast(DataErrorSeverity severityRef) {
-		Objects.requireNonNull(severityRef, "severityRef");
-		return _ordinal >= severityRef._ordinal;
+	protected String getDateAndTimeStamp() {
+		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
 	}
 }

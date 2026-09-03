@@ -16,6 +16,8 @@
  */
 package srojak.core.observe;
 
+import srojak.core.observe.writers.ObservationWriterNull;
+
 /**
  * @author Stephen
  *

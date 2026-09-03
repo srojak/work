@@ -16,6 +16,7 @@
  */
 package srojak.core.observe;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
@@ -24,65 +25,73 @@ import java.util.function.ObjIntConsumer;
  * @author Stephen
  *
  */
-public class ObservationWriterNull
-		extends ObservationWriterBase
+public class ObservationWriterHolder 
 		implements ObservationWriter {
-
-	/**
-	 * 
-	 */
-	public ObservationWriterNull() {
+	private ObservationWriter _writer;
+	
+	public ObservationWriterHolder(ObservationWriter writer) {
+		Objects.requireNonNull(writer, "writer");
+		_writer = writer;
+	}
+	
+	public ObservationWriter getWriter() {
+		return _writer;
+	}
+	
+	public void setWriter(ObservationWriter writer) {
+		Objects.requireNonNull(writer, "writer");
+		_writer = writer;
 	}
 
 	@Override
 	public boolean isLevelAccepted(ObsLevel level) {
-		return true;
+		return _writer.isLevelAccepted(level);
+	}
+
+	@Override
+	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+		_writer.write(collector, locOrigin, strText);
+	}
+
+	@Override
+	public void writeDiagnostic(String strText) {
+		_writer.writeDiagnostic(strText);
 	}
 
 	@Override
 	public void write(ObsLevel level, String strText) {
-		// does nothing
+		_writer.write(level, strText);
 	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message) {
-		// does nothing
+		_writer.buildAndWrite(level, message);
 	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
-		// does nothing
+		_writer.buildAndWrite(level, i, message);
 	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
 			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder) {
-		// does nothing		
-	}
-
-	@Override
-	public void writeDiagnostic(String strText) {
-		// does nothing
+		_writer.buildAndWrite(level, listPassThrough, messageBuilder);
 	}
 
 	@Override
 	public void writeTimeStamp(ObsLevel level) {
-		// does nothing
+		_writer.writeTimeStamp(level);
 	}
 
 	@Override
 	public ObservationCollector createCollector(ObsLevel level) {
-		// create a collector, but do not make it active
-		return new ObservationCollectorObj(this, ObsLevel.NONE, SourceLocation.caller());
-	}
-
-	@Override
-	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
-		// does nothing
+		return _writer.createCollector(level);
 	}
 
 	@Override
 	public void flush() {
-		// does nothing
+		_writer.flush();
 	}
+
 }

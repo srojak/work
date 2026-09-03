@@ -14,85 +14,86 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.observe.writers;
 
-import java.io.PrintStream;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
+import srojak.core.TextMessageRelay;
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObsPassThroughList;
+
 /**
  * @author Stephen
  *
  */
-public class ObservationWriterPrintStream
-		extends ObservationWriterBase
-		implements ObservationWriter {
-	private final PrintStream _streamOut;
+public class ObservationWriterLevelFilterTextRelay 
+		extends ObservationWriterLevelFilterBase {
+	private final TextMessageRelay _relay;
 
 	/**
 	 * 
 	 */
-	public ObservationWriterPrintStream(PrintStream stream) {
-		Objects.requireNonNull(stream, "stream");
-		if (stream.checkError())
-			throw new IllegalArgumentException("stream is not valid");
-		_streamOut = stream;
-	}
-
-	@Override
-	public boolean isLevelAccepted(ObsLevel level) {
-		return true;
+	public ObservationWriterLevelFilterTextRelay(TextMessageRelay relayText) {
+		Objects.requireNonNull(relayText, "relayText");
+		_relay = relayText;
 	}
 
 	@Override
 	public void write(ObsLevel level, String strText) {
-		_streamOut.println(level.getName() + ": " + strText);			
+		if (isObsLevelAtLeast(level)) {
+			_relay.writeln(level.getName() + ": " + strText);			
+		}
 	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		message.accept(sb);
-		_streamOut.println(sb.toString());
+		if (isObsLevelAtLeast(level)) {
+			StringBuilder sb = new StringBuilder(level.getName());
+			sb.append(": ");
+			message.accept(sb);
+			_relay.writeln(sb.toString());
+		}
 	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		message.accept(sb, i);
-		_streamOut.println(sb.toString());
+		if (isObsLevelAtLeast(level)) {
+			StringBuilder sb = new StringBuilder(level.getName());
+			sb.append(": ");
+			message.accept(sb, i);
+			_relay.writeln(sb.toString());
+		}
 	}
 
 	@Override
 	public void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
 			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		messageBuilder.accept(sb, listPassThrough);
-		_streamOut.println(sb.toString());
-	}
-
-	@Override
-	public void writeDiagnostic(String strText) {
-		_streamOut.println("*DIAG: " + strText);	
+		if (isObsLevelAtLeast(level)) {
+			StringBuilder sb = new StringBuilder(level.getName());
+			sb.append(": ");
+			messageBuilder.accept(sb, listPassThrough);
+			_relay.writeln(sb.toString());
+		}
 	}
 
 	@Override
 	public void writeTimeStamp(ObsLevel level) {
-		_streamOut.println(level.getName() + ": time " + getDateAndTimeStamp());
+		if (isObsLevelAtLeast(level)) {
+			_relay.writeln(level.getName() + ": time " + getDateAndTimeStamp());
+		}
 	}
 
 	@Override
-	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
-		write(collector.getLevel(), strText);
+	public void writeDiagnostic(String strText) {
+		_relay.writeln("*DIAG: " + strText);	
 	}
 
 	@Override
 	public void flush() {
-		_streamOut.flush();
+		// does nothing
 	}
+
 }

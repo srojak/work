@@ -14,28 +14,50 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.core.concurrent;
+
+import srojak.core.Disposable;
+
 /**
  * @author Stephen
  *
  */
-module srojak.core {
-	exports srojak.core;
-	exports srojak.core.collections;
-	exports srojak.core.concurrent;
-	exports srojak.core.containers;
-	exports srojak.core.data;
-	exports srojak.core.events;
-	exports srojak.core.field;
-	exports srojak.core.functional;
-	exports srojak.core.io;
-	exports srojak.core.keys;
-	exports srojak.core.logic;
-	exports srojak.core.mutable;
-	exports srojak.core.observe;
-	exports srojak.core.observe.writers;
-	exports srojak.core.reflect;
-	exports srojak.core.result;
-	exports srojak.core.specialized;
-	exports srojak.core.text;
-	exports srojak.core.tools;
+public class StopBarrier
+		implements Disposable {
+	private final Object _owner;
+	private final StopGate _gate;
+	private boolean _bDisposed;
+
+	/**
+	 * 
+	 */
+	StopBarrier(StopGate gate, Object objOwner) {
+		_gate = gate;
+		_owner = objOwner;
+		_bDisposed = false;
+	}
+
+	public Object getOwner() {
+		return _owner;
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return _bDisposed;
+	}
+
+	@Override
+	public void dispose() {
+		_gate.removeBarrier(this);
+		_bDisposed = true;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		if (!_bDisposed) {
+			_gate.finalRemove(this);
+		}
+	}
 }

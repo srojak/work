@@ -14,9 +14,13 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.observe.writers;
 
 import java.util.Objects;
+
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.SourceLocation;
 
 /**
  * @author Stephen
@@ -24,11 +28,11 @@ import java.util.Objects;
  */
 public abstract class ObservationWriterLevelFilterBase
 		extends ObservationWriterBase
-		implements ObservationWriter, HasObsLevel {
+		implements ObservationWriterLevelFilter {
 	private ObsLevel _levelWriter;
 	
 	public ObservationWriterLevelFilterBase() {
-		_levelWriter = ObsLevel.NOTICE;
+		_levelWriter = ObsLevel.INFO;
 	}
 
 	@Override

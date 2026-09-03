@@ -14,10 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.observe.writers;
 
 import java.io.PrintStream;
 import java.util.Objects;
+
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObsWriterMethods;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationCommonWriter;
+import srojak.core.observe.SourceLocation;
 
 /**
  * @author Stephen

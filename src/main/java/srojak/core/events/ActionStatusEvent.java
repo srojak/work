@@ -14,28 +14,42 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.core.events;
+
 /**
  * @author Stephen
  *
  */
-module srojak.core {
-	exports srojak.core;
-	exports srojak.core.collections;
-	exports srojak.core.concurrent;
-	exports srojak.core.containers;
-	exports srojak.core.data;
-	exports srojak.core.events;
-	exports srojak.core.field;
-	exports srojak.core.functional;
-	exports srojak.core.io;
-	exports srojak.core.keys;
-	exports srojak.core.logic;
-	exports srojak.core.mutable;
-	exports srojak.core.observe;
-	exports srojak.core.observe.writers;
-	exports srojak.core.reflect;
-	exports srojak.core.result;
-	exports srojak.core.specialized;
-	exports srojak.core.text;
-	exports srojak.core.tools;
+@SuppressWarnings("serial")
+public class ActionStatusEvent 
+		extends CoreEvent 
+		implements ActionStatusCodes, StateChangeCodes {
+	private final int _id;
+	private final int _status;
+
+	/**
+	 * @param source
+	 */
+	public ActionStatusEvent(Object source, int idRef, int status) {
+		super(source);
+		_id = idRef;
+		_status = status;
+	}
+	
+	public int getReferent() {
+		return _id;
+	}
+	
+	public int getStatus() {
+		return _status;
+	}
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		sb.append(", refID = ");
+		sb.append(_id);
+		sb.append(", status = ");
+		sb.append(_status);
+	}
+
 }

@@ -14,31 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
-
-import java.util.Objects;
+package srojak.core.events;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterContainerBase
-		implements HasSingleObservationWriter {
-	private ObservationWriter _writer;
+public interface ActionStatusOriginator {
 	
-	public ObservationWriterContainerBase(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
-	}
-	
-	@Override
-	public ObservationWriter getObservationWriter() {
-		return _writer;
-	}
-	
-	@Override
-	public void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
-	}
+	void addActionStatusListener(ActionStatusListener listener);
+	void removeActionStatusListener(ActionStatusListener listener);
 }

@@ -29,7 +29,7 @@ import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterNull;
+import srojak.core.observe.writers.ObservationWriterNull;
 
 /**
  * @author Stephen
@@ -77,7 +77,7 @@ public class SingletonContainer<T>
 	private void releaseCurrent() {
 		if (_obj != null) {
 			if (!_listenersState.isEmpty()) {
-				StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.ID_SELF, false);
+				StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, false);
 				_listenersState.forEach(ls -> ls.stateChanged(event));
 			}
 			if (_obj instanceof AutoCloseable objClose) {
@@ -123,7 +123,7 @@ public class SingletonContainer<T>
 			objLC.addLifeCycleListener(_listenerLife);
 		}
 		if (!_listenersState.isEmpty()) {
-			StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.ID_SELF, true);
+			StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, true);
 			_listenersState.forEach(ls -> ls.stateChanged(event));
 		}
 	}

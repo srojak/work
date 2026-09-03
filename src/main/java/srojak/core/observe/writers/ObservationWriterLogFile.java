@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.observe.writers;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +25,9 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
+
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObsPassThroughList;
 
 /**
  * @author Stephen

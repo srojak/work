@@ -53,7 +53,7 @@ public class BooleanLatch
 		StateChangeEvent event = null;
 		while (iter.hasNext()) {
 			if (event == null) {
-				event = new StateChangeEvent(this, StateChangeCodes.ID_SELF, _bState);
+				event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, _bState);
 			}
 			iter.next().stateChanged(event);
 		}

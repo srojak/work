@@ -254,6 +254,7 @@ public class ObsLevel
 	 */
 	public static List<ObsLevel> getAllKnown() {
 		ArrayList<ObsLevel> list = new ArrayList<ObsLevel>(mapAll.values());
+		list.sort((a, b) -> a.compareTo(b));
 		return List.copyOf(list);
 	}
 	

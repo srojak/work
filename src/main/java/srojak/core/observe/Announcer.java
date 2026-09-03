@@ -16,32 +16,12 @@
  */
 package srojak.core.observe;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterBase
-		implements ObservationWriter {
-	
-	protected static final DateTimeFormatter FORMAT_TIME_STAMP;
+public interface Announcer {
 
-	static {
-		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");		
-	}
-
-	public ObservationWriterBase() {
-		
-	}
-
-	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
-		return new ObservationCollectorObj(this, level, SourceLocation.caller());
-	}
-	
-	protected String getDateAndTimeStamp() {
-		return FORMAT_TIME_STAMP.format(LocalDateTime.now());
-	}
+	void announce(ObsLevel level, SourceLocation location);
+	void announceException(ObsLevel level, SourceLocation location, Exception exception);
 }

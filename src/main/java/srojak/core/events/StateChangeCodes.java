@@ -25,15 +25,25 @@ public interface StateChangeCodes {
 	/**
 	 * The state is the overall state of the object.
 	 */
-	public static final int ID_SELF = 10;
+	public static final int SC_SELF = 10;
 	
 	/**
 	 * The state is the state of an operation.
 	 */
-	public static final int ID_OPERATION = 11;
+	public static final int SC_OPERATION = 11;
 	
 	/**
 	 * The state is the state of an element in a defined set.
 	 */
-	public static final int ID_CHOICE = 12;
+	public static final int SC_CHOICE = 12;
+	
+	/**
+	 * The state is the enabled state of a component.
+	 */
+	public static final int SC_ENABLED = 13;
+	
+	/**
+	 * The state is the state of the primary content.
+	 */
+	public static final int SC_CONTENT = 14;
 }

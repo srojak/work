@@ -39,6 +39,16 @@ public class FlagsInt
 			_flags &= ~m;
 		}
 	}
+	
+	public boolean apply(boolean bState, int ... masks) {
+		int flagsOrig = _flags;
+		if (bState) {
+			set(masks);
+		} else {
+			clear(masks);
+		}
+		return (flagsOrig != _flags);
+	}
 
 	@Override
 	public boolean test(int mask) {
