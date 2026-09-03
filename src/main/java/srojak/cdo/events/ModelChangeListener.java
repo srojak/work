@@ -14,23 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo;
+package srojak.cdo.events;
 
-import java.awt.Color;
+import java.util.EventListener;
 
 /**
  * @author Stephen
  *
  */
-@Deprecated
-public interface ColorSelectionProvider {
-	Color getSelectionColor();
-	
-	default public boolean isSelectionColorEqual(ColorSelectionProvider other) {
-		if (other == null) {
-			return false;
-		} else {
-			return getSelectionColor().equals(other.getSelectionColor());
-		}
-	}
+public interface ModelChangeListener
+		extends EventListener {
+
+	void attribChanged(ModelChangeEvent event);
 }

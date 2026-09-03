@@ -23,7 +23,8 @@ import java.awt.AWTEvent;
  *
  */
 public class ScaleChangeEvent
-		extends AWTEvent {
+		extends AWTEvent
+		implements CDOEventID {
 
 	private final double _dScale;
 	
@@ -38,7 +39,7 @@ public class ScaleChangeEvent
 	 * @param id
 	 */
 	public ScaleChangeEvent(Object source, double dScale) {
-		super(source, CDOEventID.SCALE_CHANGED);
+		super(source, SCALE_CHANGED);
 		_dScale = dScale;
 	}
 	

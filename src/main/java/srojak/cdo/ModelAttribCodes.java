@@ -14,17 +14,21 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.events;
-
-import java.awt.AWTEvent;
+package srojak.cdo;
 
 /**
  * @author Stephen
  *
  */
-public interface CDOEventID {
+public interface ModelAttribCodes {
+
+	/**
+	 * The primary content of the model.
+	 */
+	public static final int MA_CONTENT = 100;
 	
-	public static final int SCALE_CHANGED = AWTEvent.RESERVED_ID_MAX + 1;
-	public static final int TEXT_CONTENT = AWTEvent.RESERVED_ID_MAX + 2;
-	public static final int MODEL_ATTRIB = AWTEvent.RESERVED_ID_MAX + 3;
+	/**
+	 * The enabled state of the model.
+	 */
+	public static final int MA_ENABLED = 101;
 }

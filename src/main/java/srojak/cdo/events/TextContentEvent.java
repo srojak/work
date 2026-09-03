@@ -22,9 +22,36 @@ import java.awt.AWTEvent;
  * @author Stephen
  *
  */
-public interface CDOEventID {
+public class TextContentEvent 
+		extends AWTEvent 
+		implements CDOEventID {
+	private final int _idRef;
+	private final String _text;
 	
-	public static final int SCALE_CHANGED = AWTEvent.RESERVED_ID_MAX + 1;
-	public static final int TEXT_CONTENT = AWTEvent.RESERVED_ID_MAX + 2;
-	public static final int MODEL_ATTRIB = AWTEvent.RESERVED_ID_MAX + 3;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7997696874224657159L;
+
+	/**
+	 * @param source
+	 * @param id
+	 */
+	public TextContentEvent(Object source, int idRef, String strText) {
+		super(source, TEXT_CONTENT);
+		_idRef = idRef;
+		_text = strText;
+	}
+	
+	public int getReferent() {
+		return _idRef;
+	}
+
+	public String getText() {
+		return _text;
+	}
+	
+	public boolean isTextNullOrEmpty() {
+		return _text == null || _text.isEmpty();
+	}
 }

@@ -18,7 +18,6 @@ package srojak.cdo;
 
 import java.awt.Dimension;
 
-import srojak.cdo.events.ScaleChangeListener;
 import srojak.numerics.intervals.IntervalDouble;
 
 /**

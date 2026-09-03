@@ -25,6 +25,7 @@ import srojak.core.NameToken;
 import srojak.core.NameTokenBearing;
 import srojak.core.events.SingleEventListenerList;
 import srojak.core.events.SingleEventListenerStore;
+import srojak.core.events.StateChangeCodes;
 import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
 
@@ -88,14 +89,14 @@ public class WindowMonitor
 			throw new IllegalStateException("another window is open");
 		}
 		_window = window;
-		StateChangeEvent event = new StateChangeEvent(this, true);
+		StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, true);
 		_listeners.forEach(ls -> ls.stateChanged(event));
 		window.addWindowListener(new MonitorWindowListener());
 	}
 	
 	private void releaseWindow() {
 		_window = null;
-		StateChangeEvent event = new StateChangeEvent(this, false);
+		StateChangeEvent event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, false);
 		_listeners.forEach(ls -> ls.stateChanged(event));
 	}
 	

@@ -22,9 +22,25 @@ import java.awt.AWTEvent;
  * @author Stephen
  *
  */
-public interface CDOEventID {
+public class ModelChangeEvent 
+		extends AWTEvent
+		implements CDOEventID {
+	private final int _attrib;
 	
-	public static final int SCALE_CHANGED = AWTEvent.RESERVED_ID_MAX + 1;
-	public static final int TEXT_CONTENT = AWTEvent.RESERVED_ID_MAX + 2;
-	public static final int MODEL_ATTRIB = AWTEvent.RESERVED_ID_MAX + 3;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4513817167684835586L;
+
+	/**
+	 * @param source
+	 */
+	public ModelChangeEvent(Object source, int idAttrib) {
+		super(source, MODEL_ATTRIB);
+		_attrib = idAttrib;
+	}
+
+	public int getAttribute() {
+		return _attrib;
+	}
 }

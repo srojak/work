@@ -16,15 +16,12 @@
  */
 package srojak.cdo.events;
 
-import java.awt.AWTEvent;
-
 /**
  * @author Stephen
  *
  */
-public interface CDOEventID {
-	
-	public static final int SCALE_CHANGED = AWTEvent.RESERVED_ID_MAX + 1;
-	public static final int TEXT_CONTENT = AWTEvent.RESERVED_ID_MAX + 2;
-	public static final int MODEL_ATTRIB = AWTEvent.RESERVED_ID_MAX + 3;
+public interface ModelChangeOriginator {
+
+	void addModelChangeListener(ModelChangeListener listener);
+	void removeModelChangeListener(ModelChangeListener listener);
 }
