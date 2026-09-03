@@ -27,10 +27,12 @@ import java.util.stream.Stream;
 
 import srojak.core.TextMessageRelay;
 import srojak.core.io.PrintStreamTextRelay;
+import srojak.core.observe.Announcer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
-import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.core.observe.SourceLocation;
+import srojak.core.observe.writers.AnnouncerPrintStream;
+import srojak.core.observe.writers.ObservationWriterLevelFilterPrintStream;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.DebugProperties;
 import srojak.debug.DebugPropertyKeys;
@@ -50,7 +52,8 @@ public class DebugNexusCore
 	public static final String PROPERTIES_FILE_NAME;
 	public static final DateTimeFormatter FORMAT_TIME_STAMP;
 	private static ObservationWriter _writer;
-	private static ObservationWriter _writerAlert;
+	private static Announcer _announcer;
+	private static ObsLevel _levelAnnounce;
 	private static ObsLevel _levelDefault;
 	private static boolean _bAutoFlush;
 	private static SwitchCaptureList _listCapture;
@@ -63,7 +66,8 @@ public class DebugNexusCore
 		_properties = new DebugProperties();
 		PROPERTIES_FILE_NAME = "debug.properties";
 		_writer = new ObservationWriterLevelFilterPrintStream(System.out);
-		_writerAlert = new ObservationWriterPrintStream(System.err);
+		_announcer = new AnnouncerPrintStream(System.err);
+		_levelAnnounce = ObsLevel.WARN;
 		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 		_levelDefault = ObsLevel.INFO;
 		_bAutoFlush = false;
@@ -230,9 +234,22 @@ public class DebugNexusCore
 		_writer = writer;
 	}
 	
-	public static void setAlertWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writerAlert = writer;
+	public static Announcer getAnnouncer() {
+		return _announcer;
+	}
+	
+	public static void setAnnouncer(Announcer announcer) {
+		Objects.requireNonNull(announcer, "announcer");
+		_announcer = announcer;
+	}
+	
+	public static ObsLevel getAnnounceLevel() {
+		return _levelAnnounce;
+	}
+	
+	public static void setAnnounceLevel(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
+		_levelAnnounce = level;
 	}
 	
 	public static ObsLevel getDefaultLogLevel() {
@@ -240,16 +257,27 @@ public class DebugNexusCore
 	}
 	
 	public static void setDefaultLogLevel(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
 		_levelDefault = level;
 	}
 	
-	protected static void writeln(ObsLevel level, String strText) {
+	protected static void writeln(ObsLevel level, SourceLocation location, String strText) {
 		_writer.write(level, strText);
 		if (_bAutoFlush) {
 			_writer.flush();
 		}
-		if (ObsLevel.ALERT.isLevelAtLeast(level)) {
-			_writerAlert.write(level, strText);
+		if (_levelAnnounce.isLevelAtLeast(level)) {
+			_announcer.announce(level, location);
+		}
+	}
+	
+	protected static void writelnException(ObsLevel level, SourceLocation location, Exception exc, String strText) {
+		_writer.write(level, strText);
+		if (_bAutoFlush) {
+			_writer.flush();
+		}
+		if (_levelAnnounce.isLevelAtLeast(level)) {
+			_announcer.announceException(level, location, exc);
 		}
 	}
 	

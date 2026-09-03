@@ -27,6 +27,7 @@ import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCommonWriter;
 import srojak.core.observe.TraceLevel;
+import srojak.core.reflect.PackageClassLocator;
 
 /**
  * @author Stephen
@@ -41,6 +42,12 @@ public interface DebugSwitch
 	 * @return The key for this debug switch.
 	 */
 	DebugSwitchKey getKey();
+	
+	/**
+	 * Get the class locator for the debug switch.
+	 * @return The class locator from the key for this debug switch.
+	 */
+	PackageClassLocator getClassLocator();
 	
 	/**
 	 * Get the observation level assigned to the debug switch.

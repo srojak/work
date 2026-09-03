@@ -25,7 +25,7 @@ import srojak.core.observe.HasObsLevel;
 import srojak.core.observe.HasSingleObservationWriter;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterContainerBase;
+import srojak.core.observe.writers.ObservationWriterContainerBase;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.specialized.IntegerCounter;
 import srojak.debug.impl.ClassDebugOptionEntry;

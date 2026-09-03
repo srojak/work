@@ -25,8 +25,8 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterBase;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.writers.ObservationWriterBase;
 import srojak.debug.impl.DebugSwitchContent;
 
 /**

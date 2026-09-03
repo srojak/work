@@ -24,12 +24,12 @@ import java.util.function.Consumer;
 import srojak.core.IPropertiesReadOnly;
 import srojak.core.InvalidOperationException;
 import srojak.core.logic.SimpleGate;
+import srojak.core.observe.Announcer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.result.XResult;
-import srojak.core.specialized.IntegerCounter;
 import srojak.core.tools.BitMethods;
 import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
@@ -107,12 +107,20 @@ public class DebugNexus
 		DebugNexusCore.setWriter(writer);
 	}
 	
-	/**
-	 * Set the alert writer for the debug switches.
-	 * @param writer The writer to receive messages at {@code ObsLevel.ALERT} or higher.
-	 */
-	public void setAlertWriter(ObservationWriter writer) {
-		DebugNexusCore.setAlertWriter(writer);
+	public Announcer getAnnouncer() {
+		return DebugNexusCore.getAnnouncer();
+	}
+	
+	public void setAnnouncer(Announcer announcer) {
+		DebugNexusCore.setAnnouncer(announcer);
+	}
+	
+	public ObsLevel getAnnounceLevel() {
+		return DebugNexusCore.getAnnounceLevel();
+	}
+	
+	public void setAnnounceLevel(ObsLevel level) {
+		DebugNexusCore.setAnnounceLevel(level);
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
+import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchKey;
 
@@ -68,6 +69,11 @@ public final class DebugSwitchContent
 	@Override
 	public DebugSwitchKey getKey() {
 		return _key;
+	}
+
+	@Override
+	public PackageClassLocator getClassLocator() {
+		return _key.getClassLocator();
 	}
 
 	@Override
@@ -119,7 +125,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, locOrigin, _sdetail);
 			sb.append(strMessage);
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writeln(level, locOrigin, sb.toString());
 		}
 	}
 
@@ -138,7 +144,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, location, _sdetail);
 			sb.append(message.get());
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writeln(level, location, sb.toString());
 		}
 	}
 
@@ -151,7 +157,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, location, _sdetail);
 			sb.append(message.apply(listPassThrough));
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writeln(level, location, sb.toString());
 		}
 	}
 	
@@ -170,7 +176,7 @@ public final class DebugSwitchContent
 				sb.append("\n  ");
 				sb.append(exc.getMessage());
 			}
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writelnException(level, location, exc, sb.toString());
 			if (exc != null && bShowStack) {
 				DebugNexusCore.writeStackTrace(level, exc);
 			}
@@ -184,7 +190,7 @@ public final class DebugSwitchContent
 		sb.append("enter ");
 		sb.append(location.getMethodName());
 		messageBuilder.accept(sb);
-		DebugNexusCore.writeln(level, sb.toString());
+		DebugNexusCore.writeln(level, location, sb.toString());
 	}
 
 	@Override
@@ -254,7 +260,7 @@ public final class DebugSwitchContent
 		sb.append("return from ");
 		sb.append(location.getMethodName());
 		messageBuilder.accept(sb);
-		DebugNexusCore.writeln(ObsLevel.TRACE, sb.toString());
+		DebugNexusCore.writeln(ObsLevel.TRACE, location, sb.toString());
 	}
 
 	@Override
@@ -276,7 +282,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, locOrigin, _sdetail);
 			messageBuilder.accept(sb);
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writeln(level, locOrigin, sb.toString());
 		}
 	}
 
@@ -295,7 +301,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, location, _sdetail);
 			messageBuilder.accept(sb, i);
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writeln(level, location, sb.toString());
 		}
 	}
 
@@ -308,7 +314,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, location, _sdetail);
 			messageBuilder.accept(sb, listPassThrough);
-			DebugNexusCore.writeln(level, sb.toString());
+			DebugNexusCore.writeln(level, location, sb.toString());
 		}
 	}
 
@@ -330,7 +336,7 @@ public final class DebugSwitchContent
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, locOrigin, _sdetail);
 			sb.append(strText);
-			DebugNexusCore.writeln(collector.getLevel(), sb.toString());
+			DebugNexusCore.writeln(collector.getLevel(), locOrigin, sb.toString());
 		}
 	}
 

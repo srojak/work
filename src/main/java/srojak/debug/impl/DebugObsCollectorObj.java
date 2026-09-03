@@ -17,9 +17,9 @@
 package srojak.debug.impl;
 
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationCollectorObj;
 import srojak.core.observe.ObservationCommonWriter;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.writers.ObservationCollectorObj;
 
 /**
  * @author Stephen
