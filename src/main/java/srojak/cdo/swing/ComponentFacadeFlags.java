@@ -19,9 +19,11 @@ package srojak.cdo.swing;
 /**
  * @author Stephen
  *
- * Identifies the class as a cdo control model.
  */
-public interface CDOControlModel
-		extends CDOControlFlags {
+public interface ComponentFacadeFlags {
 
+	static final int CFF_SYNTH_ENABLED = 0x1;
+	static final int CFF_MODEL_ENABLED = 0x2;
+	static final int CFF_PARENT_ENABLED = 0x4;
+	static final int CFF_LOCAL_ENABLED = 0x8;
 }

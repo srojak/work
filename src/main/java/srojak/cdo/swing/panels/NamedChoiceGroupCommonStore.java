@@ -32,7 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 
 import srojak.cdo.events.AWTEventMethods;
-import srojak.cdo.swing.functional.ControlModelManager;
+import srojak.cdo.swing.functional.CDOControlModelManager;
 import srojak.cdo.swing.impl.NamedChoicePanelConnector;
 import srojak.cdo.swing.models.DefaultNamedChoiceModel;
 import srojak.cdo.swing.models.NameIdentifiedButtonModel;
@@ -55,7 +55,7 @@ import srojak.debug.DebugSwitchTool;
 public class NamedChoiceGroupCommonStore {
 	private final NamedChoicePanelConnector _connectorPanel;
 	private final LinkedList<NameIdentifiedButtonModel> _listButtons;
-	private final ControlModelManager<NamedChoiceModel> _model;
+	private final CDOControlModelManager<NamedChoiceModel> _model;
 	private final ButtonGroup _group;
 	private final Point _ptNextLoc;
 	private final int _nAcross;
@@ -75,7 +75,7 @@ public class NamedChoiceGroupCommonStore {
 		}
 		_connectorPanel = connector;
 		_listButtons = new LinkedList<NameIdentifiedButtonModel>();
-		_model = new ControlModelManager<NamedChoiceModel>();
+		_model = new CDOControlModelManager<NamedChoiceModel>();
 		_group = new ButtonGroup();
 		_ptNextLoc = new Point(0, 0);
 		_nAcross = itemsAcross;

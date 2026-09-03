@@ -16,12 +16,15 @@
  */
 package srojak.cdo.swing;
 
+import java.util.function.Consumer;
+
+import javax.swing.text.MutableAttributeSet;
+
 /**
  * @author Stephen
  *
- * Identifies the class as a cdo control model.
  */
-public interface CDOControlModel
-		extends CDOControlFlags {
+public interface StyleBuilder 
+		extends Consumer<MutableAttributeSet> {
 
 }

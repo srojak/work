@@ -27,15 +27,15 @@ import javax.swing.event.ChangeListener;
 
 import srojak.core.NameToken;
 import srojak.core.NameTokenEquatable;
-import srojak.core.decorated.Decorated;
-import srojak.core.decorated.DecoratedNamed;
-import srojak.core.decorated.Decorator;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
 import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
+import srojak.mantle.decorated.Decorated;
+import srojak.mantle.decorated.DecoratedNamed;
+import srojak.mantle.decorated.Decorator;
 
 /**
  * @author Stephen

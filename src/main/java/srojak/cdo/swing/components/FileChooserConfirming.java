@@ -28,12 +28,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import srojak.cdo.swing.FileChooserAction;
+import srojak.cdo.swing.FileChooserSelectionMode;
+import srojak.core.io.FileExistence;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
-import srojak.mantle.io.FileExistence;
 
 /**
  * @author Stephen
@@ -128,6 +129,11 @@ public class FileChooserConfirming
 		_fexCustom = FileExistence.Any;
 		_fexActive = FileExistence.Any;
 		_bInferExt = true;
+	}
+	
+	public void setFileSelectionMode(FileChooserSelectionMode mode) {
+		Objects.requireNonNull(mode, "mode");
+		super.setFileSelectionMode(mode.getBaseMode());
 	}
 	
 	@Override
@@ -259,7 +265,7 @@ public class FileChooserConfirming
 			break;
 		}
 		
-		if (_bInferExt) {
+		if (_bInferExt && !fileSelected.isDirectory()) {
 			_swDebugClass.write(ObsLevel.DEBUG, "will attempt to infer extension");
 			FileFilter filterCurrent = getFileFilter();
 			String strExtension = null;

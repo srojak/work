@@ -29,8 +29,8 @@ import srojak.cdo.swing.base.ButtonModelFacadeBase;
  */
 public class LocalEnabledButtonModelFacade
 		extends ButtonModelFacadeBase {
-	private Boolean _bExternal;
-	private Boolean _bLocal;
+	private boolean _bExternal;
+	private boolean _bLocal;
 	
 	public static LocalEnabledButtonModelFacade makeFacadeFor(AbstractButton button) {
 		Objects.requireNonNull(button, "button");

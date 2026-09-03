@@ -16,12 +16,24 @@
  */
 package srojak.cdo.swing;
 
+import javax.swing.JFileChooser;
+
 /**
  * @author Stephen
  *
- * Identifies the class as a cdo control model.
  */
-public interface CDOControlModel
-		extends CDOControlFlags {
-
+public enum FileChooserSelectionMode {
+	FILES_ONLY(JFileChooser.FILES_ONLY),
+	DIRECTORIES_ONLY(JFileChooser.DIRECTORIES_ONLY),
+	FILES_AND_DIRECTORIES(JFileChooser.FILES_AND_DIRECTORIES);
+	
+	private final int _modeBase;
+	
+	private FileChooserSelectionMode(int nMode) {
+		_modeBase = nMode;
+	}
+	
+	public int getBaseMode() {
+		return _modeBase;
+	}
 }

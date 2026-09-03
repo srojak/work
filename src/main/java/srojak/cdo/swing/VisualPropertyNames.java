@@ -19,9 +19,11 @@ package srojak.cdo.swing;
 /**
  * @author Stephen
  *
- * Identifies the class as a cdo control model.
  */
-public interface CDOControlModel
-		extends CDOControlFlags {
+public interface VisualPropertyNames {
 
+	public static final String ANCESTOR = "ancestor";
+	public static final String BORDER = "border";
+	public static final String ENABLED = "enabled";
+	public static final String OPAQUE = "opaque";
 }

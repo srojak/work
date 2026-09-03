@@ -22,6 +22,7 @@ import java.awt.event.WindowListener;
 import java.util.Objects;
 import java.util.function.Function;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -87,6 +88,10 @@ public class AppFrameContainer {
     
     protected FrameWindowListenerTool getFrameWindowListenerTool() {
     	return new FrameWindowListenerTool();
+    }
+    
+    JFrame getFrame() {
+    	return _frame;
     }
 	
 	public class FrameWindowListenerTool {

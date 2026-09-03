@@ -46,7 +46,8 @@ import srojak.events.CollectionChangeListener;
  */
 public abstract class SelectionControlModelBase<T>
 		implements CDOControlModel, CanBeEnabled, ChangeEventOriginator, 
-		CollectionChangeEventOriginator, ItemSelectable {
+			CollectionChangeEventOriginator, ItemSelectable {
+	// TODO: extend ControlModelBase
 	protected final CommonEventListenerStore _listeners;
 	private final LinkedList<T> _listItems;
 	private final LinkedList<T> _listSelection;

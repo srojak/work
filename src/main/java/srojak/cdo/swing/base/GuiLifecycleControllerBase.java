@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 import srojak.cdo.swing.models.DxButtonModelFacade;
 import srojak.core.LifeCycleCloseable;
 import srojak.core.NameToken;
-import srojak.core.decorated.DecoratedNamedObjectMap;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.LifeCycleEvent;
 import srojak.core.events.LifeCycleListener;
@@ -40,6 +39,7 @@ import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
 import srojak.events.routed.RoutedStateChangeListener;
 import srojak.events.routed.RoutesStateChangeEvents;
+import srojak.mantle.decorated.DecoratedNamedObjectMap;
 
 /**
  * @author Stephen

@@ -19,8 +19,11 @@ package srojak.cdo.swing.panels;
 import java.awt.LayoutManager;
 import java.util.Objects;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import srojak.cdo.swing.interact.ComponentEnabledStateManager;
+import srojak.cdo.swing.interact.ComponentEnablingFacade;
 import srojak.core.NameToken;
 import srojak.core.NameTokenTagged;
 
@@ -33,6 +36,7 @@ public class NameTokenTagPanel
 		extends JPanel 
 		implements NameTokenTagged {
 	private final NameToken _token;
+	private final ComponentEnabledStateManager _mgrEnabled;
 
 	/**
 	 * 
@@ -41,6 +45,7 @@ public class NameTokenTagPanel
 		super();
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
 	/**
@@ -50,6 +55,7 @@ public class NameTokenTagPanel
 		super(layout);
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
 	/**
@@ -59,6 +65,7 @@ public class NameTokenTagPanel
 		super(isDoubleBuffered);
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
 	/**
@@ -69,6 +76,7 @@ public class NameTokenTagPanel
 		super(layout, isDoubleBuffered);
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
 	@Override
@@ -81,9 +89,41 @@ public class NameTokenTagPanel
 		return _token.equals(token);
 	}
 
-
 	@Override
 	public boolean isNameTagEqual(String strName) {
 		return _token.isNameEqual(strName);
+	}
+
+	@Override
+	public String getName() {
+		String strName = super.getName();
+		if (strName == null) {
+			strName = _token.getName();
+		}
+		return strName;
+	}
+	
+	protected ComponentEnabledStateManager getEnabledStateManager() {
+		return _mgrEnabled;
+	}
+	
+	public ComponentEnablingFacade findEnablingFacadeForComponent(JComponent component) {
+		return _mgrEnabled.findFacadeForComponent(component);
+	}
+	
+	public ComponentEnablingFacade createEnablingFacadeFor(JComponent component) {
+		return new ComponentEnablingFacade(component);
+	}
+	
+	public void addChild(ComponentEnablingFacade facade) {
+		_mgrEnabled.addChild(facade);
+	}
+	
+	public void addChild(ComponentEnablingFacade facade, Object constraints) {
+		_mgrEnabled.addChild(facade, constraints);
+	}
+	
+	public void removeChild(ComponentEnablingFacade facade) {
+		_mgrEnabled.removeChild(facade);
 	}
 }

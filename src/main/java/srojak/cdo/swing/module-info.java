@@ -35,8 +35,10 @@ module srojak.cdo.swing {
 	exports srojak.cdo.swing.event;
 	exports srojak.cdo.swing.frames;
 	exports srojak.cdo.swing.functional;
+	exports srojak.cdo.swing.interact;
 	exports srojak.cdo.swing.lists;
 	exports srojak.cdo.swing.models;
+	exports srojak.cdo.swing.observe;
 	exports srojak.cdo.swing.panels;
 	exports srojak.cdo.swing.status;
 	exports srojak.cdo.swing.trees;

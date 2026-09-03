@@ -23,6 +23,7 @@ import srojak.cdo.swing.base.SelectionControlModelBase;
 import srojak.core.NameIdentifiedAndLabeled;
 import srojak.core.events.NameAndStateChangeEvent;
 import srojak.core.events.NameAndStateChangeListener;
+import srojak.core.events.StateChangeCodes;
 import srojak.events.CollectionSizeChangeEvent;
 import srojak.events.CollectionSizeChangeListener;
 import srojak.events.ObjectValueChangeEvent;
@@ -79,7 +80,7 @@ public class DefaultNamedChoiceModel
 		Objects.requireNonNull(strName, "strName");
 		NameIdentifiedAndLabeled item = findChoice(i -> i.isNameEqual(strName));
 		if (item != null) {
-			NameAndStateChangeEvent event = new NameAndStateChangeEvent(this, strName, bState);
+			NameAndStateChangeEvent event = new NameAndStateChangeEvent(this, strName, StateChangeCodes.SC_CHOICE, bState);
 			_listeners.forEach(NameAndStateChangeListener.class, ls -> ls.stateChanged(event));
 			if (!bState) {
 				// is this item selected?

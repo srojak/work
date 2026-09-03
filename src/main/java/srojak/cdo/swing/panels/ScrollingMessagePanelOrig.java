@@ -18,6 +18,7 @@ package srojak.cdo.swing.panels;
 
 import java.util.Objects;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
@@ -30,32 +31,44 @@ import srojak.core.TextMessageRelay;
  *
  */
 @SuppressWarnings("serial")
-public class ScrollingMessagePanel
-		extends ScrollingViewPanel
+public class ScrollingMessagePanelOrig
+		extends NameTokenTagPanel
 		implements TextMessageRelay, TextMessageComponent {
     private JTextArea _areaText;
+    private JScrollPane _scroll;
     
-    public static final NameToken PANEL_NAME = NameToken.classNameFactory(ScrollingMessagePanel.class);
+    public static final NameToken PANEL_NAME = NameToken.classNameFactory(ScrollingMessagePanelOrig.class);
 
-    public ScrollingMessagePanel(NameToken tokenName, int nLines, int nColumns) {
+    public ScrollingMessagePanelOrig(NameToken tokenName, int nLines, int nColumns) {
     	super(tokenName);
         _areaText = new JTextArea(nLines, nColumns);
+        _scroll = new JScrollPane(_areaText);
     	postConstruct();
     }
     
-    public ScrollingMessagePanel(NameToken tokenName, boolean isDoubleBuffered, int nLines, int nColumns) {
+    public ScrollingMessagePanelOrig(NameToken tokenName, boolean isDoubleBuffered, int nLines, int nColumns) {
     	super(tokenName, isDoubleBuffered);
         _areaText = new JTextArea(nLines, nColumns);
+        _scroll = new JScrollPane(_areaText);
     	postConstruct();
    }
     
     private void postConstruct() {
-    	setView(_areaText);
          _areaText.setEditable(false);
    	
-        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-     }
+        _scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        _scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    	
+        add(_scroll);
+    }
+
+    public void setVerticalScrollBarPolicy(int policy) {
+    	_scroll.setVerticalScrollBarPolicy(policy);
+    }
+
+    public void setHorizontalScrollBarPolicy(int policy) {
+    	_scroll.setHorizontalScrollBarPolicy(policy);
+    }
 
 	@Override
 	public void writeln(String strText) {

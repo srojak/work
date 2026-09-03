@@ -16,117 +16,42 @@
  */
 package srojak.cdo.swing.frames;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Image;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.Objects;
-import java.util.function.Function;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.ScrollPaneConstants;
 
-import srojak.cdo.containers.ResourceImage;
-import srojak.cdo.swing.ExitControl;
 import srojak.cdo.swing.event.ActionListenerTextAreaCopy;
 import srojak.cdo.swing.event.ActionListenerTextAreaSelectAll;
-import srojak.cdo.swing.functional.AppFrameExitControl;
 import srojak.cdo.swing.panels.ScrollingMessagePanel;
-import srojak.cdo.swing.status.StatusBar;
-import srojak.cdo.swing.status.StatusBarTextItem;
 import srojak.core.TextMessageRelay;
-import srojak.core.result.XResult;
 /**
  * @author Stephen
  *
  */
 public class CommonMessageAppFrame
+		extends CommonAppFrame
 		implements Runnable {
-	private final AppFrameContainer _ctnrFrame;
-	private final Container _ctnContent;
-	private final JMenuBar _barMenu;
-	private final StatusBar _barStatus;
     private final ScrollingMessagePanel _areaText;
-    private final AppFrameExitControl _ctlExit;
-    private final ResourceImage _resCommonIcon;
     
     public CommonMessageAppFrame(String strAppName) {
-		JFrame frameMain = new JFrame(strAppName);
-		_ctnrFrame = new AppFrameContainer(frameMain);
-		_ctnContent = frameMain.getContentPane();
-		_ctlExit = new AppFrameExitControl();
-		_ctlExit.attach(frameMain);
-         Box boxLower = Box.createVerticalBox();
-         _ctnContent.add(boxLower, BorderLayout.SOUTH);
-        
-        _barMenu = new JMenuBar();
-        frameMain.setJMenuBar(_barMenu);
+    	super(strAppName);
         
         // put in text area
         _areaText = new ScrollingMessagePanel(ScrollingMessagePanel.PANEL_NAME, 10, 60);
         _areaText.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        boxLower.add(_areaText);
-        
-        // put in status bar
-        _barStatus = new StatusBar(StatusBar.ClassToken);
-        boxLower.add(_barStatus);
-        
-        _resCommonIcon = new ResourceImage(CommonMessageAppFrame.class, "/CDOAppIcon.png");
+        Box boxLower = getLowerBox();
+        boxLower.add(_areaText, 0);
     }
-    
-    public void useCommonAppIcon() {
-    	XResult result = _resCommonIcon.load();
-    	if (result.isValid()) {
-    		_ctnrFrame.setIconImage(_resCommonIcon.getImage());
-    	}
-    }
-    
-    public StatusBarTextItem addStatusBarTextItem(int nWidth) {
-    	if (nWidth < 10) {
-    		throw new IllegalArgumentException("allowable width is too small");
-    	}
-    	StatusBarTextItem itemStatus = new StatusBarTextItem(nWidth, "Ready");
-        _barStatus.add(itemStatus);
-        return itemStatus;
-    }
-    
-    protected ExitControl getExitControl() {
-    	return _ctlExit;
-    }
-    
-    protected void setIconImage(Image image) {
-    	_ctnrFrame.setIconImage(image);
-    }
-    
-    protected void addMenu(JMenu menu) {
-    	_barMenu.add(menu);
-    }
-    
-    @SuppressWarnings("serial")
-	protected JMenuItem createExitMenuItem() {
-    	JMenuItem itemMenu = new JMenuItem("Exit");
-    	itemMenu.addActionListener(new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_ctlExit.requestClose();				
-			}
-    	});
-    	return itemMenu;
-    }
-    
+         
     @SuppressWarnings("serial")
 	protected void addTextMenu() {
 		JMenu menu = new JMenu("Text");
-		_barMenu.add(menu);
+		addMenu(menu);
 		
 		JMenuItem itemMenu = new JMenuItem("Select All");
 		menu.add(itemMenu);
@@ -149,10 +74,6 @@ public class CommonMessageAppFrame
 		});
     }
     
-    protected StatusBar getStatusBar() {
-    	return _barStatus;
-    }
-    
     protected ScrollingMessagePanel getTextArea() {
     	return _areaText;
     }
@@ -160,62 +81,9 @@ public class CommonMessageAppFrame
     protected TextMessageRelay getMessageOut() {
     	return _areaText;
     }
-    
-    protected void repaintContent() {
-    	_ctnContent.repaint();
-    }
-    
+        
     public void relayText(String strText) {
     	Objects.requireNonNull(strText, "strText");
     	_areaText.writeln(strText);
     }
-    
-    public AppFrameContainer getAppFrameContainer() {
-    	return _ctnrFrame;
-    }
-    
-   	protected <T extends Window> T createWithParentFrame(Function<JFrame, T> function) {
-   		return _ctnrFrame.createWithParentFrame(function);
-   	}
-    
-    protected void addComponentToCenter(JComponent component) {
-        _ctnContent.add(component, BorderLayout.CENTER);
-    }
-    
-    protected void addComponentToTop(JComponent component) {
-        _ctnContent.add(component, BorderLayout.NORTH);
-    }
-    
-    protected void addComponentToLeft(JComponent component) {
-        _ctnContent.add(component, BorderLayout.WEST);
-    }
-    
-    protected void addComponentToRight(JComponent component) {
-         _ctnContent.add(component, BorderLayout.EAST);
-    }
-    
-    protected int showOpenFileDialog(JFileChooser chooser) {
-    	return _ctnrFrame.showOpenFileDialog(chooser);
-    }
-    
-    protected int showSaveFileDialog(JFileChooser chooser) {
-    	return _ctnrFrame.showSaveFileDialog(chooser);
-    }
-    
-    protected void doBeforeRendering() {
-       	// base class method does nothing
-    }
-    
-    protected void doOnceRunning() {
-    	// base class method does nothing
-    }
-
-	@Override
-	public void run() {
-		_ctnrFrame.prepare();
-		doBeforeRendering();
-		_ctnrFrame.makeVisible();
-		doOnceRunning();
-	}
-
 }

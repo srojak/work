@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.util.Collection;
 import java.util.Objects;
 
-import srojak.cdo.ColorSelectionProvider;
 import srojak.cdo.swing.base.SelectionControlModelBase;
 import srojak.events.CollectionSizeChangeEvent;
 import srojak.events.CollectionSizeChangeListener;

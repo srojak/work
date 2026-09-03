@@ -35,7 +35,7 @@ import javax.swing.event.ChangeListener;
 
 import srojak.cdo.GridBagConstraintsTool;
 import srojak.cdo.events.AWTEventMethods;
-import srojak.cdo.swing.functional.ControlModelManager;
+import srojak.cdo.swing.functional.CDOControlModelManager;
 import srojak.cdo.swing.models.DefaultNamedChoiceModel;
 import srojak.cdo.swing.models.NameIdentifiedButtonModel;
 import srojak.cdo.swing.models.NamedChoiceModel;
@@ -69,7 +69,7 @@ public class NamedChoiceGroupBoxPanel
 		implements NamedChoicePanel {
 	private final CommonEventListenerStore _listeners;
 	private final LinkedList<NameIdentifiedButtonModel> _listButtons;
-	private final ControlModelManager<NamedChoiceModel> _model;
+	private final CDOControlModelManager<NamedChoiceModel> _model;
 	private final ButtonGroup _group;
 	private final GridBagConstraintsTool _toolGBC;
 	private final Point _ptNextLoc;
@@ -83,6 +83,7 @@ public class NamedChoiceGroupBoxPanel
 		Class<?> classThis = NamedChoiceGroupBoxPanel.class;
 		_swDebugClass = debug.getSwitch(DebugSwitchTool.makeClassKey(classThis));
 	}
+	
 	/**
 	 * @param tokenName
 	 */
@@ -93,7 +94,7 @@ public class NamedChoiceGroupBoxPanel
 		}
 		_listeners = new CommonEventListenerList();
 		_listButtons = new LinkedList<NameIdentifiedButtonModel>();
-		_model = new ControlModelManager<NamedChoiceModel>();
+		_model = new CDOControlModelManager<NamedChoiceModel>();
 		_group = new ButtonGroup();
 		_toolGBC = new GridBagConstraintsTool();
 		_ptNextLoc = new Point(0, 0);
@@ -112,7 +113,7 @@ public class NamedChoiceGroupBoxPanel
 		}
 		_listeners = new CommonEventListenerList();
 		_listButtons = new LinkedList<NameIdentifiedButtonModel>();
-		_model = new ControlModelManager<NamedChoiceModel>();
+		_model = new CDOControlModelManager<NamedChoiceModel>();
 		_group = new ButtonGroup();
 		_toolGBC = new GridBagConstraintsTool();
 		_ptNextLoc = new Point(0, 0);

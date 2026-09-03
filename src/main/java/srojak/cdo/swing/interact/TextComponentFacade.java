@@ -14,14 +14,22 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing;
+package srojak.cdo.swing.interact;
+
+import javax.swing.text.JTextComponent;
 
 /**
  * @author Stephen
  *
- * Identifies the class as a cdo control model.
  */
-public interface CDOControlModel
-		extends CDOControlFlags {
+public class TextComponentFacade 
+		extends ComponentDetailFacadeBase {
+
+	/**
+	 * @param component
+	 */
+	public TextComponentFacade(JTextComponent component) {
+		super(component);
+	}
 
 }

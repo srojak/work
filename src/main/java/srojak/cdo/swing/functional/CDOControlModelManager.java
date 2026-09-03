@@ -14,14 +14,23 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing;
+package srojak.cdo.swing.functional;
+
+import srojak.cdo.ControlModelManager;
+import srojak.cdo.swing.CDOControlModel;
 
 /**
  * @author Stephen
  *
- * Identifies the class as a cdo control model.
+ * The purpose of this object is to organize the life cycle of a model as held by a control.
  */
-public interface CDOControlModel
-		extends CDOControlFlags {
+public class CDOControlModelManager<M extends CDOControlModel>
+		extends ControlModelManager<M> {
 
+	/**
+	 * 
+	 */
+	public CDOControlModelManager() {
+		super();
+	}
 }

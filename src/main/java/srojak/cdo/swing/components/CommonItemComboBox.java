@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -69,6 +70,14 @@ public class CommonItemComboBox<T>
 	
 	protected T findInData(Predicate<T> predicate) {
 		return CollectionMethods.findFirstIn(_data, predicate);
+	}
+	
+	protected int getDataSize() {
+		return _data.size();
+	}
+	
+	protected Stream<T> getDataAsStream() {
+		return _data.stream();
 	}
 	
 	public boolean hasSelectedValue() {

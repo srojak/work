@@ -41,7 +41,7 @@ import javax.swing.event.ChangeListener;
 
 import srojak.cdo.AWTGeometry;
 import srojak.cdo.DoubleDimension;
-import srojak.cdo.swing.functional.ControlModelManager;
+import srojak.cdo.swing.functional.CDOControlModelManager;
 import srojak.cdo.swing.models.CompassControlModel;
 import srojak.cdo.swing.models.DefaultCompassControlModel;
 import srojak.core.NameToken;
@@ -60,7 +60,7 @@ import srojak.numerics.compass.CompassPoint;
 @SuppressWarnings("serial")
 public class CompassRoseControl
 		extends NameTokenTagComponent {
-	private final ControlModelManager<CompassControlModel> _model;
+	private final CDOControlModelManager<CompassControlModel> _model;
 	private final BooleanLatch _latchInitSize;
 	private final DoubleDimension _szOuterCircle;
 	private final DoubleDimension _szInnerCircle;
@@ -106,7 +106,7 @@ public class CompassRoseControl
 		_bLabelPoints = true;
 		_colorArrow = Color.RED;
 		_bShowExtents = false;
-		_model = new ControlModelManager<CompassControlModel>();
+		_model = new CDOControlModelManager<CompassControlModel>();
 		_model.addObjectOwnershipListener(new ObjectOwnershipListener() {
 
 			@Override

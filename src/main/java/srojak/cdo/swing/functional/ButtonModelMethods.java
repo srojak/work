@@ -21,8 +21,8 @@ import java.util.Objects;
 import javax.swing.ButtonModel;
 
 import srojak.core.NameToken;
-import srojak.core.decorated.DecoratedNamedObject;
-import srojak.core.decorated.DecoratedNamedObjectList;
+import srojak.mantle.decorated.DecoratedNamedObject;
+import srojak.mantle.decorated.DecoratedNamedObjectList;
 
 /**
  * @author Stephen
