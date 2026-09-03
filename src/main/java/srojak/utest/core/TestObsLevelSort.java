@@ -21,7 +21,8 @@ import java.util.List;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.helpers.UnitTestEqualsMethods;
 
@@ -40,10 +41,15 @@ public class TestObsLevelSort {
 		series.getOptions().setObservationWriter(writer);
 		UnitTestEqualsMethods<ObsLevel> methodEq = new UnitTestEqualsMethods<ObsLevel>();
 		
+		List<ObsLevel> list1 = ObsLevel.getAllKnown();
+		series.expectValueEquals(TestIdentifier.name("returned list"), "first", methodEq, 
+				ObsLevel.NONE, list1.get(0));
+		
 		List<ObsLevel> list = new ArrayList<ObsLevel>(ObsLevel.getAllKnown());
 		list.sort(null);
 		
-		series.expectValueEquals("sorted list", "first", methodEq, ObsLevel.NONE, list.get(0));
+		series.expectValueEquals(TestIdentifier.name("sorted list"), "first", methodEq, 
+				ObsLevel.NONE, list.get(0));
 		
 		System.out.println("Sorted list:");
 		list.forEach(i -> System.out.println("  " + i));

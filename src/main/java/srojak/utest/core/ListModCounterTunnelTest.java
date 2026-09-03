@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import srojak.core.collections.ListModCountTracker;
 import srojak.core.observe.ExceptionAnalyzer;
 import srojak.core.observe.ExceptionAnalyzerByClass;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.core.specialized.ListModCountTracker;
+import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestSeries;
 
 /**
@@ -50,7 +51,7 @@ public class ListModCounterTunnelTest {
 		list1.add("club");
 		
 		ListModCountTracker lmct1 = new ListModCountTracker(list1, analyzeExcs);
-		series.expectValue("hasModCount", "ArrayList", true, lmct1.hasModCount());
+		series.expectValue(TestIdentifier.name("hasModCount"), "ArrayList", true, lmct1.hasModCount());
 		
 		List<String> list2 = new LinkedList<String>();
 		list2.add("first");
@@ -58,7 +59,7 @@ public class ListModCounterTunnelTest {
 		list2.add("third");
 		
 		ListModCountTracker lmct2 = new ListModCountTracker(list2, analyzeExcs);
-		series.expectValue("hasModCount", "LinkedList", true, lmct2.hasModCount());
+		series.expectValue(TestIdentifier.name("hasModCount"), "LinkedList", true, lmct2.hasModCount());
 		
 		series.complete();
 	}

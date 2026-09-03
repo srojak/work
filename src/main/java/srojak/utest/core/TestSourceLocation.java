@@ -16,9 +16,10 @@
  */
 package srojak.utest.core;
 
-import srojak.core.observe.ObservationWriterPrintStream;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.numerics.OrderedComparison;
+import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestSeries;
 
 /**
@@ -46,11 +47,12 @@ public class TestSourceLocation {
 
 		SourceLocation loc = app.MethodOne(1);
 		System.out.println("at " + loc);
-		series.expectValue("location", "class", OrderedComparison.EQ,
+		series.expectValue(TestIdentifier.name("location"), "class", OrderedComparison.EQ,
 				"srojak.utest.core.TestSourceLocation", loc.getClassName());
-		series.expectValue("location", "method", OrderedComparison.EQ, 
+		series.expectValue(TestIdentifier.name("location"), "method", OrderedComparison.EQ, 
 				"MethodOne", loc.getMethodName());
-		series.expectValue("location", "line", OrderedComparison.GE, 15, loc.getLineNumber());
+		series.expectValue(TestIdentifier.name("location"), "line", 
+				OrderedComparison.GE, 15, loc.getLineNumber());
 		
 		loc = app.MethodTwo();
 		System.out.println("at " + loc);

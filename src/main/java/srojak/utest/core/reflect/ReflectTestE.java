@@ -14,32 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.utest.core;
+package srojak.utest.core.reflect;
 
-import srojak.core.collections.ChangeEventingArrayList;
-import srojak.core.collections.IChangeEventingList;
-import srojak.core.logic.SuspendableFlag;
 /**
  * @author Stephen
  *
  */
-public class ChangeEventingStringStore {
-	private ChangeEventingArrayList<String> _list;
-	private SuspendableFlag _fDirty;
-	
-	public ChangeEventingStringStore() {
-		_list = new ChangeEventingArrayList<String>();
-		_fDirty = new SuspendableFlag();
-		_list.addChangeListener(this, ls -> {
-			_fDirty.setState(true);
-		});
-	}
-	
-	public IChangeEventingList<String> getList() {
-		return _list;
-	}
-	
-	public SuspendableFlag getDirtyFlag() {
-		return _fDirty;
-	}
+public class ReflectTestE 
+		extends ReflectTestC 
+		implements ReflectTestI2 {
+
 }

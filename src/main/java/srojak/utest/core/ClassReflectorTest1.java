@@ -16,50 +16,55 @@
  */
 package srojak.utest.core;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import srojak.core.observe.ExceptionAnalyzer;
-import srojak.core.observe.ExceptionAnalyzerByClass;
+import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
-import srojak.core.specialized.ListModCountTracker;
+import srojak.core.reflect.ClassReflector;
+import srojak.core.result.XResultOf;
 import srojak.utest.TestIdentifier;
+import srojak.utest.UnitTestConditionXResult;
 import srojak.utest.UnitTestSeries;
 
 /**
  * @author Stephen
  *
  */
-public class ListModCounterTest {
+public class ClassReflectorTest1 {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		UnitTestSeries series = new UnitTestSeries("TestListModCounter");
+		UnitTestSeries series = new UnitTestSeries("ClassReflectorTest");
 		ObservationWriter writer = new ObservationWriterPrintStream(System.err);
 		series.getOptions().setObservationWriter(writer);
-		ExceptionAnalyzer analyzeExcs = new ExceptionAnalyzerByClass(writer);
+		TestIdentifier idTest = TestIdentifier.name("reflect");
 
-		List<String> list1 = new ArrayList<String>();
-		list1.add("spade");
-		list1.add("heart");
-		list1.add("diamond");
-		list1.add("club");
+		Integer i1 = Integer.valueOf(4);
+		ClassReflector ref1 = new ClassReflector(i1);
+		XResultOf<Method> resultMethod = ref1.getMethod("intValue");
+		series.expectResult(idTest, "intValue method", UnitTestConditionXResult.passed(), resultMethod);
 		
-		ListModCountTracker lmct1 = new ListModCountTracker(list1, analyzeExcs);
-		series.expectValue(TestIdentifier.name("hasModCount"), "ArrayList", true, lmct1.hasModCount());
-		
-		List<String> list2 = new LinkedList<String>();
-		list2.add("first");
-		list2.add("second");
-		list2.add("third");
-		
-		ListModCountTracker lmct2 = new ListModCountTracker(list2, analyzeExcs);
-		series.expectValue(TestIdentifier.name("hasModCount"), "LinkedList", true, lmct2.hasModCount());
+		Method method = resultMethod.getResult();
+		int nValue = 0;
+		try {
+			nValue = (Integer) method.invoke(i1);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		writer.write(ObsLevel.NOTICE, "nValue = " + nValue);
 		
 		series.complete();
 	}
+
 }

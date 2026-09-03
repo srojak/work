@@ -14,32 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.utest.core;
-
-import srojak.core.reflect.PackageClassLocator;
-import srojak.core.result.XResult;
-import srojak.core.tools.EnvTool;
+package srojak.utest.core.reflect;
 
 /**
  * @author Stephen
  *
  */
-public class PackageClassLocatorTest1 {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		System.out.println("Java version " + EnvTool.getJavaVersion());
-		
-		PackageClassLocator loc1 = new PackageClassLocator("srojak.core", "NameToken");
-		XResult result = loc1.tryValidate();
-		if (result.isValid()) {
-			System.out.println("validated " + loc1);
-		} else {
-			Exception exc = result.getException();
-			System.out.println("validation failed: " + exc.getMessage());
-		}
-	}
+public class ReflectTestB 
+		extends ReflectTestA
+		implements ReflectTestI1 {
 
 }

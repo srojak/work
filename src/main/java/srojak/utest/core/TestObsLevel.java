@@ -17,7 +17,8 @@
 package srojak.utest.core;
 
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestSeries;
 
 /**
@@ -35,13 +36,13 @@ public class TestObsLevel {
 
 		ObsLevel levelFence = ObsLevel.DEBUG;
 		ObsLevel levelCompar = ObsLevel.ERROR;
-		series.expectValue("TestAbove", levelCompar.toString(), true,
+		series.expectValue(TestIdentifier.name("TestAbove"), levelCompar.toString(), true,
 				levelFence.isLevelAtLeast(levelCompar));
 		levelCompar = ObsLevel.DEBUG;
-		series.expectValue("TestEqual", levelCompar.toString(), true,
+		series.expectValue(TestIdentifier.name("TestEqual"), levelCompar.toString(), true,
 				levelFence.isLevelAtLeast(levelCompar));
 		levelCompar = ObsLevel.TRACE;
-		series.expectValue("TestBelow", levelCompar.toString(), false,
+		series.expectValue(TestIdentifier.name("TestBelow"), levelCompar.toString(), false,
 				levelFence.isLevelAtLeast(levelCompar));
 
 		series.complete();

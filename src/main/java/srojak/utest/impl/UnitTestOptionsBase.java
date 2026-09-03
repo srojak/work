@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.writers.ObservationWriterLevelFilterPrintStream;
 import srojak.numerics.DoubleComparer;
 import srojak.numerics.DoublePrecisionComparer;
 import srojak.numerics.FloatComparer;
