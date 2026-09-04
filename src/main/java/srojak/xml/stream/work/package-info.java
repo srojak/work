@@ -18,13 +18,4 @@
  * @author Stephen
  *
  */
-module srojak.xml {
-	requires transitive java.xml;
-	requires transitive srojak.core;
-	exports srojak.xml;
-	exports srojak.xml.dom;
-	exports srojak.xml.filters;
-	exports srojak.xml.stream;
-	exports srojak.xml.stream.errors;
-	exports srojak.xml.stream.work;
-}
+package srojak.xml.stream.work;

@@ -14,17 +14,21 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.xml.stream;
+
+import java.io.InputStream;
+import java.nio.file.Path;
+
+import srojak.core.io.FileExistence;
+import srojak.core.result.XResultInt;
+
 /**
  * @author Stephen
  *
  */
-module srojak.xml {
-	requires transitive java.xml;
-	requires transitive srojak.core;
-	exports srojak.xml;
-	exports srojak.xml.dom;
-	exports srojak.xml.filters;
-	exports srojak.xml.stream;
-	exports srojak.xml.stream.errors;
-	exports srojak.xml.stream.work;
+public interface XmlStreamAdapter {
+
+	XResultInt readStream(InputStream streamIn);
+	XResultInt readFrom(Path pathFile, FileExistence exists);
+	XResultInt readFrom(String strPath, FileExistence exists);
 }

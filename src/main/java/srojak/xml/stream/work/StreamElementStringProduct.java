@@ -14,17 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.xml.stream.work;
+
+import java.util.Objects;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+
 /**
  * @author Stephen
  *
  */
-module srojak.xml {
-	requires transitive java.xml;
-	requires transitive srojak.core;
-	exports srojak.xml;
-	exports srojak.xml.dom;
-	exports srojak.xml.filters;
-	exports srojak.xml.stream;
-	exports srojak.xml.stream.errors;
-	exports srojak.xml.stream.work;
+public class StreamElementStringProduct 
+		extends StreamElementDeferredProductBase {
+	private final String _content;
+
+	public StreamElementStringProduct(QName nameElement, Location locStartElement, String strContent) {
+		super(nameElement, locStartElement);
+		Objects.requireNonNull(strContent, "strContent");
+		_content = strContent;
+	}
+
+	public String getContent() {
+		return _content;
+	}
 }

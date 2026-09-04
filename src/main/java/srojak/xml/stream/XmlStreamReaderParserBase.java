@@ -27,7 +27,7 @@ import srojak.core.containers.SingletonContainer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterNull;
+import srojak.core.observe.writers.ObservationWriterNull;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 import srojak.xml.stream.impl.StreamParserStateBasicCtnr;

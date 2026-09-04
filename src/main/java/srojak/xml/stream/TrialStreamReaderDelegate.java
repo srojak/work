@@ -30,7 +30,7 @@ import javax.xml.stream.util.StreamReaderDelegate;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.xml.XmlParseTextFilter;
 import srojak.xml.stream.impl.XmlStreamElementAttribute;
 import srojak.xml.stream.impl.XmlStreamParserStateContainer;

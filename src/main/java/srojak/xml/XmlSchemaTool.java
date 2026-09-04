@@ -16,6 +16,13 @@
  */
 package srojak.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -46,6 +53,21 @@ public class XmlSchemaTool {
 		try {
 			result.setResult(_factory.newSchema(source));
 		} catch (SAXException exc) {
+			result.caughtException(exc);
+		}
+		return result;
+	}
+	
+	public XResultOf<Schema> readSchemaFrom(Path pathFile) {
+		XResultCarrierOf<Schema> result = new XResultCarrierOf<Schema>();
+		try (InputStream streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ)) {
+			Schema schema =_factory.newSchema(new StreamSource(streamIn));
+			result.setResult(schema);
+		} catch (NoSuchFileException exc) {
+			result.caughtException(exc);
+		} catch (SAXException exc) {
+			result.caughtException(exc);
+		} catch (IOException exc) {
 			result.caughtException(exc);
 		}
 		return result;

@@ -24,6 +24,7 @@ import javax.xml.stream.Location;
 import srojak.core.InputLocation;
 import srojak.core.data.DataErrorSeverity;
 import srojak.xml.XmlParseErrorEntry;
+import srojak.xml.stream.XmlStreamMethods;
 
 /**
  * @author Stephen
@@ -54,7 +55,7 @@ public class XmlStreamParseErrorEntry
 	@Override
 	protected void formatInto(StringBuilder sb) {
 		sb.append("at ");
-		sb.append(_location);
+		sb.append(XmlStreamMethods.format(_location));
 		sb.append(' ');
 		super.formatInto(sb);
 	}

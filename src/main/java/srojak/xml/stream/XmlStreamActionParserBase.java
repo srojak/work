@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import srojak.core.collections.WorkItemMap;
 import srojak.core.containers.SingletonContainer;
 import srojak.core.data.DataErrorSeverity;
 import srojak.core.events.ObjectPropertyChangeEvent;
@@ -34,12 +35,13 @@ import srojak.core.observe.HasSingleObservationWriter;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterNull;
+import srojak.core.observe.writers.ObservationWriterNull;
 import srojak.core.tools.StringMethods;
 import srojak.xml.stream.errors.XmlStreamParseErrorDescr;
 import srojak.xml.stream.errors.XmlStreamParseErrorEntry;
 import srojak.xml.stream.impl.StreamParserStateBasicCtnr;
 import srojak.xml.stream.impl.XmlParseMethods;
+import srojak.xml.stream.work.XmlStreamWorkItemMap;
 
 /**
  * @author Stephen
@@ -48,6 +50,7 @@ import srojak.xml.stream.impl.XmlParseMethods;
 public abstract class XmlStreamActionParserBase 
 		implements XMLStreamConstants, HasSingleObservationWriter {
 	private final StreamParserStateBasicCtnr _state;
+	private final XmlStreamWorkItemMap _mapWork;	
 	private final XmlParserOptions _options;
 	private final SingletonContainer<XMLStreamReader> _reader;
 	private final XmlPendingTextCollector _collectText;
@@ -62,6 +65,7 @@ public abstract class XmlStreamActionParserBase
 
 	protected XmlStreamActionParserBase() {
 		_state = new StreamParserStateBasicCtnr();
+		_mapWork = new XmlStreamWorkItemMap();
 		_options = new XmlParserOptions();
 		_reader = new SingletonContainer<XMLStreamReader>();
 		_collectText = new XmlPendingTextCollector();
@@ -83,6 +87,10 @@ public abstract class XmlStreamActionParserBase
 	
 	protected final XmlStreamParserState getParserState() {
 		return _state;
+	}
+	
+	protected final XmlStreamWorkItemMap getWorkItemMap() {
+		return _mapWork;
 	}
 	
 	public final XmlParserOptions getOptions() {
@@ -134,10 +142,10 @@ public abstract class XmlStreamActionParserBase
 
 	}
 
-	protected abstract void parseStartElement(QName nameElement, StreamElementAttributeSet attribs) 
+	protected abstract void parseStartElement(QName nameElement, XmlStreamWorkItemMap mapWork, StreamElementAttributeSet attribs) 
 			throws XMLStreamException ;
 
-	protected abstract void parseEndElement(QName nameElement, String strElementText);
+	protected abstract void parseEndElement(QName nameElement, XmlStreamWorkItemMap mapWork, String strElementText);
 
 	protected void parseComment(String strText) {
 
@@ -156,6 +164,7 @@ public abstract class XmlStreamActionParserBase
 		Objects.requireNonNull(reader, "reader");
 		_reader.set(reader);
 		_listErrors.clear();
+		_mapWork.clear();
 		_state.start();
 		parseInit();
 	}
@@ -207,7 +216,7 @@ public abstract class XmlStreamActionParserBase
 		case START_ELEMENT:
 			_collectText.reset();
 			_state.startElement(nameCurrent);
-			parseStartElement(nameCurrent, attribs);
+			parseStartElement(nameCurrent, _mapWork, attribs);
 			break;
 			
 		case END_ELEMENT:
@@ -216,7 +225,7 @@ public abstract class XmlStreamActionParserBase
 				_writerObs.write(ObsLevel.DEBUG, "pending text " + strElementText.length() + " chars");
 			}
 			_state.endElement(nameCurrent);
-			parseEndElement(nameCurrent, strElementText);			
+			parseEndElement(nameCurrent, _mapWork, strElementText);			
 			break;
 			
 		case COMMENT:

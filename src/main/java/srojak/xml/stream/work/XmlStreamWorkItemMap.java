@@ -14,17 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.xml.stream.work;
+
+import javax.xml.namespace.QName;
+
+import srojak.core.collections.WorkItemMap;
+
 /**
  * @author Stephen
  *
  */
-module srojak.xml {
-	requires transitive java.xml;
-	requires transitive srojak.core;
-	exports srojak.xml;
-	exports srojak.xml.dom;
-	exports srojak.xml.filters;
-	exports srojak.xml.stream;
-	exports srojak.xml.stream.errors;
-	exports srojak.xml.stream.work;
+public class XmlStreamWorkItemMap 
+		extends WorkItemMap<QName, StreamElementDeferredProductBase> {
+
+	public XmlStreamWorkItemMap() {
+		super();
+	}
 }

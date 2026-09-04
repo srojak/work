@@ -27,7 +27,7 @@ import srojak.core.events.SingleEventListenerList;
 import srojak.core.events.SingleEventListenerStore;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.writers.ObservationWriterLevelFilterPrintStream;
 import srojak.xml.stream.XmlStreamLocationSnap;
 
 /**

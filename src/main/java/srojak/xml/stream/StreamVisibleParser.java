@@ -14,17 +14,43 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.xml.stream;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import srojak.xml.stream.work.XmlStreamWorkItemMap;
+
 /**
  * @author Stephen
  *
  */
-module srojak.xml {
-	requires transitive java.xml;
-	requires transitive srojak.core;
-	exports srojak.xml;
-	exports srojak.xml.dom;
-	exports srojak.xml.filters;
-	exports srojak.xml.stream;
-	exports srojak.xml.stream.errors;
-	exports srojak.xml.stream.work;
+public class StreamVisibleParser 
+		extends XmlStreamActionParserBase {
+
+	/**
+	 * 
+	 */
+	public StreamVisibleParser() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected void parseInit() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void parseStartElement(QName nameElement, XmlStreamWorkItemMap mapWork, StreamElementAttributeSet attribs)
+			throws XMLStreamException {
+
+	}
+
+	@Override
+	protected void parseEndElement(QName nameElement, XmlStreamWorkItemMap mapWork, String strElementText) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

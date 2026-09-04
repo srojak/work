@@ -19,6 +19,7 @@ package srojak.xml.stream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
@@ -26,63 +27,47 @@ import java.util.Objects;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import srojak.core.result.XResult;
-import srojak.core.result.XResultStatusCarrier;
+import srojak.core.io.FileExistence;
+import srojak.core.io.IOResultQualifiers;
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationWriter;
+import srojak.core.result.XResultInt;
+import srojak.core.result.XResultIntCarrier;
 
 /**
  * @author Stephen
  *
  */
-public class XmlStreamReadAdapter {
-	private final XmlStreamParseFunction _fnParse;
-	private final XmlStreamInputBuilder _builderStream;
+public class XmlStreamReadAdapter 
+		extends XmlStreamReadAdapterBase
+		implements XmlStreamAdapter, IOResultQualifiers {
+	private final XmlStreamActionParserBase _parser;
 	
-	public XmlStreamReadAdapter(XmlStreamParseFunction fnParse) {
-		Objects.requireNonNull(fnParse, "fnParse");
-		_fnParse = fnParse;
-		_builderStream = new XmlStreamInputBuilder();
+	public XmlStreamReadAdapter(XmlStreamActionParserBase parser) {
+		super();
+		Objects.requireNonNull(parser, "parser");
+		_parser = parser;
 	}
 	
-	private void readCommon(InputStream streamIn, XResultStatusCarrier result) {
+	@Override
+	protected ObservationWriter getObservationWriter() {
+		return _parser.getObservationWriter();
+	}
+
+	@Override
+	protected void readCore(InputStream streamIn, XResultIntCarrier result) {
 		try {
-			XMLStreamReader reader = _builderStream.createStreamReader(streamIn);
-			_fnParse.apply(reader);
-			result.setValid();
+			XMLStreamReader reader = createStreamReader(streamIn);
+			_parser.start(reader);
+			_parser.parseInit();
+			while (reader.hasNext()) {
+				int nEvent = reader.next();
+				_parser.interpret(nEvent);
+			}
+			_parser.completed();
+			result.setResult(COMPLETED);
 		} catch (XMLStreamException exc) {
 			result.caughtException(exc);
 		}
-	}
-	
-	public XResult readFrom(InputStream streamIn) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
-		readCommon(streamIn, result);
-		return result;
-	}
-	
-	public XResult readFrom(Path pathFile) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
-		InputStream streamIn = null;
-		try {
-			streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
-		} catch (IOException e) {
-			result.caughtException(e);
-			return result;
-		}
-		readCommon(streamIn, result);
-		return result;
-	}
-	
-	public XResult readFrom(String strPath) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
-		Path pathFile = Path.of(strPath);
-		InputStream streamIn = null;
-		try {
-			streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
-		} catch (IOException e) {
-			result.caughtException(e);
-			return result;
-		}
-		readCommon(streamIn, result);
-		return result;
 	}
 }
