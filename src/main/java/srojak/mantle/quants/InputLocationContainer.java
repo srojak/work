@@ -14,24 +14,48 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.mantle.quants;
+
 /**
  * @author Stephen
  *
- * Objects at this level can use the debugging facility.
- * 
- * The dependency on srojak.numerics is to prevent the latter from depending on this module.
  */
-module srojak.mantle {
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.debug;
-	exports srojak.mantle;
-	exports srojak.mantle.collections;
-	exports srojak.mantle.decorated;
-	exports srojak.mantle.functional;
-	exports srojak.mantle.impl to srojak.utest.mantle;
-	exports srojak.mantle.io;
-	exports srojak.mantle.quants;
-	exports srojak.mantle.reflect;
-	exports srojak.mantle.restbl;
+public class InputLocationContainer 
+		implements InputLocation {
+	private final int _nLine;
+	private final int _nColumn;
+	
+	public InputLocationContainer(int nLine, int nColumn) {
+		_nLine = nLine;
+		_nColumn = nColumn;
+	}
+
+	@Override
+	public int lineNumber() {
+		return _nLine;
+	}
+
+	@Override
+	public int columnNumber() {
+		return _nColumn;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[line=");
+		if (_nLine < 0) {
+			sb.append('?');
+		} else {
+			sb.append(_nLine);
+		}
+		sb.append(", col=");
+		if (_nColumn < 0) {
+			sb.append('?');
+		} else {
+			sb.append(_nColumn);
+		}
+		sb.append(']');
+		return sb.toString();
+	}
 }
