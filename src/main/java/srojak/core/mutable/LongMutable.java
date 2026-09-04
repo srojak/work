@@ -23,26 +23,29 @@ import java.util.Objects;
  * @author Stephen
  *
  */
-public class IntegerMutable
+public class LongMutable 
 		extends MutableBase
-		implements Serializable, Comparable<IntegerMutable> {
-	private int _value;
+		implements Serializable, Comparable<LongMutable> {
+	private long _value;
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2459254108562193781L;
-	
-	public IntegerMutable(int valueInitial) {
+	private static final long serialVersionUID = -1205287627908292355L;
+
+	/**
+	 * 
+	 */
+	public LongMutable(long valueInitial) {
 		super();
 		_value = valueInitial;
 	}
 	
-	public int getValue() {
+	public long getValue() {
 		return _value;
 	}
 	
-	public boolean setValue(int valueNew) {
+	public boolean setValue(long valueNew) {
 		if (_value != valueNew) {
 			_value = valueNew;
 			whenValueChanged();
@@ -53,14 +56,14 @@ public class IntegerMutable
 	}
 
 	@Override
-	public int compareTo(IntegerMutable o) {
+	public int compareTo(LongMutable o) {
 		Objects.requireNonNull(o, "o");
-		return Integer.compare(_value, o._value);
+		return Long.compare(_value, o._value);
 	}
 
 	@Override
 	public int hashCode() {
-		return _value;
+		return Long.hashCode(_value);
 	}
 
 	@Override
@@ -69,10 +72,10 @@ public class IntegerMutable
 			return true;
 		} else if (obj == null) {
 			return false;
-		} else if (obj instanceof IntegerMutable other) {
+		} else if (obj instanceof LongMutable other) {
 			return _value == other._value;
-		} else if (obj instanceof Integer other) {
-			return _value == other.intValue();
+		} else if (obj instanceof Long other) {
+			return _value == other.longValue();
 		} else {
 			return false;
 		}
@@ -80,18 +83,18 @@ public class IntegerMutable
 
 	@Override
 	public String toString() {
-		return Integer.toString(_value);
+		return Long.toString(_value);
 	}
 	
-	public static IntegerMutable parse(String str)
+	public static LongMutable parse(String str)
 			throws NumberFormatException {
 		Objects.requireNonNull(str, "str");
-		return new IntegerMutable(Integer.parseInt(str));
+		return new LongMutable(Long.parseLong(str));
 	}
 
-	public static IntegerMutable parse(String str, int radix)
+	public static LongMutable parse(String str, int radix)
 			throws NumberFormatException {
 		Objects.requireNonNull(str, "str");
-		return new IntegerMutable(Integer.parseInt(str, radix));
+		return new LongMutable(Long.parseLong(str, radix));
 	}
 }

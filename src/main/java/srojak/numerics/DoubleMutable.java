@@ -14,16 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.mutable;
+package srojak.numerics;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+import srojak.core.mutable.MutableBase;
 
 /**
  * @author Stephen
  *
  */
-public class DoubleMutable 
+public class DoubleMutable
+		extends MutableBase 
 		implements Serializable, Comparable<DoubleMutable> {
 	private double _value;
 
@@ -33,6 +36,7 @@ public class DoubleMutable
 	private static final long serialVersionUID = -4231344370053292165L;
 	
 	public DoubleMutable(double valueInitial) {
+		super();
 		_value = valueInitial;
 	}
 	
@@ -41,8 +45,9 @@ public class DoubleMutable
 	}
 	
 	public boolean setValue(double valueNew) {
-		if (_value != valueNew) {
+		if (!DoublePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, valueNew)) {
 			_value = valueNew;
+			whenValueChanged();
 			return true;
 		} else {
 			return false;
@@ -75,7 +80,7 @@ public class DoubleMutable
 	@Override
 	public int compareTo(DoubleMutable o) {
 		Objects.requireNonNull(o, "o");
-		return Double.compare(_value, o._value);
+		return DoublePrecisionComparer.DEFAULT_COMPARER.compare(_value, o._value);
 	}
 
 	@Override
@@ -90,9 +95,9 @@ public class DoubleMutable
 		} else if (obj == null) {
 			return false;
 		} else if (obj instanceof DoubleMutable other) {
-			return _value == other._value;
+			return DoublePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, other._value);
 		} else if (obj instanceof Double other) {
-			return _value == other.doubleValue();
+			return DoublePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, other.doubleValue());
 		} else {
 			return false;
 		}
