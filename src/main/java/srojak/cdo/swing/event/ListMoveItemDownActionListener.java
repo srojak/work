@@ -18,7 +18,7 @@ package srojak.cdo.swing.event;
 
 import java.awt.event.ActionEvent;
 
-import srojak.cdo.swing.ScrollableListComponent;
+import srojak.cdo.swing.ScrollableListView;
 import srojak.cdo.swing.base.ListModelActionListenerBase;
 import srojak.cdo.swing.models.OrderableListModel;
 
@@ -32,7 +32,7 @@ public class ListMoveItemDownActionListener<E>
 	/**
 	 * @param list
 	 */
-	public ListMoveItemDownActionListener(ScrollableListComponent<E> list) {
+	public ListMoveItemDownActionListener(ScrollableListView<E> list) {
 		super(list);
 		if (!(_modelList instanceof OrderableListModel)) {
 			throw new IllegalArgumentException("list model is not orderable");

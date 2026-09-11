@@ -14,31 +14,42 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.event;
+package srojak.cdo.swing.functional;
 
-import java.awt.event.ActionEvent;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.function.Consumer;
 
-import srojak.cdo.swing.ScrollableListView;
-import srojak.cdo.swing.base.ListModelActionListenerBase;
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 /**
  * @author Stephen
  *
  */
-public class ListRemoveItemActionListener<E>
-		extends ListModelActionListenerBase<E> {
+public class ComponentFindingMouseListener 
+		extends MouseAdapter {
+	private final int _nButton;
+	private final Consumer<JComponent> _clicked;
 
 	/**
-	 * @param list
+	 * 
 	 */
-	public ListRemoveItemActionListener(ScrollableListView<E> list) {
-		super(list);
+	public ComponentFindingMouseListener(int nButton, Consumer<JComponent> clickAction) {
+		_nButton = nButton;
+		_clicked = clickAction;
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		int index = _modelSelection.getMinSelectionIndex();
-		_modelList.removeElementAt(index);
+	public void mousePressed(MouseEvent e) {
+		super.mousePressed(e);
+		if (e.getButton() == _nButton) {
+			Component c = SwingUtilities.getDeepestComponentAt(e.getComponent(), e.getX(), e.getY());
+			if (c != null) {
+				_clicked.accept((JComponent) c);
+			}
+		}
 	}
-	
+
 }

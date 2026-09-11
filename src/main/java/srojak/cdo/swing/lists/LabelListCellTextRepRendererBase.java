@@ -14,20 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing;
+package srojak.cdo.swing.lists;
+
+import java.awt.Color;
+import java.util.Objects;
+
+import javax.swing.JLabel;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+
+import srojak.cdo.swing.CellRendererSettings;
+import srojak.core.TextRepresentation;
 
 /**
  * @author Stephen
  *
  */
-public interface VisualPropertyNames {
+@SuppressWarnings("serial")
+public abstract class LabelListCellTextRepRendererBase<E>
+		extends LabelListCellRendererBase<E> {
+	private final TextRepresentation _rtext;
 
-	public static final String ANCESTOR = "ancestor";
-	public static final String BACKGROUND = "background";
-	public static final String BORDER = "border";
-	public static final String ENABLED = "enabled";
-	public static final String FONT = "font";
-	public static final String FOREGROUND = "foreground";
-	public static final String NAME = "name";
-	public static final String OPAQUE = "opaque";
+	protected LabelListCellTextRepRendererBase(TextRepresentation repText) {
+		super();
+		Objects.requireNonNull(repText, "repText");
+		_rtext = repText;
+	}
+	
+	@Override
+	protected void setTextFrom(E item) {
+		setText(_rtext.getTextFor(item));
+	}
 }

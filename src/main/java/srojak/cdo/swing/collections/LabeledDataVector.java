@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Vector;
 import java.util.function.Predicate;
 
-import srojak.core.Labeled;
 import srojak.core.tools.CollectionMethods;
+import srojak.mantle.Labeled;
 
 /**
  * @author Stephen

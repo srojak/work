@@ -14,55 +14,47 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.panels;
+package srojak.cdo.swing.components;
 
 import java.util.Objects;
 
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
-import srojak.cdo.TextMessageComponent;
+import srojak.cdo.swing.SimpleTextMessageComponent;
 import srojak.core.NameToken;
-import srojak.core.TextMessageRelay;
 
 /**
  * @author Stephen
  *
  */
 @SuppressWarnings("serial")
-public class ScrollingMessagePanel
-		extends ScrollingViewPanel
-		implements TextMessageRelay, TextMessageComponent {
-    private JTextArea _areaText;
+public class ScrollingTextMessageDisplay 
+		extends ScrollingViewComponent
+		implements SimpleTextMessageComponent {
+    private final JTextArea _areaText;
     
-    public static final NameToken PANEL_NAME = NameToken.classNameFactory(ScrollingMessagePanel.class);
-
-    public ScrollingMessagePanel(NameToken tokenName, int nLines, int nColumns) {
-    	super(tokenName);
-        _areaText = new JTextArea(nLines, nColumns);
-    	postConstruct();
-    }
+    public static final NameToken PANEL_NAME = NameToken.classNameFactory(ScrollingTextMessageDisplay.class);
     
-    public ScrollingMessagePanel(NameToken tokenName, boolean isDoubleBuffered, int nLines, int nColumns) {
-    	super(tokenName, isDoubleBuffered);
-        _areaText = new JTextArea(nLines, nColumns);
-    	postConstruct();
-   }
-    
-    private void postConstruct() {
-    	setView(_areaText);
-         _areaText.setEditable(false);
-   	
+	/**
+	 * @param tokenName
+	 */
+	public ScrollingTextMessageDisplay(NameToken tokenName, int nLines, int nColumns) {
+		super(tokenName);
+       _areaText = new JTextArea(nLines, nColumns);
+	   	setView(_areaText);
+	    _areaText.setEditable(false);
+	   	
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-     }
+	}
 
 	@Override
 	public void writeln(String strText) {
 		Objects.requireNonNull(strText, "strText");
         _areaText.append(strText + "\n");
 	}
-	
+
 	@Override
 	public void flush() {
 		// does not need to take action
@@ -74,13 +66,12 @@ public class ScrollingMessagePanel
 	}
 
 	@Override
-    public String getSelectedString() {
-        return _areaText.getSelectedText();
-    }
-    
-	@Override
-    public void selectAllText() {
+	public void selectAllText() {
     	_areaText.selectAll();
-    }
+	}
 
+	@Override
+	public String getSelectedString() {
+        return _areaText.getSelectedText();
+	}
 }

@@ -36,11 +36,10 @@ import srojak.events.IntValueChangeEventOriginator;
  */
 @SuppressWarnings("serial")
 public class IntegerSpinnerPanel 
-		extends NameTokenTagPanel
+		extends NameTokenTagCommonEventPanel
 		implements IntValueChangeEventOriginator {
     private SpinnerNumberModel _model;
     private JSpinner _spinner;
-    private SingleEventListenerStore<IntValueChangeListener> _listeners;
     
 	/**
 	 * 
@@ -50,7 +49,6 @@ public class IntegerSpinnerPanel
 		Objects.requireNonNull(model, "model");
 		_model = model;
 	   	_spinner = new JSpinner(_model);
-	   	_listeners = new SingleEventListenerList<IntValueChangeListener>();
 	   	postConstruct();
 	}
 
@@ -62,7 +60,6 @@ public class IntegerSpinnerPanel
 		Objects.requireNonNull(model, "model");
 		_model = model;
 	   	_spinner = new JSpinner(_model);
-	   	_listeners = new SingleEventListenerList<IntValueChangeListener>();
 	   	postConstruct();
 	}
 	
@@ -81,12 +78,12 @@ public class IntegerSpinnerPanel
 
 	@Override
 	public void addIntValueChangeListener(IntValueChangeListener listener) {
-		_listeners.add(listener);
+		_listeners.add(IntValueChangeListener.class, listener);
 	}
 
 	@Override
 	public void removeIntValueChangeListener(IntValueChangeListener listener) {
-		_listeners.remove(listener);
+		_listeners.remove(IntValueChangeListener.class, listener);
 	}
 
 	class SpinnerListener
@@ -96,7 +93,7 @@ public class IntegerSpinnerPanel
 		public void stateChanged(ChangeEvent e) {
 			IntValueChangeEvent event 
 				= new IntValueChangeEvent(IntegerSpinnerPanel.class, getValue());
-			_listeners.forEach(ls -> ls.update(event));
+			_listeners.forEach(IntValueChangeListener.class, ls -> ls.update(event));
 		}
 		
 	}

@@ -16,11 +16,13 @@
  */
 package srojak.cdo.swing.panels;
 
+import java.awt.Dimension;
 import java.util.Objects;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import srojak.cdo.swing.interact.PropertyRepeatListener;
 import srojak.core.NameToken;
 
 /**
@@ -29,8 +31,9 @@ import srojak.core.NameToken;
  */
 @SuppressWarnings("serial")
 public class ScrollingViewPanel 
-		extends NameTokenTagPanel {
+		extends NameTokenTagCommonEventPanel {
     private final JScrollPane _scroll;
+    private PropertyRepeatListener _repeater;
 
 	/**
 	 * @param tokenName
@@ -38,6 +41,7 @@ public class ScrollingViewPanel
 	public ScrollingViewPanel(NameToken tokenName) {
 		super(tokenName);
 		_scroll = new JScrollPane();
+		_repeater = null;
 		postConstruct();
 	}
 
@@ -48,7 +52,17 @@ public class ScrollingViewPanel
 	public ScrollingViewPanel(NameToken tokenName, boolean isDoubleBuffered) {
 		super(tokenName, isDoubleBuffered);
 		_scroll = new JScrollPane();
+		_repeater = null;
 		postConstruct();
+	}
+
+	private void postConstruct() {
+		// the scrolling pane fills the panel
+        add(_scroll);
+	}
+	
+	public void setScrollerPreferredSize(Dimension size) {
+		_scroll.setPreferredSize(size);
 	}
 
     public void setVerticalScrollBarPolicy(int policy) {
@@ -61,11 +75,14 @@ public class ScrollingViewPanel
     
     protected void setView(JComponent view) {
 		Objects.requireNonNull(view, "view");
+		if (_repeater != null) {
+			this.removePropertyChangeListener(_repeater);
+		}
 		_scroll.setViewportView(view);
+		_repeater = new PropertyRepeatListener(view);
+		this.addPropertyChangeListener(_repeater);
+		view.setFont(getFont());
+		view.setBackground(getBackground());
+		view.setForeground(getForeground());
     }
-
-	private void postConstruct() {
-		// the scrolling pane fills the panel
-        add(_scroll);
-	}
 }

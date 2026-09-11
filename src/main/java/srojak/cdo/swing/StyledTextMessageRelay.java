@@ -16,18 +16,13 @@
  */
 package srojak.cdo.swing;
 
+import javax.swing.text.AttributeSet;
+
 /**
  * @author Stephen
  *
  */
-public interface VisualPropertyNames {
+public interface StyledTextMessageRelay {
 
-	public static final String ANCESTOR = "ancestor";
-	public static final String BACKGROUND = "background";
-	public static final String BORDER = "border";
-	public static final String ENABLED = "enabled";
-	public static final String FONT = "font";
-	public static final String FOREGROUND = "foreground";
-	public static final String NAME = "name";
-	public static final String OPAQUE = "opaque";
+	void writeln(AttributeSet style, String strText);
 }

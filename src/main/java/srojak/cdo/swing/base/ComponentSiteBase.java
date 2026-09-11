@@ -14,20 +14,22 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing;
+package srojak.cdo.swing.base;
+
+import java.util.Objects;
+
+import srojak.cdo.swing.interact.ComponentEnabledStateManager;
+import srojak.cdo.swing.panels.NameTokenTagPanel;
 
 /**
  * @author Stephen
  *
  */
-public interface VisualPropertyNames {
-
-	public static final String ANCESTOR = "ancestor";
-	public static final String BACKGROUND = "background";
-	public static final String BORDER = "border";
-	public static final String ENABLED = "enabled";
-	public static final String FONT = "font";
-	public static final String FOREGROUND = "foreground";
-	public static final String NAME = "name";
-	public static final String OPAQUE = "opaque";
+public abstract class ComponentSiteBase {
+	protected final ComponentEnabledStateManager _mgrEnabled;
+	
+	public ComponentSiteBase(NameTokenTagPanel panel) {
+		Objects.requireNonNull(panel, "panel");
+		_mgrEnabled = panel.getEnabledStateManager();
+	}
 }

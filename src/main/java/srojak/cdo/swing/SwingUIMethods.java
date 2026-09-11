@@ -24,6 +24,8 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 
@@ -33,8 +35,10 @@ import srojak.core.result.XResultStatusCarrier;
  */
 public class SwingUIMethods {
 	
+	protected static final ObservedActivity  ACTIVITY_SET_LOOK_AND_FEEL = new SingleActivity("set look and feel");
+	
 	public static XResult setLookAndFeel(String strClassName) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ACTIVITY_SET_LOOK_AND_FEEL);
 		try {
 			UIManager.setLookAndFeel(strClassName);
 			result.setValid();
@@ -52,7 +56,7 @@ public class SwingUIMethods {
 	
 	public static XResult setLookAndFeel(LookAndFeel newLookAndFeel) {
 		Objects.requireNonNull(newLookAndFeel, "newLookAndFeel");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ACTIVITY_SET_LOOK_AND_FEEL);
 		try {
 			UIManager.setLookAndFeel(newLookAndFeel);
 			result.setValid();

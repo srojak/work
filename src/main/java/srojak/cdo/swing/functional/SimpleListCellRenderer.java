@@ -16,11 +16,9 @@
  */
 package srojak.cdo.swing.functional;
 
-import java.awt.Component;
-
 import javax.swing.JList;
 
-import srojak.cdo.swing.lists.LabelListCellRendererBase;
+import srojak.cdo.swing.lists.LabelListCellTextRepRendererBase;
 import srojak.core.TextRepresentation;
 
 /**
@@ -29,17 +27,18 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public class SimpleListCellRenderer<E> 
-		extends LabelListCellRendererBase<E> {
+		extends LabelListCellTextRepRendererBase<E> {
 	
 	public SimpleListCellRenderer(TextRepresentation repText) {
 		super(repText);
 	}
 
 	@Override
-	public Component getListCellRendererComponent(JList<? extends E> list, E value,
-			int index, boolean isSelected, boolean cellHasFocus) {
+	protected void display(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
 		setTextFrom(value);
-		return this;
+		if (isSelected) {
+			setBackground(getHighlightColor());
+		}
 	}
 
 }

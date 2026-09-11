@@ -16,18 +16,16 @@
  */
 package srojak.cdo.swing;
 
+import srojak.core.keys.NameEquatableKey;
+
 /**
  * @author Stephen
  *
  */
-public interface VisualPropertyNames {
+public interface StyleName
+		extends NameEquatableKey, Comparable<StyleName> {
 
-	public static final String ANCESTOR = "ancestor";
-	public static final String BACKGROUND = "background";
-	public static final String BORDER = "border";
-	public static final String ENABLED = "enabled";
-	public static final String FONT = "font";
-	public static final String FOREGROUND = "foreground";
-	public static final String NAME = "name";
-	public static final String OPAQUE = "opaque";
+	public static StyleName makeKey(String strName) {
+		return new StyleNameKey(strName);
+	}
 }

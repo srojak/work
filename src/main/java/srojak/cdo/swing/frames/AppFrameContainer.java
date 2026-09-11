@@ -16,16 +16,20 @@
  */
 package srojak.cdo.swing.frames;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Window;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import srojak.cdo.events.MouseEventOriginator;
 
 /**
  * @author Stephen
@@ -56,6 +60,14 @@ public class AppFrameContainer {
 	
 	public void makeVisible() {
 		_frame.setVisible(true);		
+	}
+	
+	public Dimension getFrameSize() {
+		return _frame.getSize();
+	}
+	
+	public void setMinimumSize(Dimension dmSize) {
+		_frame.setMinimumSize(dmSize);
 	}
     
     public int showOpenFileDialog(JFileChooser chooser) {
@@ -93,8 +105,14 @@ public class AppFrameContainer {
     JFrame getFrame() {
     	return _frame;
     }
+    
+    public void accessAsWindow(Consumer<Window> consumer) {
+    	Objects.requireNonNull(consumer, "consumer");
+    	consumer.accept(_frame);
+    }
 	
-	public class FrameWindowListenerTool {
+	public class FrameWindowListenerTool
+			implements MouseEventOriginator {
 		
 		private FrameWindowListenerTool() {
 			
@@ -106,6 +124,16 @@ public class AppFrameContainer {
 		
 		public void removeWindowListener(WindowListener listener) {
 			_frame.removeWindowListener(listener);
+		}
+
+		@Override
+		public void addMouseListener(MouseListener listener) {
+			_frame.addMouseListener(listener);
+		}
+
+		@Override
+		public void removeMouseListener(MouseListener listener) {
+			_frame.removeMouseListener(listener);
 		}
 	}
 }

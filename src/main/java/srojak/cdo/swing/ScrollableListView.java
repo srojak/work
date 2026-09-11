@@ -26,11 +26,12 @@ import srojak.mantle.ListIndexRange;
  *
  * @param <E> The type of the element in the list.
  */
-public interface ScrollableListComponent<E> {
+public interface ScrollableListView<E> {
 	
 	ModifiableListModel<E> getListModel();
 	int getSelectionMode();
 	void setSelectionMode(int mode);
+	void setPrototypeCellValue(E valueProto);
 	ListSelectionModel getListSelectionModel();
 	ListIndexRange getSelectionRange();
 }

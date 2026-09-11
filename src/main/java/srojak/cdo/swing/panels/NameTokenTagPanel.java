@@ -26,6 +26,8 @@ import srojak.cdo.swing.interact.ComponentEnabledStateManager;
 import srojak.cdo.swing.interact.ComponentEnablingFacade;
 import srojak.core.NameToken;
 import srojak.core.NameTokenTagged;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 
 /**
  * @author Stephen
@@ -37,6 +39,8 @@ public class NameTokenTagPanel
 		implements NameTokenTagged {
 	private final NameToken _token;
 	private final ComponentEnabledStateManager _mgrEnabled;
+	
+	protected static final ObservedActivity ACTIVITY_GET_FROM_DOCUMENT = new SingleActivity("get from document");
 
 	/**
 	 * 
@@ -76,6 +80,7 @@ public class NameTokenTagPanel
 		super(layout, isDoubleBuffered);
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		setName(_token.getName());
 		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
@@ -93,17 +98,8 @@ public class NameTokenTagPanel
 	public boolean isNameTagEqual(String strName) {
 		return _token.isNameEqual(strName);
 	}
-
-	@Override
-	public String getName() {
-		String strName = super.getName();
-		if (strName == null) {
-			strName = _token.getName();
-		}
-		return strName;
-	}
 	
-	protected ComponentEnabledStateManager getEnabledStateManager() {
+	public ComponentEnabledStateManager getEnabledStateManager() {
 		return _mgrEnabled;
 	}
 	

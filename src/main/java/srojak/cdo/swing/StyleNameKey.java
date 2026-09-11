@@ -16,18 +16,46 @@
  */
 package srojak.cdo.swing;
 
+import srojak.core.keys.NameEquatableKeyBase;
+
 /**
  * @author Stephen
  *
  */
-public interface VisualPropertyNames {
+public class StyleNameKey 
+		extends NameEquatableKeyBase 
+		implements StyleName {
 
-	public static final String ANCESTOR = "ancestor";
-	public static final String BACKGROUND = "background";
-	public static final String BORDER = "border";
-	public static final String ENABLED = "enabled";
-	public static final String FONT = "font";
-	public static final String FOREGROUND = "foreground";
-	public static final String NAME = "name";
-	public static final String OPAQUE = "opaque";
+	/**
+	 * 
+	 */
+	private static final long serialClassUID = 8430706935428748785L;
+	private static final String nameRoot = StyleNameKey.class.getSimpleName();
+
+	/**
+	 * @param strName
+	 */
+	public StyleNameKey(String strName) {
+		super(strName);
+	}
+
+	@Override
+	protected long getRootId() {
+		return serialClassUID;
+	}
+
+	@Override
+	protected String getRootName() {
+		return nameRoot;
+	}
+
+	@Override
+	public int compareTo(StyleName o) {
+		if (o == null) {
+			return 1;
+		} else {
+			return _name.compareTo(o.getName());
+		}
+	}
+
 }

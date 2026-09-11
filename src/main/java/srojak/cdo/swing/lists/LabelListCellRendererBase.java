@@ -16,13 +16,17 @@
  */
 package srojak.cdo.swing.lists;
 
-import java.util.Objects;
+import java.awt.Color;
+import java.awt.Component;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
 
 import srojak.cdo.swing.CellRendererSettings;
-import srojak.core.TextRepresentation;
+import srojak.cdo.swing.UIManagerKeys;
 
 /**
  * @author Stephen
@@ -30,17 +34,49 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public abstract class LabelListCellRendererBase<E>
-		extends JLabel
-		implements CellRendererSettings, ListCellRenderer<E> {
-	private final TextRepresentation _rtext;
+	extends JLabel 
+	implements CellRendererSettings, ListCellRenderer<E>, UIManagerKeys {
 
-	protected LabelListCellRendererBase(TextRepresentation repText) {
-		Objects.requireNonNull(repText, "repText");
-		_rtext = repText;
+	/**
+	 * 
+	 */
+	public LabelListCellRendererBase() {
+		super();
+		setOpaque(true);
+	}
+
+	/**
+	 * @param image
+	 */
+	public LabelListCellRendererBase(Icon image) {
+		super(image);
+		setOpaque(true);
+	}
+
+	/**
+	 * @param image
+	 * @param horizontalAlignment
+	 */
+	public LabelListCellRendererBase(Icon image, int horizontalAlignment) {
+		super(image, horizontalAlignment);
 		setOpaque(true);
 	}
 	
 	protected void setTextFrom(E item) {
-		setText(_rtext.getTextFor(item));
+		setText(item.toString());
+	}
+	
+	protected Color getHighlightColor() {
+		return UIManager.getColor(List_Selection);
+	}
+	
+	protected abstract void display(JList<? extends E> list, E value, int index, boolean isSelected,
+			boolean cellHasFocus);
+
+	@Override
+	public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected,
+			boolean cellHasFocus) {
+		display(list, value, index, isSelected, cellHasFocus);
+		return this;
 	}
 }

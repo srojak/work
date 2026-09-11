@@ -26,7 +26,6 @@ import srojak.core.observe.SourceLocation;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
-import srojak.debug.DebugSwitchKey;
 import srojak.debug.DebugSwitchTool;
 
 /**

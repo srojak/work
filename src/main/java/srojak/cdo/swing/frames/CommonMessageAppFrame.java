@@ -16,19 +16,24 @@
  */
 package srojak.cdo.swing.frames;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.Objects;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.ScrollPaneConstants;
 
+import srojak.cdo.AWTCommon;
+import srojak.cdo.swing.SimpleTextMessageComponent;
 import srojak.cdo.swing.event.ActionListenerTextAreaCopy;
 import srojak.cdo.swing.event.ActionListenerTextAreaSelectAll;
-import srojak.cdo.swing.panels.ScrollingMessagePanel;
+import srojak.cdo.swing.panels.ScrollingTextAreaPanel;
 import srojak.core.TextMessageRelay;
+import srojak.mantle.quants.TextBlockSize;
 /**
  * @author Stephen
  *
@@ -36,16 +41,18 @@ import srojak.core.TextMessageRelay;
 public class CommonMessageAppFrame
 		extends CommonAppFrame
 		implements Runnable {
-    private final ScrollingMessagePanel _areaText;
+    private final ScrollingTextAreaPanel _areaText;
     
     public CommonMessageAppFrame(String strAppName) {
     	super(strAppName);
         
         // put in text area
-        _areaText = new ScrollingMessagePanel(ScrollingMessagePanel.PANEL_NAME, 10, 60);
+        _areaText = new ScrollingTextAreaPanel(ScrollingTextAreaPanel.PANEL_NAME, TextBlockSize.quantity(10, 60));
         _areaText.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        Box boxLower = getLowerBox();
-        boxLower.add(_areaText, 0);
+        _areaText.setBackground(Color.WHITE);
+        _areaText.setFont(new Font(AWTCommon.FONT_FAMILY_MONOSPACED, Font.PLAIN, 12));
+        
+        addToLowerPanel(_areaText, BorderLayout.CENTER);
     }
          
     @SuppressWarnings("serial")
@@ -74,7 +81,7 @@ public class CommonMessageAppFrame
 		});
     }
     
-    protected ScrollingMessagePanel getTextArea() {
+    protected SimpleTextMessageComponent getTextArea() {
     	return _areaText;
     }
     

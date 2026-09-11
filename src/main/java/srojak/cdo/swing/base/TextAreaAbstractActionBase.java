@@ -27,17 +27,17 @@ import srojak.cdo.TextMessageComponent;
  */
 public abstract class TextAreaAbstractActionBase
 		implements ActionListener {
-	private TextMessageComponent _text;
+	private TextMessageComponent _source;
 	
 	/**
 	 * 
 	 */
-	public TextAreaAbstractActionBase(TextMessageComponent text) {
-		Objects.requireNonNull(text, "text");
-		_text = text;
+	public TextAreaAbstractActionBase(TextMessageComponent source) {
+		Objects.requireNonNull(source, "source");
+		_source = source;
 	}
 
 	protected TextMessageComponent getTextArea() {
-		return _text;
+		return _source;
 	}
 }

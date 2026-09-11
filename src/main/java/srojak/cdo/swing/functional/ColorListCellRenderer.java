@@ -22,7 +22,7 @@ import java.util.Objects;
 import javax.swing.JList;
 
 import srojak.cdo.ColorPair;
-import srojak.cdo.swing.lists.LabelListCellRendererBase;
+import srojak.cdo.swing.lists.LabelListCellTextRepRendererBase;
 import srojak.core.TextRepresentation;
 
 /**
@@ -31,7 +31,7 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public class ColorListCellRenderer<E>
-		extends LabelListCellRendererBase<E> {
+		extends LabelListCellTextRepRendererBase<E> {
 	private final ColorPair _colorsUnselected;
 	private final ColorPair _colorsSelected;
 
@@ -48,8 +48,7 @@ public class ColorListCellRenderer<E>
 	}
 
 	@Override
-	public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected,
-			boolean cellHasFocus) {
+	protected void display(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
 		setTextFrom(value);
 		ColorPair pair = _colorsUnselected;
 		if (isSelected) {
@@ -57,7 +56,6 @@ public class ColorListCellRenderer<E>
 		}
 		setBackground(pair.getBackgroundColor());
 		setForeground(pair.getForegroundColor());
-		return this;
 	}
 
 }

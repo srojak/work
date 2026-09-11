@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.panels;
+package srojak.cdo.swing.components;
 
 import java.awt.Color;
 import java.util.Objects;
@@ -41,8 +41,8 @@ import srojak.mantle.ListIndexRange;
  *
  */
 @SuppressWarnings("serial")
-public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
-		extends NameTokenTagCommonEventPanel
+public class ScrollableListComponent<V, M extends ModifiableListModel<V>> 
+		extends NameTokenTagComponent
 		implements ListComponent<V>, ScrollableListView<V> {
 	protected final JList<V> _list;
 	private final M _model;
@@ -50,32 +50,14 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 	private boolean _bForwardAllListSelectionEvents;
 
 	/**
-	 * 
+	 * @param tokenName
 	 */
-	public ScrollableListPanel(NameToken tokenName, M model) {
+	public ScrollableListComponent(NameToken tokenName, M model) {
 		super(tokenName);
-		Objects.requireNonNull(model, "model");
 		_model = model;
 		_list = new JList<V>(_model);
 		_scroll = new JScrollPane(_list);
 		add(_scroll);
-		postConstruct();
-	}
-
-	/**
-	 * @param isDoubleBuffered
-	 */
-	public ScrollableListPanel(NameToken tokenName, boolean isDoubleBuffered, M model) {
-		super(tokenName, isDoubleBuffered);
-		Objects.requireNonNull(model, "model");
-		_model = model;
-		_list = new JList<V>(_model);
-		_scroll = new JScrollPane(_list);
-		add(_scroll);
-		postConstruct();
-	}
-
-	private void postConstruct() {
 		_bForwardAllListSelectionEvents = false;
 		_scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		_model.addListDataListener(new RelayListDataListener());
@@ -83,17 +65,17 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 	}
 	
 	// if a setListModel is ever added, it needs to be able to relay changes to derived classes.
-	
+
 	@Override
 	public ModifiableListModel<V> getListModel() {
 		return _model;
 	}
-	
+
 	@Override
 	public int getSelectionMode() {
 		return _list.getSelectionModel().getSelectionMode();
 	}
-	
+
 	@Override
 	public void setSelectionMode(int mode) {
 		_list.getSelectionModel().setSelectionMode(mode);
@@ -129,7 +111,7 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 			crSettings.setBackground(color);
 		}
 	}
-	
+
 	@Override
 	public ListIndexRange getSelectionRange() {
 		ListSelectionModel modelSelect = _list.getSelectionModel();
@@ -137,11 +119,6 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 				modelSelect.getMinSelectionIndex(),
 				modelSelect.getMaxSelectionIndex());
 		return range;
-	}
-	
-	@Override
-	public int[] getSelectedIndices() {
-		return _list.getSelectionModel().getSelectedIndices();
 	}
 
 	protected void setHorizontalScrollBarPolicy(int policy) {
@@ -169,6 +146,11 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 	@Override
 	public boolean isSelectionEmpty() {
 		return _list.isSelectionEmpty();
+	}
+
+	@Override
+	public int[] getSelectedIndices() {
+		return _list.getSelectionModel().getSelectedIndices();
 	}
 	
 	private ListDataEvent copyEvent(ListDataEvent e) {
@@ -227,7 +209,7 @@ public class ScrollableListPanel<V, M extends ModifiableListModel<V>>
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if (!e.getValueIsAdjusting() || _bForwardAllListSelectionEvents) {
-				ListSelectionEvent event = new ListSelectionEvent(ScrollableListPanel.this,
+				ListSelectionEvent event = new ListSelectionEvent(ScrollableListComponent.this,
 						e.getFirstIndex(), e.getLastIndex(), e.getValueIsAdjusting());
 				_listeners.forEach(ListSelectionListener.class,
 						ls -> ls.valueChanged(event));

@@ -22,6 +22,12 @@ import javax.swing.JComponent;
 
 import srojak.core.NameToken;
 import srojak.core.NameTokenTagged;
+import srojak.core.events.ActionStatusEvent;
+import srojak.core.events.ActionStatusListener;
+import srojak.core.events.CommonEventListenerList;
+import srojak.core.events.CommonEventListenerStore;
+import srojak.core.events.StateChangeEvent;
+import srojak.core.events.StateChangeListener;
 
 /**
  * @author Stephen
@@ -32,6 +38,7 @@ public class NameTokenTagComponent
 		extends JComponent 
 		implements NameTokenTagged {
 	private final NameToken _token;
+	protected final CommonEventListenerStore _listeners;
 
 	/**
 	 * 
@@ -40,6 +47,7 @@ public class NameTokenTagComponent
 		super();
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		_listeners = new CommonEventListenerList();
 	}
 
 	@Override
@@ -55,6 +63,16 @@ public class NameTokenTagComponent
 	@Override
 	public boolean isNameTagEqual(String strName) {
 		return _token.isNameEqual(strName);
+	}
+
+	protected void sendActionStatus(int idRef, int status) {
+		ActionStatusEvent event = new ActionStatusEvent(this, idRef, status);
+		_listeners.forEach(ActionStatusListener.class, ls -> ls.statusChanged(event));
+	}
+
+	protected void sendStateChange(int idRef, boolean bState) {
+		StateChangeEvent event = new StateChangeEvent(this, idRef, bState);
+		_listeners.forEach(StateChangeListener.class, ls -> ls.stateChanged(event));
 	}
 
 }

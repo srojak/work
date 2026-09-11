@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -36,8 +35,12 @@ import javax.swing.JMenuItem;
 import srojak.cdo.containers.ResourceImage;
 import srojak.cdo.swing.ExitControl;
 import srojak.cdo.swing.functional.AppFrameExitControl;
+import srojak.cdo.swing.panels.NameTokenTagPanel;
 import srojak.cdo.swing.status.StatusBar;
 import srojak.cdo.swing.status.StatusBarTextItem;
+import srojak.core.NameToken;
+import srojak.core.logic.FlagsInt;
+import srojak.core.logic.FlagsIntTest;
 import srojak.core.result.XResult;
 
 /**
@@ -52,7 +55,17 @@ public class CommonAppFrame
 	private final StatusBar _barStatus;
 	private final AppFrameExitControl _ctlExit;
     private final ResourceImage _resCommonIcon;
-    private final Box _boxLower;
+    private final NameTokenTagPanel _panelLower;
+    private final FlagsInt _flagsStart;
+    
+    public static final int START_MINSIZE_CURSIZE = 0x1;
+    public static final String FRAME_NAME = "ApplicationFrame";
+	public static final NameToken ClassToken;
+	
+	static {
+		Class<?> classThis = CommonAppFrame.class;
+		ClassToken = NameToken.classNameFactory(classThis);		
+	}
 
 	/**
 	 * 
@@ -63,21 +76,35 @@ public class CommonAppFrame
 			throw new IllegalArgumentException("strAppName is blank");
 		}
 		JFrame frameMain = new JFrame(strAppName);
+		frameMain.setName(FRAME_NAME);
 		_ctnrFrame = new AppFrameContainer(frameMain);
 		_ctnContent = frameMain.getContentPane();
 		_ctlExit = new AppFrameExitControl();
 		_ctlExit.attach(frameMain);
-		_boxLower = Box.createVerticalBox();
-        _ctnContent.add(_boxLower, BorderLayout.SOUTH);
+		_panelLower = new NameTokenTagPanel(NameToken.factory(ClassToken, "LowerPanel"), new BorderLayout());
+        _ctnContent.add(_panelLower, BorderLayout.SOUTH);
+        _flagsStart = new FlagsInt();
         
         _barMenu = new JMenuBar();
         frameMain.setJMenuBar(_barMenu);
         
         // put in status bar
         _barStatus = new StatusBar(StatusBar.ClassToken);
-        _boxLower.add(_barStatus);
+        _panelLower.add(_barStatus, BorderLayout.SOUTH);
         
         _resCommonIcon = new ResourceImage(CommonMessageAppFrame.class, "/CDOAppIcon.png");
+	}
+	
+	public FlagsIntTest getStartFlags() {
+		return _flagsStart;
+	}
+	
+	protected void setStartFlags(int... masks) {
+		_flagsStart.set(masks);
+	}
+	
+	protected void clearStartFlags(int... masks) {
+		_flagsStart.clear(masks);
 	}
     
     public void useCommonAppIcon() {
@@ -96,7 +123,7 @@ public class CommonAppFrame
         return itemStatus;
     }
     
-    protected ExitControl getExitControl() {
+    public ExitControl getExitControl() {
     	return _ctlExit;
     }
     
@@ -121,8 +148,12 @@ public class CommonAppFrame
     	return itemMenu;
     }
     
-    protected Box getLowerBox() {
-    	return _boxLower;
+    protected void addToLowerPanel(JComponent component, Object constraints) {
+    	_panelLower.add(component, constraints);
+    }
+    
+    protected void completeSetup() {
+    	// base class method does nothing   	
     }
     
     protected void buildMenus() {
@@ -180,6 +211,9 @@ public class CommonAppFrame
 	@Override
 	public void run() {
 		_ctnrFrame.prepare();
+		if (_flagsStart.test(START_MINSIZE_CURSIZE)) {
+			_ctnrFrame.setMinimumSize(_ctnrFrame.getFrameSize());
+		}
 		doBeforeRendering();
 		_ctnrFrame.makeVisible();
 		doOnceRunning();
@@ -187,6 +221,7 @@ public class CommonAppFrame
 	
 	public static <A extends CommonAppFrame> void start(A app) {
 		Objects.requireNonNull(app, "app");
+		app.completeSetup();
 		app.buildMenus();
 		javax.swing.SwingUtilities.invokeLater(app);
 	}

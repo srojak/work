@@ -14,36 +14,38 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.base;
+package srojak.cdo.swing.event;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
-import javax.swing.ListSelectionModel;
-
-import srojak.cdo.swing.ScrollableListView;
-import srojak.cdo.swing.models.ModifiableListModel;
+import srojak.cdo.HtmlSelection;
+import srojak.cdo.HyperTextMessageComponent;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ListModelActionListenerBase<E>
+public class ActionListenerTextAreaHTMLCopy 
 		implements ActionListener {
-	protected final ModifiableListModel<E> _modelList;
-	protected final ListSelectionModel _modelSelection;
-
-	protected ListModelActionListenerBase(ModifiableListModel<E> modelList,
-				ListSelectionModel modelSelection) {
-		Objects.requireNonNull(modelList, "modelList");
-		Objects.requireNonNull(modelSelection, "modelSelection");
-		_modelList = modelList;
-		_modelSelection = modelSelection;
-	}
+	private HyperTextMessageComponent _source;
 	
-	protected ListModelActionListenerBase(ScrollableListView<E> list) {
-		Objects.requireNonNull(list, "list");
-		_modelList = list.getListModel();
-		_modelSelection = list.getListSelectionModel();	
+	public ActionListenerTextAreaHTMLCopy(HyperTextMessageComponent source) {
+		Objects.requireNonNull(source, "source");
+		_source = source;
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String strHtml = _source.getSelectedStringAsHTML();
+        String strText = _source.getSelectedString();
+        if (strText != null) {
+            Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+            cb.setContents(new HtmlSelection(strHtml, strText), null);
+        }
+	}
+
 }

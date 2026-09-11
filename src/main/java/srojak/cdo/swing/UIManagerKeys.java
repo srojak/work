@@ -20,14 +20,13 @@ package srojak.cdo.swing;
  * @author Stephen
  *
  */
-public interface VisualPropertyNames {
+public interface UIManagerKeys {
 
-	public static final String ANCESTOR = "ancestor";
-	public static final String BACKGROUND = "background";
-	public static final String BORDER = "border";
-	public static final String ENABLED = "enabled";
-	public static final String FONT = "font";
-	public static final String FOREGROUND = "foreground";
-	public static final String NAME = "name";
-	public static final String OPAQUE = "opaque";
+	static final String Text_Highlight = "textHighlight";
+	static final String TextArea_Selection = "TextArea.selectionBackground";
+	static final String TextField_Selection = "TextField.selectionBackground";
+	static final String List_Selection = "List.selectionBackground";
+	static final String Table_Selection = "Table.selectionBackground";
+	static final String MenuItem_Selection = "MenuItem.selectionBackground";
+	static final String ScrollBar_Width = "ScrollBar.width";
 }

@@ -16,14 +16,13 @@
  */
 package srojak.cdo.swing.functional;
 
-import java.awt.Component;
 import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.border.Border;
 
-import srojak.cdo.swing.lists.LabelListCellRendererBase;
+import srojak.cdo.swing.lists.LabelListCellTextRepRendererBase;
 import srojak.core.TextRepresentation;
 
 /**
@@ -32,7 +31,7 @@ import srojak.core.TextRepresentation;
  */
 @SuppressWarnings("serial")
 public class SelectBorderListCellRenderer<E>
-		extends LabelListCellRendererBase<E> {
+		extends LabelListCellTextRepRendererBase<E> {
 	private final Border _borderSelected;
 
 	private static final Border _borderEmpty = BorderFactory.createEmptyBorder();
@@ -47,15 +46,13 @@ public class SelectBorderListCellRenderer<E>
 	}
 
 	@Override
-	public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected,
-			boolean cellHasFocus) {
+	protected void display(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
 		setTextFrom(value);
 		if (isSelected) {
 			setBorder(_borderSelected);
 		} else {
 			setBorder(_borderEmpty);
 		}
-		return this;
 	}
 
 }

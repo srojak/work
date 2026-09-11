@@ -24,6 +24,8 @@ import srojak.cdo.events.ModelChangeOriginator;
 import srojak.cdo.swing.CDOControlModel;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
+import srojak.core.events.StateChangeEvent;
+import srojak.core.events.StateChangeListener;
 import srojak.core.logic.FlagsInt;
 
 /**
@@ -54,6 +56,16 @@ public abstract class ControlModelBase
 	protected void fireModelChanged(int idAttrib) {
 		ModelChangeEvent event = new ModelChangeEvent(this, idAttrib);
 		_listeners.forEach(ModelChangeListener.class, ls -> ls.attribChanged(event));
+	}
+	
+	protected void fireModelChanged(int idAttrib, int idMember) {
+		ModelChangeEvent event = new ModelChangeEvent(this, idAttrib, idMember);
+		_listeners.forEach(ModelChangeListener.class, ls -> ls.attribChanged(event));
+	}
+	
+	protected void fireStateChanged(int idRef, boolean bState) {
+		StateChangeEvent event = new StateChangeEvent(this, idRef, bState);
+		_listeners.forEach(StateChangeListener.class, ls -> ls.stateChanged(event));
 	}
 
 	@Override
