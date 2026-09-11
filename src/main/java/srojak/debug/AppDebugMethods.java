@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import srojak.core.EnvironmentCharacteristicException;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultOf;
 import srojak.core.result.XResultStatusCarrier;
@@ -33,6 +35,7 @@ public class AppDebugMethods
 		implements DebugPropertyKeys {
 
 	private static final DebugProperties _properties = DebugNexusCore.getProperties();
+	private static final ObservedActivity _activityCreate = new SingleActivity("create log file");
 	
 	public static void setAutoFlush(boolean bState) {
 		DebugNexusCore.setAutoFlush(bState);
@@ -45,7 +48,7 @@ public class AppDebugMethods
 	
 	public static XResult tryCreateLogFile(Class<?> classApp, String strPrefix) {
 		Objects.requireNonNull(classApp, "classApp");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityCreate);
 		String strPath = _properties.getProperty(LOG_DIR);
 		if (strPath == null) {
 			result.caughtException(
@@ -70,7 +73,7 @@ public class AppDebugMethods
 	public static XResult tryCreateLogFileIn(Class<?> classApp, String strPrefix, Path pathDir) {
 		Objects.requireNonNull(classApp, "classApp");
 		Objects.requireNonNull(pathDir, "pathDir");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityCreate);
 		XResultOf<DebugWriterLogFile> resultCreate
 			= DebugWriterLogFile.tryCreate(pathDir, classApp, strPrefix);
 		result.copyFrom(resultCreate);

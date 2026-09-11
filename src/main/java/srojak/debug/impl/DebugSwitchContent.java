@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
@@ -162,16 +163,22 @@ public final class DebugSwitchContent
 	}
 	
 	@Override
-	public void writeException(ObsLevel level, Exception exc, boolean bShowStack) {
+	public void writeException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack) {
 		ObsLevel.validateEventLevel(level);
 		if (isLevelAtLeast(level)) {
 			SourceLocation location = SourceLocation.caller();
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, location, SourceDetail.ALL);
-			if (exc == null) {
-				sb.append("null exception");
+			sb.append("during ");
+			if (activity == null) {
+				sb.append("??");
 			} else {
-				sb.append("caught ");
+				sb.append(activity.describe());
+			}
+			if (exc == null) {
+				sb.append(" null exception");
+			} else {
+				sb.append(" caught ");
 				sb.append(exc.getClass().getSimpleName());
 				sb.append("\n  ");
 				sb.append(exc.getMessage());

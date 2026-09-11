@@ -32,7 +32,9 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.observe.writers.ObservationWriterBase;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
@@ -52,6 +54,7 @@ public class DebugWriterLogFile
 	private final String _strAppName;
 	
 	public static final String PREFIX_DEBUG = "debug";
+	private static final ObservedActivity _activityCreate = new SingleActivity("create log file");
 	
 	protected DebugWriterLogFile(Path pathDir, Class<?> classApp, String strPrefix)
 			throws IOException {
@@ -150,7 +153,7 @@ public class DebugWriterLogFile
 
 	public static XResultOf<DebugWriterLogFile> tryCreate(Path pathDir, Class<?> classApp, 
 			String strPrefix) {
-		XResultCarrierOf<DebugWriterLogFile> result = new XResultCarrierOf<DebugWriterLogFile>();
+		XResultCarrierOf<DebugWriterLogFile> result = new XResultCarrierOf<DebugWriterLogFile>(_activityCreate);
 		try {
 			result.setResult(new DebugWriterLogFile(pathDir, classApp, strPrefix));
 		} catch (IOException exc) {

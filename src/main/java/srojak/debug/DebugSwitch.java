@@ -26,6 +26,7 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCommonWriter;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.TraceLevel;
 import srojak.core.reflect.PackageClassLocator;
 
@@ -102,10 +103,11 @@ public interface DebugSwitch
 	/**
 	 * Write an exception at an observation level.
 	 * @param level The level at which to write the message.
+	 * @param activity Identifies the activity that produced the exception.
 	 * @param exc The exception whose contents are to be written.
 	 * @param bShowStack If {@code true}, the stack trace will be written.
 	 */
-	void writeException(ObsLevel level, Exception exc, boolean bShowStack);
+	void writeException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack);
 	
 	/**
 	 * Write a trace message to enter a method.
