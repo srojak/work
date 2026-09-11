@@ -16,11 +16,9 @@
  */
 package srojak.xml.stream;
 
-import java.util.Objects;
-
 import javax.xml.stream.Location;
 
-import srojak.core.io.InputLocationContainer;
+import srojak.mantle.quants.InputLocationContainer;
 
 /**
  * @author Stephen

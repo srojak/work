@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import srojak.core.tools.StringMethods;
 import srojak.numerics.IRandomSource;
-import srojak.numerics.RadiansMethods;
 
 /**
  * @author Stephen

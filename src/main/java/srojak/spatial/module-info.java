@@ -22,6 +22,7 @@ module srojak.spatial {
 	requires transitive srojak.core;
 	requires transitive srojak.debug;
 	requires transitive srojak.numerics;
+	requires transitive srojak.mantle;
 	exports srojak.spatial;
 	exports srojak.spatial.r3;
 	exports srojak.spatial.impl to srojak.utest.spatial;

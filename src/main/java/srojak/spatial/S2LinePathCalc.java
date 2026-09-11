@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.function.ToIntFunction;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
@@ -106,7 +107,7 @@ public class S2LinePathCalc
 			direction = _orientation.findCompassDirection(_offsetTo);
 		} catch (NoValidMoveException e) {
 			// this should not happen as it was previously defended against.
-			_swDebugClass.writeException(ObsLevel.ERROR, e, true);
+			_swDebugClass.writeException(ObsLevel.ERROR, new SingleActivity("walk"), e, true);
 			return;
 		}
 		if (direction.isCardinalDirection()) {

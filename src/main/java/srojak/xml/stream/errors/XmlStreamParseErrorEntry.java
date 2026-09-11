@@ -21,8 +21,8 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 
-import srojak.core.InputLocation;
 import srojak.core.data.DataErrorSeverity;
+import srojak.mantle.quants.InputLocation;
 import srojak.xml.XmlParseErrorEntry;
 import srojak.xml.stream.XmlStreamMethods;
 

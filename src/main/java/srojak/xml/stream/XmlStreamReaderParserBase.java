@@ -27,6 +27,8 @@ import srojak.core.containers.SingletonContainer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.observe.writers.ObservationWriterNull;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
@@ -44,6 +46,7 @@ public abstract class XmlStreamReaderParserBase
 	private final SingletonContainer<XMLStreamReader> _reader;
 	private ObservationWriter _writerObs;
 	
+	protected static final ObservedActivity _activityRead = new SingleActivity("read stream");
 	protected static final XmlStreamEventsDictionary DICT_EVENTS;
 	
 	static {
@@ -196,7 +199,7 @@ public abstract class XmlStreamReaderParserBase
 	}
 	
 	public final XResult tryParse(XMLStreamReader reader) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityRead);
 		try {
 			parse(reader);
 			result.setValid();

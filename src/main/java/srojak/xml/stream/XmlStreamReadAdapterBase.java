@@ -31,6 +31,8 @@ import srojak.core.io.FileExistence;
 import srojak.core.io.IOResultQualifiers;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResultInt;
 import srojak.core.result.XResultIntCarrier;
 
@@ -41,6 +43,8 @@ import srojak.core.result.XResultIntCarrier;
 public abstract class XmlStreamReadAdapterBase 
 		implements IOResultQualifiers, XmlStreamAdapter {
 	private final XmlStreamInputBuilder _builderStream;
+
+	protected static final ObservedActivity ACTIVITY_READ_STREAM = new SingleActivity("read stream");
 	
 	public XmlStreamReadAdapterBase() {
 		_builderStream = new XmlStreamInputBuilder();
@@ -57,7 +61,7 @@ public abstract class XmlStreamReadAdapterBase
 	
 	@Override
 	public XResultInt readStream(InputStream streamIn) {
-		XResultIntCarrier result = new XResultIntCarrier();
+		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_STREAM);
 		readCore(streamIn, result);
 		return result;
 	}
@@ -90,7 +94,7 @@ public abstract class XmlStreamReadAdapterBase
 	public XResultInt readFrom(Path pathFile, FileExistence exists) {
 		Objects.requireNonNull(pathFile, "pathFile");
 		Objects.requireNonNull(exists, "exists");
-		XResultIntCarrier result = new XResultIntCarrier();
+		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_STREAM);
 		openAndReadCore(pathFile, exists, result);
 		return result;
 	}
@@ -99,7 +103,7 @@ public abstract class XmlStreamReadAdapterBase
 	public XResultInt readFrom(String strPath, FileExistence exists) {
 		Objects.requireNonNull(strPath, "strPath");
 		Objects.requireNonNull(exists, "exists");
-		XResultIntCarrier result = new XResultIntCarrier();
+		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_STREAM);
 		Path pathFile = Path.of(strPath);
 		openAndReadCore(pathFile, exists, result);
 		return result;

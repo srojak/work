@@ -84,8 +84,12 @@ public class S2Segment
 		return _coordsEnd;
 	}
 	
-	S2Offset getOffset() {
+	public S2Offset getOffset() {
 		return _offsetTo;
+	}
+	
+	public double getLength() {
+		return _offsetTo.getDistance();
 	}
 	
 	@Override

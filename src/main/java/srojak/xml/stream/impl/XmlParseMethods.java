@@ -20,7 +20,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.xml.sax.SAXParseException;
 
-import srojak.core.InputLocation;
+import srojak.mantle.quants.InputLocation;
 import srojak.xml.stream.StreamElementAttribute;
 import srojak.xml.stream.XmlInputLocationContainer;
 

@@ -23,6 +23,7 @@ import srojak.core.observe.TraceLevel;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
+import srojak.mantle.restbl.ResultTable;
 import srojak.numerics.IRandomSource;
 import srojak.numerics.compass.CompassDegrees;
 
@@ -89,19 +90,40 @@ public class S2RandomMover {
 		return dirReturn;
 	}
 	
-	public S2Offset moveRandomDistance(S2CompassDirection direction, double dLambda, int nFloor) {
+	public S2Offset moveRandomDistance(S2Coords coordsFrom, S2CompassDirection direction, double dLambda, int nFloor) {
+		Objects.requireNonNull(coordsFrom, "coordsFrom");
 		Objects.requireNonNull(direction, "direction");
+		int nLimit = _szField.getGreatestMoveInDirection(_orient, coordsFrom, direction);
 		double dRoll = _rand.genExponential(dLambda);
-		return _orient.offset(direction, nFloor + (int) Math.floor(dRoll));
+		int nResult = nFloor + (int) Math.floor(dRoll);
+		return _orient.offset(direction, Math.min(nLimit, nResult));
 	}
 	
-	public S2Offset moveRandomDistance(S2CompassDirection direction, double dLambda) {
-		return moveRandomDistance(direction, dLambda, 1);
+	public S2Offset moveRandomDistance(ResultTable<Integer> tblSegmentLength, S2Coords coordsFrom, S2CompassDirection direction, int nFloor) {
+		Objects.requireNonNull(tblSegmentLength, "tblSegmentLength");
+		Objects.requireNonNull(coordsFrom, "coordsFrom");
+		Objects.requireNonNull(direction, "direction");
+		int nLimit = _szField.getGreatestMoveInDirection(_orient, coordsFrom, direction);
+		Integer nResult = tblSegmentLength.select(_rand);
+		int nMove = nResult.intValue();
+		// a true floor
+		if (nMove > nLimit) {
+			nMove = nLimit;
+		} else if (nResult < nFloor) {
+			nMove = nFloor;
+		}
+		return _orient.offset(direction, nMove);
 	}
 	
-	public S2Offset moveRandomDirection(int nDistance) {
+	public S2Offset moveRandomDirection(S2Coords coordsFrom, int nDistance) 
+			throws NoValidMoveException {
+		Objects.requireNonNull(coordsFrom, "coordsFrom");
 		S2CompassDirection dir = getRandomDirection();
-		return _orient.offset(dir, nDistance);
+		int nLimit = _szField.getGreatestMoveInDirection(_orient, coordsFrom, dir);
+		if (nLimit == 0) {
+			throw new NoValidMoveException("cannot move in chosen direction");
+		}
+		return _orient.offset(dir, Math.min(nDistance, nLimit));
 	}
 	
 	public S2Coords walkOneSquare(S2Coords coordsFrom, S2CompassDirection direction) {

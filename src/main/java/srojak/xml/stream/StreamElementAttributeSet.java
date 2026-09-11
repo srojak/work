@@ -22,6 +22,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import srojak.core.CommonCollectionSize;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultInt;
 import srojak.core.result.XResultIntCarrier;
@@ -37,6 +39,7 @@ public class StreamElementAttributeSet
 	private final StreamElementAttribute[] _attribs;
 
 	private final static String STRING_TRUE = "true";
+	protected static final ObservedActivity ACTIVITY_READ_ATTRIB = new SingleActivity("read acttribute");
 	
 	StreamElementAttributeSet(XMLStreamReader reader) {
 		int nCount = reader.getAttributeCount();
@@ -66,7 +69,7 @@ public class StreamElementAttributeSet
 	}
 	
 	public XResultOf<String> readRequiredStringAttribValue(QName nameAttribute) {
-		XResultCarrierOf<String> result = new XResultCarrierOf<String>();	
+		XResultCarrierOf<String> result = new XResultCarrierOf<String>(ACTIVITY_READ_ATTRIB);	
 		StreamElementAttribute attrib = findAttributeByName(nameAttribute);
 		if (attrib == null) {
 			result.caughtException(new NoSuchElementException(nameAttribute.toString()));
@@ -94,7 +97,7 @@ public class StreamElementAttributeSet
 	}
 	
 	public XResultInt readIntAttribValue(QName nameAttribute) {
-		XResultIntCarrier result = new XResultIntCarrier();
+		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_ATTRIB);
 		StreamElementAttribute attrib = findAttributeByName(nameAttribute);
 		if (attrib == null) {
 			result.caughtException(new NoSuchElementException(nameAttribute.toString()));

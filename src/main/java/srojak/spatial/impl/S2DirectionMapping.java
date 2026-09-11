@@ -18,8 +18,8 @@ package srojak.spatial.impl;
 
 import java.util.Objects;
 
-import srojak.core.Tuple;
-import srojak.core.containers.TupleContainer;
+import srojak.core.data.Tuple;
+import srojak.core.data.TupleContainer;
 import srojak.numerics.CircleOctant;
 import srojak.spatial.S2CompassDirection;
 

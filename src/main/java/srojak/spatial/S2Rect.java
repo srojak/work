@@ -16,6 +16,7 @@
  */
 package srojak.spatial;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -154,6 +155,31 @@ public class S2Rect {
 		return list;
 	}
 	
+	public List<S2Segment> getOutsideSegments() 
+			throws SpatialCalcException {
+		if (_width <= 0 || _height <= 0) {
+			throw new SpatialCalcException("rectangle size is invalid");
+		}
+		ArrayList<S2Segment> list = new ArrayList<S2Segment>(4);
+		S2Coords coordsStart = _coordsStart;
+		S2Offset offset = new S2Offset(_width - 1, 0);
+		S2Segment segment = new S2Segment(coordsStart, offset, true);
+		list.add(segment);
+		coordsStart = getNECorner();
+		offset = new S2Offset(0, _height - 1);
+		segment = new S2Segment(coordsStart, offset, true);
+		list.add(segment);
+		coordsStart = getSECorner();
+		offset = new S2Offset(- _width + 1, 0);
+		segment = new S2Segment(coordsStart, offset, true);
+		list.add(segment);
+		coordsStart = getSWCorner();
+		offset = new S2Offset(0, -_height + 1);
+		segment = new S2Segment(coordsStart, offset, true);
+		list.add(segment);
+		return list;
+	}
+	
 	public boolean overlaps(S2Rect other) {
 		Objects.requireNonNull(other, "other");
 		if (_width <= 0 || _height <= 0 || other._width <= 0 || other._height <= 0) {
@@ -242,13 +268,14 @@ public class S2Rect {
 	}
 	
 	public void overPeriphery(Consumer<S2Coords> visitor) {
+		int hm1 = _height - 1;
 		for (int i = 0; i < _width; i++) {
 			visitor.accept(_coordsStart.getOffsetCoords(i, 0));
-			visitor.accept(_coordsStart.getOffsetCoords(i, _height));
+			visitor.accept(_coordsStart.getOffsetCoords(i, hm1));
 		}
-		for (int j = 1; j < _height - 1; j++) {
+		for (int j = 1; j < hm1; j++) {
 			visitor.accept(_coordsStart.getOffsetCoords(0, j));
-			visitor.accept(_coordsStart.getOffsetCoords(_width, j));
+			visitor.accept(_coordsStart.getOffsetCoords(_width - 1, j));
 		}
 	}
 	

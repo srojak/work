@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import srojak.core.Labeled;
 import srojak.core.TextRepresentation;
-import srojak.core.text.LabeledEnvelope;
+import srojak.mantle.Labeled;
+import srojak.mantle.text.LabeledEnvelope;
 import srojak.numerics.compass.CompassDegrees;
 import srojak.spatial.impl.S2DirectionRepListAbbrev;
 

@@ -65,6 +65,11 @@ public class S2FieldSize
 		return isValueInBounds(width, coords._x) && isValueInBounds(height, coords._y);
 	}
 	
+	public boolean isOnBoundary(S2Coords coords) {
+		Objects.requireNonNull(coords, "coords");
+		return (coords._x == 0 || coords._x == (width - 1)) || (coords._y == 0 || coords._y == (height - 1));
+	}
+	
 	public S2Coords addBounded(S2Coords coords, S2Offset offset) {
 		Objects.requireNonNull(coords, "coords");
 		Objects.requireNonNull(offset, "offset");
@@ -99,6 +104,36 @@ public class S2FieldSize
 		}
 		list.trimToSize();
 		return list;
+	}
+	
+	public int getGreatestMoveInDirection(S2Orientation orientation, S2Coords coordsStart, S2CompassDirection direction) {
+		Objects.requireNonNull(orientation, "orientation");
+		Objects.requireNonNull(coordsStart, "coordsStart");
+		Objects.requireNonNull(direction, "direction");
+		if (!isInBounds(coordsStart)) {
+			// want to keep this simple
+			throw new IllegalArgumentException("starting point is not in bounds");
+		}
+		S2Offset offsetOne = orientation.offsetByOne(direction);
+		int limitX = 0;
+		int limitY = 0;
+		if (offsetOne.dx < 0) {
+			limitX = coordsStart._x;
+		} else if (offsetOne.dx > 0) {
+			limitX = width - coordsStart._x - 1;
+		}
+		if (offsetOne.dy < 0) {
+			limitY = coordsStart._y;
+		} else if (offsetOne.dy > 0) {
+			limitY = height - coordsStart._y - 1;
+		}
+		if (limitX == 0) {
+			return limitY;
+		} else if (limitY == 0) {
+			return limitX;
+		} else {
+			return Math.min(limitX, limitY);
+		}
 	}
 
 	@Override

@@ -26,6 +26,8 @@ import java.util.Objects;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 
@@ -36,6 +38,8 @@ import srojak.core.result.XResultStatusCarrier;
 public class XmlStreamReadV1Adapter {
 	private final XmlStreamParseFunction _fnParse;
 	private final XmlStreamInputBuilder _builderStream;
+	
+	protected static final ObservedActivity _activityRead = new SingleActivity("read stream");
 	
 	public XmlStreamReadV1Adapter(XmlStreamParseFunction fnParse) {
 		Objects.requireNonNull(fnParse, "fnParse");
@@ -54,13 +58,13 @@ public class XmlStreamReadV1Adapter {
 	}
 	
 	public XResult readFrom(InputStream streamIn) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityRead);
 		readCommon(streamIn, result);
 		return result;
 	}
 	
 	public XResult readFrom(Path pathFile) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityRead);
 		InputStream streamIn = null;
 		try {
 			streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
@@ -73,7 +77,7 @@ public class XmlStreamReadV1Adapter {
 	}
 	
 	public XResult readFrom(String strPath) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityRead);
 		Path pathFile = Path.of(strPath);
 		InputStream streamIn = null;
 		try {

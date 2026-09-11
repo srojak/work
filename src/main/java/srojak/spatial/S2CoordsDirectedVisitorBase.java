@@ -17,6 +17,7 @@
 package srojak.spatial;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.debug.DebugSwitch;
 import srojak.numerics.DoublePrecisionComparer;
 import srojak.numerics.compass.CompassOrdinals;
@@ -101,7 +102,7 @@ public abstract class S2CoordsDirectedVisitorBase<A>
 			direction = getOverallCompassDirection();
 		} catch (NoValidMoveException e) {
 			// this should not happen as it was previously defended against.
-			_swDebug.writeException(ObsLevel.ERROR, e, true);
+			_swDebug.writeException(ObsLevel.ERROR, new SingleActivity("walk"), e, true);
 			return;
 		}
 		if (direction.isCardinalDirection()) {

@@ -21,6 +21,8 @@
 module srojak.xml {
 	requires transitive java.xml;
 	requires transitive srojak.core;
+	requires transitive srojak.numerics;
+	requires transitive srojak.mantle;
 	exports srojak.xml;
 	exports srojak.xml.dom;
 	exports srojak.xml.filters;
