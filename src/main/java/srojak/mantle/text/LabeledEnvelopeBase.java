@@ -14,25 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.mantle.text;
+
+import java.util.Objects;
+
+import srojak.mantle.Labeled;
+
 /**
  * @author Stephen
  *
- * Objects at this level can use the debugging facility.
- * 
- * The dependency on srojak.numerics is to prevent the latter from depending on this module.
  */
-module srojak.mantle {
-	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.debug;
-	exports srojak.mantle;
-	exports srojak.mantle.collections;
-	exports srojak.mantle.decorated;
-	exports srojak.mantle.functional;
-	exports srojak.mantle.impl to srojak.utest.mantle;
-	exports srojak.mantle.io;
-	exports srojak.mantle.quants;
-	exports srojak.mantle.reflect;
-	exports srojak.mantle.restbl;
-	exports srojak.mantle.text;
+public abstract class LabeledEnvelopeBase<T>
+		implements Labeled<T> {
+	private final String _strLabel;
+
+	/**
+	 * 
+	 */
+	protected LabeledEnvelopeBase(String strLabel) {
+		Objects.requireNonNull(strLabel, "strLabel");
+		_strLabel = strLabel;
+	}
+
+	@Override
+	public boolean isLabelEqual(String strText) {
+		return _strLabel.equals(strText);
+	}
+
+	@Override
+	public String toString() {
+		return _strLabel;
+	}
 }

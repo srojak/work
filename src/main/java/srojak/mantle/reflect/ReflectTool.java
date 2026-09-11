@@ -21,6 +21,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
@@ -74,15 +76,16 @@ public class ReflectTool {
 			if (classFields.isAssignableFrom(fx.getType())) {
 				fx.setAccessible(true);
 				Object objField = null;
+				ObservedActivity activity = new SingleActivity("field access");
 				try {
 					objField = fx.get(objOwner);
 				} catch (IllegalArgumentException exc) {
-					_swDebug.writeException(ObsLevel.ERROR, exc, true);
+					_swDebug.writeException(ObsLevel.ERROR, activity, exc, true);
 					return false;
 				} catch (IllegalAccessException exc) {
 					_swDebug.write(ObsLevel.ALERT, () -> "illegal access to "
 						+ f.getName() + " in class " + classOwner.getName());
-					_swDebug.writeException(ObsLevel.ERROR, exc, false);
+					_swDebug.writeException(ObsLevel.ERROR, activity, exc, false);
 					return false;
 				}
 				@SuppressWarnings("unchecked")

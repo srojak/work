@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 
@@ -39,7 +40,7 @@ public abstract class SpecializedFileWriterBase {
 	
 	public XResult writeFile(File fileWrite) {
 		Objects.requireNonNull(fileWrite, "fileWrite");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.WRITE_TO_FILE);
 		try (FileOutputStream streamOut = new FileOutputStream(fileWrite)) {
 			return writeContent(streamOut);
 		} catch (FileNotFoundException exc) {

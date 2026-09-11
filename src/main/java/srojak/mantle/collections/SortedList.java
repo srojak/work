@@ -35,13 +35,13 @@ import srojak.core.collections.ReadOnlyListIteratorFacade;
 public class SortedList<E>
 		implements List<E> {
 	private final TypedArrayList<E> _list;
-	private final Comparator<E> _comparer;
+	private final Comparator<? super E> _comparer;
 	
 	/**
 	 * 
 	 * @param comparer
 	 */
-	public SortedList(Class<E> classElement, Comparator<E> comparer) {
+	public SortedList(Class<E> classElement, Comparator<? super E> comparer) {
 		Objects.requireNonNull(comparer, "comparer");
 		_list = new TypedArrayList<E>(classElement);
 		_comparer = comparer;
@@ -52,7 +52,7 @@ public class SortedList<E>
 	 * @param comparer
 	 * @param c
 	 */
-	public SortedList(Class<E> classElement, Comparator<E> comparer, Collection<? extends E> c) {
+	public SortedList(Class<E> classElement, Comparator<? super E> comparer, Collection<? extends E> c) {
 		Objects.requireNonNull(comparer, "comparer");
 		_list = new TypedArrayList<E>(classElement, c);
 		_comparer = comparer;

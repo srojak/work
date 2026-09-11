@@ -14,38 +14,39 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.io;
+package srojak.mantle.text;
 
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-
-import srojak.core.observe.ObservedActivity;
-import srojak.core.result.XResult;
-import srojak.core.result.XResultStatusCarrier;
+import srojak.core.tools.StringMethods;
 
 /**
  * @author Stephen
  *
  */
-public abstract class SpecializedTextFileWriterBase
-		extends SpecializedFileWriterBase {
-
-	/**
-	 * 
-	 */
-	public SpecializedTextFileWriterBase() {
-	}
+public class SequentialNumberLabeler<T> 
+		implements SequentialLabeler<T> {
+	private final int _nPositions;
+	private final int _nOrigin;
+	private int _nValue;
 	
-	protected abstract boolean writeTextContent(PrintWriter writer);
+	public SequentialNumberLabeler(int nPositions, boolean bStartAtOne) {
+		if (nPositions < 1) {
+			throw new IllegalArgumentException("nPositions must be positive");
+		}
+		_nPositions = nPositions;
+		_nOrigin = bStartAtOne ? 1 : 0;
+		_nValue = _nOrigin;
+	}
 
 	@Override
-	protected final XResult writeContent(FileOutputStream streamOut) {
-		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.WRITE_TO_FILE);
-		PrintWriter writer = new PrintWriter(streamOut);
-		if (writeTextContent(writer));
-			result.setValid();
-		writer.close();
-		return result;
+	public void reset() {
+		_nValue = _nOrigin;
+	}
+
+	@Override
+	public LabeledEnvelope<T> generateNext(T value) {
+		String strLabel = "#" + StringMethods.leftPadToSize(String.valueOf(_nValue), '0', _nPositions);
+		_nValue++;
+		return new LabeledEnvelope<T>(value, strLabel);
 	}
 
 }

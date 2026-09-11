@@ -24,4 +24,8 @@ public interface TextBlockSize {
 
 	int lines();
 	int columns();
+	
+	public static TextBlockSize quantity(int nLines, int nColumns) { 
+		return new TextBlockSizeQty(nLines, nColumns);
+	}
 }

@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 
@@ -38,7 +39,7 @@ public class TextReaderMethods {
 	public static XResult forEachLine(File file, Consumer<String> consumerLines) {
 		Objects.requireNonNull(file, "file");
 		Objects.requireNonNull(consumerLines, "consumerLines");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_FROM_FILE);
 		try (InputStream stream = new FileInputStream(file);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
 			reader.lines().forEach(consumerLines);
