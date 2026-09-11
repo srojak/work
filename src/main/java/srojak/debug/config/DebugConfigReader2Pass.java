@@ -31,6 +31,7 @@ import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
 
 import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.DebugConfigSchema;
@@ -97,7 +98,7 @@ public class DebugConfigReader2Pass {
 	}
 	
 	public XResult validateContent(Path pathFile) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(new SingleActivity("read stream"));
 		try (InputStream streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ)) {
 			Validator validator = _schema.newValidator();
 			validator.setErrorHandler(_handlerErrors);

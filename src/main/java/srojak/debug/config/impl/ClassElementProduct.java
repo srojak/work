@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 
 import srojak.core.reflect.PackageClassLocator;
-import srojak.xml.stream.StreamElementDeferredProductBase;
+import srojak.xml.stream.work.StreamElementDeferredProductBase;
 
 /**
  * @author Stephen

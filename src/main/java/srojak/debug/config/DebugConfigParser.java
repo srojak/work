@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 
-import srojak.core.containers.SingletonContainer;
 import srojak.core.data.DataErrorSeverity;
 import srojak.core.observe.InvalidObservationLevelException;
 import srojak.core.observe.ObsLevel;
@@ -33,13 +32,14 @@ import srojak.core.result.XResultOf;
 import srojak.debug.DebugSwitchKey;
 import srojak.debug.DebugSwitchTool;
 import srojak.debug.config.impl.ClassElementProduct;
-import srojak.debug.config.impl.PackageElementProduct;
 import srojak.debug.impl.ClassDebugOptionMap;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.debug.impl.DebugSwitchContent;
 import srojak.xml.stream.StreamElementAttribute;
 import srojak.xml.stream.StreamElementAttributeSet;
 import srojak.xml.stream.XmlStreamActionParserBase;
+import srojak.xml.stream.work.StreamElementStringProduct;
+import srojak.xml.stream.work.XmlStreamWorkItemMap;
 
 /**
  * @author Stephen
@@ -48,8 +48,6 @@ import srojak.xml.stream.XmlStreamActionParserBase;
 public class DebugConfigParser 
 		extends XmlStreamActionParserBase 
 		implements DebugConfigNames {
-	private final SingletonContainer<PackageElementProduct> _ctnrPackage;
-	private final SingletonContainer<ClassElementProduct> _ctnrClass;
 	private ObsLevel _levelDefault;
 	
 	/**
@@ -57,8 +55,6 @@ public class DebugConfigParser
 	 */
 	public DebugConfigParser() {
 		super();
-		_ctnrPackage = new SingletonContainer<PackageElementProduct>();
-		_ctnrClass = new SingletonContainer<ClassElementProduct>();
 		_levelDefault = ObsLevel.INFO;
 	}
 	
@@ -73,8 +69,7 @@ public class DebugConfigParser
 
 	@Override
 	protected void parseInit() {
-		_ctnrPackage.clear();
-		_ctnrClass.clear();
+		
 	}
 	
 	private ObsLevel readObsLevel(QName nameElement, StreamElementAttributeSet attribs,
@@ -88,31 +83,31 @@ public class DebugConfigParser
 			} catch (InvalidObservationLevelException exc) {
 				Location loc = super.getParserState().getCurentLocation();
 				ObservationWriter writer = getObservationWriter();
-				writer.write(ObsLevel.WARN, 
-						String.format("line %d, element %s, attribute %s: unrecognized value \"%s\"",
-								loc.getLineNumber(), nameElement, ATTRIB_LEVEL, strLevel));
+				String strMessage = String.format("attribute %s: unrecognized value \"%s\"", ATTRIB_LEVEL, strLevel);
+				writer.write(ObsLevel.WARN, "line " + loc.getLineNumber() + ", element " + nameElement + ", " + strMessage);
+				recordElementParseError(loc, nameElement, DataErrorSeverity.WARN, strMessage);
 			}
 		}
 		return level;
 	}
 
 	@Override
-	protected void parseStartElement(QName nameElement, StreamElementAttributeSet attribs)
+	protected void parseStartElement(QName nameElement,XmlStreamWorkItemMap mapWork, StreamElementAttributeSet attribs)
 			throws XMLStreamException {
 		if (nameElement.equals(ELEMENT_PACKAGE)) {
 			StreamElementAttribute attrName = attribs.findAttributeByName(ATTRIB_NAME);
 			Location location = getParserState().getCurentLocation();
 			XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
 			if (result.isValid()) {
-				PackageElementProduct product = new PackageElementProduct(ELEMENT_PACKAGE, location, result.getResult());
-				_ctnrPackage.set(product);
+				StreamElementStringProduct product = new StreamElementStringProduct(ELEMENT_PACKAGE, location, result.getResult());
+				mapWork.assign(ELEMENT_PACKAGE, product);
 			} else {
 				recordElementParseError(location, ELEMENT_PACKAGE, DataErrorSeverity.ERROR, "element has no name");
 			}
 		} else if (nameElement.equals(ELEMENT_CLASS)) {
-			if (!_ctnrPackage.isEmpty()) {
+			if (mapWork.containsKey(ELEMENT_PACKAGE)) {
 				Location location = getParserState().getCurentLocation();
-				String strPackageName = _ctnrPackage.get().getPackageName();
+				String strPackageName = mapWork.<StreamElementStringProduct>getAs(ELEMENT_PACKAGE).getContent();
 				PackageClassLocator locator = null;
 				XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
 				if (result.isValid()) {
@@ -125,7 +120,7 @@ public class DebugConfigParser
 				boolean bShowSource = attribs.readBooleanAttribValue(ATTRIB_LOCS);
 				boolean bCascade = attribs.readBooleanAttribValue(ATTRIB_CASCADE);
 				ClassElementProduct product = new ClassElementProduct(ELEMENT_CLASS, location, locator);
-				_ctnrClass.set(product);
+				mapWork.assign(ELEMENT_CLASS, product);
 				DebugSwitchKey key = DebugSwitchTool.makeClassKey(locator);
 				DebugSwitchContent sw = DebugNexusCore.getContent(key);
 				if (sw == null) {
@@ -139,9 +134,9 @@ public class DebugConfigParser
 				}
 			}
 		} else if (nameElement.equals(ELEMENT_SUBJECT)) {
-			if (!_ctnrClass.isEmpty()) {
+			if (mapWork.containsKey(ELEMENT_CLASS)) {
 				Location location = getParserState().getCurentLocation();
-				PackageClassLocator locClass = _ctnrClass.get().getClassLocator();
+				PackageClassLocator locClass = mapWork.<ClassElementProduct>getAs(ELEMENT_CLASS).getClassLocator();
 				String strSubjectName = null;
 				XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
 				if (result.isValid()) {
@@ -162,9 +157,9 @@ public class DebugConfigParser
 				sw.setShowSourceLocations(bShowSource);
 			}
 		} else if (nameElement.equals(ELEMENT_OPTION)) {
-			if (!_ctnrClass.isEmpty()) {
+			if (mapWork.containsKey(ELEMENT_CLASS)) {
 				Location location = getParserState().getCurentLocation();
-				PackageClassLocator locClass = _ctnrClass.get().getClassLocator();
+				PackageClassLocator locClass = mapWork.<ClassElementProduct>getAs(ELEMENT_CLASS).getClassLocator();
 				String strOptionName = null;
 				XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
 				if (result.isValid()) {
@@ -194,11 +189,11 @@ public class DebugConfigParser
 	}
 
 	@Override
-	protected void parseEndElement(QName nameElement, String strElementText) {
+	protected void parseEndElement(QName nameElement, XmlStreamWorkItemMap mapWork, String strElementText) {
 		if (nameElement.equals(ELEMENT_CLASS)) {
-			_ctnrClass.clear();
+			mapWork.removeIfAssigned(ELEMENT_CLASS);
 		} else if (nameElement.equals(ELEMENT_PACKAGE))
-			_ctnrPackage.clear();
+			mapWork.removeIfAssigned(ELEMENT_PACKAGE);
 	}
 
 }

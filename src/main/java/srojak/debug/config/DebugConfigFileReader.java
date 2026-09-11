@@ -29,7 +29,9 @@ import srojak.core.io.FileExistence;
 import srojak.core.observe.HasSingleObservationWriter;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
+import srojak.core.observe.writers.ObservationWriterLevelFilterPrintStream;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultInt;
 import srojak.core.result.XResultIntCarrier;
@@ -52,6 +54,9 @@ public final class DebugConfigFileReader
 	private final DebugConfigParser _parser;
 	private ObservationWriter _writer;
 	private boolean _bShowStackOnException;
+	
+	public static final ObservedActivity ACTIVITY_INIT = new SingleActivity("reading debug config schema");
+	public static final ObservedActivity ACTIVITY_READ = new SingleActivity("reading debug config");
 	
 	public DebugConfigFileReader() {
 		_schema = new SetOnce<Schema>(SetOnce.DEFAULT);
@@ -95,7 +100,7 @@ public final class DebugConfigFileReader
 	}
 	
 	public XResult initialize() {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ACTIVITY_INIT);
 		if (_schema.hasBeenSet()) {
 			result.caughtException(new IllegalStateException("already initialized"));
 		} else {
@@ -152,7 +157,7 @@ public final class DebugConfigFileReader
 	public XResultInt readConfigFile(Path pathFile, FileExistence exists) {
 		Objects.requireNonNull(pathFile, "pathFile");
 		Objects.requireNonNull(exists, "exists");
-		XResultIntCarrier result = new XResultIntCarrier();
+		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ);
 		readConfigFileCore(result, pathFile, exists);
 		return result;
 	}
@@ -160,7 +165,7 @@ public final class DebugConfigFileReader
 	public XResultInt readConfigFile(String strFile, FileExistence exists) {
 		Objects.requireNonNull(strFile, "strFile");
 		Objects.requireNonNull(exists, "exists");
-		XResultIntCarrier result = new XResultIntCarrier();
+		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ);
 		Path pathFile = Path.of(strFile);
 		readConfigFileCore(result, pathFile, exists);
 		return result;		

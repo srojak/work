@@ -24,7 +24,7 @@ import javax.xml.stream.Location;
 import srojak.core.observe.InvalidObservationLevelException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterNull;
+import srojak.core.observe.writers.ObservationWriterNull;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.tools.StringMethods;
 import srojak.debug.DebugSwitchKey;

@@ -26,6 +26,8 @@ import org.xml.sax.SAXException;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
@@ -41,13 +43,14 @@ public class DebugConfigMethods {
 		
 	private static final DebugNexus _nexus = new DebugNexus();
 	private static boolean _bShowStackOnException = false;
+	private static final ObservedActivity _activityRead = new SingleActivity("read stream");
 	
 	public static void setShowStackOnException(boolean bState) {
 		_bShowStackOnException = bState;
 	}	
 	
 	public static XResultOf<DebugConfigReader2Pass> createReader() {
-		XResultCarrierOf<DebugConfigReader2Pass> result = new XResultCarrierOf<DebugConfigReader2Pass>();
+		XResultCarrierOf<DebugConfigReader2Pass> result = new XResultCarrierOf<DebugConfigReader2Pass>(_activityRead);
 		try {
 			DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
 			result.setResult(reader);
@@ -76,7 +79,7 @@ public class DebugConfigMethods {
 
 	public static XResult readConfigFileTwoPass(String strFile, boolean bFileMustExist) {
 		Objects.requireNonNull(strFile, "strFile");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityRead);
 		ObservationWriter writer = _nexus.getWriter();
 		try {
 			DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
