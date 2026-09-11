@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import srojak.core.field.SetOnce;
 import srojak.core.field.SetOnceConditions;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.DebugNexus;
@@ -64,7 +65,7 @@ public class ResourceImage {
 	
 	public XResult load() {
 		_image.faultIfAlreadySet();
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_RESOURCE);
 		URL urlImage = _classOwner.getResource(_strName);
 		if (urlImage == null) {
 			String strMessage = "cannot locate resource \"" + _strName + "\" using "

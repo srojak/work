@@ -31,4 +31,9 @@ public interface ModelAttribCodes {
 	 * The enabled state of the model.
 	 */
 	public static final int MA_ENABLED = 101;
+	
+	/**
+	 * The enabled state of a model member.
+	 */
+	public static final int MA_MEMBER_ENABLED = 102;
 }

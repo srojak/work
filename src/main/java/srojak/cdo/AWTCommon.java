@@ -14,42 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.events;
-
-import java.awt.AWTEvent;
+package srojak.cdo;
 
 /**
  * @author Stephen
  *
  */
-public class ModelChangeEvent 
-		extends AWTEvent
-		implements CDOEventID {
-	private final int _attrib;
-	private final int _member;
+public interface AWTCommon {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4513817167684835586L;
-
-	public ModelChangeEvent(Object source, int idAttrib) {
-		super(source, MODEL_ATTRIB);
-		_attrib = idAttrib;
-		_member = 0;
-	}
-	
-	public ModelChangeEvent(Object source, int idAttrib, int idMember) {
-		super(source, MODEL_ATTRIB);
-		_attrib = idAttrib;
-		_member = idMember;
-	}
-
-	public int getAttribute() {
-		return _attrib;
-	}
-	
-	public int getMember() {
-		return _member;
-	}
+	static final String FONT_FAMILY_MONOSPACED = "Monospaced";
+	static final String FONT_FAMILY_SERIF = "Serif";
+	static final String FONT_FAMILY_SANS_SERIF = "SansSerif";
+	static final String FONT_FAMILY_DIALOG = "Dialog";
+	static final String FONT_FAMILY_DIALOG_INPUT = "DialogInput";
+	static final String FONT_FAMILY_LUCIDA_SANS = "Lucida Sans";
+	static final String FONT_FAMILY_LUCIDA_MONO = "Lucida Sans Typewriter";
+	static final String FONT_FAMILY_LUCIDA_BRIGHT = "Lucida Bright";
 }

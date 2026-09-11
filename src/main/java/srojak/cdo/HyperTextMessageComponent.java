@@ -14,42 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.events;
-
-import java.awt.AWTEvent;
+package srojak.cdo;
 
 /**
  * @author Stephen
  *
  */
-public class ModelChangeEvent 
-		extends AWTEvent
-		implements CDOEventID {
-	private final int _attrib;
-	private final int _member;
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4513817167684835586L;
+public interface HyperTextMessageComponent 
+		extends TextMessageComponent {
 
-	public ModelChangeEvent(Object source, int idAttrib) {
-		super(source, MODEL_ATTRIB);
-		_attrib = idAttrib;
-		_member = 0;
-	}
-	
-	public ModelChangeEvent(Object source, int idAttrib, int idMember) {
-		super(source, MODEL_ATTRIB);
-		_attrib = idAttrib;
-		_member = idMember;
-	}
-
-	public int getAttribute() {
-		return _attrib;
-	}
-	
-	public int getMember() {
-		return _member;
-	}
+	String getSelectedStringAsHTML();
 }

@@ -81,4 +81,9 @@ public class DimensionMethods {
 		}
 		return new Dimension(width, height);
 	}
+	
+	public static Dimension expand(Dimension dmBase, int adjWidth, int adjHeight) {
+		Objects.requireNonNull(dmBase, "dmBase");
+		return new Dimension(dmBase.width + adjWidth, dmBase.height + adjHeight);
+	}
 }
