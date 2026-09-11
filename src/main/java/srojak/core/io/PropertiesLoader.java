@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import srojak.core.functional.IOSupplier;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 
@@ -35,7 +36,7 @@ public class PropertiesLoader {
 	
 	@SuppressWarnings("unused")
 	private static XResult loadFrom(Properties properties, IOSupplier<InputStream> opener) {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_FROM_FILE);
 		try (InputStream stream = opener.get()) {
 			properties.load(stream);
 			result.setValid();
@@ -50,7 +51,7 @@ public class PropertiesLoader {
 		Objects.requireNonNull(properties, "properties");
 		Objects.requireNonNull(loaderClass, "loaderClass");
 		Objects.requireNonNull(strName, "strName");
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_RESOURCE);
 		try (InputStream stream = loaderClass.getResourceAsStream(strName)) {
 			properties.load(stream);
 			result.setValid();
@@ -65,7 +66,7 @@ public class PropertiesLoader {
 		Objects.requireNonNull(pathDir, "pathDir");
 		Objects.requireNonNull(strName, "strName");
 		Path pathFile = pathDir.resolve(strName);
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_FROM_FILE);
 		try (InputStream stream = Files.newInputStream(pathFile)) {
 			properties.load(stream);
 			result.setValid();

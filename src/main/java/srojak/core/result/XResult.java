@@ -16,6 +16,7 @@
  */
 package srojak.core.result;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -33,6 +34,12 @@ public interface XResult {
 	 * @return The source location where the result object was created.
 	 */
 	SourceLocation getOriginator();
+	
+	/**
+	 * Get text of the activity being performed.
+	 * @return An object describing the activity.
+	 */
+	ObservedActivity getActivity();
 	
 	/**
 	 * Did the requested operation succeed?

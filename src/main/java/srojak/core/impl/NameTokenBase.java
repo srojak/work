@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.impl;
 
 import java.util.Objects;
 
-import srojak.core.impl.NameTokenCommon;
-import srojak.core.impl.NameTokenFixed;
+import srojak.core.NameToken;
 
 /**
  * @author Stephen

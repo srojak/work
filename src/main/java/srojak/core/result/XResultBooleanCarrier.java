@@ -14,35 +14,41 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.text;
+package srojak.core.result;
 
-import java.util.Objects;
-
-import srojak.core.Labeled;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.SourceLocation;
 
 /**
  * @author Stephen
  *
  */
-public abstract class LabeledEnvelopeBase<T>
-		implements Labeled<T> {
-	private final String _strLabel;
+public class XResultBooleanCarrier 
+		extends XResultCarrierBase 
+		implements XResultBoolean {
+	private boolean _result;
+	
+	public XResultBooleanCarrier(ObservedActivity activity) {
+		super(SourceLocation.caller(), activity);
+		_result = false;
+	}
 
 	/**
-	 * 
+	 * @param source
 	 */
-	protected LabeledEnvelopeBase(String strLabel) {
-		Objects.requireNonNull(strLabel, "strLabel");
-		_strLabel = strLabel;
+	public XResultBooleanCarrier(SourceLocation source, ObservedActivity activity) {
+		super(source, activity);
+		_result = false;
 	}
 
 	@Override
-	public boolean isLabelEqual(String strText) {
-		return _strLabel.equals(strText);
+	public boolean getResult() {
+		// TODO Auto-generated method stub
+		return _result;
 	}
 
-	@Override
-	public String toString() {
-		return _strLabel;
+	public void setResult(boolean bResult) {
+		_result = bResult;
+		markValid();
 	}
 }

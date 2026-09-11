@@ -19,6 +19,7 @@ package srojak.core.tools;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ArrayMethods {
@@ -100,5 +101,13 @@ public class ArrayMethods {
 			}
 		}
 		return true;		
+	}
+	
+	public static <T> void forEach(T[] array, Consumer<T> consumer) {
+		Objects.requireNonNull(array, "array");
+		Objects.requireNonNull(consumer, "consumer");
+		for (T item : array) {
+			consumer.accept(item);
+		}
 	}
 }

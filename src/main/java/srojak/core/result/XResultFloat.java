@@ -16,41 +16,16 @@
  */
 package srojak.core.result;
 
-import srojak.core.observe.ObservedActivity;
-import srojak.core.observe.SourceLocation;
-
 /**
  * @author Stephen
  *
  */
-public class XResultLongCarrier 
-		extends XResultCarrierBase 
-		implements XResultLong {
-	private long _result;
-	
-	/**
-	 * Constructor.
-	 */
-	public XResultLongCarrier(ObservedActivity activity) {
-		super(SourceLocation.caller(), activity);
-		_result = -1L;
-	}
+public interface XResultFloat 
+		extends XResult {
 
 	/**
-	 * @param source
+	 * Get the result of successful completion of an operation.
+	 * @return The result returned by the operation.
 	 */
-	public XResultLongCarrier(SourceLocation source, ObservedActivity activity) {
-		super(source, activity);
-		_result = -1L;
-	}
-
-	@Override
-	public long getResult() {
-		return _result;
-	}
-
-	public void setResult(long result) {
-		_result = result;
-		markValid();
-	}
+	float getResult();
 }

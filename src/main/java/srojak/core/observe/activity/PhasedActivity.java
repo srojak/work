@@ -14,43 +14,39 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.result;
-
-import srojak.core.observe.ObservedActivity;
-import srojak.core.observe.SourceLocation;
+package srojak.core.observe.activity;
 
 /**
  * @author Stephen
  *
  */
-public class XResultLongCarrier 
-		extends XResultCarrierBase 
-		implements XResultLong {
-	private long _result;
-	
-	/**
-	 * Constructor.
-	 */
-	public XResultLongCarrier(ObservedActivity activity) {
-		super(SourceLocation.caller(), activity);
-		_result = -1L;
-	}
+public class PhasedActivity
+		extends SingleActivity {
+	private String _phase;
 
 	/**
-	 * @param source
+	 * @param strActivity
 	 */
-	public XResultLongCarrier(SourceLocation source, ObservedActivity activity) {
-		super(source, activity);
-		_result = -1L;
+	public PhasedActivity(String strActivity) {
+		super(strActivity);
+		_phase = null;
+	}
+	
+	public PhasedActivity(String strActivity, String strPhase) {
+		super(strActivity);
+		_phase = strPhase;
+	}
+
+	public void setPhase(String strPhase) {
+		_phase = strPhase;
 	}
 
 	@Override
-	public long getResult() {
-		return _result;
-	}
-
-	public void setResult(long result) {
-		_result = result;
-		markValid();
+	public String describe() {
+		if (_phase == null) {
+			return _activity;
+		} else {
+			return _activity + "/" + _phase;
+		}
 	}
 }

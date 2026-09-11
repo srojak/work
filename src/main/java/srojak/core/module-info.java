@@ -32,6 +32,7 @@ module srojak.core {
 	exports srojak.core.logic;
 	exports srojak.core.mutable;
 	exports srojak.core.observe;
+	exports srojak.core.observe.activity;
 	exports srojak.core.observe.writers;
 	exports srojak.core.reflect;
 	exports srojak.core.result;

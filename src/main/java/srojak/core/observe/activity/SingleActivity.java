@@ -14,43 +14,30 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.result;
+package srojak.core.observe.activity;
+
+import java.util.Objects;
 
 import srojak.core.observe.ObservedActivity;
-import srojak.core.observe.SourceLocation;
 
 /**
  * @author Stephen
  *
  */
-public class XResultLongCarrier 
-		extends XResultCarrierBase 
-		implements XResultLong {
-	private long _result;
+public class SingleActivity 
+		implements ObservedActivity {
+	protected final String _activity;
 	
-	/**
-	 * Constructor.
-	 */
-	public XResultLongCarrier(ObservedActivity activity) {
-		super(SourceLocation.caller(), activity);
-		_result = -1L;
-	}
-
-	/**
-	 * @param source
-	 */
-	public XResultLongCarrier(SourceLocation source, ObservedActivity activity) {
-		super(source, activity);
-		_result = -1L;
+	public SingleActivity(String strActivity) {
+		Objects.requireNonNull(strActivity, "strActivity");
+		if (strActivity.isBlank()) {
+			throw new IllegalArgumentException("strActivity is blank");
+		}
+		_activity = strActivity;
 	}
 
 	@Override
-	public long getResult() {
-		return _result;
-	}
-
-	public void setResult(long result) {
-		_result = result;
-		markValid();
+	public String describe() {
+		return _activity;
 	}
 }

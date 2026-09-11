@@ -46,4 +46,16 @@ public interface StateChangeCodes {
 	 * The state is the state of the primary content.
 	 */
 	public static final int SC_CONTENT = 14;
+	
+	public static final int SC_TEXT_BOLD = 20;
+	
+	public static final int SC_TEXT_ITALIC = 21;
+	
+	public static final int SC_TEXT_UNDERLINE = 22;
+	
+	public static final int SC_TEXT_STRIKETHROUGH = 23;
+	
+	public static final int SC_TEXT_SUBSCRIPT = 24;
+	
+	public static final int SC_TEXT_SUPERSCRIPT = 25;
 }

@@ -14,39 +14,34 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.text;
+package srojak.core.observe.activity;
 
-import srojak.core.tools.StringMethods;
+import srojak.core.observe.ObservedActivity;
 
 /**
  * @author Stephen
  *
  */
-public class SequentialNumberLabeler<T> 
-		implements SequentialLabeler<T> {
-	private final int _nPositions;
-	private final int _nOrigin;
-	private int _nValue;
-	
-	public SequentialNumberLabeler(int nPositions, boolean bStartAtOne) {
-		if (nPositions < 1) {
-			throw new IllegalArgumentException("nPositions must be positive");
-		}
-		_nPositions = nPositions;
-		_nOrigin = bStartAtOne ? 1 : 0;
-		_nValue = _nOrigin;
+public class SingleNumberedActivity 
+		extends SingleActivity {
+	private int _sequence;
+
+	/**
+	 * @param strActivity
+	 */
+	public SingleNumberedActivity(String strActivity) {
+		super(strActivity);
+		_sequence = 0;
+	}
+
+	public ObservedActivity instance(int nSequence) {
+		_sequence = nSequence;
+		return this;
 	}
 
 	@Override
-	public void reset() {
-		_nValue = _nOrigin;
+	public String describe() {
+		// TODO Auto-generated method stub
+		return String.format("%s (%d)", _activity, _sequence);
 	}
-
-	@Override
-	public LabeledEnvelope<T> generateNext(T value) {
-		String strLabel = "#" + StringMethods.leftPadToSize(String.valueOf(_nValue), '0', _nPositions);
-		_nValue++;
-		return new LabeledEnvelope<T>(value, strLabel);
-	}
-
 }

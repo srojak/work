@@ -18,6 +18,7 @@ package srojak.core.reflect;
 
 import java.util.Objects;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 
@@ -88,7 +89,7 @@ public class PackageClassLocator
 	}
 	
 	public XResult tryValidate() {
-		XResultStatusCarrier result = new XResultStatusCarrier();
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.VALIDATE);
 		boolean bResult = false;
 		try {
 			bResult = validateInner();

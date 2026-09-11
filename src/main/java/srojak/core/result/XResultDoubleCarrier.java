@@ -16,6 +16,7 @@
  */
 package srojak.core.result;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -30,16 +31,16 @@ public class XResultDoubleCarrier
 	/**
 	 * Constructor.
 	 */
-	public XResultDoubleCarrier() {
-		super(SourceLocation.caller());
+	public XResultDoubleCarrier(ObservedActivity activity) {
+		super(SourceLocation.caller(), activity);
 		_result = Double.NaN;
 	}
 	
 	/**
 	 * @param source
 	 */
-	public XResultDoubleCarrier(SourceLocation source) {
-		super(source);
+	public XResultDoubleCarrier(SourceLocation source, ObservedActivity activity) {
+		super(source, activity);
 		_result = Double.NaN;
 	}
 

@@ -20,32 +20,32 @@ package srojak.core;
  * @author Stephen
  *
  */
-public class EmptyCollectionException
+public class DuplicateKeyException 
 		extends RuntimeException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4929014033385070794L;
+	private static final long serialVersionUID = -5458744547333925198L;
 
 	/**
 	 * 
 	 */
-	public EmptyCollectionException() {
+	public DuplicateKeyException() {
 		super();
 	}
 
 	/**
 	 * @param message
 	 */
-	public EmptyCollectionException(String message) {
+	public DuplicateKeyException(String message) {
 		super(message);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public EmptyCollectionException(Throwable cause) {
+	public DuplicateKeyException(Throwable cause) {
 		super(cause);
 	}
 
@@ -53,7 +53,7 @@ public class EmptyCollectionException
 	 * @param message
 	 * @param cause
 	 */
-	public EmptyCollectionException(String message, Throwable cause) {
+	public DuplicateKeyException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -63,7 +63,8 @@ public class EmptyCollectionException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public EmptyCollectionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public DuplicateKeyException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

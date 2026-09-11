@@ -19,7 +19,6 @@ package srojak.core.impl;
 import java.util.Objects;
 
 import srojak.core.NameToken;
-import srojak.core.NameTokenBase;
 
 /**
  * @author Stephen

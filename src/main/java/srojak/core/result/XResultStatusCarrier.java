@@ -16,6 +16,7 @@
  */
 package srojak.core.result;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -28,15 +29,15 @@ public class XResultStatusCarrier
 	/**
 	 * Constructor.
 	 */
-	public XResultStatusCarrier() {
-		super(SourceLocation.caller());
+	public XResultStatusCarrier(ObservedActivity activity) {
+		super(SourceLocation.caller(), activity);
 	}
 
 	/**
 	 * @param source
 	 */
-	public XResultStatusCarrier(SourceLocation source) {
-		super(source);
+	public XResultStatusCarrier(SourceLocation source, ObservedActivity activity) {
+		super(source, activity);
 	}
 	
 	/**

@@ -23,33 +23,33 @@ import srojak.core.observe.SourceLocation;
  * @author Stephen
  *
  */
-public class XResultLongCarrier 
+public class XResultCharCarrier 
 		extends XResultCarrierBase 
-		implements XResultLong {
-	private long _result;
+		implements XResultChar {
+	private char _result;
 	
 	/**
 	 * Constructor.
 	 */
-	public XResultLongCarrier(ObservedActivity activity) {
+	public XResultCharCarrier(ObservedActivity activity) {
 		super(SourceLocation.caller(), activity);
-		_result = -1L;
+		_result = '\0';
 	}
 
 	/**
 	 * @param source
 	 */
-	public XResultLongCarrier(SourceLocation source, ObservedActivity activity) {
+	public XResultCharCarrier(SourceLocation source, ObservedActivity activity) {
 		super(source, activity);
-		_result = -1L;
+		_result = '\0';
 	}
 
 	@Override
-	public long getResult() {
+	public char getResult() {
 		return _result;
 	}
 
-	public void setResult(long result) {
+	public void setResult(char result) {
 		_result = result;
 		markValid();
 	}

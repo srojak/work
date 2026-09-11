@@ -17,7 +17,9 @@
 package srojak.core.result;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 
@@ -28,12 +30,15 @@ import srojak.core.observe.SourceLocation;
 public abstract class XResultCarrierBase
 		implements XResult {
 	private SourceLocation _origin;
+	private ObservedActivity _activity;
 	private boolean _bValid;
 	private Exception _exception;
 
-	protected XResultCarrierBase(SourceLocation source) {
+	protected XResultCarrierBase(SourceLocation source, ObservedActivity activity) {
 		Objects.requireNonNull(source, "source");
+		Objects.requireNonNull(activity, "activity");
 		_origin = source;
+		_activity = activity;
 		_bValid = false;
 		_exception = null;
 	}
@@ -57,6 +62,17 @@ public abstract class XResultCarrierBase
 		_bValid = true;
 	}
 	
+	public <A extends ObservedActivity> A getActivityAs() {
+		@SuppressWarnings("unchecked")
+		A activity = (A) _activity;
+		return activity;
+	}
+	
+	public void setActivity(ObservedActivity activity) {
+		Objects.requireNonNull(activity, "activity");
+		_activity = activity;
+	}
+	
 	/**
 	 * Copy another result into this result.
 	 * 
@@ -67,6 +83,23 @@ public abstract class XResultCarrierBase
 	public void copyFrom(XResult result) {
 		Objects.requireNonNull(result, "result");
 		_origin = result.getOriginator();
+		_activity = result.getActivity();
+		_bValid = result.isValid();
+		_exception = result.getException();
+	}
+	
+	/**
+	 * Copy another result into this result with defined handing for the activity.
+	 * 
+	 * A method would use this to overlay another result from a method it called that failed
+	 * 		so that the caller has the actual origin and exception from the source of the exception.
+	 * @param result The result from the subordinate method.
+	 */
+	public void copyFrom(XResult result, BiFunction<XResultCarrierBase, ObservedActivity, ObservedActivity> transferActivity) {
+		Objects.requireNonNull(result, "result");
+		Objects.requireNonNull(transferActivity, "transferActivity");
+		_origin = result.getOriginator();
+		_activity = transferActivity.apply(this, result.getActivity());
 		_bValid = result.isValid();
 		_exception = result.getException();
 	}
@@ -80,6 +113,15 @@ public abstract class XResultCarrierBase
 	@Override
 	public SourceLocation getOriginator() {
 		return _origin;
+	}
+
+	/**
+	 * Get text of the activity being performed.
+	 * @return An object describing the activity.
+	 */
+	@Override
+	public ObservedActivity getActivity() {
+		return _activity;
 	}
 
 	/**

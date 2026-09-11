@@ -14,15 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
-
 /**
  * @author Stephen
  *
  */
-public interface LabeledObject {
-	String toString();
-	boolean isLabelEqual(String strText);
-	boolean hasObject();
-	Object getObject();
-}
+package srojak.core.observe.activity;

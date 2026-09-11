@@ -14,14 +14,22 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.text;
+package srojak.core.observe;
+
+import srojak.core.observe.activity.SingleActivity;
 
 /**
  * @author Stephen
  *
  */
-public interface SequentialLabeler<T> {
+public interface ObservedActivity {
+
+	String describe();
 	
-	void reset();
-	LabeledEnvelope<T> generateNext(T value);
+	public static final ObservedActivity READ_FROM_FILE = new SingleActivity("read from file");
+	public static final ObservedActivity READ_RESOURCE = new SingleActivity("read resource");
+	public static final ObservedActivity READ_SCHEMA = new SingleActivity("read schema");
+	public static final ObservedActivity SCALAR_PARSE = new SingleActivity("parse scalar");
+	public static final ObservedActivity VALIDATE = new SingleActivity("validate");
+	public static final ObservedActivity WRITE_TO_FILE = new SingleActivity("write to file");
 }

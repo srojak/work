@@ -14,13 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.reflect;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
+import java.lang.reflect.Type;
+import java.util.stream.Stream;
 
 /**
  * @author Stephen
  *
  */
-public interface Labeled<T>
-		extends LabeledObject, WrappedEquatable<T> {
+public interface ReflectedClass 
+		extends Type, Member {
+	
+	Class<?> getReflectedClass();
+	
+	Package getPackage();
+	
+	Module getModule();
+	
+	String getSimpleName();
+	
+	boolean hasAnnotations();
+	
+	Stream<Annotation> getAnnotationsAsStream();
+	
+	String metadataToString();
 
 }

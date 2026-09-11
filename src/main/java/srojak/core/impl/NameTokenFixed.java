@@ -16,8 +16,6 @@
  */
 package srojak.core.impl;
 
-import srojak.core.NameTokenBase;
-
 /**
  * @author Stephen
  *

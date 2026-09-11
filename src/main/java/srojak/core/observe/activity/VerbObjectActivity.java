@@ -14,55 +14,38 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.text;
+package srojak.core.observe.activity;
+
+import java.util.Objects;
+
+import srojak.core.observe.ObservedActivity;
 
 /**
  * @author Stephen
  *
  */
-public class LabeledEnvelopeStub<T>
-	extends LabeledEnvelopeBase<T> {
-
-	/**
-	 * @param strLabel
-	 */
-	public LabeledEnvelopeStub(String strLabel) {
-		super(strLabel);
+public class VerbObjectActivity 
+		implements ObservedActivity {
+	private final String _verb;
+	private String _object;
+	
+	private static final String NULL = "(null)";
+	
+	public VerbObjectActivity(String strVerb, Object objObject) {
+		Objects.requireNonNull(strVerb, "strVerb");
+		if (strVerb.isBlank()) {
+			throw new IllegalArgumentException("strVerb is blank");
+		}
+		_verb = strVerb;
+		_object = objObject == null ? NULL : objObject.toString(); 
+	}
+	
+	public void changeObject(Object objNew) {
+		_object = objNew == null ? NULL : objNew.toString(); 
 	}
 
 	@Override
-	public T getWrapped() {
-		return null;
+	public String describe() {
+		return _verb + " " + _object;
 	}
-
-	@Override
-	public boolean isValueEqual(T value) {
-		return false;
-	}
-
-	@Override
-	public boolean hasObject() {
-		return false;
-	}
-
-	@Override
-	public Object getWrappedObject() {
-		return null;
-	}
-
-	@Override
-	public Object getObject() {
-		return null;
-	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return false;
-	}
-
 }
