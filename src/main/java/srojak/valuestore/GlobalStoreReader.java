@@ -20,7 +20,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.reflect.PackageClassLocator;
 
 /**
@@ -37,7 +37,7 @@ public class GlobalStoreReader {
 	 * Gets the current observation writer in use for the global stores.
 	 * @return the current observation writer.
 	 */
-	public ObservationWriter getObservationWriter() {
+	public ObservationCollector getObservationWriter() {
 		return SingletonStore.getObservationWriter();
 	}
 	
@@ -46,7 +46,7 @@ public class GlobalStoreReader {
 	 * @param writer the observation writer to use.
 	 * @throws NullPointerException if {@code writer} is {@code null}.
 	 */
-	public void setObservationWriter(ObservationWriter writer) {
+	public void setObservationWriter(ObservationCollector writer) {
 		Objects.requireNonNull(writer, "writer");
 		SingletonStore.setObservationWriter(writer);
 	}

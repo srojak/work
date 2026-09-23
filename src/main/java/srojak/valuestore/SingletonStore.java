@@ -22,8 +22,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterNull;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.reflect.PackageClassLocator;
 
 /**
@@ -33,19 +32,19 @@ import srojak.core.reflect.PackageClassLocator;
  */
 final class SingletonStore {
 	private static final HashMap<PackageClassLocator, StoreValueKeyed> _map;
-	private static ObservationWriter _writer;
+	private static ObservationCollector _collectObs;
 	
 	static {
 		_map = new HashMap<PackageClassLocator, StoreValueKeyed>();
-		_writer = new ObservationWriterNull();
+		_collectObs = ObservationCollector.makeInstance();
 	}
 	
-	public static ObservationWriter getObservationWriter() {
-		return _writer;
+	public static ObservationCollector getObservationWriter() {
+		return _collectObs;
 	}
 	
-	public static void setObservationWriter(ObservationWriter writer) {
-		_writer = writer;
+	public static void setObservationWriter(ObservationCollector writer) {
+		_collectObs = writer;
 	}
 	
 	public static int size() {
@@ -59,12 +58,12 @@ final class SingletonStore {
 	public static StoreValueKeyed getStore(PackageClassLocator locator) {
 		StoreValueKeyed store = _map.get(locator);
 		if (store != null) {
-			_writer.buildAndWrite(ObsLevel.DEBUG2, sb -> {
+			_collectObs.buildAndWrite(ObsLevel.DEBUG2, sb -> {
 				sb.append("retrieving store for ");
 				sb.append(locator);
 			});
 		} else {
-			_writer.buildAndWrite(ObsLevel.WARN, sb -> {
+			_collectObs.buildAndWrite(ObsLevel.WARN, sb -> {
 				sb.append("could not retrieve store for ");
 				sb.append(locator);
 			});
@@ -82,7 +81,7 @@ final class SingletonStore {
 			Objects.requireNonNull(store, "created store");
 			_map.put(locator, store);
 			final int nSize = store.size();
-			_writer.buildAndWrite(ObsLevel.DEBUG, sb -> {
+			_collectObs.buildAndWrite(ObsLevel.DEBUG, sb -> {
 				sb.append("created store for ");
 				sb.append(locator);
 				sb.append(" with ");
@@ -90,7 +89,7 @@ final class SingletonStore {
 				sb.append(" entries");
 			});
 		} else {
-			_writer.buildAndWrite(ObsLevel.DEBUG2, sb -> {
+			_collectObs.buildAndWrite(ObsLevel.DEBUG2, sb -> {
 				sb.append("retrieving store for ");
 				sb.append(locator);
 			});
@@ -103,7 +102,7 @@ final class SingletonStore {
 		Objects.requireNonNull(store, "store");
 		_map.put(locator, store);
 		final int nSize = store.size();
-		_writer.buildAndWrite(ObsLevel.DEBUG, sb -> {
+		_collectObs.buildAndWrite(ObsLevel.DEBUG, sb -> {
 			sb.append("created store for ");
 			sb.append(locator);
 			sb.append(" with ");
