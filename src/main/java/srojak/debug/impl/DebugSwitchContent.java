@@ -25,8 +25,8 @@ import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
-import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
@@ -40,7 +40,7 @@ import srojak.debug.DebugSwitchKey;
  */
 public final class DebugSwitchContent 
 		implements DebugSwitch {
-	private final DebugSwitchKey _key;
+	final DebugSwitchKey _key;
 	private ObsLevel _level;
 	private boolean _bShowSource;
 	private SourceDetail _sdetail;
@@ -93,6 +93,17 @@ public final class DebugSwitchContent
 
 	@Override
 	public boolean isLevelAtLeast(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
+		return _level.isLevelAtLeast(level);
+	}
+
+	@Override
+	public boolean canWrite() {
+		return true;
+	}
+
+	@Override
+	public boolean canWriteAt(ObsLevel level) {
 		Objects.requireNonNull(level, "level");
 		return _level.isLevelAtLeast(level);
 	}
@@ -326,19 +337,19 @@ public final class DebugSwitchContent
 	}
 
 	@Override
-	public void writeDiagnostic(String strText) {
-		DebugNexusCore.writeDiagnostic(strText);		
+	public void writeDiagnostic(SourceLocation locOrigin, String strText) {
+		DebugNexusCore.writeDiagnostic(locOrigin, strText);		
 	}
 
 	@Override
-	public ObservationCollector createCollector(ObsLevel level) {
+	public SingleObservationCollector createCollector(ObsLevel level) {
 		ObsLevel.validateEventLevel(level);
 		SourceLocation loc = SourceLocation.caller();
 		return new DebugObsCollectorObj(this, loc, level);
 	}
 
 	@Override
-	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
+	public void write(SingleObservationCollector collector, SourceLocation locOrigin, String strText) {
 		if (isLevelAtLeast(collector.getLevel())) {
 			StringBuilder sb = new StringBuilder();
 			writeSourceLocation(sb, locOrigin, _sdetail);

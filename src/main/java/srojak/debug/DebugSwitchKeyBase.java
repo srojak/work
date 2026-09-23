@@ -26,7 +26,7 @@ import srojak.core.reflect.PackageClassLocator;
  *
  */
 public sealed abstract class DebugSwitchKeyBase 
-		implements DebugSwitchKey, Comparable<DebugSwitchKeyBase>
+		implements DebugSwitchKey
 		permits DebugSwitchKeyClass, DebugSwitchKeyClassSubject {
 	private final PackageClassLocator _locator;
 	private final String _strFullName;
@@ -49,8 +49,8 @@ public sealed abstract class DebugSwitchKeyBase
 	public DebugSwitchKeyBase(PackageClassLocator locator, String strExtension) {
 		Objects.requireNonNull(locator, "locator");
 		Objects.requireNonNull(strExtension, "strExtension");
-		if (strExtension.isEmpty()) {
-			throw new IllegalArgumentException("strExtension is empty");
+		if (strExtension.isBlank()) {
+			throw new IllegalArgumentException("strExtension is blank");
 		}
 		_locator = locator;
 		_strFullName = _locator.getFullName() + "!" + strExtension;
@@ -60,8 +60,8 @@ public sealed abstract class DebugSwitchKeyBase
 	public DebugSwitchKeyBase(Class<?> classOwner, String strExtension) {
 		Objects.requireNonNull(classOwner, "classOwner");
 		Objects.requireNonNull(strExtension, "strExtension");
-		if (strExtension.isEmpty()) {
-			throw new IllegalArgumentException("strExtension is empty");
+		if (strExtension.isBlank()) {
+			throw new IllegalArgumentException("strExtension is blank");
 		}
 		_locator = new PackageClassLocator(classOwner);
 		_strFullName = _locator.getFullName() + "!" + strExtension;
@@ -111,13 +111,13 @@ public sealed abstract class DebugSwitchKeyBase
 	}
 	
 	@Override
-	public int compareTo(DebugSwitchKeyBase o) {
+	public int compareTo(DebugSwitchKey o) {
 		if (this == o) {
 			return 0;
 		} else if (o == null) {
 			return 1;
 		} else {
-			int nCompar = _locator.compareTo(o._locator);
+			int nCompar = _locator.compareTo(o.getClassLocator());
 			if (nCompar == 0) {
 				if (hasSubjectName()) {
 					if (o.hasSubjectName()) {

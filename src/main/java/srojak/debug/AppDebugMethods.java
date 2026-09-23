@@ -20,8 +20,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import srojak.core.EnvironmentCharacteristicException;
+import srojak.core.backplane.ApplicationBackplane;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
+import srojak.core.props.DebugProperties;
+import srojak.core.props.DebugPropertyKeys;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultOf;
 import srojak.core.result.XResultStatusCarrier;
@@ -34,18 +37,14 @@ import srojak.debug.impl.DebugNexusCore;
 public class AppDebugMethods
 		implements DebugPropertyKeys {
 
-	private static final DebugProperties _properties = DebugNexusCore.getProperties();
+	private static final DebugProperties _properties = ApplicationBackplane.getDebugProperties();
 	private static final ObservedActivity _activityCreate = new SingleActivity("create log file");
+	private static final boolean _useSourceObject = true;
 	
 	public static void setAutoFlush(boolean bState) {
-		DebugNexusCore.setAutoFlush(bState);
+		// TODO: are we keeping this?
 	}
-	
-	public static XResult readDebugPropertiesFromCurrentDir() {
-		XResult result = _properties.loadFromCurrentDirectory(DebugNexusCore.PROPERTIES_FILE_NAME);
-		return result;
-	}
-	
+
 	public static XResult tryCreateLogFile(Class<?> classApp, String strPrefix) {
 		Objects.requireNonNull(classApp, "classApp");
 		XResultStatusCarrier result = new XResultStatusCarrier(_activityCreate);
@@ -57,11 +56,17 @@ public class AppDebugMethods
 			return result;
 		}
 		Path pathLogDir = Path.of(strPath);
-		XResultOf<DebugWriterLogFile> resultCreate
-			= DebugWriterLogFile.tryCreate(pathLogDir, classApp, strPrefix);
-		result.copyFrom(resultCreate);
-		if (resultCreate.isValid()) {
-			DebugNexusCore.setWriter(resultCreate.getResult());
+		if (_useSourceObject) {
+			DebugLogFileWriterSource source = new DebugLogFileWriterSource(pathLogDir, strPrefix);
+			XResult resultCreate = source.useLogFile(classApp);
+			result.copyFrom(resultCreate);
+		} else {
+			XResultOf<DebugWriterLogFile> resultCreate
+				= DebugWriterLogFile.tryCreate(pathLogDir, classApp, strPrefix);
+			result.copyFrom(resultCreate);
+			if (resultCreate.isValid()) {
+				DebugNexusCore.setWriter(resultCreate.getResult());
+			}
 		}
 		return result;
 	}

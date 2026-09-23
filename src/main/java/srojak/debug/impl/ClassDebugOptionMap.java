@@ -17,9 +17,9 @@
 package srojak.debug.impl;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.ClassDebugOptions;
@@ -73,7 +73,11 @@ public class ClassDebugOptionMap
 	}
 
 	@Override
-	public List<DebugOptionNameValue> getOptions() {
-		return List.copyOf(_mapOptions.values());
+	public Stream<DebugOptionNameValue> getOptions() {
+		return _mapOptions.values().stream().map(o -> (DebugOptionNameValue) o);
+	}
+	
+	Stream<ClassDebugOptionEntry> getOptionsPrivate() {
+		return _mapOptions.values().stream();
 	}
 }

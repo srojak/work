@@ -22,6 +22,7 @@ import srojak.core.observe.ObsLevel;
  * @author Stephen
  *
  */
+@Deprecated(forRemoval = true)
 public interface DebugWriter {
 	void writeln(ObsLevel level, String strText);
 	void writeDiagnostic(String strText);

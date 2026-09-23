@@ -23,7 +23,9 @@ import srojak.core.reflect.PackageClassLocator;
  *
  * The interface for a key for a debug switch.
  */
-public interface DebugSwitchKey {
+public sealed interface DebugSwitchKey
+		extends Comparable<DebugSwitchKey>
+	permits DebugSwitchKeyBase {
 	
 	/**
 	 * Get the class locator for the key.

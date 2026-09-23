@@ -14,15 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.debug;
+package srojak.debug.impl;
+
+import java.util.Comparator;
 
 /**
  * @author Stephen
  *
  */
-public interface DebugNexusConsFlags {
-	
-	public static final int CONS_NONE = 0;
-	public static final int CONS_CAN_MODIFY = 01;
+public class ClassDebugStoreComparatorByKey 
+		implements Comparator<ClassDebugStore> {
+
+	@Override
+	public int compare(ClassDebugStore o1, ClassDebugStore o2) {
+		return o1.getLocator().compareTo(o2.getLocator());
+	}
 
 }

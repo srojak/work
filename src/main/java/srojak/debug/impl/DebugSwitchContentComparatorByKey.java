@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.debug;
+package srojak.debug.impl;
 
+import java.util.Comparator;
 
 /**
- * Recognized keys in the properties file.
- * 
  * @author Stephen
  *
  */
-public interface DebugPropertyKeys {
-	public static final String LOG_DIR = "dir.log";
-	public static final String DIAG_NEW_SWITCH = "diag.new.switch";
-	public static final String DIAG_NEW_CLASS_OPTIONS = "diag.new.classoptions";
-	public static final String DIAG_SWITCH_CASCADE = "diag.switch.cascade";
+public class DebugSwitchContentComparatorByKey 
+		implements Comparator<DebugSwitchContent> {
+
+	@Override
+	public int compare(DebugSwitchContent o1, DebugSwitchContent o2) {
+		return o1._key.compareTo(o2._key);
+	}
+
 }

@@ -16,28 +16,23 @@
  */
 package srojak.debug;
 
-import java.io.InputStream;
-
-import srojak.core.io.ResourceStreamProvider;
+import srojak.core.io.CommonResourceStreamProviderBase;
+import srojak.core.io.ResourceLocator;
 
 /**
  * @author Stephen
  *
  */
 public class DebugConfigSchema
-		implements ResourceStreamProvider {
-	private static final ClassLoader _loader;
+		extends CommonResourceStreamProviderBase {
 	
+	private static final ResourceLocator _locResource;
+
 	static {
-		_loader = DebugConfigSchema.class.getClassLoader();
+		_locResource = new ResourceLocator(DebugConfigSchema.class, "debugs.xsd");
 	}
 	
 	public DebugConfigSchema() {
-		
-	}
-	
-	@Override
-	public InputStream getResource() {
-		return _loader.getResourceAsStream("debugs.xsd");
+		super(_locResource);
 	}
 }

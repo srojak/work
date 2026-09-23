@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsPassThroughList;
-import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.ObservationCommonWriter;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.TraceLevel;
@@ -37,6 +37,8 @@ import srojak.core.reflect.PackageClassLocator;
  */
 public interface DebugSwitch 
 		extends ObservationCommonWriter {
+	
+	boolean isLevelAccepted(ObsLevel level);
 	
 	/**
 	 * Get the key for the debug switch.
@@ -63,7 +65,7 @@ public interface DebugSwitch
 	boolean showSourceLocations();
 	
 	/**
-	 * Get the name of the control set tht defined this switch, if it was defined
+	 * Get the name of the control set that defined this switch, if it was defined
 	 * by a control set.
 	 * @return The name of the defining control set, or an empty string.
 	 */
@@ -183,7 +185,7 @@ public interface DebugSwitch
 	 * @return an observation collector, which will be active if {@code level} is a level
 	 * 		for which the switch is accepting.
 	 */
-	ObservationCollector createCollector(ObsLevel level);
+	SingleObservationCollector createCollector(ObsLevel level);
 	
 	/**
 	 * Create a passthrough list for use with a call to write to this debug switch.

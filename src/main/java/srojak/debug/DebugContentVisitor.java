@@ -14,26 +14,18 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.debug.impl;
+package srojak.debug;
 
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.SingleObservationCollectorObj;
-import srojak.debug.DebugSwitch;
+import srojak.core.reflect.PackageClassLocator;
 
 /**
  * @author Stephen
  *
  */
-public class DebugObsCollectorObj
-		extends SingleObservationCollectorObj {
+public interface DebugContentVisitor {
 
-	/**
-	 * @param writer
-	 * @param level
-	 */
-	public DebugObsCollectorObj(DebugSwitch writer, SourceLocation locOrigin, ObsLevel level) {
-		super(writer, level, locOrigin);
-	}
-
+	void visitClassSwitch(DebugSwitch sw);
+	void visitSubjectSwitch(DebugSwitch sw);
+	void visitClassOption(DebugOptionNameValue option);
+	void endClass(PackageClassLocator locator);
 }

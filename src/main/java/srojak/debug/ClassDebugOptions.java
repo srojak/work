@@ -16,7 +16,7 @@
  */
 package srojak.debug;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import srojak.core.reflect.PackageClassLocator;
 
@@ -29,5 +29,5 @@ public interface ClassDebugOptions {
 	boolean hasOption(String strName);
 	int getOptionValue(String strName);
 	boolean isOptionValueNonZero(String strName);
-	List<DebugOptionNameValue> getOptions();
+	Stream<DebugOptionNameValue> getOptions();
 }

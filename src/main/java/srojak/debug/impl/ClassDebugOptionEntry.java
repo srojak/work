@@ -28,7 +28,7 @@ import srojak.debug.DebugOptionNameValue;
 public class ClassDebugOptionEntry
 		implements NameComparable, DebugOptionNameValue {
 	
-	private final String _name;
+	final String _name;
 	private int _value;
 	
 	public ClassDebugOptionEntry(String strName, int nValue) {

@@ -14,26 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.debug.impl;
-
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.SingleObservationCollectorObj;
-import srojak.debug.DebugSwitch;
+package srojak.debug;
 
 /**
  * @author Stephen
  *
  */
-public class DebugObsCollectorObj
-		extends SingleObservationCollectorObj {
-
-	/**
-	 * @param writer
-	 * @param level
-	 */
-	public DebugObsCollectorObj(DebugSwitch writer, SourceLocation locOrigin, ObsLevel level) {
-		super(writer, level, locOrigin);
-	}
+public interface DebugAccessConsFlags {
+	
+	public static final int CONS_NONE = 0;
+	public static final int CONS_CAN_MODIFY = 01;
+	public static final int CONS_UTEST = 02;
 
 }

@@ -23,19 +23,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.ObjIntConsumer;
 
+import srojak.core.backplane.ApplicationBackplane;
 import srojak.core.io.DatedFileNameMethods;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObsPassThroughList;
-import srojak.core.observe.ObservationCollector;
-import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
-import srojak.core.observe.SourceLocation;
 import srojak.core.observe.activity.SingleActivity;
-import srojak.core.observe.writers.ObservationWriterBase;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
 import srojak.core.tools.EnvTool;
@@ -46,8 +40,8 @@ import srojak.debug.impl.DebugNexusCore;
  *
  */
 public class DebugWriterLogFile
-		extends ObservationWriterBase
-		implements ObservationWriter {
+		extends ObservationWriterPrintStream {
+	// TODO: change base class
 	private final Path _pathDir;
 	private final Path _pathFile;
 	private final PrintStream _print;
@@ -59,6 +53,7 @@ public class DebugWriterLogFile
 	protected DebugWriterLogFile(Path pathDir, Class<?> classApp, String strPrefix)
 			throws IOException {
 		super();
+		// TODO: block level filtering
 		Objects.requireNonNull(pathDir, "pathDir");
 		Objects.requireNonNull(classApp, "classApp");
 		Objects.requireNonNull(strPrefix, "strPrefix");
@@ -72,11 +67,12 @@ public class DebugWriterLogFile
 		Files.createFile(_pathFile);
 		OutputStream streamOut = Files.newOutputStream(_pathFile);
 		_print = new PrintStream(streamOut);
+		assignPrintStream(_print);
 		_print.println("Java version " + EnvTool.getJavaVersion());
 		_print.println("log created for " + _strAppName + " on "
 				+ DebugNexusCore.FORMAT_TIME_STAMP.format(dtNow));
 		// TODO functionally organize, create a writer for the announcement
-		System.out.println("Created log file " + _pathFile);
+		ApplicationBackplane.writeToOutput(ObsLevel.INFO, "Created log file " + _pathFile);
 	}
 	
 	public Path getDirectoryPath() {
@@ -85,64 +81,6 @@ public class DebugWriterLogFile
 	
 	public Path getFilePath() {
 		return _pathFile;
-	}
-
-	@Override
-	public boolean isLevelAccepted(ObsLevel level) {
-		return true;
-	}
-
-	@Override
-	public void write(ObsLevel level, String strText) {
-		_print.print(level.getName());
-		_print.print(": ");
-		_print.println(strText);
-	}
-
-	@Override
-	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		message.accept(sb);
-		_print.println(sb.toString());
-	}
-
-	@Override
-	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		message.accept(sb, i);
-		_print.println(sb.toString());
-	}
-
-	@Override
-	public void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
-			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		messageBuilder.accept(sb, listPassThrough);
-		_print.println(sb.toString());
-	}
-
-	@Override
-	public void writeDiagnostic(String strText) {
-		_print.print("*DIAG: ");
-		_print.println(strText);
-	}
-
-	@Override
-	public void writeTimeStamp(ObsLevel level) {
-		_print.println(level.getName() + ": time " + getDateAndTimeStamp());
-	}
-	
-	@Override
-	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
-		write(collector.getLevel(), strText);
-	}
-	
-	@Override
-	public void flush() {
-		_print.flush();
 	}
 	
 	public static DebugWriterLogFile create(Path pathDir, Class<?> classApp, 
@@ -161,5 +99,4 @@ public class DebugWriterLogFile
 		}
 		return result;
 	}
-	
 }

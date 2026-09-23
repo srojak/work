@@ -16,24 +16,18 @@
  */
 package srojak.debug.impl;
 
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.SingleObservationCollectorObj;
-import srojak.debug.DebugSwitch;
+import java.util.Comparator;
 
 /**
  * @author Stephen
  *
  */
-public class DebugObsCollectorObj
-		extends SingleObservationCollectorObj {
+public class ClassDebugOptionEntryComparatorByName 
+		implements Comparator<ClassDebugOptionEntry> {
 
-	/**
-	 * @param writer
-	 * @param level
-	 */
-	public DebugObsCollectorObj(DebugSwitch writer, SourceLocation locOrigin, ObsLevel level) {
-		super(writer, level, locOrigin);
+	@Override
+	public int compare(ClassDebugOptionEntry o1, ClassDebugOptionEntry o2) {
+		return o1._name.compareTo(o2._name);
 	}
 
 }

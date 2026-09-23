@@ -22,14 +22,13 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import srojak.core.observe.HasObsLevel;
-import srojak.core.observe.HasSingleObservationWriter;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterContainerBase;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.specialized.IntegerCounter;
 import srojak.debug.impl.ClassDebugOptionEntry;
 import srojak.debug.impl.ClassDebugOptionMap;
+import srojak.debug.impl.ClassDebugStoreComparatorByKey;
 import srojak.debug.impl.DebugNexusCore;
 import srojak.debug.impl.DebugSwitchContent;
 
@@ -38,16 +37,16 @@ import srojak.debug.impl.DebugSwitchContent;
  *
  * The public class through which to read debug switches and options.
  */
-public final class DebugSwitchReader 
-		extends ObservationWriterContainerBase
-		implements HasSingleObservationWriter, HasObsLevel {
+public final class DebugContentReader 
+		implements HasObsLevel {
 	private ObsLevel _levelWrite;
+	
+	private ClassDebugStoreComparatorByKey COMPARE_STORE_BY_KEY = new ClassDebugStoreComparatorByKey();
 
 	/**
 	 * @param writer
 	 */
-	public DebugSwitchReader(ObservationWriter writer) {
-		super(writer);
+	public DebugContentReader() {
 		_levelWrite = ObsLevel.INFO;
 	}
 
@@ -74,7 +73,7 @@ public final class DebugSwitchReader
 	private void enumOptionsForClass(StringBuilder sb, PackageClassLocator locClass) {
 		ClassDebugOptionMap mapOptions = DebugNexusCore.getOptionsForClass(locClass);
 		if (mapOptions != null) {
-			List<DebugOptionNameValue> listOptions = mapOptions.getOptions();
+			List<DebugOptionNameValue> listOptions = mapOptions.getOptions().toList();
 			// can't sort this way
 			//listOptions.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 			sb.append("\n    options:");
@@ -112,33 +111,49 @@ public final class DebugSwitchReader
 		return counter.getValue();
 	}
 		
-	public int enumerateAllSwitches() {
+	public int enumerateAllSwitches(ObservationCollector collector) {
+		Objects.requireNonNull(collector, "collector");
 		StringBuilder sb = new StringBuilder("switches:");
 		List<DebugSwitchKey> listKeys = getSortedSwitchKeys();
 		int nSwitches = enumSwitches(sb, listKeys, loc -> { });
-		ObservationWriter writer = getObservationWriter();
-		writer.write(_levelWrite, sb.toString());
+		collector.write(_levelWrite, sb.toString());
 		return nSwitches;
 	}
 	
-	public int enumerateAllSwitchesForPackage(String strPackage) {
+	public int enumerateAllSwitchesForPackage(ObservationCollector collector, String strPackage) {
+		Objects.requireNonNull(collector, "collector");
 		Objects.requireNonNull(strPackage, "strPackage");
 		StringBuilder sb = new StringBuilder("switches for package");
 		sb.append(strPackage);
 		sb.append(":");
 		List<DebugSwitchKey> listKeys = getSortedSwitchKeysForPackage(strPackage);
-		int nSwitches =enumSwitches(sb, listKeys, loc -> { });
-		ObservationWriter writer = getObservationWriter();
-		writer.write(_levelWrite, sb.toString());
+		int nSwitches = enumSwitches(sb, listKeys, loc -> { });
+		collector.write(_levelWrite, sb.toString());
 		return nSwitches;
 	}
 	
-	public int enumerateAllSwitchesAndOptions() {
+	public int enumerateAllSwitchesAndOptions(ObservationCollector collector) {
+		Objects.requireNonNull(collector, "collector");
 		StringBuilder sb = new StringBuilder("switches:");
 		List<DebugSwitchKey> listKeys = getSortedSwitchKeys();
-		int nSwitches =enumSwitches(sb, listKeys, loc -> enumOptionsForClass(sb, loc));
-		ObservationWriter writer = getObservationWriter();
-		writer.write(_levelWrite, sb.toString());
+		int nSwitches = enumSwitches(sb, listKeys, loc -> enumOptionsForClass(sb, loc));
+		collector.write(_levelWrite, sb.toString());
 		return nSwitches;
+	}
+	
+	public void visitAllContent(DebugContentVisitor visitor) {
+		Objects.requireNonNull(visitor, "visitor");
+		DebugNexusCore.getAllClassEntries().sorted(COMPARE_STORE_BY_KEY).forEach(s -> {
+			s.visit(visitor);
+		});
+	}
+	
+	public void visitAllContentForPackage(DebugContentVisitor visitor, String strPackage) {
+		Objects.requireNonNull(visitor, "visitor");
+		Objects.requireNonNull(strPackage, "strPackage");
+		DebugNexusCore.getAllClassEntries().filter(s -> s.getLocator().getPackageName().equals(strPackage))
+			.sorted(COMPARE_STORE_BY_KEY).forEach(s -> {
+				s.visit(visitor);
+		});
 	}
 }

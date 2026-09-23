@@ -18,6 +18,7 @@ package srojak.debug;
 
 import java.util.Objects;
 
+import srojak.core.reflect.ClassReflector;
 import srojak.core.reflect.PackageClassLocator;
 
 /**
@@ -42,6 +43,11 @@ public class DebugSwitchTool {
 		return new DebugSwitchKeyClass(locator);
 	}
 	
+	public static DebugSwitchKey makeClassKey(ClassReflector reflector) {
+		Objects.requireNonNull(reflector, "reflector");
+		return new DebugSwitchKeyClass(reflector.getClass());
+	}
+	
 	public static DebugSwitchKey makeClassKey(String strPackage, String strClass) {
 		Objects.requireNonNull(strPackage, "strPackage");
 		Objects.requireNonNull(strClass, "strClass");
@@ -58,6 +64,12 @@ public class DebugSwitchTool {
 		Objects.requireNonNull(locator, "locator");
 		Objects.requireNonNull(strSubject, "strSubject");
 		return new DebugSwitchKeyClassSubject(locator, strSubject);
+	}
+	
+	public static DebugSwitchKey makeClassSubjectKey(ClassReflector reflector, String strSubject) {
+		Objects.requireNonNull(reflector, "reflector");
+		Objects.requireNonNull(strSubject, "strSubject");
+		return new DebugSwitchKeyClassSubject(reflector.getClass(), strSubject);
 	}
 	
 	public static DebugSwitchKey makeClassSubjectKey(String strPackage, String strClass,

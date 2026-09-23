@@ -14,26 +14,31 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.debug.impl;
+package srojak.debug;
 
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.SingleObservationCollectorObj;
-import srojak.debug.DebugSwitch;
+import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public class DebugObsCollectorObj
-		extends SingleObservationCollectorObj {
+public class DebugLogFileWriterSource 
+		extends DebugLogFileWriterSourceBase {
 
-	/**
-	 * @param writer
-	 * @param level
-	 */
-	public DebugObsCollectorObj(DebugSwitch writer, SourceLocation locOrigin, ObsLevel level) {
-		super(writer, level, locOrigin);
+	public DebugLogFileWriterSource(Path pathDir) {
+		super();
+		Objects.requireNonNull(pathDir, "pathDir");
+		setFilePath(formFilePath(pathDir, PREFIX_DEBUG));
 	}
-
+	
+	public DebugLogFileWriterSource(Path pathDir, String strPrefix) {
+		super();
+		Objects.requireNonNull(pathDir, "pathDir");
+		Objects.requireNonNull(strPrefix, "strPrefix");
+		if (strPrefix.isBlank()) {
+			throw new IllegalArgumentException("strPrefix is blank");
+		}
+		setFilePath( formFilePath(pathDir, strPrefix));
+	}
 }
