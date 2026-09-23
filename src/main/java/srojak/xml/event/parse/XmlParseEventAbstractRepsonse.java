@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.event.parse;
 
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Comment;

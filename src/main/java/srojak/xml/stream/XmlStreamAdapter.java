@@ -17,9 +17,9 @@
 package srojak.xml.stream;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 
-import srojak.core.io.FileExistence;
+import srojak.core.functional.IOSupplier;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResultInt;
 
 /**
@@ -28,7 +28,5 @@ import srojak.core.result.XResultInt;
  */
 public interface XmlStreamAdapter {
 
-	XResultInt readStream(InputStream streamIn);
-	XResultInt readFrom(Path pathFile, FileExistence exists);
-	XResultInt readFrom(String strPath, FileExistence exists);
+	XResultInt openAndRead(ObservedActivity activity, boolean bPermissive, IOSupplier<InputStream> supplierStream);
 }

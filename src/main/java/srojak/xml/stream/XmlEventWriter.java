@@ -27,18 +27,19 @@ import javax.xml.stream.events.XMLEvent;
 
 import srojak.core.collections.TStack;
 import srojak.xml.XmlIndenter;
+import srojak.xml.stream.factories.XmlStreamOutputFactory;
 /**
  * @author Stephen
  *
  */
 public class XmlEventWriter {
-	protected final XmlStreamOutputBuilder _builderEvent;
+	protected final XmlStreamOutputFactory _builderEvent;
 	protected final TStack<ElementEventName> _stackElements;
 	private XmlIndenter _indenter;
 	private InnerWriter _writer;
 	private XMLEventFactory _factoryEvents;
 
-	public XmlEventWriter(XmlStreamOutputBuilder builder) {
+	public XmlEventWriter(XmlStreamOutputFactory builder) {
 		Objects.requireNonNull(builder, "builder");
 		_builderEvent = builder;
 		_stackElements = new TStack<ElementEventName>();

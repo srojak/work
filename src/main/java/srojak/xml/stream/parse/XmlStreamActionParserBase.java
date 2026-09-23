@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.stream.parse;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,38 +26,39 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import srojak.core.collections.WorkItemMap;
 import srojak.core.containers.SingletonContainer;
 import srojak.core.data.DataErrorSeverity;
-import srojak.core.events.ObjectPropertyChangeEvent;
-import srojak.core.events.ObjectPropertyChangeListener;
-import srojak.core.observe.HasSingleObservationWriter;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterNull;
+import srojak.core.observe.SingleObservationCollector;
+import srojak.core.text.PartialTextBuffer;
+import srojak.core.text.TextBufferSegment;
 import srojak.core.tools.StringMethods;
+import srojak.xml.stream.XmlPendingTextCollector;
+import srojak.xml.stream.XmlStreamEventsDictionary;
+import srojak.xml.stream.XmlStreamMethods;
 import srojak.xml.stream.errors.XmlStreamParseErrorDescr;
 import srojak.xml.stream.errors.XmlStreamParseErrorEntry;
 import srojak.xml.stream.impl.StreamParserStateBasicCtnr;
-import srojak.xml.stream.impl.XmlParseMethods;
 import srojak.xml.stream.work.XmlStreamWorkItemMap;
 
 /**
  * @author Stephen
  *
+ * @see https://docs.oracle.com/javase/8/docs/api/javax/xml/stream/XMLStreamReader.html
  */
 public abstract class XmlStreamActionParserBase 
-		implements XMLStreamConstants, HasSingleObservationWriter {
+		implements XMLStreamConstants, XmlStreamParser {
 	private final StreamParserStateBasicCtnr _state;
 	private final XmlStreamWorkItemMap _mapWork;	
-	private final XmlParserOptions _options;
 	private final SingletonContainer<XMLStreamReader> _reader;
 	private final XmlPendingTextCollector _collectText;
 	private final LinkedList<XmlStreamParseErrorDescr> _listErrors;
-	private ObservationWriter _writerObs;
+	private ObservationCollector _collectObs;
+	private boolean _bRecordComments;
 	
 	protected static final XmlStreamEventsDictionary DICT_EVENTS;
+	protected static final boolean DEFAULT_TO_NULL_WRITER = false;
 	
 	static {
 		DICT_EVENTS = new XmlStreamEventsDictionary();
@@ -66,23 +67,11 @@ public abstract class XmlStreamActionParserBase
 	protected XmlStreamActionParserBase() {
 		_state = new StreamParserStateBasicCtnr();
 		_mapWork = new XmlStreamWorkItemMap();
-		_options = new XmlParserOptions();
 		_reader = new SingletonContainer<XMLStreamReader>();
 		_collectText = new XmlPendingTextCollector();
 		_listErrors = new LinkedList<XmlStreamParseErrorDescr>();
-		_writerObs = new ObservationWriterNull();
-		_options.addObjectPropertyChangeListener(new ObjectPropertyChangeListener() {
-
-			@Override
-			public void propertyChanged(ObjectPropertyChangeEvent event) {
-				if (event.isPropertyEqual(XmlParserOptions.PROPERTY_IGNORE_WS)) {
-					Boolean b = (Boolean) event.getNewValue();
-					_collectText.setIgnoreInitialWhiteSpace(b.booleanValue());
-				}
-				
-			}
-			
-		});
+		_collectObs = ObservationCollector.makeInstance();
+		_bRecordComments = false;
 	}
 	
 	protected final XmlStreamParserState getParserState() {
@@ -93,10 +82,6 @@ public abstract class XmlStreamActionParserBase
 		return _mapWork;
 	}
 	
-	public final XmlParserOptions getOptions() {
-		return _options;
-	}
-	
 	public final boolean hasParseErrors() {
 		return !_listErrors.isEmpty();
 	}
@@ -105,20 +90,47 @@ public abstract class XmlStreamActionParserBase
 		return List.copyOf(_listErrors);
 	}
 	
-	final void writeError(XmlStreamParseErrorDescr error) {
+	public final void writeError(XmlStreamParseErrorDescr error) {
 		Objects.requireNonNull(error, "error");
 		_listErrors.add(error);
 	}
 	
 	@Override
-	public final ObservationWriter getObservationWriter() {
-		return _writerObs;
+	public final ObservationCollector getObservationCollector() {
+		return _collectObs;
 	}
 	
+	/*
 	@Override
-	public final void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writerObs = writer;
+	public final void setObservationCollector(ObservationCollector collector) {
+		Objects.requireNonNull(collector, "collector");
+		_collectObs = collector;
+	}
+	*/
+	
+	@Override
+	public boolean recordComments() {
+		return _bRecordComments;
+	}
+
+	@Override
+	public void setRecordComments(boolean bState) {
+		_bRecordComments = bState;
+	}
+
+	@Override
+	public boolean removeLeadingWhiteSpace() {
+		return _collectText.ignoreInitialWhiteSpace();
+	}
+
+	@Override
+	public void setRemoveLeadingWhiteSpace(boolean bState) {
+		_collectText.setIgnoreInitialWhiteSpace(bState);
+	}
+	
+	protected TextBufferSegment getCharacterSegment() {
+		XMLStreamReader reader = _reader.get();
+		return new PartialTextBuffer(reader.getTextCharacters(), reader.getTextStart(), reader.getTextLength());
 	}
 	
 	private String gatherElementText(QName nameCurrent) {
@@ -180,9 +192,10 @@ public abstract class XmlStreamActionParserBase
 		QName nameCurrent = null;
 		StreamElementAttributeSet attribs = null;
 		String strElementText = null;
+		TextBufferSegment segment = null;
 		{
 			String strEvent = DICT_EVENTS.getNameForCode(nEvent);
-			ObservationCollector collectNode = _writerObs.createCollector(ObsLevel.DEBUG);
+			SingleObservationCollector collectNode = _collectObs.createCollector(ObsLevel.DEBUG2);
 			collectNode.append("read event ");
 			collectNode.append(strEvent);
 			collectNode.append(" at location ");
@@ -222,30 +235,32 @@ public abstract class XmlStreamActionParserBase
 		case END_ELEMENT:
 			if (!_collectText.isEmpty()) {
 				strElementText = gatherElementText(nameCurrent);
-				_writerObs.write(ObsLevel.DEBUG, "pending text " + strElementText.length() + " chars");
+				_collectObs.write(ObsLevel.DEBUG, "pending text " + strElementText.length() + " chars");
 			}
 			_state.endElement(nameCurrent);
 			parseEndElement(nameCurrent, _mapWork, strElementText);			
 			break;
 			
 		case COMMENT:
-			strElementText = XmlParseMethods.getTextChars(reader).toString();
-			if (_options.getFlag(XmlParserOptions.PROPERTY_RECORD_COMMENTS)) {
-				_writerObs.write(ObsLevel.INFO, "at " + XmlStreamMethods.format(loc) 
-						+ " comment: " + StringMethods.encloseInQuotes(strElementText));
+			segment = getCharacterSegment();
+			if (_bRecordComments) {
+				_collectObs.write(ObsLevel.INFO, "at " + XmlStreamMethods.format(loc) 
+						+ " comment: " + StringMethods.encloseInQuotes(segment.copySegment()));
 			}
-			parseComment(strElementText);
+			parseComment(segment.copySegment());
 			break;
 			
 		case CHARACTERS:
 			if (_state.isAtElementStart()) {
-				_collectText.acceptChars(reader);
+				segment = getCharacterSegment();
+				_collectText.acceptChars(segment);
 			}
 			break;
 			
 		case CDATA:
 			if (_state.isAtElementStart()) {
-				_collectText.acceptCData(reader);
+				segment = getCharacterSegment();
+				_collectText.acceptCData(segment);
 			}
 			break;
 			
@@ -264,6 +279,6 @@ public abstract class XmlStreamActionParserBase
 	public final void completed() {
 		_state.reset();
 		_reader.clear();
-		_writerObs.write(ObsLevel.TRACE, "parse completed");
+		_collectObs.write(ObsLevel.TRACE, "parse completed");
 	}
 }

@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.stream.parse;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -28,6 +30,8 @@ import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultInt;
 import srojak.core.result.XResultIntCarrier;
 import srojak.core.result.XResultOf;
+import srojak.core.tools.ArrayMethods;
+import srojak.xml.stream.StreamElementAttribute;
 import srojak.xml.stream.impl.XmlStreamElementAttribute;
 
 /**
@@ -66,6 +70,11 @@ public class StreamElementAttributeSet
 			}
 		}
 		return null;
+	}
+	
+	public void forEach(Consumer<StreamElementAttribute> consumer) {
+		Objects.requireNonNull(consumer, "consumer");
+		ArrayMethods.forEach(_attribs, consumer);
 	}
 	
 	public XResultOf<String> readRequiredStringAttribValue(QName nameAttribute) {

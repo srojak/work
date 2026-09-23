@@ -14,23 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
-
-import javax.xml.namespace.QName;
-
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.parse.XmlStreamParserState;
-
 /**
  * @author Stephen
  *
  */
-public interface XmlStreamParserStateWithChars 
-		extends XmlStreamParserState {
-
-	XmlParseTextFilter getTextFilter();
-	void setTextFilter(XmlParseTextFilter filter);
-	void clearCharacters();
-	void saveCharacters(String strChars);
-	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
-}
+package srojak.xml.stream.factories;

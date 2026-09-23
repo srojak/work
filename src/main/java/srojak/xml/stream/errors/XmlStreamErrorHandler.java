@@ -25,9 +25,10 @@ import org.xml.sax.SAXParseException;
 import srojak.core.data.DataErrorSeverity;
 import srojak.core.events.SingleEventListenerList;
 import srojak.core.events.SingleEventListenerStore;
+import srojak.core.observe.HasSingleObservationCollector;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.xml.stream.XmlStreamLocationSnap;
 
 /**
@@ -35,32 +36,30 @@ import srojak.xml.stream.XmlStreamLocationSnap;
  *
  */
 public class XmlStreamErrorHandler 
-		implements ErrorHandler {
+		implements ErrorHandler, HasSingleObservationCollector {
 	private final SingleEventListenerStore<XmlStreamErrorListener> _listeners;
-	private ObservationWriter _writer;
+	private ObservationCollector _collectObs;
 	
 	public XmlStreamErrorHandler() {
 		_listeners = new SingleEventListenerList<XmlStreamErrorListener>();
-		_writer = new ObservationWriterLevelFilterPrintStream(System.err);
+		_collectObs = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writer = new ObservationWriterPrintStream(System.err);
+		_collectObs.addWriter(writer);
 	}
 	
-	public ObservationWriter getWriter() {
-		return _writer;
-	}
-	
-	public void setWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
+	@Override
+	public ObservationCollector getObservationCollector() {
+		return _collectObs;
 	}
 	
 	private static String createMessage(SAXParseException exc) {
-		return String.format("at line %d, column %d: %s",
+		return String.format("in reader at line %d, column %d: %s",
 				exc.getLineNumber(), exc.getColumnNumber(), exc.getMessage());
 	}
 
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
-		_writer.write(ObsLevel.WARN, createMessage(exception));
+		_collectObs.write(ObsLevel.WARN, createMessage(exception));
 		XmlStreamLocationSnap location = new XmlStreamLocationSnap(exception);
 		XmlStreamErrorEvent event = new XmlStreamErrorEvent(this, location, DataErrorSeverity.WARN, exception.getMessage());
 		_listeners.forEach(ls -> ls.receive(event));
@@ -68,7 +67,7 @@ public class XmlStreamErrorHandler
 
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
-		_writer.write(ObsLevel.ERROR, createMessage(exception));
+		_collectObs.write(ObsLevel.ERROR, createMessage(exception));
 		XmlStreamLocationSnap location = new XmlStreamLocationSnap(exception);
 		XmlStreamErrorEvent event = new XmlStreamErrorEvent(this, location, DataErrorSeverity.ERROR, exception.getMessage());
 		_listeners.forEach(ls -> ls.receive(event));
@@ -76,7 +75,7 @@ public class XmlStreamErrorHandler
 
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
-		_writer.write(ObsLevel.ALERT, createMessage(exception));
+		_collectObs.write(ObsLevel.ALERT, createMessage(exception));
 		XmlStreamLocationSnap location = new XmlStreamLocationSnap(exception);
 		XmlStreamErrorEvent event = new XmlStreamErrorEvent(this, location, DataErrorSeverity.FATAL, exception.getMessage());
 		_listeners.forEach(ls -> ls.receive(event));

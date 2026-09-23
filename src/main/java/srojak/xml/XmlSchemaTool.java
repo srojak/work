@@ -30,6 +30,7 @@ import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
 
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
@@ -50,7 +51,7 @@ public class XmlSchemaTool {
 	}
 	
 	public XResultOf<Schema> readSchema(StreamSource source) {
-		XResultCarrierOf<Schema> result = new XResultCarrierOf<Schema>(new SingleActivity("read schema"));
+		XResultCarrierOf<Schema> result = new XResultCarrierOf<Schema>(ObservedActivity.READ_SCHEMA);
 		try {
 			result.setResult(_factory.newSchema(source));
 		} catch (SAXException exc) {
@@ -60,7 +61,7 @@ public class XmlSchemaTool {
 	}
 	
 	public XResultOf<Schema> readSchemaFrom(Path pathFile) {
-		XResultCarrierOf<Schema> result = new XResultCarrierOf<Schema>(new SingleActivity("read schema"));
+		XResultCarrierOf<Schema> result = new XResultCarrierOf<Schema>(new SingleActivity("read schema from file"));
 		try (InputStream streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ)) {
 			Schema schema =_factory.newSchema(new StreamSource(streamIn));
 			result.setResult(schema);

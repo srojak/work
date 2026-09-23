@@ -24,7 +24,7 @@ import javax.xml.stream.Location;
 import srojak.core.collections.TStack;
 import srojak.core.collections.TStackReadOnly;
 import srojak.xml.XmlElementContext;
-import srojak.xml.stream.XmlStreamParserState;
+import srojak.xml.stream.parse.XmlStreamParserState;
 
 /**
  * @author Stephen

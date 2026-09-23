@@ -16,25 +16,29 @@
  */
 package srojak.xml.stream;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.util.Objects;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import srojak.core.collections.TStack;
 import srojak.xml.XmlIndenter;
+import srojak.xml.stream.factories.XmlStreamOutputFactory;
 
 /**
  * @author Stephen
  *
  */
 public class XmlStreamFmtWriter {
-	private XmlStreamOutputBuilder _builderStream;
+	private XmlStreamOutputFactory _builderStream;
 	private TStack<ElementStreamName> _stackElements;
 	private XmlIndenter _indenter;
 	private XMLStreamWriter _writer;
 	
-	public XmlStreamFmtWriter(XmlStreamOutputBuilder builder) {
-		_builderStream = builder;
+	public XmlStreamFmtWriter(XmlStreamOutputFactory factory) {
+		Objects.requireNonNull(factory, "factory");
+		_builderStream = factory;
 		_stackElements = new TStack<ElementStreamName>();
 		_indenter = new XmlIndenter(_stackElements);
 		_writer = null;

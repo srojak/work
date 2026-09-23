@@ -16,7 +16,10 @@
  */
 package srojak.xml.stream;
 
-import javax.xml.stream.XMLStreamReader;
+import java.io.StringWriter;
+import java.util.Objects;
+
+import srojak.core.text.TextBufferSegment;
 
 /**
  * @author Stephen
@@ -59,30 +62,52 @@ public class XmlPendingTextCollector {
 		clearContent();
 	}
 	
-	public void acceptChars(XMLStreamReader reader) {
-		char[] array = reader.getTextCharacters();
-		int nStart = reader.getTextStart();
-		for (int index = 0; index < reader.getTextLength(); index++) {
-			char c = array[nStart + index];
-			if (_bSeenFirstChar) {
-				_sb.append(c);
-			} else {
-				if (Character.isWhitespace(c)) {
-					if (!_bIgnoreInitialWhiteSpace) {
-						_sb.append(c);
-					}
-				} else {
-					_bSeenFirstChar = true;
+	private void addCharFiltered(char c) {
+		if (_bSeenFirstChar) {
+			_sb.append(c);
+		} else {
+			if (Character.isWhitespace(c)) {
+				if (!_bIgnoreInitialWhiteSpace) {
 					_sb.append(c);
 				}
+			} else {
+				_bSeenFirstChar = true;
+				_sb.append(c);
 			}
 		}
 	}
 	
-	public void acceptCData(XMLStreamReader reader) {
-		int n = reader.getTextLength();
-		_sb.append(reader.getTextCharacters(), reader.getTextStart(), n);
-		if (n > 0) {
+	public void acceptChars(StringWriter carrier) {
+		StringBuffer buf = carrier.getBuffer();
+		for (int index = 0; index < buf.length(); index++) {
+			char c = buf.charAt(index);
+			addCharFiltered(c);
+		}
+	}
+	
+	public void acceptChars(TextBufferSegment segment) {
+		Objects.requireNonNull(segment, "segment");
+		for (int index = 0; index < segment.getLength(); index++) {
+			char c = segment.charAtOffset(index);
+			addCharFiltered(c);
+		}
+	}
+	
+	public void acceptCData(StringWriter carrier) {
+		int lengthBefore = _sb.length();
+		_sb.append(carrier.toString());
+		if (_sb.length() > lengthBefore) {
+			_bSeenFirstChar = true;
+		}
+	}
+	
+	public void acceptCData(TextBufferSegment segment) {
+		Objects.requireNonNull(segment, "segment");
+		for (int index = 0; index < segment.getLength(); index++) {
+			char c = segment.charAtOffset(index);
+			addCharFiltered(c);
+		}
+		if (segment.getLength() > 0) {
 			_bSeenFirstChar = true;
 		}
 	}

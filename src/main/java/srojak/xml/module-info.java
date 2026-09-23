@@ -17,6 +17,8 @@
 /**
  * @author Stephen
  *
+ * {@code srojak.xml} cannot depend on {@code srojak.debug}.
+ * Instead, use {@code ObservationWriter} objects to get debug information.
  */
 module srojak.xml {
 	requires transitive java.xml;
@@ -25,8 +27,11 @@ module srojak.xml {
 	requires transitive srojak.mantle;
 	exports srojak.xml;
 	exports srojak.xml.dom;
+	exports srojak.xml.event.parse;
 	exports srojak.xml.filters;
 	exports srojak.xml.stream;
 	exports srojak.xml.stream.errors;
+	exports srojak.xml.stream.factories;
+	exports srojak.xml.stream.parse;
 	exports srojak.xml.stream.work;
 }

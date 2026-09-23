@@ -14,43 +14,17 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.stream.factories;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
-import srojak.xml.stream.work.XmlStreamWorkItemMap;
+import srojak.core.observe.HasSingleObservationCollector;
 
 /**
  * @author Stephen
  *
  */
-public class StreamVisibleParser 
-		extends XmlStreamActionParserBase {
+public interface XmlStreamFactory
+		extends HasSingleObservationCollector {
 
-	/**
-	 * 
-	 */
-	public StreamVisibleParser() {
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	protected void parseInit() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void parseStartElement(QName nameElement, XmlStreamWorkItemMap mapWork, StreamElementAttributeSet attribs)
-			throws XMLStreamException {
-
-	}
-
-	@Override
-	protected void parseEndElement(QName nameElement, XmlStreamWorkItemMap mapWork, String strElementText) {
-		// TODO Auto-generated method stub
-
-	}
-
+	Object getFactoryProperty(String name);
+	void setFactoryProperty(String name, Object value);
 }

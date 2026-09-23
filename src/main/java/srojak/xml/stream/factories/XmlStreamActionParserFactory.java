@@ -14,23 +14,24 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.stream.factories;
 
-import javax.xml.namespace.QName;
+import java.util.function.Supplier;
 
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.parse.XmlStreamParserState;
+import srojak.mantle.reflect.ClassIdentifiedFunctionalFactory;
+import srojak.xml.stream.parse.XmlStreamActionParserBase;
 
 /**
  * @author Stephen
  *
  */
-public interface XmlStreamParserStateWithChars 
-		extends XmlStreamParserState {
+public class XmlStreamActionParserFactory<P extends XmlStreamActionParserBase>
+		extends ClassIdentifiedFunctionalFactory<P> {
 
-	XmlParseTextFilter getTextFilter();
-	void setTextFilter(XmlParseTextFilter filter);
-	void clearCharacters();
-	void saveCharacters(String strChars);
-	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
+	/**
+	 * 
+	 */
+	public XmlStreamActionParserFactory(Class<P> classParser, Supplier<P> fnFactory) {
+		super(classParser, fnFactory);
+	}
 }

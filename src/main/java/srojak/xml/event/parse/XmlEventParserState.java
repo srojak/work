@@ -14,23 +14,23 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.event.parse;
 
 import javax.xml.namespace.QName;
 
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.parse.XmlStreamParserState;
-
+import srojak.core.collections.TStackReadOnly;
+import srojak.xml.XmlElementContext;
 /**
  * @author Stephen
  *
+ * Parser state information passed to response objects.
  */
-public interface XmlStreamParserStateWithChars 
-		extends XmlStreamParserState {
-
-	XmlParseTextFilter getTextFilter();
-	void setTextFilter(XmlParseTextFilter filter);
-	void clearCharacters();
-	void saveCharacters(String strChars);
-	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
+public interface XmlEventParserState
+		extends XmlElementContext {
+	TStackReadOnly<QName> getElementStack();
+	// TODO remove duplication
+	boolean hasCurrentElement();
+	QName getCurrentElementName();
+	boolean isAtElementStart();
+	boolean ignoreExtraWhiteSpace();
 }

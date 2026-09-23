@@ -16,23 +16,17 @@
  */
 package srojak.xml.stream;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import srojak.core.io.FileExistence;
 import srojak.core.io.IOResultQualifiers;
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.result.XResultInt;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.result.XResultIntCarrier;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
+import srojak.xml.stream.parse.XmlStreamParser;
 
 /**
  * @author Stephen
@@ -41,25 +35,24 @@ import srojak.core.result.XResultIntCarrier;
 public class XmlStreamReadAdapter 
 		extends XmlStreamReadAdapterBase
 		implements XmlStreamAdapter, IOResultQualifiers {
-	private final XmlStreamActionParserBase _parser;
+	private final XmlStreamParser _parser;
 	
-	public XmlStreamReadAdapter(XmlStreamActionParserBase parser) {
-		super();
+	public XmlStreamReadAdapter(XmlStreamInputFactory factory, XmlStreamParser parser) {
+		super(factory);
 		Objects.requireNonNull(parser, "parser");
 		_parser = parser;
 	}
 	
 	@Override
-	protected ObservationWriter getObservationWriter() {
-		return _parser.getObservationWriter();
+	protected ObservationCollector getObservationCollector() {
+		return _parser.getObservationCollector();
 	}
 
 	@Override
 	protected void readCore(InputStream streamIn, XResultIntCarrier result) {
 		try {
-			XMLStreamReader reader = createStreamReader(streamIn);
+			XMLStreamReader reader = createStreamReader(result.getActivity(), streamIn);
 			_parser.start(reader);
-			_parser.parseInit();
 			while (reader.hasNext()) {
 				int nEvent = reader.next();
 				_parser.interpret(nEvent);

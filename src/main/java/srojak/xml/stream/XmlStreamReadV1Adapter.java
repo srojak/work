@@ -30,26 +30,28 @@ import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
 
 /**
  * @author Stephen
  *
  */
+@Deprecated
 public class XmlStreamReadV1Adapter {
 	private final XmlStreamParseFunction _fnParse;
-	private final XmlStreamInputBuilder _builderStream;
+	private final XmlStreamInputFactory _builderStream;
 	
 	protected static final ObservedActivity _activityRead = new SingleActivity("read stream");
 	
 	public XmlStreamReadV1Adapter(XmlStreamParseFunction fnParse) {
 		Objects.requireNonNull(fnParse, "fnParse");
 		_fnParse = fnParse;
-		_builderStream = new XmlStreamInputBuilder();
+		_builderStream = new XmlStreamInputFactory(true);
 	}
 	
 	private void readCommon(InputStream streamIn, XResultStatusCarrier result) {
 		try {
-			XMLStreamReader reader = _builderStream.createStreamReader(streamIn);
+			XMLStreamReader reader = _builderStream.createStreamReader(_activityRead, streamIn);
 			_fnParse.apply(reader);
 			result.setValid();
 		} catch (XMLStreamException exc) {

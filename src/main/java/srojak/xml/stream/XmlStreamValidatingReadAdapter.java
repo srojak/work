@@ -29,12 +29,14 @@ import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
 
 import srojak.core.io.IOResultQualifiers;
-import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.result.XResultIntCarrier;
 import srojak.xml.stream.errors.XmlStreamErrorEvent;
 import srojak.xml.stream.errors.XmlStreamErrorHandler;
 import srojak.xml.stream.errors.XmlStreamErrorListener;
 import srojak.xml.stream.errors.XmlStreamParseErrorEntry;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
+import srojak.xml.stream.parse.XmlStreamParser;
 
 /**
  * @author Stephen
@@ -44,16 +46,18 @@ public class XmlStreamValidatingReadAdapter
 		extends XmlStreamReadAdapterBase
 		implements XmlStreamAdapter, IOResultQualifiers {
 	private final Schema _schema;
-	private final XmlStreamActionParserBase _parser;
+	private final XmlStreamParser _parser;
 	private final XmlStreamErrorHandler _handlerErrors;
 	
-	public XmlStreamValidatingReadAdapter(Schema schema, XmlStreamActionParserBase parser) {
-		super();
+	public XmlStreamValidatingReadAdapter(XmlStreamInputFactory factoryInput, Schema schema, XmlStreamParser parser) {
+		super(factoryInput);
 		Objects.requireNonNull(schema, "schema");
 		Objects.requireNonNull(parser, "parser");
 		_schema = schema;
 		_parser = parser;
 		_handlerErrors = new XmlStreamErrorHandler();
+		// TODO figure out what should happen here
+		//_handlerErrors.setWriter(_parser.getObservationCollector());
 		_handlerErrors.addStreamErrorListener(new XmlStreamErrorListener() {
 
 			@Override
@@ -67,8 +71,8 @@ public class XmlStreamValidatingReadAdapter
 	}
 	
 	@Override
-	protected ObservationWriter getObservationWriter() {
-		return _parser.getObservationWriter();
+	protected ObservationCollector getObservationCollector() {
+		return _parser.getObservationCollector();
 	}
 	
 	public XmlStreamErrorHandler getErrorHandler() {
@@ -80,7 +84,7 @@ public class XmlStreamValidatingReadAdapter
 		Validator validator = _schema.newValidator();
 		validator.setErrorHandler(_handlerErrors);
 		try {
-			XMLStreamReader readerBase = createStreamReader(streamIn);
+			XMLStreamReader readerBase = createStreamReader(result.getActivity(), streamIn);
 			StreamReaderParsingDelegate reader = new StreamReaderParsingDelegate(_parser, readerBase);
 			_parser.start(reader);
 			validator.validate(new StAXSource(reader));

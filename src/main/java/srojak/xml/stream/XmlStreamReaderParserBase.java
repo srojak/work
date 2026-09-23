@@ -24,27 +24,27 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import srojak.core.containers.SingletonContainer;
+import srojak.core.observe.HasSingleObservationCollector;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
-import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.activity.SingleActivity;
-import srojak.core.observe.writers.ObservationWriterNull;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 import srojak.xml.stream.impl.StreamParserStateBasicCtnr;
 import srojak.xml.stream.impl.XmlParseMethods;
+import srojak.xml.stream.parse.XmlStreamParserState;
 
 /**
  * @author Stephen
  *
  */
 public abstract class XmlStreamReaderParserBase 
-		implements XMLStreamConstants {
+		implements XMLStreamConstants, HasSingleObservationCollector {
 	private final StreamParserStateBasicCtnr _state;
-	private final XmlParserOptions _options;
 	private final SingletonContainer<XMLStreamReader> _reader;
-	private ObservationWriter _writerObs;
+	private final ObservationCollector _collectObs;
 	
 	protected static final ObservedActivity _activityRead = new SingleActivity("read stream");
 	protected static final XmlStreamEventsDictionary DICT_EVENTS;
@@ -58,27 +58,19 @@ public abstract class XmlStreamReaderParserBase
 	 */
 	protected XmlStreamReaderParserBase() {
 		_state = new StreamParserStateBasicCtnr();
-		_options = new XmlParserOptions();
 		_reader = new SingletonContainer<XMLStreamReader>();
-		_writerObs = new ObservationWriterNull();
+		_collectObs = ObservationCollector.makeInstance();
 	}
 	
 	protected final XmlStreamParserState getParserState() {
 		return _state;
 	}
 	
-	public final XmlParserOptions getOptions() {
-		return _options;
+	@Override
+	public final ObservationCollector getObservationCollector() {
+		return _collectObs;
 	}
 	
-	public final ObservationWriter getObservationWriter() {
-		return _writerObs;
-	}
-	
-	public final void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writerObs = writer;
-	}
 		
 	protected StreamElementAttribute findAttributeByName(StreamElementAttribute[] attributes,
 			QName nameAttribute) {
@@ -119,12 +111,12 @@ public abstract class XmlStreamReaderParserBase
 		Objects.requireNonNull(reader, "reader");
 		_reader.set(reader);
 		_state.start();
-		_writerObs.write(ObsLevel.TRACE, "entering parse");
+		_collectObs.write(ObsLevel.TRACE, "entering parse");
 		parseInit();
 			while (reader.hasNext()) {
 				int nEvent = reader.next();
 				_state.setCurrentLocation(reader.getLocation());
-				ObservationCollector collector = _writerObs.createCollector(ObsLevel.DEBUG2);
+				SingleObservationCollector collector = _collectObs.createCollector(ObsLevel.DEBUG2);
 				if (collector.isActive()) {
 					collector.append("location ");
 					collector.append(XmlStreamMethods.format(_state.getCurentLocation()));
@@ -137,12 +129,12 @@ public abstract class XmlStreamReaderParserBase
 				QName nameCurrent;
 				switch (nEvent) {
 				case START_DOCUMENT:
-					_writerObs.write(ObsLevel.DEBUG, "start document");
+					_collectObs.write(ObsLevel.DEBUG, "start document");
 					break;
 					
 				case END_DOCUMENT:
 					_state.clearAtElementStart();
-					_writerObs.write(ObsLevel.DEBUG, "end document");
+					_collectObs.write(ObsLevel.DEBUG, "end document");
 					parseEndDocument();
 					break;
 					
@@ -154,7 +146,7 @@ public abstract class XmlStreamReaderParserBase
 					{
 						_state.startElement(nameCurrent);
 						StreamElementAttribute[] attribs = XmlParseMethods.getAttributes(reader);
-						_writerObs.buildAndWrite(ObsLevel.DEBUG, sb -> {
+						_collectObs.buildAndWrite(ObsLevel.DEBUG, sb -> {
 							sb.append("start element ");
 							sb.append(nameCurrent);
 							sb.append(", ");
@@ -168,7 +160,7 @@ public abstract class XmlStreamReaderParserBase
 				case END_ELEMENT:
 					nameCurrent = reader.getName();
 					_state.endElement(nameCurrent);
-					_writerObs.buildAndWrite(ObsLevel.DEBUG, sb -> {
+					_collectObs.buildAndWrite(ObsLevel.DEBUG, sb -> {
 						sb.append("end element ");
 						sb.append(nameCurrent);
 					});
@@ -195,7 +187,7 @@ public abstract class XmlStreamReaderParserBase
 		
 		_reader.clear();
 		_state.reset();
-		_writerObs.write(ObsLevel.TRACE, "returning from parse");
+		_collectObs.write(ObsLevel.TRACE, "returning from parse");
 	}
 	
 	public final XResult tryParse(XMLStreamReader reader) {

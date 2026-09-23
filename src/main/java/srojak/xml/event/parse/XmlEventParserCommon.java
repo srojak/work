@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.event.parse;
 
 import java.util.Iterator;
 
@@ -29,6 +29,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import srojak.core.collections.TStack;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
 
 /**
  * @author Stephen
@@ -40,8 +41,8 @@ public class XmlEventParserCommon
 	/**
 	 * @param builder
 	 */
-	public XmlEventParserCommon(XmlStreamInputBuilder builder) {
-		super(builder);
+	public XmlEventParserCommon(XmlStreamInputFactory factory) {
+		super(factory);
 	}
 	
 	private void parseStartElement(IXmlParseEventResponse response, 

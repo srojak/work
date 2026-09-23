@@ -22,7 +22,9 @@ import javax.xml.stream.*;
 /**
  * @author Stephen
  *
+ * @deprecated Use srojak.xml.stream.factories.XmlStreamOutputFactory.
  */
+@Deprecated(forRemoval = true)
 public class XmlStreamOutputBuilder {
 	XMLOutputFactory _factoryOutput;
 	

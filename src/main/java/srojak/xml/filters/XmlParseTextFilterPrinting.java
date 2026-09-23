@@ -22,7 +22,7 @@ import javax.xml.stream.events.Characters;
 import srojak.core.TextMessageRelay;
 import srojak.xml.XmlElementContext;
 import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.XmlEventParserState;
+import srojak.xml.event.parse.XmlEventParserState;
 
 /**
  * @author Stephen

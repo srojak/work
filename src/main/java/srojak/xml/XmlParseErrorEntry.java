@@ -49,8 +49,7 @@ public class XmlParseErrorEntry
 
 	@Override
 	public boolean hasElementName() {
-		// TODO Auto-generated method stub
-		return false;
+		return _element != null;
 	}
 	
 	@Override
@@ -65,8 +64,7 @@ public class XmlParseErrorEntry
 
 	@Override
 	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+		return _text;
 	}
 	
 	protected void formatInto(StringBuilder sb) {

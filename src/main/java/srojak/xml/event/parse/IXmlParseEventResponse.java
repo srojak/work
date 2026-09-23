@@ -14,23 +14,27 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.event.parse;
 
-import javax.xml.namespace.QName;
-
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.parse.XmlStreamParserState;
-
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Comment;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 /**
  * @author Stephen
  *
  */
-public interface XmlStreamParserStateWithChars 
-		extends XmlStreamParserState {
-
-	XmlParseTextFilter getTextFilter();
-	void setTextFilter(XmlParseTextFilter filter);
-	void clearCharacters();
-	void saveCharacters(String strChars);
-	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
+public interface IXmlParseEventResponse {
+	void onStartDocument(XMLEvent event);
+	void onEndDocument(XMLEvent event, XmlEventParserState state);
+	
+	void onStartElement(StartElement event, XmlEventParserState state);
+	void onEndElement(EndElement event, XmlEventParserState state);
+	
+	void onAttribute(Attribute attrib, XmlEventParserState state);
+	
+	void onElementText(String strText, XmlEventParserState state);
+	
+	void onComment(Comment event);
 }

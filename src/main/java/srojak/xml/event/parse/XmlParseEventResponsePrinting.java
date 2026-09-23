@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.event.parse;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.Attribute;
@@ -25,6 +25,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import srojak.core.TextMessageRelay;
 import srojak.core.collections.TStackReadOnly;
+import srojak.xml.stream.StreamLocationTool;
 
 /**
  * @author Stephen

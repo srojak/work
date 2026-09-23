@@ -18,11 +18,7 @@ package srojak.xml.stream.impl;
 
 import javax.xml.stream.XMLStreamReader;
 
-import org.xml.sax.SAXParseException;
-
-import srojak.mantle.quants.InputLocation;
 import srojak.xml.stream.StreamElementAttribute;
-import srojak.xml.stream.XmlInputLocationContainer;
 
 /**
  * @author Stephen

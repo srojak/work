@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.event.parse;
 
 
 import java.io.InputStream;
+import java.util.Objects;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -29,8 +30,10 @@ import javax.xml.stream.events.XMLEvent;
 import srojak.core.collections.TQueue;
 import srojak.core.collections.TStack;
 import srojak.core.collections.TStackReadOnly;
+import srojak.core.observe.ObservedActivity;
 import srojak.xml.XmlParseTextFilter;
 import srojak.xml.filters.XmlParseTextNullFilter;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
 
 
 /**
@@ -39,7 +42,7 @@ import srojak.xml.filters.XmlParseTextNullFilter;
  */
 public abstract class XmlEventParserBase 
 		implements XmlEventParserState {
-	private XmlStreamInputBuilder _builderEvent;
+	private final XmlStreamInputFactory _factoryInput;
 	private XmlParseTextFilter _filterText;
 	private TStack<QName> _stackElements;
 	private TQueue<String> _queuePendingText;
@@ -48,8 +51,9 @@ public abstract class XmlEventParserBase
 	private int _nEventTypePrior;
 	private boolean _bIgnoreExtraWhiteSpace;
 	
-	public XmlEventParserBase(XmlStreamInputBuilder builder) {
-		_builderEvent = builder;
+	public XmlEventParserBase(XmlStreamInputFactory factory) {
+		Objects.requireNonNull(factory, "factory");		
+		_factoryInput = factory;
 		_filterText = new XmlParseTextNullFilter();
 		_stackElements = new TStack<QName>();
 		_queuePendingText = new TQueue<String>();
@@ -131,9 +135,9 @@ public abstract class XmlEventParserBase
 			IXmlParseEventResponse response)
 			throws XMLStreamException;
 
-	public void parse(IXmlParseEventResponse response, InputStream stream) 
+	public void parse(IXmlParseEventResponse response, ObservedActivity activity, InputStream stream) 
 			throws XMLStreamException {
-		XMLEventReader reader = _builderEvent.createEventReader(stream);
+		XMLEventReader reader = _factoryInput.createEventReader(activity, stream);
 		_stackElements.clear();
 		_queuePendingText.clear();
 		_nEventTypePrior = 0;

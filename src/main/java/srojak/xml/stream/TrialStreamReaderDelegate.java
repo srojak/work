@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.xml.XmlParseTextFilter;
@@ -43,10 +44,9 @@ public class TrialStreamReaderDelegate
 		extends StreamReaderDelegate
 		implements XMLStreamConstants {
 	private final XmlStreamParserStateContainer _state;
-	private final XmlParserOptions _options;
 	private final HashSet<QName> _setNamesWithText;
 	private final List<StreamElementAttribute> _listAttribs;
-	private ObservationWriter _writer;
+	private ObservationCollector _collectObs;
 	private int _nEventLast;
 	private int _nEventPending;
 	private boolean _bDoneOnce;
@@ -63,10 +63,11 @@ public class TrialStreamReaderDelegate
 	public TrialStreamReaderDelegate() {
 		super();
 		_state = new XmlStreamParserStateContainer();
-		_options = new XmlParserOptions();
 		_setNamesWithText = new HashSet<QName>();
 		_listAttribs = new LinkedList<StreamElementAttribute>();
-		_writer = new ObservationWriterPrintStream(System.out);
+		_collectObs = ObservationCollector.makeInstance();
+		ObservationWriter writer = new ObservationWriterPrintStream(System.out);
+		_collectObs.addWriter(writer);
 		_nEventLast = -1;
 		_nEventPending = -1;
 		_bDoneOnce = false;
@@ -78,10 +79,11 @@ public class TrialStreamReaderDelegate
 	public TrialStreamReaderDelegate(XMLStreamReader reader) {
 		super(reader);
 		_state = new XmlStreamParserStateContainer();
-		_options = new XmlParserOptions();
 		_setNamesWithText = new HashSet<QName>();
 		_listAttribs = new LinkedList<StreamElementAttribute>();
-		_writer = new ObservationWriterPrintStream(System.out);
+		_collectObs = ObservationCollector.makeInstance();
+		ObservationWriter writer = new ObservationWriterPrintStream(System.out);
+		_collectObs.addWriter(writer);
 		_nEventLast = -1;
 		_nEventPending = -1;
 		_bDoneOnce = false;
@@ -107,7 +109,7 @@ public class TrialStreamReaderDelegate
 	@Override
 	public int getEventType() {
 		if (_nEventLast >= 1) {
-			_writer.write(ObsLevel.NOTICE, "sending event type " + DICT_EVENTS.getNameForCode(_nEventLast));
+			_collectObs.write(ObsLevel.NOTICE, "sending event type " + DICT_EVENTS.getNameForCode(_nEventLast));
 			return _nEventLast;
 		}
 		return super.getEventType();
@@ -126,7 +128,7 @@ public class TrialStreamReaderDelegate
 			int nEvent = _nEventPending;
 			_nEventPending = -1;
 			_nEventLast = -1;
-			_writer.write(ObsLevel.NOTICE, "pending event " + DICT_EVENTS.getNameForCode(nEvent));
+			_collectObs.write(ObsLevel.NOTICE, "pending event " + DICT_EVENTS.getNameForCode(nEvent));
 			return nEvent;
 		}
 		int n = super.next();
@@ -138,7 +140,7 @@ public class TrialStreamReaderDelegate
 		sbNode.append(" at location ");
 		sbNode.append( XmlStreamMethods.format(loc));
 		QName nameCurrent;
-		XmlParseTextFilter filter = _options.getTextFilter();
+		XmlParseTextFilter filter = null;
 		String strSecondMessage = null;
 		_listAttribs.clear();
 		
@@ -170,7 +172,7 @@ public class TrialStreamReaderDelegate
 			}
 			if (!_bDoneOnce) {
 				Class<?> classLoc = loc.getClass();
-				_writer.write(ObsLevel.INFO, "locator class is " + classLoc.getName());
+				_collectObs.write(ObsLevel.INFO, "locator class is " + classLoc.getName());
 			}
 			break;
 			
@@ -180,7 +182,7 @@ public class TrialStreamReaderDelegate
 			sbNode.append(nameCurrent);
 			{
 				StringBuilder sbText = new StringBuilder();
-				_state.endElement(nameCurrent, _options, sbText);
+				_state.endElement(nameCurrent, sbText);
 				/*
 				if (sbText.length() > 0) {
 					strSecondMessage = "gathered text: \"" + sbText.toString() + "\"";
@@ -198,25 +200,25 @@ public class TrialStreamReaderDelegate
 				StringBuilder sbChars = new StringBuilder();
 				getCharacters(sbChars);
 				String strText = filter.filterCharacters(_state, 
-						_options.ignoreExtraWhiteSpace(), sbChars.toString());
+						false, sbChars.toString());
 				_state.saveCharacters(strText);
 			}
 			break;
 			
 		case CDATA:
-			filter = _options.getTextFilter();
+			filter = null;
 			{
 				StringBuilder sbChars = new StringBuilder();
 				getCharacters(sbChars);
 				String strText = filter.filterCharacters(_state, 
-						_options.ignoreExtraWhiteSpace(), sbChars.toString());
+						false, sbChars.toString());
 				_state.saveCharacters(strText);
 			}
 			break;
 		}
-		_writer.write(ObsLevel.INFO, sbNode.toString());
+		_collectObs.write(ObsLevel.INFO, sbNode.toString());
 		if (!_listAttribs.isEmpty()) {
-			_writer.buildAndWrite(ObsLevel.DETAIL, sb -> {
+			_collectObs.buildAndWrite(ObsLevel.DETAIL, sb -> {
 				sb.append("attributes:");
 				for (StreamElementAttribute attr : _listAttribs) {
 					sb.append("\n  ");
@@ -225,7 +227,7 @@ public class TrialStreamReaderDelegate
 			});
 		}
 		if (strSecondMessage != null) {
-			_writer.write(ObsLevel.DETAIL, strSecondMessage);
+			_collectObs.write(ObsLevel.DETAIL, strSecondMessage);
 		}
 		return n;
 	}

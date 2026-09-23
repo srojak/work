@@ -14,23 +14,28 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml.stream.parse;
 
-import javax.xml.namespace.QName;
+import java.util.List;
 
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.parse.XmlStreamParserState;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import srojak.core.observe.HasSingleObservationCollector;
+import srojak.xml.stream.errors.XmlStreamParseErrorDescr;
 
 /**
  * @author Stephen
  *
  */
-public interface XmlStreamParserStateWithChars 
-		extends XmlStreamParserState {
+public interface XmlStreamParser 
+		extends HasSingleObservationCollector, XmlStreamParserOptions {
 
-	XmlParseTextFilter getTextFilter();
-	void setTextFilter(XmlParseTextFilter filter);
-	void clearCharacters();
-	void saveCharacters(String strChars);
-	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
+	void start(XMLStreamReader reader);
+	void interpret(int nEvent)
+			throws XMLStreamException;
+	void writeError(XmlStreamParseErrorDescr error);
+	void completed();
+	boolean hasParseErrors();
+	List<XmlStreamParseErrorDescr> getParseErrors();
 }

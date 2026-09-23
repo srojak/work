@@ -22,18 +22,20 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 
+import srojak.xml.stream.parse.XmlStreamParser;
+
 /**
  * @author Stephen
  *
  */
 public class StreamReaderParsingDelegate
 		extends StreamReaderDelegate {
-	private final XmlStreamActionParserBase _parser;
+	private final XmlStreamParser _parser;
 
 	/**
 	 * 
 	 */
-	public StreamReaderParsingDelegate(XmlStreamActionParserBase parser) {
+	public StreamReaderParsingDelegate(XmlStreamParser parser) {
 		super();
 		Objects.requireNonNull(parser, "parser");
 		_parser = parser;
@@ -42,7 +44,7 @@ public class StreamReaderParsingDelegate
 	/**
 	 * @param reader
 	 */
-	public StreamReaderParsingDelegate(XmlStreamActionParserBase parser, XMLStreamReader reader) {
+	public StreamReaderParsingDelegate(XmlStreamParser parser, XMLStreamReader reader) {
 		super(reader);
 		Objects.requireNonNull(parser, "parser");
 		_parser = parser;

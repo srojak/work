@@ -14,23 +14,47 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.xml.stream;
+package srojak.xml;
 
-import javax.xml.namespace.QName;
-
-import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.parse.XmlStreamParserState;
+import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public interface XmlStreamParserStateWithChars 
-		extends XmlStreamParserState {
+public class XNamespace {
+	private final String _namespace;
 
-	XmlParseTextFilter getTextFilter();
-	void setTextFilter(XmlParseTextFilter filter);
-	void clearCharacters();
-	void saveCharacters(String strChars);
-	void gatherCollectedText(QName nameCurrent, StringBuilder sbText);
+	/**
+	 * 
+	 */
+	public XNamespace(String strNamespace) {
+		Objects.requireNonNull(strNamespace, "strNamespace");
+		_namespace = strNamespace;
+	}
+	
+	public String getText() {
+		return _namespace;
+	}
+	
+	@Override
+	public int hashCode() {
+		return _namespace.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		else if (obj instanceof XNamespace other) {
+			return _namespace.equals(other._namespace);
+		} else
+			return false;
+	}
+
+	@Override
+	public String toString() {
+		return "namespace[" + _namespace + "]";
+	}
+	
 }

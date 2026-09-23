@@ -27,14 +27,16 @@ import java.util.Objects;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import srojak.core.functional.IOSupplier;
 import srojak.core.io.FileExistence;
 import srojak.core.io.IOResultQualifiers;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResultInt;
 import srojak.core.result.XResultIntCarrier;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
 
 /**
  * @author Stephen
@@ -42,27 +44,55 @@ import srojak.core.result.XResultIntCarrier;
  */
 public abstract class XmlStreamReadAdapterBase 
 		implements IOResultQualifiers, XmlStreamAdapter {
-	private final XmlStreamInputBuilder _builderStream;
+	private final XmlStreamInputFactory _factoryInput;
 
 	protected static final ObservedActivity ACTIVITY_READ_STREAM = new SingleActivity("read stream");
 	
-	public XmlStreamReadAdapterBase() {
-		_builderStream = new XmlStreamInputBuilder();
+	public XmlStreamReadAdapterBase(XmlStreamInputFactory factoryInput) {
+		Objects.requireNonNull(factoryInput, "factoryInput");		
+		_factoryInput = factoryInput;
 	}
 	
-	protected abstract ObservationWriter getObservationWriter();
+	protected abstract ObservationCollector getObservationCollector();
 	
-	protected XMLStreamReader createStreamReader(InputStream streamIn) 
+	protected XMLStreamReader createStreamReader(ObservedActivity activity, InputStream streamIn) 
 			throws XMLStreamException {
-		return _builderStream.createStreamReader(streamIn);
+		return _factoryInput.createStreamReader(activity, streamIn);
 	}
 	
 	protected abstract void readCore(InputStream streamIn, XResultIntCarrier result);
 	
-	@Override
-	public XResultInt readStream(InputStream streamIn) {
-		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_STREAM);
+	@Deprecated
+	public XResultInt readStream(ObservedActivity activity, InputStream streamIn) {
+		Objects.requireNonNull(activity, "activity");
+		XResultIntCarrier result = new XResultIntCarrier(activity);
 		readCore(streamIn, result);
+		return result;
+	}
+	
+	@Override
+	public XResultInt openAndRead(ObservedActivity activity, boolean bPermissive, IOSupplier<InputStream> supplierStream) {
+		Objects.requireNonNull(activity, "activity");
+		Objects.requireNonNull(supplierStream, "supplierStream");
+		XResultIntCarrier result = new XResultIntCarrier(activity);
+		try (InputStream streamIn = supplierStream.get()) {
+			readCore(streamIn, result);
+		} catch (NoSuchFileException exc) {
+			if (bPermissive) {
+				// for example, a file that may not exist
+				result.setResult(NO_FILE_TO_READ);
+				return result;
+			} else {
+				result.caughtException(exc);
+			}
+		} catch (IOException exc) {
+			if (result.isValid()) {
+				// the exception must have been thrown on close
+				result.setResult(EXCEPT_ON_CLOSE);
+			} else {
+				result.caughtException(exc);
+			}
+		}
 		return result;
 	}
 
@@ -71,7 +101,7 @@ public abstract class XmlStreamReadAdapterBase
 			readCore(streamIn, result);
 		} catch (NoSuchFileException exc) {
 			if (exists.equals(FileExistence.MustExist)) {
-				ObservationWriter writer = getObservationWriter();
+				ObservationCollector writer = getObservationCollector();
 				writer.write(ObsLevel.ERROR, pathFile.getFileName() + " does not exist");
 				result.caughtException(exc);
 			} else {
@@ -90,20 +120,22 @@ public abstract class XmlStreamReadAdapterBase
 	}
 	
 
-	@Override
-	public XResultInt readFrom(Path pathFile, FileExistence exists) {
+	@Deprecated
+	public XResultInt readFrom(ObservedActivity activity, Path pathFile, FileExistence exists) {
+		Objects.requireNonNull(activity, "activity");
 		Objects.requireNonNull(pathFile, "pathFile");
 		Objects.requireNonNull(exists, "exists");
-		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_STREAM);
+		XResultIntCarrier result = new XResultIntCarrier(activity);
 		openAndReadCore(pathFile, exists, result);
 		return result;
 	}
 
-	@Override
-	public XResultInt readFrom(String strPath, FileExistence exists) {
+	@Deprecated
+	public XResultInt readFrom(ObservedActivity activity, String strPath, FileExistence exists) {
+		Objects.requireNonNull(activity, "activity");
 		Objects.requireNonNull(strPath, "strPath");
 		Objects.requireNonNull(exists, "exists");
-		XResultIntCarrier result = new XResultIntCarrier(ACTIVITY_READ_STREAM);
+		XResultIntCarrier result = new XResultIntCarrier(activity);
 		Path pathFile = Path.of(strPath);
 		openAndReadCore(pathFile, exists, result);
 		return result;

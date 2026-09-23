@@ -25,8 +25,7 @@ import srojak.core.collections.TQueue;
 import srojak.core.collections.TStack;
 import srojak.core.collections.TStackReadOnly;
 import srojak.xml.XmlParseTextFilter;
-import srojak.xml.stream.XmlParserOptions;
-import srojak.xml.stream.XmlStreamParserState;
+import srojak.xml.stream.parse.XmlStreamParserState;
 
 /**
  * @author Stephen
@@ -121,8 +120,8 @@ public class XmlStreamParserStateContainer
 		_queuePendingText.enqueue(strChars);
 	}
 	
-	public void gatherCollectedText(XmlParserOptions options, StringBuilder sbText) {
-		XmlParseTextFilter filterText = options.getTextFilter();
+	public void gatherCollectedText(StringBuilder sbText) {
+		XmlParseTextFilter filterText = null;
 		int nSeq = 0;
 		while (!_queuePendingText.isEmpty()) {
 			String strText = _queuePendingText.dequeue();
@@ -139,13 +138,12 @@ public class XmlStreamParserStateContainer
 		_stackElements.push(nameElement);
 	}
 	
-	public void endElement(QName nameElementRead, XmlParserOptions options, StringBuilder sbText) {
+	public void endElement(QName nameElementRead, StringBuilder sbText) {
 		Objects.requireNonNull(nameElementRead, "nameElementRead");
-		Objects.requireNonNull(options, "options");
 		@SuppressWarnings("unused")
 		QName nameStored = _stackElements.peek();
 		if (_bAtElementStart) {
-			gatherCollectedText(options, sbText);
+			gatherCollectedText(sbText);
 		}
 		_queuePendingText.clear();
 		_bAtElementStart = false;
