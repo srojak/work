@@ -16,13 +16,20 @@
  */
 package srojak.utest.debug;
 
+import java.nio.file.Path;
+
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.SourceLocation;
+import srojak.core.props.DebugProperties;
+import srojak.core.result.XResult;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugWriterLogFile;
+import srojak.debug.impl.DebugNexusCore;
+import srojak.utest.TestIdentifier;
 import srojak.utest.TestOutcome;
+import srojak.utest.UnitTestConditionXResult;
 import srojak.utest.UnitTestSeries;
-import srojak.utest.instances.UnitTestSupervisedConsumer;
 import srojak.utest.instances.UnitTestSupervisedVoid;
 
 /**
@@ -35,26 +42,28 @@ public class DebugLogFileTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DebugLogFileTest app = new DebugLogFileTest();
-		DebugNexus debug = new DebugNexus();
+		DebugNexus debug = new DebugNexus(DebugNexus.CONS_NONE);
 		UnitTestSeries series = new UnitTestSeries("DebugLogFileTest");
 		series.getOptions().setStopOnFailure(true);
 		series.getOptions().setShowStackOnExceptions(true);
 		ObservationWriter writer = null;
+		DebugProperties propsDebug = DebugNexusCore.getProperties();
+		@SuppressWarnings("unused")
+		Path pathCurDir = Path.of(System.getProperty("user.dir"));
+		TestIdentifier idTestReadDebug = TestIdentifier.name("read debug properties");
 		
-		UnitTestSupervisedConsumer<Object> instance1 
-				= series.createConsumerInstance("read debug properties",
-						TestOutcome.PASS, obj -> debug.loadPropertiesFromCurrentDir());
-		instance1.execute(new Object());
+		XResult resultRead = propsDebug.loadFromCurrentDirectory(DebugProperties.PROPERTIES_FILE_NAME);
+		series.expectResult(idTestReadDebug, "load", UnitTestConditionXResult.passed(), resultRead);
 		
 		UnitTestSupervisedVoid<ObservationWriter> instance2
-			= series.createVoidInstance("create writer", TestOutcome.PASS, 
-					() -> DebugWriterLogFile.create(debug.getLogDirectory(), DebugLogFileTest.class));
+			= series.createVoidInstance(TestIdentifier.name("create writer"), TestOutcome.PASS, 
+					() -> DebugWriterLogFile.create(debug.getLogDirectory(), 
+							DebugLogFileTest.class, DebugWriterLogFile.PREFIX_DEBUG));
 		writer = instance2.execute();
 		debug.setWriter(writer);
 		
 		
-		writer.write(ObsLevel.NOTICE, "Test completed");
+		writer.write(ObsLevel.NOTICE, SourceLocation.here(), "Test completed");
 		
 		series.complete();
 	}

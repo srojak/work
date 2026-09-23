@@ -20,10 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import srojak.core.keys.ClassKey;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.numerics.OrderedComparison;
 import srojak.utest.TestIdentifier;
+import srojak.utest.TestStandardObservers;
 import srojak.utest.UnitTestConditionInt;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.core.reflect.ReflectTestA;
@@ -39,15 +38,15 @@ import srojak.utest.helpers.UnitTestEqualsMethods;
  * @author Stephen
  *
  */
-public class ClassKeyEvalTest1 {
+public class ClassKeyEvalTest1 
+		implements TestStandardObservers {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("ClassKeyEvalTest");
-		ObservationWriter writer = new ObservationWriterPrintStream(System.err);
-		series.getOptions().setObservationWriter(writer);
+		series.setObservationCollector(TEST_OBSV_ERR);
 		TestIdentifier idTestQual = TestIdentifier.name("findQualifying");
 		TestIdentifier idTestBest = TestIdentifier.name("findBest");
 		

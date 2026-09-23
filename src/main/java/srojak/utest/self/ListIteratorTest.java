@@ -21,9 +21,9 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterPrintStream;
+import srojak.utest.TestIdentifier;
 import srojak.utest.TestOutcome;
+import srojak.utest.TestStandardObservers;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.conditions.StringCondition;
 import srojak.utest.instances.UnitTestSupervisedVoid;
@@ -32,15 +32,15 @@ import srojak.utest.instances.UnitTestSupervisedVoid;
  * @author Stephen
  *
  */
-public class ListIteratorTest {
+public class ListIteratorTest 
+		implements TestStandardObservers {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("ListIteratorTest");
-		ObservationWriter writer = new ObservationWriterPrintStream(System.err);
-		series.getOptions().setObservationWriter(writer);
+		series.setObservationCollector(TEST_OBSV_ERR);
 		
 		List<String> list = new ArrayList<String>();
 		list.add("first");
@@ -49,18 +49,21 @@ public class ListIteratorTest {
 		
 		Iterator<String> iter1 = list.iterator();
 		
-		series.expectValue("iter1", "hasNext", true, iter1.hasNext());
-		series.expectString("iter1", "next", StringCondition.EQUALS, "first", iter1.next());
+		series.expectValue(TestIdentifier.name("iter1"), "hasNext", true, iter1.hasNext());
+		series.expectString(TestIdentifier.name("iter1"), "next", 
+				StringCondition.EQUALS, "first", iter1.next());
 		
 		list.add("fourth");
 		
 		UnitTestSupervisedVoid<Boolean> instance2
-			= series.createVoidInstance("after add", TestOutcome.FAIL, () -> iter1.hasNext());
+			= series.createVoidInstance(TestIdentifier.name("after add"), 
+					TestOutcome.FAIL, () -> iter1.hasNext());
 		boolean bResult = instance2.execute().booleanValue();
 		System.out.println("result is " + bResult);
 		
 		UnitTestSupervisedVoid<String> instance3
-			= series.createVoidInstance("fetch after add", TestOutcome.FAIL, () -> iter1.next());
+			= series.createVoidInstance(TestIdentifier.name("fetch after add"), 
+					TestOutcome.FAIL, () -> iter1.next());
 		instance3.expect(ConcurrentModificationException.class);
 		@SuppressWarnings("unused")
 		String s = instance3.execute();

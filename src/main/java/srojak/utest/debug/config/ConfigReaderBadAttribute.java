@@ -16,54 +16,105 @@
  */
 package srojak.utest.debug.config;
 
+import java.util.List;
+
+import srojak.core.AppControl;
+import srojak.core.io.FileExistence;
+import srojak.core.io.IOResultQualifiers;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
-import srojak.core.specialized.IntegerCounter;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.core.reflect.ClassReflector;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultInt;
+import srojak.debug.AppDebugMethods;
 import srojak.debug.DebugNexus;
-import srojak.debug.config.DebugConfigReader2Pass;
+import srojak.debug.DebugSwitch;
+import srojak.debug.DebugContentReader;
+import srojak.debug.DebugSwitchTool;
+import srojak.debug.config.DebugConfigFileReader;
 import srojak.numerics.OrderedComparison;
 import srojak.utest.TestIdentifier;
-import srojak.utest.TestOutcome;
+import srojak.utest.UnitTestConditionInt;
+import srojak.utest.UnitTestConditionXResult;
 import srojak.utest.UnitTestSeries;
-import srojak.utest.instances.UnitTestSupervisedVoid;
+import srojak.xml.stream.errors.XmlStreamParseErrorDescr;
 
 /**
  * @author Stephen
  *
  */
-public class ConfigReaderBadAttribute {
+public class ConfigReaderBadAttribute
+		implements IOResultQualifiers {
+	
+	private static final String PREFIX_LOG_FILE = "DbgCf";
+	private static final String FILE_NAME = "badattr.xml";
+	private static final ClassReflector _self;
+	private static final DebugSwitch _swDebugClass;
+	
+	static {
+		_self = new ClassReflector(ConfigReaderBadAttribute.class);
+		DebugNexus nexus = new DebugNexus(DebugNexus.CONS_NONE);
+		_swDebugClass = nexus.getSwitch(DebugSwitchTool.makeClassKey(_self));
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DebugNexus debug = new DebugNexus();
 		UnitTestSeries series = new UnitTestSeries("ConfigReaderBadAttribute");
+		ObservationCollector collError = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerErr
+				= new ObservationWriterPrintStream(System.err);
+		writerErr.enableLevelFilter();
+		writerErr.setObsLevel(ObsLevel.DEBUG);
+		collError.addWriter(writerErr);
+		series.setObservationCollector(collError);
 		series.getOptions().setShowStackOnExceptions(true);
-		ObservationWriterLevelFilterPrintStream writer
-			= new ObservationWriterLevelFilterPrintStream(System.out);
-		writer.setObsLevel(ObsLevel.DEBUG);
-		series.getOptions().setObservationWriter(writer);
+		TestIdentifier idTest = TestIdentifier.name("parse");
+		ObservationCollector collOutput = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerOut
+				= new ObservationWriterPrintStream(System.out);
+		collOutput.addWriter(writerOut);
 		
-		UnitTestSupervisedVoid<DebugConfigReader2Pass> test1
-			= series.<DebugConfigReader2Pass>createVoidInstance(TestIdentifier.name("read config file"), 
-					TestOutcome.PASS, () -> {
-						DebugConfigReader2Pass reader = new DebugConfigReader2Pass();
-						reader.readFrom("badattr.xml");		
-						return reader;
-					});
-		test1.execute();
+		XResult result = AppControl.startApp(_self.getClass());
+		if (!result.isValid()) {
+			System.err.println("cannot load properties: " + result.getException().getMessage());
+			System.exit(2);
+		}
+		result = AppDebugMethods.tryCreateLogFile(ConfigReaderBadAttribute.class, PREFIX_LOG_FILE);
+		series.expectValue(TestIdentifier.name("create log file"), "result", true, result.isValid());
+		AppDebugMethods.setAutoFlush(true);
+
+		DebugConfigFileReader readerDebug = new DebugConfigFileReader();
+		XResultInt resultSchema = readerDebug.loadSchema();
+		series.expectResult(idTest, "load schema", UnitTestConditionXResult.passed(), resultSchema);
 		
-		StringBuilder sb = new StringBuilder("Switches");
-		IntegerCounter counter = new IntegerCounter();
-		debug.forEachSwitch(ds -> {
-			sb.append("\n  ");
-			sb.append(ds);
-			counter.increment(1);
-		});
-		series.writeMessageLine(ObsLevel.NOTICE, sb.toString());
+		_swDebugClass.write(ObsLevel.NOTICE, "Reading config file");
+		XResultInt resultRead = readerDebug.readConfigFile(FILE_NAME, FileExistence.MustExist);
+		if (!resultRead.isValid()) {
+			_swDebugClass.writeException(ObsLevel.ERROR, DebugConfigFileReader.ACTIVITY_READ, resultRead.getException(), true);
+		}
+		series.expectResult(idTest, "read", UnitTestConditionXResult.passed(), resultRead);
+		
+		_swDebugClass.write(ObsLevel.NOTICE, "Completed reading config file");
+		series.expectValueWhere(idTest, "qualifier", 
+				UnitTestConditionInt.makeValueCondition(OrderedComparison.EQ, COMPLETED), resultRead.getResult());
+		
+		series.expectValue(idTest, "parseErrors", true, readerDebug.hasParseErrors());
+		// get the errors
+		List<XmlStreamParseErrorDescr> listErrors = readerDebug.getParseErrors();
+		collOutput.write(ObsLevel.NOTICE, String.valueOf(listErrors.size()) + " parse errors");
+		for (XmlStreamParseErrorDescr error : listErrors) {
+			collOutput.write(error.getSeverity().mapToObsLevel(), error.toString());
+		}
+		series.expectValueWhere(idTest, "# errors", 
+				UnitTestConditionInt.makeValueCondition(OrderedComparison.EQ, 1), listErrors.size());
+		
+		DebugContentReader readerSwitch = new DebugContentReader();
+		int nSwitches = readerSwitch.enumerateAllSwitches(collOutput);
 		series.expectValue(TestIdentifier.name("switch count"), "# switches", 
-				OrderedComparison.GT, 0, counter.getValue());
+				OrderedComparison.GT, 0, nSwitches);
 
 		series.complete();
 	}

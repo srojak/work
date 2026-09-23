@@ -20,11 +20,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.core.reflect.ClassReflector;
 import srojak.core.result.XResultOf;
 import srojak.utest.TestIdentifier;
+import srojak.utest.TestStandardObservers;
 import srojak.utest.UnitTestConditionXResult;
 import srojak.utest.UnitTestSeries;
 
@@ -32,15 +31,15 @@ import srojak.utest.UnitTestSeries;
  * @author Stephen
  *
  */
-public class ClassReflectorTest1 {
+public class ClassReflectorTest1 
+		implements TestStandardObservers {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("ClassReflectorTest");
-		ObservationWriter writer = new ObservationWriterPrintStream(System.err);
-		series.getOptions().setObservationWriter(writer);
+		series.setObservationCollector(TEST_OBSV_ERR);
 		TestIdentifier idTest = TestIdentifier.name("reflect");
 
 		Integer i1 = Integer.valueOf(4);
@@ -62,7 +61,7 @@ public class ClassReflectorTest1 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		writer.write(ObsLevel.NOTICE, "nValue = " + nValue);
+		TEST_OBSV_ERR.write(ObsLevel.NOTICE, "nValue = " + nValue);
 		
 		series.complete();
 	}

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import srojak.numerics.OrderedComparison;
+import srojak.utest.TestIdentifier;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.instances.UnitTestSupervisedConsumer;
@@ -43,14 +44,17 @@ public class MarkedFileNotFoundTest {
 		MarkedTextFileReader reader = new MarkedTextFileReader();
 		ArrayList<String> listMatches = new ArrayList<String>();
 		UnitTestSupervisedConsumer<List<String>> instance = 
-			series.createConsumerInstance("findMarkedLines", TestOutcome.FAIL, list -> {
+			series.createConsumerInstance(TestIdentifier.name("findMarkedLines"), 
+					TestOutcome.FAIL, list -> {
 				reader.findMarkedLines(pathFile, list);
 			});
 		instance.expect(NoSuchFileException.class);
 		instance.execute(listMatches);
 		
-		series.expectValue("line count", "reader", OrderedComparison.EQ, 0, reader.getLineCount());
-		series.expectValue("match count", "listMatches", OrderedComparison.EQ, 0, listMatches.size());
+		series.expectValue(TestIdentifier.name("line count"), "reader", 
+				OrderedComparison.EQ, 0, reader.getLineCount());
+		series.expectValue(TestIdentifier.name("match count"), "listMatches", 
+				OrderedComparison.EQ, 0, listMatches.size());
 		
 		series.complete();
 	}

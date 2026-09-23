@@ -16,9 +16,14 @@
  */
 package srojak.utest.core;
 
-import srojak.core.observe.SourceLocation;
-import srojak.numerics.OrderedComparison;
-import srojak.utest.TestIdentifier;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+
+import srojak.core.io.UnicodeOutputStreamWriter;
+import srojak.core.observe.ObsLevel;
 import srojak.utest.TestStandardObservers;
 import srojak.utest.UnitTestSeries;
 
@@ -26,39 +31,32 @@ import srojak.utest.UnitTestSeries;
  * @author Stephen
  *
  */
-public class TestSourceLocation 
+public class TestUnicodeStreamWriter 
 		implements TestStandardObservers {
 
-	public SourceLocation MethodOne(int nArg) {
-		return SourceLocation.here();
-	}
-	
-	public SourceLocation MethodTwo() {
-		return SourceLocation.caller();
-	}
-	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		UnitTestSeries series = new UnitTestSeries("TestObsLevel");
+		UnitTestSeries series = new UnitTestSeries("UnicodeStreamWriter Test");
 		series.setObservationCollector(TEST_OBSV_ERR);
 		
-		TestSourceLocation app = new TestSourceLocation();
-
-		SourceLocation loc = app.MethodOne(1);
-		System.out.println("at " + loc);
-		series.expectValue(TestIdentifier.name("location"), "class", OrderedComparison.EQ,
-				"srojak.utest.core.TestSourceLocation", loc.getClassName());
-		series.expectValue(TestIdentifier.name("location"), "method", OrderedComparison.EQ, 
-				"MethodOne", loc.getMethodName());
-		series.expectValue(TestIdentifier.name("location"), "line", 
-				OrderedComparison.GE, 15, loc.getLineNumber());
+		Path pathFile = Path.of("Unitext.txt");
+		try {
+			OutputStream streamOut = Files.newOutputStream(pathFile);
+			UnicodeOutputStreamWriter writer = new UnicodeOutputStreamWriter(streamOut);
+			writer.write(LocalDateTime.now().toString());
+			writer.writeln();
+			writer.write("Copyright © 2026 Stephen Rojak");
+			writer.writeln();
+			writer.flush();
+			streamOut.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		loc = app.MethodTwo();
-		System.out.println("at " + loc);
-		
-		series.complete();
+		TEST_OBSV_OUT.write(ObsLevel.INFO, "done");
 	}
 
 }

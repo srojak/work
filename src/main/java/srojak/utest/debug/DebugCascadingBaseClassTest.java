@@ -16,35 +16,51 @@
  */
 package srojak.utest.debug;
 
+import srojak.core.AppControl;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
-import srojak.core.specialized.IntegerCounter;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.core.reflect.ClassReflector;
+import srojak.core.result.XResult;
 import srojak.debug.AppDebugMethods;
+import srojak.debug.DebugContentReader;
+import srojak.debug.DebugContentVisitor;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitchTool;
+import srojak.debug.tools.DebugContentCountingVisitor;
 import srojak.numerics.OrderedComparison;
+import srojak.utest.TestIdentifier;
+import srojak.utest.TestStandardObservers;
 import srojak.utest.UnitTestSeries;
 
 /**
  * @author Stephen
  *
  */
-public class DebugCascadingBaseClassTest {
+public class DebugCascadingBaseClassTest 
+		implements TestStandardObservers {
 
+	private static final ClassReflector _self = new ClassReflector(DebugCascadingBaseClassTest.class);
+	private static final String PREFIX_LOG_FILE = "DbgT";
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("ConfigReader");
 		series.getOptions().setShowStackOnExceptions(true);
-		ObservationWriterLevelFilterPrintStream writer
-			= new ObservationWriterLevelFilterPrintStream(System.out);
+		ObservationWriterPrintStream writer
+			= new ObservationWriterPrintStream(System.out);
+		writer.enableLevelFilter();
 		writer.setObsLevel(ObsLevel.DEBUG);
-		series.getOptions().setObservationWriter(writer);
+		series.setObservationCollector(TEST_OBSV_ERR);
 		
-		AppDebugMethods.readDebugPropertiesFromCurrentDir(2);
-		boolean bCreated = AppDebugMethods.tryCreateLogFile(DebugCascadingBaseClassTest.class);
-		series.expectValue("create log file", "result", true, bCreated);
+		XResult result = AppControl.startApp(_self.getClass());
+		if (!result.isValid()) {
+			System.err.println("cannot load properties: " + result.getException().getMessage());
+			System.exit(2);
+		}
+		result = AppDebugMethods.tryCreateLogFile(_self.getClass(), PREFIX_LOG_FILE);
+		series.expectValue(TestIdentifier.name("create log file"), "result", true, result.isValid());
 		AppDebugMethods.setAutoFlush(true);
 		
 		@SuppressWarnings("unused")
@@ -52,15 +68,15 @@ public class DebugCascadingBaseClassTest {
 		DebugNexus debug = new DebugNexus(DebugNexus.CONS_NONE);
 		debug.enableBaseClassSwitches(DebugSwitchTool.makeClassKey(TestSpecializedTarget.class));
 		
-		StringBuilder sb = new StringBuilder("Switches");
-		IntegerCounter counter = new IntegerCounter();
-		debug.forEachSwitch(ds -> {
-			sb.append("\n  ");
-			sb.append(ds);
-			counter.increment(1);
-		});
-		series.writeMessageLine(ObsLevel.NOTICE, sb.toString());
-		series.expectValue("switch count", "# switches", OrderedComparison.EQ, 3, counter.getValue());
+	    DebugContentVisitor visitor = new DebugContentTestVisitor1(TEST_OBSV_OUT);
+	    DebugContentReader readerDebug = new DebugContentReader();
+	    readerDebug.visitAllContent(visitor);
+	    
+	    DebugContentCountingVisitor visitorCount = new DebugContentCountingVisitor();
+	    readerDebug.visitAllContent(visitorCount);
+		
+		series.expectValue(TestIdentifier.name("switch count"), "# class switches",
+				OrderedComparison.EQ, 3, visitorCount.totalClassSwitches());
 
 		series.complete();
 	}

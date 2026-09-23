@@ -14,47 +14,51 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.utest.core;
+package srojak.utest.self;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import srojak.core.observe.ObsLevel;
+import srojak.core.NameToken;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestSeries;
-import srojak.utest.helpers.UnitTestEqualsMethods;
+import srojak.utest.helpers.UnitTestClassElementMethods;
 
 /**
  * @author Stephen
  *
  */
-public class TestObsLevelSort {
+public class ListHavingTestSample1 {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		UnitTestSeries series = new UnitTestSeries("TestObsLevel");
+		UnitTestSeries series = new UnitTestSeries("ListHavingTestSample");
 		ObservationCollector collError = ObservationCollector.makeInstance();
 		ObservationWriterPrintStream writerErr = new ObservationWriterPrintStream(System.err);
 		collError.addWriter(writerErr);
 		series.setObservationCollector(collError);
-		UnitTestEqualsMethods<ObsLevel> methodEq = new UnitTestEqualsMethods<ObsLevel>();
 		
-		List<ObsLevel> list1 = ObsLevel.getAllKnown();
-		series.expectValueEquals(TestIdentifier.name("returned list"), "first", methodEq, 
-				ObsLevel.NONE, list1.get(0));
+		TestIdentifier ident = TestIdentifier.name("listNameTokens");
+		List<NameToken> listTokens = List.of(
+				NameToken.factory("route1"),
+				NameToken.factory("we2can"),
+				NameToken.factory("par3"));
+		List<NameToken> listFail = new ArrayList<NameToken>(4);
+		listFail.addAll(listTokens);
+		listFail.add(NameToken.factory("zero"));
+
+		UnitTestClassElementMethods<NameToken> methodElements
+			= new UnitTestClassElementMethods<NameToken>(NameToken.class);
+		series.expectAllElementsToHave(ident, "names", methodElements, "digit",
+			token -> token.getName().chars().anyMatch(Character::isDigit), listTokens);
 		
-		List<ObsLevel> list = new ArrayList<ObsLevel>(ObsLevel.getAllKnown());
-		list.sort(null);
-		
-		series.expectValueEquals(TestIdentifier.name("sorted list"), "first", methodEq, 
-				ObsLevel.NONE, list.get(0));
-		
-		System.out.println("Sorted list:");
-		list.forEach(i -> System.out.println("  " + i));
+		ident = TestIdentifier.name("bad list");
+		series.expectAllElementsToHave(ident, "names", methodElements, "digit",
+				token -> token.getName().chars().anyMatch(Character::isDigit), listFail);
 		
 		series.complete();
 	}

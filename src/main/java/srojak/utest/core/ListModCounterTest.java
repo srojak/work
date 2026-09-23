@@ -22,26 +22,26 @@ import java.util.List;
 
 import srojak.core.observe.ExceptionAnalyzer;
 import srojak.core.observe.ExceptionAnalyzerByClass;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.core.specialized.ListModCountTracker;
 import srojak.utest.TestIdentifier;
+import srojak.utest.TestStandardObservers;
 import srojak.utest.UnitTestSeries;
 
 /**
  * @author Stephen
  *
  */
-public class ListModCounterTest {
+public class ListModCounterTest 
+		implements TestStandardObservers  {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("TestListModCounter");
-		ObservationWriter writer = new ObservationWriterPrintStream(System.err);
-		series.getOptions().setObservationWriter(writer);
-		ExceptionAnalyzer analyzeExcs = new ExceptionAnalyzerByClass(writer);
+		
+		series.setObservationCollector(TEST_OBSV_ERR);
+		ExceptionAnalyzer analyzeExcs = new ExceptionAnalyzerByClass(TEST_OBSV_OUT);
 
 		List<String> list1 = new ArrayList<String>();
 		list1.add("spade");

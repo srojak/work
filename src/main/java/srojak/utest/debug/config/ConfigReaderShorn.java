@@ -16,30 +16,24 @@
  */
 package srojak.utest.debug.config;
 
-import java.io.InputStream;
-import java.nio.file.Path;
-
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-
 import org.xml.sax.SAXException;
 
+import srojak.core.AppControl;
 import srojak.core.io.FileExistence;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.core.reflect.ClassReflector;
 import srojak.core.result.XResult;
-import srojak.core.result.XResultOf;
+import srojak.core.result.XResultInt;
 import srojak.debug.AppDebugMethods;
-import srojak.debug.DebugConfigSchema;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
-import srojak.debug.config.DebugConfigParser;
+import srojak.debug.config.DebugConfigFileReader;
 import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestConditionXResult;
 import srojak.utest.UnitTestSeries;
-import srojak.xml.XmlSchemaTool;
-import srojak.xml.stream.XmlStreamValidatingReadAdapter;
 
 /**
  * @author Stephen
@@ -49,11 +43,13 @@ public class ConfigReaderShorn {
 	
 	private static final String PREFIX_LOG_FILE = "DbgCf";
 	private static final String FILE_NAME = "sheared.xml";
+	private static final ClassReflector _self;
 	private static final DebugSwitch _swDebugClass;
 	
 	static {
+		_self = new ClassReflector(ConfigReaderShorn.class);
 		DebugNexus nexus = new DebugNexus(DebugNexus.CONS_NONE);
-		_swDebugClass = nexus.getSwitch(DebugSwitchTool.makeClassKey(ConfigReaderShorn.class));
+		_swDebugClass = nexus.getSwitch(DebugSwitchTool.makeClassKey(_self));
 	}
 
 	/**
@@ -61,14 +57,20 @@ public class ConfigReaderShorn {
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("ConfigReaderShorn");
+		ObservationCollector collError = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerErr
+				= new ObservationWriterPrintStream(System.err);
+		writerErr.enableLevelFilter();
+		writerErr.setObsLevel(ObsLevel.DEBUG);
+		collError.addWriter(writerErr);
+		series.setObservationCollector(collError);
 		series.getOptions().setShowStackOnExceptions(true);
-		ObservationWriterLevelFilterPrintStream writer
-			= new ObservationWriterLevelFilterPrintStream(System.out);
-		writer.setObsLevel(ObsLevel.DEBUG);
-		series.getOptions().setObservationWriter(writer);
 		TestIdentifier idTest = TestIdentifier.name("parse");
+		ObservationCollector collOutput = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerOut = new ObservationWriterPrintStream(System.out);
+		collOutput.addWriter(writerOut);
 	
-		XResult result = AppDebugMethods.readDebugPropertiesFromCurrentDir();
+		XResult result = AppControl.startApp(_self.getClass());
 		if (!result.isValid()) {
 			System.err.println("cannot load properties: " + result.getException().getMessage());
 			System.exit(2);
@@ -76,24 +78,17 @@ public class ConfigReaderShorn {
 		result = AppDebugMethods.tryCreateLogFile(ConfigReaderShorn.class, PREFIX_LOG_FILE);
 		series.expectValue(TestIdentifier.name("create log file"), "result", true, result.isValid());
 		AppDebugMethods.setAutoFlush(true);
-		
-		DebugConfigSchema sourceSchema = new DebugConfigSchema();
-		InputStream stream = sourceSchema.getResource();
-		XmlSchemaTool toolSchema = new XmlSchemaTool();
-		XResultOf<Schema> resultSchema = toolSchema.readSchema(new StreamSource(stream));
-		if (!resultSchema.isValid()) {
-			_swDebugClass.writeException(ObsLevel.ERROR, resultSchema.getException(), false);
-			System.err.println("cannot read schema");
-			System.exit(2);
-		}
-		
-		DebugConfigParser parser = new DebugConfigParser();
+
+		DebugConfigFileReader readerDebug = new DebugConfigFileReader();
+		XResultInt resultSchema = readerDebug.loadSchema();
+		series.expectResult(idTest, "load schema", UnitTestConditionXResult.passed(), resultSchema);
 		
 		_swDebugClass.write(ObsLevel.NOTICE, "Reading config file");
-		XmlStreamValidatingReadAdapter adapter = new XmlStreamValidatingReadAdapter(resultSchema.getResult(), parser);
-		Path pathFile = Path.of(FILE_NAME);
-		result = adapter.readFrom(pathFile, FileExistence.MustExist);
-		series.expectResult(idTest, "read", UnitTestConditionXResult.caughtException(SAXException.class), result);
+		XResultInt resultRead = readerDebug.readConfigFile(FILE_NAME, FileExistence.MustExist);
+		if (!resultRead.isValid()) {
+			_swDebugClass.writeException(ObsLevel.ERROR, DebugConfigFileReader.ACTIVITY_READ, resultRead.getException(), true);
+		}
+		series.expectResult(idTest, "read", UnitTestConditionXResult.caughtException(SAXException.class), resultRead);
 		
 		_swDebugClass.write(ObsLevel.NOTICE, "Completed reading config file");
 		

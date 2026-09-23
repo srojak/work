@@ -16,35 +16,39 @@
  */
 package srojak.utest.self;
 
+import srojak.core.observe.SourceLocation;
 import srojak.numerics.OrderedComparison;
-import srojak.utest.TestIdentifier;
+import srojak.utest.TestLocationIdentifier;
+import srojak.utest.UnitTestConditionInt;
 import srojak.utest.UnitTestSeries;
-import srojak.utest.conditions.UnitTestDoubleValueComparison;
 
 /**
  * @author Stephen
  *
  */
-public class DoubleComparisonsTest {
+public class TestLocationIdentifierTest {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		UnitTestSeries series = new UnitTestSeries("DoubleComparisons");
+		UnitTestSeries series = new UnitTestSeries("TestLocationIdentifier Test");
 
-		double dLarge = 100000.0d;
-		double dSmall = 0.5d;
-		double dHalf = 1.0d / 2.0d;
+		TestLocationIdentifier ident = TestLocationIdentifier.name("trial");
 		
-		series.expectValueWhere(TestIdentifier.name("comparison"), "dLarge",
-				new UnitTestDoubleValueComparison(OrderedComparison.EQ, 100000.0d), dLarge);
-		series.expectValueWhere(TestIdentifier.name("comparison"), "dLarge", 
-				new UnitTestDoubleValueComparison(OrderedComparison.GT, 250.0d), dLarge);
-		series.expectValueWhere(TestIdentifier.name("subtract"), "dSmall - dHalf", 
-				new UnitTestDoubleValueComparison(OrderedComparison.EQ, 0.0d), dSmall - dHalf);
-		series.expectValueWhere(TestIdentifier.name("comparison"), "dSmall", 
-				new UnitTestDoubleValueComparison(OrderedComparison.LE, 0.5d), dHalf);
+		System.out.println(ident.getText());
+		
+		ident.setLocation(SourceLocation.here());
+		
+		System.out.println(ident.getText());
+		
+		int nValue = 2;
+		
+		series.expectValueWhere(ident.setLocation(SourceLocation.here()), "sample",
+				UnitTestConditionInt.makeValueCondition(OrderedComparison.EQ, 2), nValue);
+		
+		series.expectValueWhere(ident.setCallingLocation(), "sample 2",
+				UnitTestConditionInt.makeValueCondition(OrderedComparison.LT, 3), nValue);
 		
 		series.complete();
 	}

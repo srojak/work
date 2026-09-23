@@ -22,15 +22,20 @@ import javax.xml.stream.XMLStreamException;
 
 import org.xml.sax.SAXException;
 
+import srojak.core.AppControl;
 import srojak.core.InvalidOperationException;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.core.reflect.ClassReflector;
 import srojak.core.result.XResult;
 import srojak.core.specialized.IntegerCounter;
 import srojak.debug.AppDebugMethods;
 import srojak.debug.ClassDebugOptions;
+import srojak.debug.DebugClassPortal;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
+import srojak.debug.DebugContentReader;
 import srojak.debug.DebugSwitchTool;
 import srojak.debug.config.DebugConfigReader2Pass;
 import srojak.numerics.ConditionSense;
@@ -48,11 +53,13 @@ import srojak.utest.instances.UnitTestSupervisedVoid;
  */
 public class DebugConfigReader1 {
 	
+	private static final ClassReflector _self;
 	private static final DebugSwitch swDebugClass;
 	
 	static {
-		DebugNexus nexus = new DebugNexus(DebugNexus.CONS_NONE);
-		swDebugClass = nexus.getSwitch(DebugSwitchTool.makeClassKey(DebugConfigReader1.class));
+		_self = new ClassReflector(DebugConfigReader1.class);
+		DebugClassPortal portal = new DebugClassPortal(_self, DebugClassPortal.CONS_NONE);
+		swDebugClass = portal.getMyClassSwitch();
 	}
 
 	/**
@@ -60,13 +67,19 @@ public class DebugConfigReader1 {
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("ConfigReader");
+		ObservationCollector collError = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerErr = new ObservationWriterPrintStream(System.err);
+		writerErr.enableLevelFilter();
+		writerErr.setObsLevel(ObsLevel.DEBUG);
+		collError.addWriter(writerErr);
+		series.setObservationCollector(collError);
 		series.getOptions().setShowStackOnExceptions(true);
-		ObservationWriterLevelFilterPrintStream writer
-			= new ObservationWriterLevelFilterPrintStream(System.out);
-		writer.setObsLevel(ObsLevel.DEBUG);
-		series.getOptions().setObservationWriter(writer);
+		TestIdentifier idTest = TestIdentifier.name("parse");
+		ObservationCollector collOutput = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerOut = new ObservationWriterPrintStream(System.out);
+		collOutput.addWriter(writerOut);
 		
-		XResult result = AppDebugMethods.readDebugPropertiesFromCurrentDir();
+		XResult result = AppControl.startApp(_self.getClass());
 		if (!result.isValid()) {
 			System.err.println("cannot load properties: " + result.getException().getMessage());
 			System.exit(2);
@@ -77,7 +90,9 @@ public class DebugConfigReader1 {
 		
 		swDebugClass.write(ObsLevel.NOTICE, "Reading config file");
 		
-		DebugNexus debug = new DebugNexus();
+		DebugNexus debug = new DebugNexus(DebugNexus.CONS_NONE);
+		DebugClassPortal portal = new DebugClassPortal(_self, DebugClassPortal.CONS_CAN_MODIFY);
+		DebugContentReader readerSwitch = new DebugContentReader();
 		
 		UnitTestSupervisedVoid<DebugConfigReader2Pass> test1
 			= series.<DebugConfigReader2Pass>createVoidInstance(TestIdentifier.name("read config file"), 
@@ -115,13 +130,13 @@ public class DebugConfigReader1 {
 				UnitTestConditionInt.makeValueCondition(OrderedComparison.EQ, 1),
 				options.getOptionValue("option3"));
 		
-		UnitTestSupervisedConsumer<DebugNexus> testSetOptionValue
+		UnitTestSupervisedConsumer<DebugClassPortal> testSetOptionValue
 				= series.createConsumerInstance(TestIdentifier.name("debug options"), TestOutcome.FAIL,
 						n -> {
-							n.setClassOption(DebugConfigReader1.class, "option3", 2);
+							n.setMyClassOption("option3", 2);
 						});
 		testSetOptionValue.expect(InvalidOperationException.class);
-		testSetOptionValue.execute(debug);
+		testSetOptionValue.execute(portal);
 
 		series.complete();
 	}

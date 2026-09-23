@@ -18,10 +18,13 @@ package srojak.utest.debug.config;
 
 import java.nio.file.NoSuchFileException;
 
+import srojak.core.AppControl;
 import srojak.core.io.FileExistence;
 import srojak.core.io.IOResultQualifiers;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriterLevelFilterPrintStream;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.writers.ObservationWriterPrintStream;
+import srojak.core.reflect.ClassReflector;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultInt;
 import srojak.debug.AppDebugMethods;
@@ -34,7 +37,6 @@ import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestConditionInt;
 import srojak.utest.UnitTestConditionXResult;
 import srojak.utest.UnitTestSeries;
-import srojak.xml.stream.XmlParserOptions;
 
 /**
  * @author Stephen
@@ -44,11 +46,13 @@ public class DebugConfigNoFileTest
 		implements IOResultQualifiers {
 	private static final String PREFIX_LOG_FILE = "DbgCf";
 	private static final String FILE_NAME = "NotThere.xml";
+	private static final ClassReflector _self;
 	private static final DebugSwitch _swDebugClass;
 	
 	static {
+		_self = new ClassReflector(DebugConfigNoFileTest.class);
 		DebugNexus nexus = new DebugNexus(DebugNexus.CONS_NONE);
-		_swDebugClass = nexus.getSwitch(DebugSwitchTool.makeClassKey(DebugConfigNoFileTest.class));
+		_swDebugClass = nexus.getSwitch(DebugSwitchTool.makeClassKey(_self));
 	}
 
 	/**
@@ -68,12 +72,18 @@ public class DebugConfigNoFileTest
 			}
 		}
 		
-		ObservationWriterLevelFilterPrintStream writerOut
-			= new ObservationWriterLevelFilterPrintStream(System.out);
-		writerOut.setObsLevel(ObsLevel.DEBUG);
-		writerOut.write(ObsLevel.NOTICE, "existence = " + existDebug);
+		ObservationCollector collError = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerErr = new ObservationWriterPrintStream(System.err);
+		writerErr.enableLevelFilter();
+		writerErr.setObsLevel(ObsLevel.DEBUG);
+		collError.addWriter(writerErr);
+		series.setObservationCollector(collError);
+		series.getOptions().setShowStackOnExceptions(true);
+		ObservationCollector collOutput = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerOut = new ObservationWriterPrintStream(System.out);
+		collOutput.addWriter(writerOut);
 		
-		XResult result = AppDebugMethods.readDebugPropertiesFromCurrentDir();
+		XResult result = AppControl.startApp(_self.getClass());
 		if (!result.isValid()) {
 			System.err.println("cannot load properties: " + result.getException().getMessage());
 			System.exit(2);
@@ -84,12 +94,12 @@ public class DebugConfigNoFileTest
 
 		
 		DebugConfigFileReader readerDebug = new DebugConfigFileReader();
-		readerDebug.getParserOptions().setFlag(XmlParserOptions.PROPERTY_RECORD_COMMENTS, true);
+		readerDebug.setRecordComments(true);
 		XResultInt resultRead = readerDebug.readConfigFile(FILE_NAME, existDebug);
 		if (!resultRead.isValid()) {
-			_swDebugClass.writeException(ObsLevel.ERROR, resultRead.getException(), true);
+			_swDebugClass.writeException(ObsLevel.ERROR, DebugConfigFileReader.ACTIVITY_READ, resultRead.getException(), true);
 		} else {
-			writerOut.write(ObsLevel.INFO, "result qualifier = " + resultRead.getResult());
+			collOutput.write(ObsLevel.INFO, "result qualifier = " + resultRead.getResult());
 		}
 		if (existDebug.equals(FileExistence.Any)) {
 			series.expectResult(idTest, "parse", UnitTestConditionXResult.passed(), resultRead);

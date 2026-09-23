@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import srojak.numerics.OrderedComparison;
+import srojak.utest.TestIdentifier;
 import srojak.utest.TestOutcome;
 import srojak.utest.UnitTestSeries;
 import srojak.utest.instances.UnitTestSupervisedConsumer;
@@ -42,13 +43,15 @@ public class MarkedFileReadTest {
 		MarkedTextFileReader reader = new MarkedTextFileReader();
 		ArrayList<String> listMatches = new ArrayList<String>();
 		UnitTestSupervisedConsumer<List<String>> instance = 
-			series.createConsumerInstance("findMarkedLines", TestOutcome.PASS, list -> {
+			series.createConsumerInstance(TestIdentifier.name("findMarkedLines"), TestOutcome.PASS, list -> {
 				reader.findMarkedLines(pathFile, list);
 			});
 		instance.execute(listMatches);
 		
-		series.expectValue("line count", "reader", OrderedComparison.GT, 40, reader.getLineCount());
-		series.expectValue("match count", "listMatches", OrderedComparison.EQ, 2, listMatches.size());
+		series.expectValue(TestIdentifier.name("line count"), "reader", 
+				OrderedComparison.GT, 40, reader.getLineCount());
+		series.expectValue(TestIdentifier.name("match count"), "listMatches", 
+				OrderedComparison.EQ, 2, listMatches.size());
 		
 		listMatches.forEach(s -> {
 			System.out.println("marked line: " + s);

@@ -17,6 +17,7 @@
 package srojak.utest.core;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.utest.TestIdentifier;
 import srojak.utest.UnitTestSeries;
@@ -32,7 +33,10 @@ public class TestObsLevel {
 	 */
 	public static void main(String[] args) {
 		UnitTestSeries series = new UnitTestSeries("TestObsLevel");
-		series.getOptions().setObservationWriter(new ObservationWriterPrintStream(System.err));
+		ObservationCollector collError = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writerErr = new ObservationWriterPrintStream(System.err);
+		collError.addWriter(writerErr);
+		series.setObservationCollector(collError);
 
 		ObsLevel levelFence = ObsLevel.DEBUG;
 		ObsLevel levelCompar = ObsLevel.ERROR;
