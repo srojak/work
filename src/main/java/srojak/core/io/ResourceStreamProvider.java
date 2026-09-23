@@ -24,5 +24,6 @@ import java.io.InputStream;
  */
 public interface ResourceStreamProvider {
 
-	InputStream getResource();
+	String getResourceName();
+	InputStream getResourceStream();
 }

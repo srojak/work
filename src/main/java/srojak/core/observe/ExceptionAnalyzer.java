@@ -21,6 +21,6 @@ package srojak.core.observe;
  *
  */
 public interface ExceptionAnalyzer {
-	ObservationWriter getWriter();
+	ObservationCollector getWriter();
 	void analyze(ObsLevel level, SourceLocation location, Exception exc);
 }

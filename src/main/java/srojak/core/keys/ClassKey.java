@@ -104,6 +104,7 @@ public class ClassKey {
 		return list;
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public static ClassKey findMostSpecificFor(Collection<ClassKey> keys, Class<?> classTarget) {
 		Objects.requireNonNull(keys, "keys");
 		Objects.requireNonNull(classTarget, "classTarget");

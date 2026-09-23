@@ -16,65 +16,69 @@
  */
 package srojak.core.observe;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.ObjIntConsumer;
+import java.io.IOException;
 
 /**
  * @author Stephen
  *
- * Common interface all observation writers must provide.
  */
 public interface ObservationWriter
-		extends ObservationCommonWriter {
+		extends HasObsLevel, ObservationCommonWriter {
+	
+	/**
+	 * Is this writer filtering by {@code ObsLevel} ?
+	 * @return {@code true} if the writer is filtering.
+	 */
+	boolean isLevelFiltering();
+	
+	/**
+	 * Is this writer set to flush after every write?
+	 * @return {@code true} if autoflush is enabled.
+	 */
+	boolean isAutoFlush();
+	
+	/**
+	 * Set the autoflush state for the writer.
+	 * @param bState The value to which the state should be set.
+	 */
+	void setAutoFlush(boolean bState);
+	
+	/**
+	 * Can this writer show code locations?
+	 * @return {@code true} if the writer can show code locations.
+	 */
+	boolean canShowLocations();
+	
+	/**
+	 * Set whether to show code locations.
+	 * @param bState The value to which the state should be set.
+	 */
+	void setShowLocations(boolean bState);
+	
+	boolean isShowExceptionStackEnabled();
+	
+	void setShowExceptionStackEnabled(boolean bState);
+	
+	/**
+	 * Can this writer write at all?
+	 * @return {@code true} if the writer can write.
+	 */
+	boolean canWrite();
 
 	/**
-	 * Write a message at a given observation level.
-	 * @param level The observation level.
-	 * @param strText The text of the message.
+	 * Can this writer write output at the given level?
+	 * @param level The {@code ObsLevel} threshold to test.
+	 * @return {@code true} if the writer can write at the given level.
 	 */
-	void write(ObsLevel level, String strText);
+	boolean canWriteAt(ObsLevel level);
 	
-	/**
-	 * Build a message and write it at a given observation level.
-	 * @param level The observation level.
-	 * @param message The callback to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message);
+	void write(ObsLevel level, SourceLocation locOrigin, String strText);
 	
-	/**
-	 * Build a message and write it at a given observation level.
-	 * @param level The observation level.
-	 * @param i The {@code int} value to pass through to the callback.
-	 * @param message The callback to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message);
+	void writeException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc, boolean bShowStack);
 	
-	/**
-	 * Build and write a message at an observation level.
-	 * @param level The level at which to write the message.
-	 * @param listPassThrough The observation passthrough list carrying additional data.
-	 * @param messageBuilder The consumer to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
-			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder);
+	void writeDiagnostic(String strText);
 	
-	/**
-	 * Write a time stamp at a given observation level.
-	 * @param level The observation level.
-	 */
-	void writeTimeStamp(ObsLevel level);
+	void writeDiagnostic(SourceLocation locOrigin, String strText);
 	
-	/**
-	 * Create an observation collector at a given observation level.
-	 * @param level The observation level.
-	 * @return an observation collector, which will be active if {@code level} is a level
-	 * 		for which the writer is writing.
-	 */
-	ObservationCollector createCollector(ObsLevel level);
-	
-	/**
-	 * Flush the writer, if the underlying mechanism supports it.
-	 */
-	void flush();
+	void close() throws IOException;
 }

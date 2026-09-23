@@ -23,19 +23,31 @@ package srojak.core.observe;
  */
 public interface ObservationCommonWriter {
 	
-	boolean isLevelAccepted(ObsLevel level);
+	/**
+	 * Can this writer write at all?
+	 * @return {@code true} if the writer can write.
+	 */
+	boolean canWrite();
+
+	/**
+	 * Can this writer write output at the given level?
+	 * @param level The {@code ObsLevel} threshold to test.
+	 * @return {@code true} if the writer can write at the given level.
+	 */
+	boolean canWriteAt(ObsLevel level);
 	
 	/**
-	 * Write the contents of an observation collector.
-	 * @param collector The observation collector bearing the content.
+	 * Write the contents of a single observation collector.
+	 * @param collector The {@code SingleObservationCollector} bearing the content.
 	 * @param locOrigin The location at which the collector was created.
 	 * @param strText The text content from the collector.
 	 */
-	void write(ObservationCollector collector, SourceLocation locOrigin, String strText);
+	void write(SingleObservationCollector collector, SourceLocation locOrigin, String strText);
 	
 	/**
 	 * Write a diagnostic message.
+	 * @param locOrigin The location at which the collector was created.
 	 * @param strText The text of the message.
 	 */
-	void writeDiagnostic(String strText);
+	void writeDiagnostic(SourceLocation locOrigin, String strText);
 }

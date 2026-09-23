@@ -33,10 +33,13 @@ module srojak.core {
 	exports srojak.core.mutable;
 	exports srojak.core.observe;
 	exports srojak.core.observe.activity;
+	exports srojak.core.observe.sources;
 	exports srojak.core.observe.writers;
+	exports srojak.core.props;
 	exports srojak.core.reflect;
 	exports srojak.core.result;
 	exports srojak.core.specialized;
 	exports srojak.core.text;
 	exports srojak.core.tools;
+	exports srojak.core.backplane to srojak.debug, srojak.utest, srojak.utest.core;
 }

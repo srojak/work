@@ -51,4 +51,10 @@ public class XResultBooleanCarrier
 		_result = bResult;
 		markValid();
 	}
+
+	@Override
+	protected void buildValidString(StringBuilder sb) {
+		sb.append(", value=");
+		sb.append(_result);
+	}
 }

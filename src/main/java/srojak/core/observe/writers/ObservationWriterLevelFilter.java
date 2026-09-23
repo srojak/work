@@ -17,13 +17,13 @@
 package srojak.core.observe.writers;
 
 import srojak.core.observe.HasObsLevel;
-import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationCollector;
 
 /**
  * @author Stephen
  *
  */
 public interface ObservationWriterLevelFilter 
-		extends ObservationWriter, HasObsLevel {
+		extends ObservationCollector, HasObsLevel {
 
 }

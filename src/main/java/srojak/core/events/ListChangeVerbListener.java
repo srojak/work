@@ -24,5 +24,5 @@ import java.util.EventListener;
  */
 public interface ListChangeVerbListener
 		extends EventListener {
-	void listChanged(ListChangeVerbEvent e);
+	void listChanged(ListChangeVerbEvent event);
 }

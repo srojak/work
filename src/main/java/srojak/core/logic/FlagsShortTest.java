@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe;
+package srojak.core.logic;
 
 /**
  * @author Stephen
  *
  */
-public interface HasSingleObservationWriter {
+public interface FlagsShortTest {
 
-	ObservationWriter getObservationWriter();
-	void setObservationWriter(ObservationWriter writer);
+	boolean test(short mask);
+	boolean testAnd(short maskFirst, short ... masks);
+	boolean testOr(short maskFirst, short ... masks);
 }

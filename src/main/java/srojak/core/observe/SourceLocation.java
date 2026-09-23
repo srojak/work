@@ -16,29 +16,38 @@
  */
 package srojak.core.observe;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
+
+import srojak.core.impl.SourceLocationPseudo;
+import srojak.core.impl.SourceLocationSpecific;
 
 /**
  * @author Stephen
  *
- * Identifies a source location from the stack.
  */
-public final class SourceLocation
-		implements SourceDetailFlags {
-	private final String _strPackage;
-	private final String _strClass;
-	private final String _strMethod;
-	private final int _nLine;
+public sealed interface SourceLocation
+		permits SourceLocationSpecific, SourceLocationPseudo {
+	
+	boolean isReal();
+	
+	String getPackageName();
+	
+	public String getClassName();
+	
+	public String getMethodName();
+	
+	public int getLineNumber();
+	
+	public String toString(SourceDetail detail);
+	
+	public String toString();
 	
 	/**
 	 * Get the source location from the immediate caller.
 	 * @return A source location object.
 	 */
 	public static SourceLocation here() {
-		return new SourceLocation(Thread.currentThread().getStackTrace()[2]);
+		return new SourceLocationSpecific(Thread.currentThread().getStackTrace()[2]);
 	}
 	
 	/**
@@ -46,7 +55,7 @@ public final class SourceLocation
 	 * @return A source location object.
 	 */
 	public static SourceLocation caller() {
-		return new SourceLocation(Thread.currentThread().getStackTrace()[3]);
+		return new SourceLocationSpecific(Thread.currentThread().getStackTrace()[3]);
 	}
 	
 	/**
@@ -57,69 +66,14 @@ public final class SourceLocation
 	public static SourceLocation caller(int offset) {
 		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 		Objects.checkIndex(offset, stack.length);
-		return new SourceLocation(stack[offset]);
+		return new SourceLocationSpecific(stack[offset]);
 	}
 	
-	private SourceLocation(StackTraceElement element) {
-		String strFull = element.getClassName();
-		int index = strFull.lastIndexOf('.');
-		_strClass = strFull.substring(index + 1);
-		_strPackage = strFull.substring(0, index);
-		_strMethod = element.getMethodName();
-		_nLine = element.getLineNumber();
+	public static SourceLocation redacted() {
+		return new SourceLocationPseudo("redacted");
 	}
 	
-	public String getPackageName() {
-		return _strPackage;
-	}
-	
-	public String getClassName() {
-		return _strClass;
-	}
-	
-	public String getMethodName() {
-		return _strMethod;
-	}
-	
-	public int getLineNumber() {
-		return _nLine;
-	}
-	
-	public String toString(SourceDetail detail) {
-		List<String> list = new LinkedList<String>();
-		if (detail.isFlagSet(FLAG_CLASS)) {
-			list.add("class=" + (detail.isFlagSet(FLAG_PACKAGE)
-					? _strPackage + "." + _strClass : _strClass));
-		}
-		if (detail.isFlagSet(FLAG_METHOD)) {
-			list.add("method=" + _strMethod);
-		}
-		if (detail.isFlagSet(FLAG_LINE)) {
-			list.add("line=" + _nLine);
-		}
-		StringBuilder sb = new StringBuilder("@[");
-		Iterator<String> iter = list.iterator();
-		if (iter.hasNext()) {
-			sb.append(iter.next());
-		}
-		while (iter.hasNext()) {
-			sb.append(", ");
-			sb.append(iter.next());
-		}
-		sb.append(']');
-		return sb.toString();
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder("@[");
-		sb.append("class=");
-		sb.append(_strClass);
-		sb.append(", method=");
-		sb.append(_strMethod);
-		sb.append(", line=");
-		sb.append(_nLine);
-		sb.append(']');
-		return sb.toString();
+	public static SourceLocation start() {
+		return new SourceLocationPseudo("start");
 	}
 }

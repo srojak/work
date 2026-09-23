@@ -20,7 +20,7 @@ package srojak.core.logic;
  * @author Stephen
  *
  */
-public class FlagsInt 
+public final class FlagsInt 
 		implements FlagsIntTest {
 	private int _flags;
 	

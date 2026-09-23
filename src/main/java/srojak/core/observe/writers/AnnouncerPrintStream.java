@@ -48,6 +48,22 @@ public class AnnouncerPrintStream
 		sb.append(", location=");
 		sb.append(location.toString(SourceDetail.PACKAGE_CLASS_METHOD));
 		_streamOut.println(sb.toString());
+		_streamOut.flush();
+	}
+
+	@Override
+	public void announceMessage(ObsLevel level, Class<?> classSource, String strMessage) {
+		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(classSource, "classSource");
+		Objects.requireNonNull(strMessage, "strMessage");
+		StringBuilder sb = new StringBuilder("Observation level=");
+		sb.append(level);
+		sb.append(", source=");
+		sb.append(classSource.getName());
+		sb.append("\n    ");
+		sb.append(strMessage);
+		_streamOut.println(sb.toString());
+		_streamOut.flush();
 	}
 
 	@Override
@@ -65,5 +81,6 @@ public class AnnouncerPrintStream
 		sb.append(", location=");
 		sb.append(location.toString(SourceDetail.PACKAGE_CLASS_METHOD));
 		_streamOut.println(sb.toString());
+		_streamOut.flush();
 	}
 }

@@ -14,53 +14,41 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.writers;
+package srojak.core.observe;
 
 import java.util.Objects;
 
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationCollector;
-import srojak.core.observe.SourceLocation;
+import srojak.core.FilterDecorator;
 
 /**
  * @author Stephen
  *
  */
-public abstract class ObservationWriterLevelFilterBase
-		extends ObservationWriterBase
-		implements ObservationWriterLevelFilter {
-	private ObsLevel _levelWriter;
-	
-	public ObservationWriterLevelFilterBase() {
-		_levelWriter = ObsLevel.INFO;
+public class ObsLevelFilterDecorator 
+		implements FilterDecorator, HasObsLevel {
+	private ObsLevel _levelFilter;
+
+	/**
+	 * 
+	 */
+	public ObsLevelFilterDecorator(ObsLevel levelInitial) {
+		Objects.requireNonNull(levelInitial, "levelInitial");
+		_levelFilter = levelInitial;
 	}
 
 	@Override
-	public boolean isLevelAccepted(ObsLevel level) {
-		return isObsLevelAtLeast(level);
-	}
-	
-	@Override
 	public ObsLevel getObsLevel() {
-		return _levelWriter;
+		return _levelFilter;
 	}
-	
-	protected boolean isObsLevelAtLeast(ObsLevel obsEvent) {
-		Objects.requireNonNull(obsEvent, "obsEvent");
-		return _levelWriter.isLevelAtLeast(obsEvent);
-	}
-	
+
 	@Override
 	public void setObsLevel(ObsLevel level) {
 		Objects.requireNonNull(level, "level");
-		_levelWriter = level;
+		_levelFilter = level;
 	}
 	
-	@Override
-	public abstract void write(ObsLevel level, String strText);
-	
-	@Override
-	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
-		write(collector.getLevel(), strText);
+	public boolean isLevelAtLeast(ObsLevel obsEvent) {
+		Objects.requireNonNull(obsEvent, "obsEvent");
+		return _levelFilter.isLevelAtLeast(obsEvent);
 	}
 }

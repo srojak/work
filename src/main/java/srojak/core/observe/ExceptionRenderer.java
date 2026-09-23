@@ -23,6 +23,6 @@ package srojak.core.observe;
 @FunctionalInterface
 public interface ExceptionRenderer {
 	
-	public void render(ObservationWriter writer, ObsLevel level, SourceLocation location,
+	public void render(ObservationCollector writer, ObsLevel level, SourceLocation location,
 			Exception exception);
 }

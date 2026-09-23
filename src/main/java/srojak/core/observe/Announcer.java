@@ -23,5 +23,6 @@ package srojak.core.observe;
 public interface Announcer {
 
 	void announce(ObsLevel level, SourceLocation location);
+	void announceMessage(ObsLevel level, Class<?> classOrigin, String strMessage);
 	void announceException(ObsLevel level, SourceLocation location, Exception exception);
 }

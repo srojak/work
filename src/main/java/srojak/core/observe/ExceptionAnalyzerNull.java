@@ -16,20 +16,19 @@
  */
 package srojak.core.observe;
 
-import srojak.core.observe.writers.ObservationWriterNull;
-
 /**
  * @author Stephen
  *
  */
 public final class ExceptionAnalyzerNull 
 		extends ExceptionAnalyzerCommonBase {
+	// TODO: is this still needed?
 
 	/**
 	 * 
 	 */
 	public ExceptionAnalyzerNull() {
-		super(new ObservationWriterNull());
+		super(ObservationCollector.makeInstance());
 	}
 
 	@Override

@@ -24,8 +24,8 @@ package srojak.core.events;
 @SuppressWarnings("serial")
 public class ListChangeVerbEvent
 		extends CoreEvent {
-	private int _nVerb;
-	private Object _objItem;
+	private final int _nVerb;
+	private final Object _objItem;
 	
 	/**
 	 * 
@@ -40,6 +40,7 @@ public class ListChangeVerbEvent
 	public static final int VERB_SORT = 7;
 	public static final int VERB_BIND = 8;
 	public static final int VERB_UNBIND = 9;
+	public static final int VERB_INIT = 10;
 	
 	/**
 	 * @param source
@@ -63,15 +64,23 @@ public class ListChangeVerbEvent
 	public Object getItem() {
 		return _objItem;
 	}
-
-	@Override
-	protected void formatData(StringBuilder sb) {
+	
+	protected void formatVerb(StringBuilder sb) {
 		sb.append(", verb=");
 		sb.append(_nVerb);
+	}
+	
+	protected void formatItem(StringBuilder sb) {
 		if (_objItem != null) {
 			sb.append(", item=[");
 			sb.append(_objItem);
 			sb.append(']');
 		}
+	}
+
+	@Override
+	protected void formatData(StringBuilder sb) {
+		formatVerb(sb);
+		formatItem(sb);
 	}
 }

@@ -159,13 +159,22 @@ public abstract class XResultCarrierBase
 			return classException.isAssignableFrom(_exception.getClass());
 		}
 	}
+	
+	protected void buildValidString(StringBuilder sb) {
+		// base class method does nothing
+	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Result [origin=");
+		StringBuilder sb = new StringBuilder("result [origin=");
 		sb.append(_origin.toString(SourceDetail.PACKAGE_CLASS_METHOD));
+		sb.append(", activity=");
+		sb.append(_activity.describe());
 		sb.append(", valid=");
 		sb.append(_bValid);
+		if (_bValid) {
+			buildValidString(sb);
+		}
 		if (_exception != null) {
 			sb.append(", exception=");
 			sb.append(_exception.getClass().getSimpleName());

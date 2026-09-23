@@ -14,34 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.writers;
+package srojak.core.props;
 
-import java.util.Objects;
-
-import srojak.core.observe.HasSingleObservationWriter;
-import srojak.core.observe.ObservationWriter;
 
 /**
+ * Recognized keys in the properties file.
+ * 
  * @author Stephen
  *
  */
-public abstract class ObservationWriterContainerBase
-		implements HasSingleObservationWriter {
-	private ObservationWriter _writer;
-	
-	public ObservationWriterContainerBase(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
-	}
-	
-	@Override
-	public ObservationWriter getObservationWriter() {
-		return _writer;
-	}
-	
-	@Override
-	public void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
-	}
+public interface DebugPropertyKeys {
+	public static final String LOG_DIR = "dir.log";
+	public static final String DIAG_NEW_SWITCH = "diag.new.switch";
+	public static final String DIAG_NEW_CLASS_OPTIONS = "diag.new.classoptions";
+	public static final String DIAG_SHUTDOWN = "diag.shutdown";
+	public static final String DIAG_SWITCH_CASCADE = "diag.switch.cascade";
+	public static final String RULE_INFER_SHOW_LOCATIONS = "rule.infer.show.locations";
 }

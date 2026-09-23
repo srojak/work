@@ -17,21 +17,22 @@
 package srojak.core.observe.writers;
 
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Objects;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsWriterMethods;
-import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCommonWriter;
+import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.SourceLocation;
 
 /**
  * @author Stephen
  *
  */
-public class ObservationCollectorObj
-		implements ObservationCollector, AutoCloseable {
-	private final ObservationCommonWriter _writer;
+public class SingleObservationCollectorObj
+		implements SingleObservationCollector, AutoCloseable {
+	private final List<? extends ObservationCommonWriter> _listWriters;
 	private final ObsLevel _level;
 	private final SourceLocation _locOrigin;
 	private final StringBuilder _sb;
@@ -40,16 +41,28 @@ public class ObservationCollectorObj
 	/**
 	 * 
 	 */
-	protected ObservationCollectorObj(ObservationCommonWriter writer, 
+	public SingleObservationCollectorObj(List<? extends ObservationCommonWriter> listActiveWriters, 
+			ObsLevel level, SourceLocation locOrigin) {
+		Objects.requireNonNull(listActiveWriters, "listActiveWriters");
+		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(locOrigin, "locOrigin");
+		_listWriters = listActiveWriters;
+		_level = level;
+		_locOrigin = locOrigin;
+		_sb = new StringBuilder();
+		_bIsLevelOn = !_listWriters.isEmpty();
+	}
+	
+	public SingleObservationCollectorObj(ObservationCommonWriter writer,
 			ObsLevel level, SourceLocation locOrigin) {
 		Objects.requireNonNull(writer, "writer");
 		Objects.requireNonNull(level, "level");
 		Objects.requireNonNull(locOrigin, "locOrigin");
-		_writer = writer;
+		_listWriters = List.of(writer);
 		_level = level;
 		_locOrigin = locOrigin;
 		_sb = new StringBuilder();
-		_bIsLevelOn = _writer.isLevelAccepted(_level);
+		_bIsLevelOn = writer.canWriteAt(level);
 	}
 
 	@Override
@@ -63,85 +76,85 @@ public class ObservationCollectorObj
 	}
 
 	@Override
-	public ObservationCollector append(boolean value) {
+	public SingleObservationCollector append(boolean value) {
 		_sb.append(value);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(char value) {
+	public SingleObservationCollector append(char value) {
 		_sb.append(value);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(int value) {
+	public SingleObservationCollector append(int value) {
 		_sb.append(value);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(long value) {
+	public SingleObservationCollector append(long value) {
 		_sb.append(value);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(float value) {
+	public SingleObservationCollector append(float value) {
 		_sb.append(value);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(double value) {
+	public SingleObservationCollector append(double value) {
 		_sb.append(value);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(String strText) {
+	public SingleObservationCollector append(String strText) {
 		_sb.append(strText);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(Object obj) {
+	public SingleObservationCollector append(Object obj) {
 		_sb.append(obj);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(StringBuffer sbuf) {
+	public SingleObservationCollector append(StringBuffer sbuf) {
 		_sb.append(sbuf);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(CharSequence cs) {
+	public SingleObservationCollector append(CharSequence cs) {
 		_sb.append(cs);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(CharSequence cs, int start, int end) {
+	public SingleObservationCollector append(CharSequence cs, int start, int end) {
 		_sb.append(cs, start, end);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(char[] str) {
+	public SingleObservationCollector append(char[] str) {
 		_sb.append(str);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector append(char[] str, int offset, int len) {
+	public SingleObservationCollector append(char[] str, int offset, int len) {
 		_sb.append(str, offset, len);
 		return this;
 	}
 
 	@Override
-	public ObservationCollector appendFormat(String format, Object... args) {
+	public SingleObservationCollector appendFormat(String format, Object... args) {
 		SourceLocation loc = SourceLocation.caller();
 		_sb.append(ObsWriterMethods.formatSafely(loc, format, args));
 		return this;
@@ -156,7 +169,8 @@ public class ObservationCollectorObj
 	@Override
 	public void commit() {
 		if (_bIsLevelOn) {
-			_writer.write(this, _locOrigin, _sb.toString());
+			String strText = _sb.toString();
+			_listWriters.forEach(w -> w.write(this, _locOrigin, strText));
 		}
 		_sb.delete(0, _sb.length());
 		_bIsLevelOn = false;
@@ -165,7 +179,7 @@ public class ObservationCollectorObj
 	@Override
 	public void close() throws Exception {
 		if (_sb.length() > 0 && _bIsLevelOn) {
-			_writer.writeDiagnostic("Collector created at " + _locOrigin.toString() + " never committed");
+			_listWriters.forEach(w -> w.writeDiagnostic(_locOrigin, "collector never committed"));
 		}
 	}
 

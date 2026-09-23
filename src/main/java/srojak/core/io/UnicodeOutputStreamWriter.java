@@ -14,16 +14,33 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.io;
 
-import java.util.Set;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Stephen
  *
  */
-public interface IPropertiesReadOnly {
-	String getProperty(String key);
-	String getProperty(String key, String defaultValue);
-	Set<String> stringPropertyNames();
+public class UnicodeOutputStreamWriter {
+	private final OutputStreamWriter _writer;
+	
+	public UnicodeOutputStreamWriter(OutputStream streamOut) {
+		_writer = new OutputStreamWriter(streamOut, StandardCharsets.UTF_8);
+	}
+	
+	public void write(String strText) throws IOException {
+		_writer.write(strText);
+	}
+	
+	public void writeln() throws IOException {
+		_writer.write('\n');
+	}
+	
+	public void flush() throws IOException {
+		_writer.flush();
+	}
 }

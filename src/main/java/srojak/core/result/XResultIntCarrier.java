@@ -53,4 +53,10 @@ public class XResultIntCarrier
 		_result = result;
 		markValid();
 	}
+
+	@Override
+	protected void buildValidString(StringBuilder sb) {
+		sb.append(", value=");
+		sb.append(_result);
+	}
 }

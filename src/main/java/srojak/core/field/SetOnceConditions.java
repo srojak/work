@@ -21,7 +21,7 @@ package srojak.core.field;
  *
  */
 public interface SetOnceConditions {
-	boolean hasBeenSet();
+	boolean isEmpty();
 	boolean allowsNonNullValue();
 	
 	public static final int DEFAULT = 0;

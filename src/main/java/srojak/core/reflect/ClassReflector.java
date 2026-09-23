@@ -132,26 +132,14 @@ public class ClassReflector
 		return Stream.iterate(_classObj.getSuperclass(), c -> c != null, Class::getSuperclass);
 	}
 	
-	private void expandInterfaces(Set<Class<?>> setIntfs, Class<?> classIntf) {
-		if (!classIntf.isInterface()) {
-			throw new IllegalArgumentException(classIntf.getSimpleName() + " is not an interface");
-		}
-		if (setIntfs.add(classIntf))
-		{
-			for (Class<?> i : classIntf.getInterfaces()) {
-				expandInterfaces(setIntfs, i);
-			}
-		}
-	}
-	
 	public Set<Class<?>> getAllImplementedInterfaces() {
 		HashSet<Class<?>> interfaces = new HashSet<Class<?>>();
 		for (Class<?> classIntf : _classObj.getInterfaces()) {
-			expandInterfaces(interfaces, classIntf);
-		}
+			InterfaceMethods.expand(interfaces, classIntf);
+			}
 		getStreamOfSuperclasses().forEach(sc -> {
 			for (Class<?> classIntf : sc.getInterfaces()) {
-				expandInterfaces(interfaces, classIntf);
+				InterfaceMethods.expand(interfaces, classIntf);
 			}
 		});
 		return interfaces;

@@ -31,7 +31,7 @@ public class ExceptionAnalyzerByClass
 	/**
 	 * @param writer
 	 */
-	public ExceptionAnalyzerByClass(ObservationWriter writer) {
+	public ExceptionAnalyzerByClass(ObservationCollector writer) {
 		super(writer);
 		_map = new HashMap<String, ExceptionRenderer>();
 		_bShowStack = false;
@@ -51,7 +51,7 @@ public class ExceptionAnalyzerByClass
 		_map.put(classExc.getTypeName(), renderer);
 	}
 	
-	protected void defaultRenderer(ObservationWriter writer, ObsLevel level, SourceLocation location,
+	protected void defaultRenderer(ObservationCollector writer, ObsLevel level, SourceLocation location,
 			Exception exception) {
 		writer.buildAndWrite(level, sb -> {
 			sb.append("caught ");

@@ -53,4 +53,10 @@ public class XResultCarrierOf<T>
 		_result = result;
 		markValid();
 	}
+
+	@Override
+	protected void buildValidString(StringBuilder sb) {
+		sb.append(", object=");
+		sb.append(_result);
+	}
 }

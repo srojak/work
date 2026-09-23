@@ -24,15 +24,15 @@ import java.util.Objects;
  */
 public abstract class ExceptionAnalyzerCommonBase
 		implements ExceptionAnalyzer {
-	protected final ObservationWriter _writer;
+	protected final ObservationCollector _writer;
 	
-	protected ExceptionAnalyzerCommonBase(ObservationWriter writer) {
+	protected ExceptionAnalyzerCommonBase(ObservationCollector writer) {
 		Objects.requireNonNull(writer, "writer");
 		_writer = writer;
 	}
 
 	@Override
-	public ObservationWriter getWriter() {
+	public ObservationCollector getWriter() {
 		return _writer;
 	}
 

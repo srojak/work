@@ -25,4 +25,5 @@ public interface IOResultQualifiers {
 	public static final int COMPLETED = 0;
 	public static final int EXCEPT_ON_CLOSE = 1;
 	public static final int NO_FILE_TO_READ = 2;
+	public static final int NO_ACTION_TAKEN = 3;
 }

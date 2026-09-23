@@ -24,8 +24,7 @@ import java.util.Objects;
 import srojak.core.NameToken;
 import srojak.core.NameTokenBearing;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.ObservationWriterHolder;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 
 /**
@@ -37,18 +36,16 @@ public class StopGate
 	private final NameToken _name;
 	private final List<StopBarrier> _listStops;
 	
-	private static final ObservationWriterHolder _writerErr;
+	private static final ObservationCollector _obsErr;
 	
 	static {
-		_writerErr = new ObservationWriterHolder(new ObservationWriterPrintStream(System.err));
+		_obsErr = ObservationCollector.makeInstance();
+		ObservationWriterPrintStream writer = new ObservationWriterPrintStream(System.err);
+		_obsErr.addWriter(writer);
 	}
 	
-	public static ObservationWriter getWriter() {
-		return _writerErr.getWriter();
-	}
-	
-	public static void setWriter(ObservationWriter writer) {
-		_writerErr.setWriter(_writerErr);
+	public static ObservationCollector getObservationCollector() {
+		return _obsErr;
 	}
 	
 	public StopGate(NameToken tokenName) {
@@ -92,7 +89,7 @@ public class StopGate
 	
 	void finalRemove(StopBarrier barrier) {
 		if (_listStops.remove(barrier)) {
-			_writerErr.write(ObsLevel.ERROR, "gate for " + _name + " barrier never properly removed");
+			_obsErr.write(ObsLevel.ERROR, "gate for " + _name + " barrier never properly removed");
 		}
 	}
 }

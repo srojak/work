@@ -16,41 +16,103 @@
  */
 package srojak.core.observe;
 
-import java.io.PrintStream;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.ObjIntConsumer;
+import java.util.function.Supplier;
+
+import srojak.core.backplane.ObservationCollectorInstance;
+import srojak.core.logic.FlagsShortTest;
 
 /**
  * @author Stephen
  *
+ * Common interface all observation collectors must provide.
  */
-public interface ObservationCollector {
+public interface ObservationCollector
+	extends TraceCollector {
 	
-	public ObsLevel getLevel();
-	public boolean isActive();
-	public ObservationCollector append(boolean value);
-	public ObservationCollector append(char value);
-	public ObservationCollector append(int value);
-	public ObservationCollector append(long value);
-	public ObservationCollector append(float value);
-	public ObservationCollector append(double value);
-	public ObservationCollector append(String strText);
-	public ObservationCollector append(Object obj);
-	public ObservationCollector append(StringBuffer sbuf);
-	public ObservationCollector append(CharSequence cs);
-    /**
-     * @throws IndexOutOfBoundsException {@inheritDoc}
-     */
-	public ObservationCollector append(CharSequence cs, int start, int end);
-	public ObservationCollector append(char[] str);
-    /**
-     * @throws IndexOutOfBoundsException {@inheritDoc}
-     */
-	public ObservationCollector append(char[] str, int offset, int len);
-	public ObservationCollector appendFormat(String format, Object... args);
-	/**
-	 * If called, must be called before commit.
-	 * @param output
-	 */
-	public void alsoWriteTo(PrintStream output);
-	public void commit();
+	FlagsShortTest getFlags();
 
+	/**
+	 * Write a message at a given observation level.
+	 * @param level The observation level.
+	 * @param strText The text of the message.
+	 */
+	void write(ObsLevel level, String strText);
+	
+	/**
+	 * Write a message at an observation level.
+	 * @param level The level at which to write the message.
+	 * @param message The supplier of the message.
+	 */
+	void write(ObsLevel level, Supplier<String> message);
+	
+	/**
+	 * Write a message at an observation level.
+	 * @param level The level at which to write the message.
+	 * @param listPassThrough The observable passthrough list carrying additional data.
+	 * @param message The function to write the message.
+	 */
+	void write(ObsLevel level, ObsPassThroughList listPassThrough, 
+			Function<ObsPassThroughList, String> message);
+	
+	/**
+	 * Build a message and write it at a given observation level.
+	 * @param level The observation level.
+	 * @param message The callback to build the message.
+	 */
+	void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message);
+	
+	/**
+	 * Build a message and write it at a given observation level.
+	 * @param level The observation level.
+	 * @param i The {@code int} value to pass through to the callback.
+	 * @param message The callback to build the message.
+	 */
+	void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message);
+	
+	/**
+	 * Build and write a message at an observation level.
+	 * @param level The level at which to write the message.
+	 * @param listPassThrough The observation passthrough list carrying additional data.
+	 * @param messageBuilder The consumer to build the message.
+	 */
+	void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
+			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder);
+	
+	/**
+	 * Write a time stamp at a given observation level.
+	 * @param level The observation level.
+	 */
+	void writeTimeStamp(ObsLevel level);
+	
+	/**
+	 * Write a diagnostic message.
+	 * @param strText The text of the message.
+	 */
+	void writeDiagnostic(String strText);
+	
+	/**
+	 * Create an observation collector at a given observation level.
+	 * @param level The observation level.
+	 * @return an observation collector, which will be active if {@code level} is a level
+	 * 		for which the writer is writing.
+	 */
+	SingleObservationCollector createCollector(ObsLevel level);
+	
+	boolean hasPermanentWriters();
+	
+	void addWriter(ObservationWriter writer);
+	
+	void addWriterPermanent(ObservationWriter writer);
+	
+	void removeWriter(ObservationWriter writer);
+	
+	void replaceAllWriters(ObservationWriter writer);
+	
+	public static ObservationCollector makeInstance() {
+		return new ObservationCollectorInstance();
+	}
 }

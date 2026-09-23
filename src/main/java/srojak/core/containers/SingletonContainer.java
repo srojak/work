@@ -28,8 +28,7 @@ import srojak.core.events.StateChangeCodes;
 import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterNull;
+import srojak.core.observe.ObservationCollector;
 
 /**
  * @author Stephen
@@ -41,15 +40,10 @@ public class SingletonContainer<T>
 	private final ObjectLifeCycleListener _listenerLife;
 	private T _obj;
 	
-	private static ObservationWriter _writer = new ObservationWriterNull();
+	private static ObservationCollector _obsErr = ObservationCollector.makeInstance();
 	
-	public static ObservationWriter getObservationWriter() {
-		return _writer;
-	}
-	
-	public static void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
+	public static ObservationCollector getObservationWriter() {
+		return _obsErr;
 	}
 	
 	public SingletonContainer() {
@@ -84,7 +78,7 @@ public class SingletonContainer<T>
 				try {
 					objClose.close();
 				} catch (Exception exc) {
-					_writer.buildAndWrite(ObsLevel.ERROR, sb -> {
+					_obsErr.buildAndWrite(ObsLevel.ERROR, sb -> {
 						sb.append("caught ");
 						sb.append(exc.getClass().getSimpleName());
 						sb.append("\n    ");

@@ -16,89 +16,57 @@
  */
 package srojak.core.observe.writers;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.ObjIntConsumer;
 
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObsPassThroughList;
-import srojak.core.observe.ObservationCollector;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.SourceLocation;
+import srojak.core.field.SetOnce;
 
 /**
  * @author Stephen
  *
  */
-public class ObservationWriterPrintStream
-		extends ObservationWriterBase
-		implements ObservationWriter {
-	private final PrintStream _streamOut;
+public class ObservationWriterPrintStream 
+		extends ObservationWriterCommonTextBase {
+	private final SetOnce<PrintStream> _stream;
 
 	/**
-	 * 
+	 * @param stream
 	 */
 	public ObservationWriterPrintStream(PrintStream stream) {
+		super();
+		_stream = new SetOnce<PrintStream>(SetOnce.DEFAULT);
+		assignPrintStream(stream);
+	}
+	
+	public ObservationWriterPrintStream() {
+		super();
+		_stream = new SetOnce<PrintStream>(SetOnce.DEFAULT);
+	}
+	
+	protected void assignPrintStream(PrintStream stream) {
 		Objects.requireNonNull(stream, "stream");
 		if (stream.checkError())
 			throw new IllegalArgumentException("stream is not valid");
-		_streamOut = stream;
+		_stream.set(stream);
+		setCanWrite(true);
+		if (stream != System.out && stream != System.err) {
+			setIsClosable();
+		}
 	}
 
 	@Override
-	public boolean isLevelAccepted(ObsLevel level) {
-		return true;
+	protected void writeln(String strText) throws IOException {
+		_stream.get().println(strText);		
 	}
 
 	@Override
-	public void write(ObsLevel level, String strText) {
-		_streamOut.println(level.getName() + ": " + strText);			
+	protected void flushOutput() throws IOException {
+		_stream.get().flush();	
 	}
 
 	@Override
-	public void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		message.accept(sb);
-		_streamOut.println(sb.toString());
-	}
-
-	@Override
-	public void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		message.accept(sb, i);
-		_streamOut.println(sb.toString());
-	}
-
-	@Override
-	public void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
-			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder) {
-		StringBuilder sb = new StringBuilder(level.getName());
-		sb.append(": ");
-		messageBuilder.accept(sb, listPassThrough);
-		_streamOut.println(sb.toString());
-	}
-
-	@Override
-	public void writeDiagnostic(String strText) {
-		_streamOut.println("*DIAG: " + strText);	
-	}
-
-	@Override
-	public void writeTimeStamp(ObsLevel level) {
-		_streamOut.println(level.getName() + ": time " + getDateAndTimeStamp());
-	}
-
-	@Override
-	public void write(ObservationCollector collector, SourceLocation locOrigin, String strText) {
-		write(collector.getLevel(), strText);
-	}
-
-	@Override
-	public void flush() {
-		_streamOut.flush();
+	protected void closeOutput() throws IOException {
+		_stream.get().close();
 	}
 }

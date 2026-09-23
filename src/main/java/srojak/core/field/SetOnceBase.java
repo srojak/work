@@ -44,8 +44,8 @@ public abstract class SetOnceBase
 	}
 
 	@Override
-	public boolean hasBeenSet() {
-		return _flag.getState();
+	public boolean isEmpty() {
+		return !_flag.getState();
 	}
 	
 	public void faultIfAlreadySet() {
