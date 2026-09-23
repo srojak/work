@@ -18,53 +18,26 @@ package srojak.utest.impl;
 
 import java.util.Objects;
 
-import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.writers.ObservationWriterLevelFilterPrintStream;
 import srojak.numerics.DoubleComparer;
 import srojak.numerics.DoublePrecisionComparer;
 import srojak.numerics.FloatComparer;
 import srojak.numerics.SinglePrecisionComparer;
-import srojak.utest.TestOutcome;
-import srojak.utest.UnitTestSeries;
 
 /**
  * @author Stephen
  *
  */
 public class UnitTestOptionsBase {
-	private ObservationWriter _writer;	
 	private boolean _bStopOnFailure;
 	private boolean _bShowStackOnExcepts;
 	private DoublePrecisionComparer _comparerDouble;
 	private SinglePrecisionComparer _comparerFloat;
 
 	public UnitTestOptionsBase() {
-		ObservationWriterLevelFilterPrintStream writer = new ObservationWriterLevelFilterPrintStream(System.err);
-		writer.setObsLevel(UnitTestSeries.LEVEL_NON_FAILURE);
-		_writer = writer;
 		_bStopOnFailure = false;	
 		_bShowStackOnExcepts = false;
 		_comparerDouble = new DoubleComparer(1.0e-10);
 		_comparerFloat = new FloatComparer((float) 1.0e-10);
-	}
-	
-	/**
-	 * Gets the observation writer in use.
-	 * @return The {@code ObservationWriter} the tests will use.
-	 */
-	public ObservationWriter getObservationWriter() {
-		return _writer;
-	}
-	
-	/**
-	 * Sets the observation writer to use.
-	 * @param writer the {@code ObservationWriter} the tests will use.
-	 * @throws NullPointerException If writer is {@value null}.
-	 */
-	public void setObservationWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
 	}
 	
 	/**
@@ -115,27 +88,5 @@ public class UnitTestOptionsBase {
 	public void setFloatComparer(SinglePrecisionComparer comparer) {
 		Objects.requireNonNull(comparer, "comparer");
 		_comparerFloat = comparer;
-	}
-	
-	void writeMessage(ObsLevel level, String strText) {
-		_writer.write(level, strText);
-	}
-	
-	void writeOutcomeMessage(TestOutcome outcome, String strLine) {
-		ObsLevel level = outcome == TestOutcome.PASS 
-				? UnitTestSeries.LEVEL_NON_FAILURE : ObsLevel.ERROR;
-		_writer.write(level, strLine);
-	}
-	
-	void writeStack(ObsLevel level, Exception exc) {
-		if (_bShowStackOnExcepts) {
-			StringBuilder sb = new StringBuilder("stack trace:");
-			StackTraceElement[] frames = exc.getStackTrace();
-			for (StackTraceElement frame : frames) {
-				sb.append("\n    ");
-				sb.append(frame);
-			}
-			_writer.write(level, sb.toString());
-		}
 	}
 }

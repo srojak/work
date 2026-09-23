@@ -56,7 +56,7 @@ import srojak.utest.instances.UnitTestSupervisedVoid;
 public class UnitTestSeries
 		extends UnitTestSeriesBase {
 	
-	public static final ObsLevel LEVEL_NON_FAILURE = ObsLevel.INFO;
+	public static final ObsLevel LEVEL_NON_FAILURE = OBS_LEVEL_DEFAULT;
 	
 	/**
 	 * Constructor
@@ -115,7 +115,7 @@ public class UnitTestSeries
 		sb.append(" null? ");
 		TestOutcome outcome = TestOutcome.evaluate(() -> sense.isExpectedResult(actual == null));
 		sb.append(outcome);
-		writeOutcomeMessage(outcome, sb.toString());
+		super.writeOwnOutcomeMessage(outcome, sb.toString());
 		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
@@ -258,7 +258,7 @@ public class UnitTestSeries
 			sb.append("\"");
 			outcome = TestOutcome.evaluate(() -> condition.evaluate(expected, actual));
 		}
-		writeOutcomeMessage(outcome, sb.toString());
+		writeOwnOutcomeMessage(outcome, sb.toString());
 		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
@@ -295,7 +295,7 @@ public class UnitTestSeries
 			sb.append(actual);
 			outcome = TestOutcome.evaluate(() -> sense.isExpectedResult(expected.equals(actual)));
 		}
-		writeOutcomeMessage(outcome, sb.toString());
+		writeOwnOutcomeMessage(outcome, sb.toString());
 		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
@@ -398,7 +398,7 @@ public class UnitTestSeries
 			outcome = TestOutcome.evaluate(() -> classExpected.isAssignableFrom(classActual));
 		}
 		sb.append(outcome);
-		writeOutcomeMessage(outcome, sb.toString());
+		writeOwnOutcomeMessage(outcome, sb.toString());
 		checkStopOnFailure(idInstance, outcome);
 		return outcome;
 	}
@@ -474,7 +474,7 @@ public class UnitTestSeries
 			sb.append("\"");
 			outcome = TestOutcome.evaluate(() -> condition.test(actual));
 		}
-		writeOutcomeMessage(outcome, sb.toString());
+		writeOwnOutcomeMessage(outcome, sb.toString());
 		checkStopOnFailure(idInstance, outcome);
 		return outcome;		
 	}

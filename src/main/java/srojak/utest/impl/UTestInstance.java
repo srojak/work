@@ -64,14 +64,14 @@ public abstract class UTestInstance {
 	}
 	
 	protected void writeMessage(ObsLevel level, String strText) {
-		_utest.writeMessageLine(level, strText);
+		((UnitTestSeriesBase)_utest).writeMessage(level, strText);
 	}
 	
 	protected void writeOutcomeMessage(TestOutcome outcome, String strLine) {
-		_utest.writeOutcomeMessage(outcome, strLine);
+		((UnitTestSeriesBase)_utest).writeOutcomeMessage(outcome, strLine);
 	}
 	
 	protected void writeStack(ObsLevel level, Exception exc) {
-		_utest.writeStack(level, exc);
+		((UnitTestSeriesBase)_utest).writeStack(level, exc);
 	}
 }
