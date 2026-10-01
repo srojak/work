@@ -55,6 +55,16 @@ public class XResultIntCarrier
 	}
 
 	@Override
+	protected void coreCopyFrom(XResult result) {
+		super.coreCopyFrom(result);
+		if (result instanceof XResultInt resultInt) {
+			_result = resultInt.getResult();
+		} else {
+			_result = -1;
+		}
+	}
+
+	@Override
 	protected void buildValidString(StringBuilder sb) {
 		sb.append(", value=");
 		sb.append(_result);

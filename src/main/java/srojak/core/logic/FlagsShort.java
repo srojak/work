@@ -16,6 +16,8 @@
  */
 package srojak.core.logic;
 
+import java.util.Objects;
+
 /**
  * @author Stephen
  *
@@ -40,6 +42,16 @@ public final class FlagsShort
 		}
 	}
 	
+	public void copyFrom(FlagsShortTest flagsSource) {
+		Objects.requireNonNull(flagsSource, "flagsSource");
+		_flags = flagsSource.allFlags();
+	}
+	
+	public void unionWith(FlagsShortTest flagsSource) {
+		Objects.requireNonNull(flagsSource, "flagsSource");
+		_flags |= flagsSource.allFlags();
+	}
+	
 	public boolean apply(boolean bState, short ... masks) {
 		int flagsOrig = _flags;
 		if (bState) {
@@ -48,6 +60,16 @@ public final class FlagsShort
 			clear(masks);
 		}
 		return (flagsOrig != _flags);
+	}
+
+	@Override
+	public short allFlags() {
+		return _flags;
+	}
+
+	@Override
+	public boolean isAnySet() {
+		return _flags != 0;
 	}
 
 	@Override

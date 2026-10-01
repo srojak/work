@@ -18,11 +18,15 @@ package srojak.core.props;
 
 import java.util.Set;
 
+import srojak.core.CommonCollectionSize;
+
 /**
  * @author Stephen
  *
  */
-public interface PropertiesReadOnly {
+public interface PropertiesReadOnly
+		extends CommonCollectionSize {
+	
 	String getProperty(String key);
 	String getProperty(String key, String defaultValue);
 	Set<String> getAllPropertyNames();

@@ -22,7 +22,6 @@ import java.util.function.Function;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
-import srojak.core.backplane.ObservationCollectorInstance;
 import srojak.core.logic.FlagsShortTest;
 
 /**
@@ -43,11 +42,25 @@ public interface ObservationCollector
 	void write(ObsLevel level, String strText);
 	
 	/**
+	 * Write a message at a given observation level without location information.
+	 * @param level The observation level.
+	 * @param strText The text of the message.
+	 */
+	void writeNoLocation(ObsLevel level, String strText);
+	
+	/**
 	 * Write a message at an observation level.
 	 * @param level The level at which to write the message.
 	 * @param message The supplier of the message.
 	 */
 	void write(ObsLevel level, Supplier<String> message);
+	
+	/**
+	 * Write a message at an observation level without location information.
+	 * @param level The level at which to write the message.
+	 * @param message The supplier of the message.
+	 */
+	void writeNoLocation(ObsLevel level, Supplier<String> message);
 	
 	/**
 	 * Write a message at an observation level.
@@ -57,6 +70,15 @@ public interface ObservationCollector
 	 */
 	void write(ObsLevel level, ObsPassThroughList listPassThrough, 
 			Function<ObsPassThroughList, String> message);
+	
+	/**
+	 * Write an exception at an observation level.
+	 * @param level The level at which to write the message.
+	 * @param activity Identifies the activity that produced the exception.
+	 * @param exc The exception whose contents are to be written.
+	 * @param bShowStack If {@code true}, the stack trace can be written.
+	 */
+	void writeException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack);
 	
 	/**
 	 * Build a message and write it at a given observation level.

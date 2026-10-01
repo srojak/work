@@ -16,6 +16,7 @@
  */
 package srojak.core.result;
 
+import srojak.core.logic.FlagsIntTest;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
 
@@ -46,6 +47,17 @@ public interface XResult {
 	 * @return {@code true} if the operation was successful.
 	 */
 	boolean isValid();
+	
+	/**
+	 * Modifiers to the result.
+	 * @return Modifiers for the result.
+	 * @see XResultModifiers.
+	 */
+	FlagsIntTest modifiers();
+	
+	Throwable getThrowable();
+	
+	boolean hasException();
 
 	/**
 	 * Get the exception, if any, that was thrown performing the requested operation.

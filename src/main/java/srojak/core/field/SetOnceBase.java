@@ -29,18 +29,30 @@ import srojak.core.OnceFlagNamed;
 public abstract class SetOnceBase 
 		implements SetOnceConditions {
 	private final OnceFlag _flag;
+	private Runnable _doWhenNotSet;
+	
+	private static void defaultWhenNotSet() {
+		throw new IllegalStateException("value has never been set"); 
+	}
 	
 	public SetOnceBase() {
 		_flag = new OnceFlag();
+		_doWhenNotSet = SetOnceBase::defaultWhenNotSet;
 	}
 	
 	public SetOnceBase(NameToken token) {
 		Objects.requireNonNull(token, "token");
 		_flag = new OnceFlagNamed(token);
+		_doWhenNotSet = SetOnceBase::defaultWhenNotSet;
 	}
 	
 	public SetOnceBase(String strName) {
 		_flag = new OnceFlagNamed(NameToken.factory(strName));
+	}
+	
+	public void useActionWhenNotSet(Runnable action) {
+		Objects.requireNonNull(action, "action");
+		_doWhenNotSet = action;
 	}
 
 	@Override
@@ -56,7 +68,7 @@ public abstract class SetOnceBase
 	
 	protected void gettingValue() {
 		if (!_flag.getState()) {
-			throw new IllegalStateException("value has never been set");
+			_doWhenNotSet.run();
 		}
 	}
 

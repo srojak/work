@@ -25,4 +25,6 @@ public interface FlagsShortTest {
 	boolean test(short mask);
 	boolean testAnd(short maskFirst, short ... masks);
 	boolean testOr(short maskFirst, short ... masks);
+	boolean isAnySet();
+	short allFlags();
 }

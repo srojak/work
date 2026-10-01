@@ -26,6 +26,7 @@ public interface ObservedActivity {
 
 	String describe();
 	
+	public static final ObservedActivity INIT = new SingleActivity("initialize");
 	public static final ObservedActivity READ_FROM_FILE = new SingleActivity("read from file");
 	public static final ObservedActivity READ_RESOURCE = new SingleActivity("read resource");
 	public static final ObservedActivity READ_SCHEMA = new SingleActivity("read schema");

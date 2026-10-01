@@ -18,6 +18,8 @@ package srojak.core.observe;
 
 import java.io.IOException;
 
+import srojak.core.events.LifeCycleListener;
+
 /**
  * @author Stephen
  *
@@ -72,6 +74,8 @@ public interface ObservationWriter
 	 */
 	boolean canWriteAt(ObsLevel level);
 	
+	void write(ObsLevel level, String strText);
+	
 	void write(ObsLevel level, SourceLocation locOrigin, String strText);
 	
 	void writeException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc, boolean bShowStack);
@@ -80,5 +84,11 @@ public interface ObservationWriter
 	
 	void writeDiagnostic(SourceLocation locOrigin, String strText);
 	
+	void flush();
+	
 	void close() throws IOException;
+	
+	void addLifeCycleListener(LifeCycleListener listener);
+	
+	void removeLifeCycleListener(LifeCycleListener listener);
 }

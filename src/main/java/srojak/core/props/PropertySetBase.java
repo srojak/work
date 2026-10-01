@@ -16,7 +16,11 @@
  */
 package srojak.core.props;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
@@ -27,20 +31,50 @@ import srojak.core.events.ActionCompletedListener;
 import srojak.core.events.ActionCompletedOriginator;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
+import srojak.core.functional.IOSupplier;
+import srojak.core.logic.FlagsInt;
+import srojak.core.logic.FlagsIntTest;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
+import srojak.core.result.XResultModifierFlags;
+import srojak.core.result.XResultStatusCarrier;
 
 /**
  * @author Stephen
  *
  */
 public abstract class PropertySetBase
-		implements PropertiesReadOnly, ActionCompletedOriginator {
-	protected final Properties _props;
+		implements PropertySet, PropertySetLoadable, XResultModifierFlags, ActionCompletedOriginator {
+	private final Properties _props;
+	protected final FlagsInt _flags;
 	protected final CommonEventListenerStore _listeners;
+	
+	public static final int FLAGS_WAS_LOADED = 0x1;
 	
 	protected PropertySetBase() {
 		_props = new Properties();
+		_flags = new FlagsInt();
 		_listeners = new CommonEventListenerList();
+	}
+
+	@Override
+	public FlagsIntTest getFlags() {
+		return _flags;
+	}
+	
+	@Override
+	public boolean wasLoaded() {
+		return _flags.test(FLAGS_WAS_LOADED);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return _props.isEmpty();
+	}
+
+	@Override
+	public int size() {
+		return _props.size();
 	}
 
 	@Override
@@ -55,7 +89,17 @@ public abstract class PropertySetBase
 
 	@Override
 	public Set<String> getAllPropertyNames() {
-		return _props.stringPropertyNames();
+		return new HashSet<String>(_props.keySet().stream().map(o -> o.toString()).toList());
+	}
+	
+	protected void afterSetProperty(String key, Object valueOld, Object valueNew) {
+		// base class method does nothing
+	}
+	
+	public Object setProperty(String key, String value) {
+		Object valueOld = _props.setProperty(key, value);
+		afterSetProperty(key, valueOld, value);
+		return valueOld;
 	}
 	
 	protected boolean evalProperty(String strKey, Predicate<String> predicate) {
@@ -80,24 +124,27 @@ public abstract class PropertySetBase
 	
 	protected abstract void postLoad();
 	
-	public XResult loadFromResource(Object objApp, String strName) {
-		Objects.requireNonNull(objApp, "objApp");
-		ClassLoader loader = objApp.getClass().getClassLoader();
-		XResult result = PropertiesLoader.loadFromResource(_props, loader, strName);
-		if (result.isValid()) {
+	private void innerLoad(XResultStatusCarrier result, IOSupplier<InputStream> supplier) {
+		try (InputStream stream = supplier.get()) {
+			_props.load(stream);
+			_flags.set(FLAGS_WAS_LOADED);
 			postLoad();
-			ActionCompletedEvent event 
-				= new ActionCompletedEvent(this, ActionCompletedEvent.ID_FILE_READ);
-			_listeners.forEach(ActionCompletedListener.class, ls -> ls.completed(event));
+			result.setValid();
+		} catch (IOException exc) {
+			if (result.isValid()) {
+				result.setModifierFlag(MOD_EXCEPT_ON_CLOSE);
+			} else {
+				result.caughtException(exc);
+			}
 		}
-		return result;
 	}
 	
-	public XResult loadFromCurrentDirectory(String strName) {
-		Path pathCurrent = Path.of(System.getProperty("user.dir"));
-		XResult result = PropertiesLoader.loadFromDirectory(_props, pathCurrent, strName);
+	public XResult loadFromResource(ClassLoader loader, String strName) {
+		Objects.requireNonNull(loader, "loader");
+		Objects.requireNonNull(strName, "strName");
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_RESOURCE);
+		innerLoad(result, () -> loader.getResourceAsStream(strName));
 		if (result.isValid()) {
-			postLoad();
 			ActionCompletedEvent event 
 				= new ActionCompletedEvent(this, ActionCompletedEvent.ID_FILE_READ);
 			_listeners.forEach(ActionCompletedListener.class, ls -> ls.completed(event));
@@ -108,9 +155,10 @@ public abstract class PropertySetBase
 	public XResult loadFrom(Path pathDir, String strName) {
 		Objects.requireNonNull(pathDir, "pathDir");
 		Objects.requireNonNull(strName, "strName");
-		XResult result = PropertiesLoader.loadFromDirectory(_props, pathDir, strName);
+		Path pathFile = pathDir.resolve(strName);
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.READ_FROM_FILE);
+		innerLoad(result, () -> Files.newInputStream(pathFile));
 		if (result.isValid()) {
-			postLoad();
 			ActionCompletedEvent event 
 				= new ActionCompletedEvent(this, ActionCompletedEvent.ID_FILE_READ);
 			_listeners.forEach(ActionCompletedListener.class, ls -> ls.completed(event));

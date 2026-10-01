@@ -24,5 +24,5 @@ import srojak.core.result.XResultOf;
  */
 public interface ObservationWriterSource {
 
-	XResultOf<ObservationWriter> createFor(Object objApp);
+	XResultOf<ObservationWriter> createFor(Class<?> classApp);
 }

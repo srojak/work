@@ -19,6 +19,8 @@ package srojak.core.result;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
+import srojak.core.logic.FlagsInt;
+import srojak.core.logic.FlagsIntTest;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
@@ -28,19 +30,21 @@ import srojak.core.observe.SourceLocation;
  *
  */
 public abstract class XResultCarrierBase
-		implements XResult {
+		implements XResult, XResultModifierFlags {
+	private final FlagsInt _modifiers;
 	private SourceLocation _origin;
 	private ObservedActivity _activity;
 	private boolean _bValid;
-	private Exception _exception;
+	private Throwable _throwable;
 
 	protected XResultCarrierBase(SourceLocation source, ObservedActivity activity) {
 		Objects.requireNonNull(source, "source");
 		Objects.requireNonNull(activity, "activity");
 		_origin = source;
 		_activity = activity;
+		_modifiers = new FlagsInt();
 		_bValid = false;
-		_exception = null;
+		_throwable = null;
 	}
 	
 	/**
@@ -53,9 +57,23 @@ public abstract class XResultCarrierBase
 	 * 
 	 * @param exc The exception that was captured.
 	 */
-	public void caughtException(Exception exc) {
+	public final void caughtException(Exception exc) {
 		Objects.requireNonNull(exc, "exc");
-		_exception = exc;
+		_throwable = exc;
+	}
+	
+	public final void caughtThrowable(Throwable t) {
+		Objects.requireNonNull(t, "t");
+		_throwable = t;
+	}
+	
+	@Override
+	public final FlagsIntTest modifiers() {
+		return _modifiers;
+	}
+	
+	public final void setModifierFlag(int mask) {
+		_modifiers.set(mask);
 	}
 	
 	protected void markValid() {
@@ -68,9 +86,16 @@ public abstract class XResultCarrierBase
 		return activity;
 	}
 	
-	public void setActivity(ObservedActivity activity) {
+	public final void setActivity(ObservedActivity activity) {
 		Objects.requireNonNull(activity, "activity");
 		_activity = activity;
+	}
+	
+	protected void coreCopyFrom(XResult result) {
+		_origin = result.getOriginator();
+		_modifiers.copyFrom(result.modifiers());
+		_bValid = result.isValid();
+		_throwable = result.getThrowable();
 	}
 	
 	/**
@@ -80,12 +105,10 @@ public abstract class XResultCarrierBase
 	 * 		so that the caller has the actual origin and exception from the source of the exception.
 	 * @param result The result from the subordinate method.
 	 */
-	public void copyFrom(XResult result) {
+	public final void copyFrom(XResult result) {
 		Objects.requireNonNull(result, "result");
-		_origin = result.getOriginator();
+		coreCopyFrom(result);
 		_activity = result.getActivity();
-		_bValid = result.isValid();
-		_exception = result.getException();
 	}
 	
 	/**
@@ -95,13 +118,11 @@ public abstract class XResultCarrierBase
 	 * 		so that the caller has the actual origin and exception from the source of the exception.
 	 * @param result The result from the subordinate method.
 	 */
-	public void copyFrom(XResult result, BiFunction<XResultCarrierBase, ObservedActivity, ObservedActivity> transferActivity) {
+	public final void copyFrom(XResult result, BiFunction<XResultCarrierBase, ObservedActivity, ObservedActivity> transferActivity) {
 		Objects.requireNonNull(result, "result");
 		Objects.requireNonNull(transferActivity, "transferActivity");
-		_origin = result.getOriginator();
+		coreCopyFrom(result);
 		_activity = transferActivity.apply(this, result.getActivity());
-		_bValid = result.isValid();
-		_exception = result.getException();
 	}
 
 	/**
@@ -133,13 +154,29 @@ public abstract class XResultCarrierBase
 		return _bValid;
 	}
 
+	@Override
+	public Throwable getThrowable() {
+		return _throwable;
+	}
+
+	@Override
+	public boolean hasException() {
+		return _throwable != null && _throwable instanceof Exception;
+	}
+
 	/**
 	 * Get the exception, if any, that was thrown performing the requested operation.
 	 * @return The captured exception, or {@code null} if there was none.
 	 */
 	@Override
 	public Exception getException() {
-		return _exception;
+		if (_throwable == null) {
+			return null;
+		} else if (_throwable instanceof Exception exc) {
+			return exc;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -153,10 +190,10 @@ public abstract class XResultCarrierBase
 		if (!Exception.class.isAssignableFrom(classException)) {
 			throw new IllegalArgumentException("argument is not an exception class");
 		}
-		if (_exception == null) {
+		if (_throwable == null) {
 			return false;
 		} else {
-			return classException.isAssignableFrom(_exception.getClass());
+			return classException.isAssignableFrom(_throwable.getClass());
 		}
 	}
 	
@@ -175,9 +212,9 @@ public abstract class XResultCarrierBase
 		if (_bValid) {
 			buildValidString(sb);
 		}
-		if (_exception != null) {
+		if (_throwable != null) {
 			sb.append(", exception=");
-			sb.append(_exception.getClass().getSimpleName());
+			sb.append(_throwable.getClass().getSimpleName());
 		}
 		sb.append(']');
 		return sb.toString();

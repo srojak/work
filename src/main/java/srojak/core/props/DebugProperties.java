@@ -17,27 +17,23 @@
 package srojak.core.props;
 
 import srojak.core.events.ActionCompletedOriginator;
-import srojak.core.logic.FlagsShort;
-import srojak.core.logic.FlagsShortTest;
 /**
  * @author Stephen
  *
  */
 public class DebugProperties
 		extends PropertySetBase
-		implements PropertiesReadOnly, DebugPropertyKeys, ActionCompletedOriginator {
-	private final FlagsShort _flags;
+		implements DebugPropertyKeys, ActionCompletedOriginator {
 	
 	public static final String PROPERTIES_FILE_NAME = "debug.properties";
-	public static final short FLAGS_DIAG_NEW_SWITCH = 0x1;
-	public static final short FLAGS_DIAG_NEW_CLASS_OPTIONS = 0x2;
-	public static final short FLAGS_INFER_SHOW_LOCATION_RULE = 0x4;
-	public static final short FLAGS_DIAG_SWITCH_CASCADE = 0x8;
-	public static final short FLAGS_DIAG_SHUTDOWN = 0x10;
+	public static final int FLAGS_DIAG_NEW_SWITCH = 0x2;
+	public static final int FLAGS_DIAG_NEW_CLASS_OPTIONS = 0x4;
+	public static final int FLAGS_INFER_SHOW_LOCATION_RULE = 0x8;
+	public static final int FLAGS_DIAG_SWITCH_CASCADE = 0x10;
+	public static final int FLAGS_DIAG_CLOSE = 0x20;
 	
 	public DebugProperties() {
 		super();
-		_flags = new FlagsShort();
 		_flags.set(FLAGS_INFER_SHOW_LOCATION_RULE);
 	}
 	
@@ -46,11 +42,7 @@ public class DebugProperties
 		_flags.apply(evalBooleanProperty(DIAG_NEW_SWITCH,  false), FLAGS_DIAG_NEW_SWITCH);
 		_flags.apply(evalBooleanProperty(DIAG_NEW_CLASS_OPTIONS, false), FLAGS_DIAG_NEW_CLASS_OPTIONS);
 		_flags.apply(evalBooleanProperty(DIAG_SWITCH_CASCADE, false), FLAGS_DIAG_SWITCH_CASCADE);
-		_flags.apply(evalBooleanProperty(DIAG_SHUTDOWN, false), FLAGS_DIAG_SHUTDOWN);
-	}
-	
-	public FlagsShortTest getFlags() {
-		return _flags;
+		_flags.apply(evalBooleanProperty(DIAG_CLOSE, false), FLAGS_DIAG_CLOSE);
 	}
 	
 	public boolean isDiagNewSwitchEnabled() {
@@ -69,7 +61,7 @@ public class DebugProperties
 		return _flags.test(FLAGS_DIAG_SWITCH_CASCADE);
 	}
 	
-	public boolean isDiagShutdownEnabled() {
-		return _flags.test(FLAGS_DIAG_SHUTDOWN);
+	public boolean isDiagCloseEnabled() {
+		return _flags.test(FLAGS_DIAG_CLOSE);
 	}
 }

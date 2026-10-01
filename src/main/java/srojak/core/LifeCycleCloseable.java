@@ -16,6 +16,8 @@
  */
 package srojak.core;
 
+import srojak.core.events.LifeCycleEventOriginating;
+
 /**
  * @author Stephen
  *

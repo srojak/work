@@ -27,7 +27,7 @@ public interface DebugPropertyKeys {
 	public static final String LOG_DIR = "dir.log";
 	public static final String DIAG_NEW_SWITCH = "diag.new.switch";
 	public static final String DIAG_NEW_CLASS_OPTIONS = "diag.new.classoptions";
-	public static final String DIAG_SHUTDOWN = "diag.shutdown";
+	public static final String DIAG_CLOSE = "diag.close";
 	public static final String DIAG_SWITCH_CASCADE = "diag.switch.cascade";
 	public static final String RULE_INFER_SHOW_LOCATIONS = "rule.infer.show.locations";
 }

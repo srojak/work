@@ -25,4 +25,6 @@ public interface FlagsIntTest {
 	boolean test(int mask);
 	boolean testAnd(int maskFirst, int ... masks);
 	boolean testOr(int maskFirst, int ... masks);
+	boolean isAnySet();
+	int allFlags();
 }

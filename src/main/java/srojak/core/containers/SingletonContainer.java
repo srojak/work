@@ -20,9 +20,9 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 import srojak.core.EmptyCollectionException;
-import srojak.core.LifeCycleEventOriginating;
 import srojak.core.SingletonReadOnly;
 import srojak.core.events.LifeCycleEvent;
+import srojak.core.events.LifeCycleEventOriginating;
 import srojak.core.events.LifeCycleListener;
 import srojak.core.events.StateChangeCodes;
 import srojak.core.events.StateChangeEvent;

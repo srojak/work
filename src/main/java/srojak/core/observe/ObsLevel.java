@@ -227,7 +227,7 @@ public class ObsLevel
 	@Override
 	public int compareTo(ObsLevel o) {
 		Objects.requireNonNull(o, "o");
-		return Integer.compare(_level, o._level);
+		return -Integer.compare(_level, o._level);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class ObservationWriterPrintStream
 		_stream = new SetOnce<PrintStream>(SetOnce.DEFAULT);
 	}
 	
-	protected void assignPrintStream(PrintStream stream) {
+	public void assignPrintStream(PrintStream stream) {
 		Objects.requireNonNull(stream, "stream");
 		if (stream.checkError())
 			throw new IllegalArgumentException("stream is not valid");

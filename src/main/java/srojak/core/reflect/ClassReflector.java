@@ -40,6 +40,13 @@ public class ClassReflector
 	
 	protected static final ObservedActivity ACTIVITY_GET_MEMBER = new SingleActivity("get member");
 	
+	public static ClassReflector getFor(PackageClassLocator locator) 
+			throws ClassNotFoundException {
+		Objects.requireNonNull(locator, "locator");
+		Class<?> classNew = Class.forName(locator.getFullName());
+		return new ClassReflector(classNew);
+	}
+	
 	public ClassReflector(Class<?> classObj) {
 		Objects.requireNonNull(classObj, "classObj");
 		if (classObj.isInterface()) {
@@ -59,7 +66,7 @@ public class ClassReflector
 	}
 	
 	@Override
-	public Class<?> getReflectedClass() {
+	public Class<?> getReferencedClass() {
 		return _classObj;
 	}
 	
@@ -99,8 +106,18 @@ public class ClassReflector
 	}
 
 	@Override
+	public ClassLoader getClassLoader() {
+		return _classObj.getClassLoader();
+	}
+
+	@Override
 	public boolean hasAnnotations() {
 		return _classObj.getAnnotations().length > 0;
+	}
+
+	@Override
+	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+		return _classObj.getAnnotation(annotationClass);
 	}
 
 	@Override

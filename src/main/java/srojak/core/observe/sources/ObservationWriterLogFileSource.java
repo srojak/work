@@ -20,12 +20,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+import srojak.core.io.LogFileLocator;
+import srojak.core.kernel.Kernel;
+import srojak.core.kernel.KernelLog;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.writers.ObservationWriterUnicodeStream;
+import srojak.core.result.XResult;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
 
@@ -35,17 +40,17 @@ import srojak.core.result.XResultOf;
  */
 public class ObservationWriterLogFileSource
 		extends ObservationWriterNamedFileSourceBase {
-	private final Path _pathFile;
+	private final LogFileLocator _locator;
 	private boolean _bAppend;
 
 	/**
 	 * @param pathFile
 	 * @param optionOpen
 	 */
-	public ObservationWriterLogFileSource(Path pathFile) {
+	public ObservationWriterLogFileSource(LogFileLocator locator) {
 		super();
-		Objects.requireNonNull(pathFile, "pathFile");
-		_pathFile = pathFile;
+		Objects.requireNonNull(locator, "locator");
+		_locator = locator;
 		_bAppend = false;
 	}
 	
@@ -54,20 +59,29 @@ public class ObservationWriterLogFileSource
 	}
 
 	@Override
-	public XResultOf<ObservationWriter> createFor(Object objApp) {
-		Objects.requireNonNull(objApp, "objApp");
+	public XResultOf<ObservationWriter> createFor(Class<?> classApp) {
+		Objects.requireNonNull(classApp, "classApp");
 		XResultCarrierOf<ObservationWriter> result
 				= new XResultCarrierOf<ObservationWriter>(ACTIVITY_OPEN_WRITE);
+		XResult resultValid = _locator.validate();
+		if (!resultValid.isValid()) {
+			result.copyFrom(resultValid);
+			return result;
+		}
 		_listOptions.add(StandardOpenOption.CREATE);
 		if (_bAppend) {
 			_listOptions.add(StandardOpenOption.APPEND);
 		}
+		LocalDateTime dtNow = LocalDateTime.now();
+		Path pathFile = _locator.formFile(dtNow);
 		try {
-			OutputStream stream = open(_pathFile);
+			OutputStream stream = open(pathFile);
 			ObservationWriterUnicodeStream writer = new ObservationWriterUnicodeStream();
 			writer.assignOutputStream(stream);
-			writer.write(ObsLevel.NOTICE, SourceLocation.start(), "log created for " + objApp.getClass().getName());
+			writer.setAutoFlush(true);
+			KernelLog.startLogFile(writer, dtNow);
 			result.setResult(writer);
+			Kernel.OBS_KERNEL.writeNoLocation(ObsLevel.INFO, "Created log file " + pathFile);
 		} catch (IOException exc) {
 			result.caughtException(exc);
 		}

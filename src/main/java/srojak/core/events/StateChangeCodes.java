@@ -47,6 +47,11 @@ public interface StateChangeCodes {
 	 */
 	public static final int SC_CONTENT = 14;
 	
+	/**
+	 * The event is for a new day.
+	 */
+	public static final int SC_MIDNIGHT = 15;
+	
 	public static final int SC_TEXT_BOLD = 20;
 	
 	public static final int SC_TEXT_ITALIC = 21;

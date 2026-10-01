@@ -21,39 +21,25 @@ package srojak.core;
  *
  */
 public class ClassMismatchException
-		extends RuntimeException {
-	private final Class<?> _classObserved;
+		extends ClassReferencingRuntimeException {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8060189997795946304L;
 	
-	private static Class<?> validateClass(Class<?> classArg) {
-		return classArg == null ? UnsuppliedClass.class : classArg;
-	}
-	
-	/**
-	 * 
-	 */
-	public ClassMismatchException(Class<?> classObserved) {
-		_classObserved = validateClass(classObserved);
-	}
-
 	/**
 	 * @param message
 	 */
 	public ClassMismatchException(Class<?> classObserved, String message) {
-		super(message);
-		_classObserved = validateClass(classObserved);
+		super(classObserved, message);
 	}
 
 	/**
 	 * @param cause
 	 */
 	public ClassMismatchException(Class<?> classObserved, Throwable cause) {
-		super(cause);
-		_classObserved = validateClass(classObserved);
+		super(classObserved, cause);
 	}
 
 	/**
@@ -61,8 +47,7 @@ public class ClassMismatchException
 	 * @param cause
 	 */
 	public ClassMismatchException(Class<?> classObserved, String message, Throwable cause) {
-		super(message, cause);
-		_classObserved = validateClass(classObserved);
+		super(classObserved, message, cause);
 	}
 
 	/**
@@ -73,15 +58,6 @@ public class ClassMismatchException
 	 */
 	public ClassMismatchException(Class<?> classObserved, String message, Throwable cause, 
 			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-		_classObserved = validateClass(classObserved);
-	}
-	
-	public Class<?> getObservedClass() {
-		return _classObserved;
-	}
-
-	private class UnsuppliedClass {
-		
+		super(classObserved, message, cause, enableSuppression, writableStackTrace);
 	}
 }

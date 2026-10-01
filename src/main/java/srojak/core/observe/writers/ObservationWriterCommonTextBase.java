@@ -18,7 +18,6 @@ package srojak.core.observe.writers;
 
 import java.io.IOException;
 
-import srojak.core.backplane.ApplicationBackplane;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
@@ -29,7 +28,7 @@ import srojak.core.observe.SourceLocation;
  *
  */
 public abstract class ObservationWriterCommonTextBase 
-		extends ObservationWriterBase {
+		extends ObservationWriterStandardBase {
 
 	/**
 	 * 
@@ -48,8 +47,8 @@ public abstract class ObservationWriterCommonTextBase
 		try {
 			writeln(sb.toString());
 		} catch (IOException exc) {
-			ApplicationBackplane.writerInvalidated(this);
 			setCanWrite(false);
+			raiseClosedEvent();
 		}
 	}
 	
@@ -57,8 +56,16 @@ public abstract class ObservationWriterCommonTextBase
 		if (canShowLocations()) {
 			return true;
 		} else {
-			return level.compareTo(ObsLevel.TRACE) >= 0;
+			return level.compareTo(ObsLevel.TRACE) <= 0;
 		}
+	}
+
+	@Override
+	protected void innerWrite(ObsLevel level, String strText) {
+		StringBuilder sb = new StringBuilder(level.getName());
+		sb.append(": ");
+		sb.append(strText);
+		writeOutput(sb);
 	}
 
 	@Override
@@ -108,12 +115,12 @@ public abstract class ObservationWriterCommonTextBase
 	}
 
 	@Override
-	protected void flush() {
+	public void flush() {
 		try {
 			flushOutput();
 		} catch (IOException exc) {
-			ApplicationBackplane.writerInvalidated(this);
 			setCanWrite(false);
+			raiseClosedEvent();
 		}
 	}
 }

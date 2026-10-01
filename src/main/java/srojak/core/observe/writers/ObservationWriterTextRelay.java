@@ -29,7 +29,7 @@ import srojak.core.observe.SourceLocation;
  *
  */
 public class ObservationWriterTextRelay 
-		extends ObservationWriterBase {
+		extends ObservationWriterStandardBase {
 	private final TextMessageRelay _relay;
 
 	/**
@@ -39,6 +39,14 @@ public class ObservationWriterTextRelay
 		Objects.requireNonNull(relayText, "relayText");
 		_relay = relayText;
 		setCanWrite(true);
+	}
+
+	@Override
+	protected void innerWrite(ObsLevel level, String strText) {
+		StringBuilder sb = new StringBuilder(level.getName());
+		sb.append(": ");
+		sb.append(strText);
+		_relay.writeln(sb.toString());
 	}
 
 	@Override

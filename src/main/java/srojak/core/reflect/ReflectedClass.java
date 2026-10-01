@@ -21,14 +21,14 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.stream.Stream;
 
+import srojak.core.ClassReferencing;
+
 /**
  * @author Stephen
  *
  */
 public interface ReflectedClass 
-		extends Type, Member {
-	
-	Class<?> getReflectedClass();
+		extends Type, Member, ClassReferencing {
 	
 	Package getPackage();
 	
@@ -36,7 +36,11 @@ public interface ReflectedClass
 	
 	String getSimpleName();
 	
+	ClassLoader getClassLoader();
+	
 	boolean hasAnnotations();
+	
+	<A extends Annotation> A getAnnotation(Class<A> annotationClass);
 	
 	Stream<Annotation> getAnnotationsAsStream();
 	

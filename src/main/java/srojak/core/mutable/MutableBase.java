@@ -16,8 +16,8 @@
  */
 package srojak.core.mutable;
 
-import srojak.core.LifeCycleEventOriginating;
 import srojak.core.events.LifeCycleEvent;
+import srojak.core.events.LifeCycleEventOriginating;
 import srojak.core.events.LifeCycleListener;
 import srojak.core.events.SingleEventListenerList;
 import srojak.core.events.SingleEventListenerStore;

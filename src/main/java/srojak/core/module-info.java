@@ -28,6 +28,8 @@ module srojak.core {
 	exports srojak.core.field;
 	exports srojak.core.functional;
 	exports srojak.core.io;
+	exports srojak.core.kernel;
+	exports srojak.core.kernel.priv to srojak.afw, srojak.debug;
 	exports srojak.core.keys;
 	exports srojak.core.logic;
 	exports srojak.core.mutable;
@@ -38,8 +40,8 @@ module srojak.core {
 	exports srojak.core.props;
 	exports srojak.core.reflect;
 	exports srojak.core.result;
+	exports srojak.core.sequence;
 	exports srojak.core.specialized;
 	exports srojak.core.text;
 	exports srojak.core.tools;
-	exports srojak.core.backplane to srojak.debug, srojak.utest, srojak.utest.core;
 }
