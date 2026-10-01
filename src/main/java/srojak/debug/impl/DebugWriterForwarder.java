@@ -20,14 +20,14 @@ import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.ObservationWriterBase;
+import srojak.core.observe.writers.ObservationWriterStandardBase;
 
 /**
  * @author Stephen
  *
  */
 public class DebugWriterForwarder
-		extends ObservationWriterBase {
+		extends ObservationWriterStandardBase {
 
 	/**
 	 * 
@@ -43,6 +43,12 @@ public class DebugWriterForwarder
 		// use the value from the debug writer
 		ObservationWriter writerDebug = DebugNexusCore.getWriter();
 		return writerDebug.canWriteAt(level);
+	}
+
+	@Override
+	protected void innerWrite(ObsLevel level, String strText) {
+		ObservationWriter writerDebug = DebugNexusCore.getWriter();
+		writerDebug.write(level, strText);
 	}
 
 	@Override

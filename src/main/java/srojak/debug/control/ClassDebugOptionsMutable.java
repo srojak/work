@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug.control;
+
+import srojak.debug.ClassDebugOptions;
+
 /**
  * @author Stephen
  *
  */
-module srojak.debug {
-	requires transitive srojak.core;
-	exports srojak.debug;
-	exports srojak.debug.control to srojak.core, srojak.debug.config, srojak.utest.debug;
-	exports srojak.debug.tools;
-	exports srojak.debug.impl to srojak.utest.debug, srojak.afw;
-	opens srojak.debug.impl to srojak.debug.config;
+public interface ClassDebugOptionsMutable
+		extends ClassDebugOptions {
+
+	void putOption(String strName, int nValue);
 }

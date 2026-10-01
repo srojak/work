@@ -25,8 +25,10 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import srojak.core.backplane.ApplicationBackplane;
 import srojak.core.io.DatedFileNameMethods;
+import srojak.core.kernel.Kernel;
+import srojak.core.kernel.KernelLog;
+import srojak.core.kernel.KernelMut;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
@@ -35,13 +37,13 @@ import srojak.core.observe.activity.SingleActivity;
 import srojak.core.observe.writers.ObservationWriterUnicodeStream;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
-import srojak.core.tools.EnvTool;
 import srojak.debug.impl.DebugNexusCore;
 
 /**
  * @author Stephen
  *
  */
+@Deprecated(forRemoval = true)
 public abstract class DebugLogFileWriterSourceBase {
 	protected final LinkedList<OpenOption> _listOptions;
 	private Path _pathFile;
@@ -72,19 +74,15 @@ public abstract class DebugLogFileWriterSourceBase {
 		}
 		SourceLocation location = SourceLocation.here();
 		XResultStatusCarrier result = new XResultStatusCarrier(ACTIVITY_OPEN_WRITE);
+		LocalDateTime dtNow = LocalDateTime.now();
 		try {
 			OutputStream stream = Files.newOutputStream(_pathFile, _listOptions.toArray(new OpenOption[0]));
 			ObservationWriterUnicodeStream writer = new ObservationWriterUnicodeStream();
-			LocalDateTime dtNow = LocalDateTime.now();
-			writer.assignOutputStream(stream);
+				writer.assignOutputStream(stream);
 			writer.setAutoFlush(true);
-			writer.write(ObsLevel.NOTICE, SourceLocation.start(), 
-					"log created for " + classApp.getName() + " on "
-							+ DebugNexusCore.FORMAT_TIME_STAMP.format(dtNow));
-			writer.write(ObsLevel.NOTICE, SourceLocation.start(), 
-						"Java version " + EnvTool.getJavaVersion());
-			DebugNexusCore.setWriter(writer);
-			ApplicationBackplane.writeToOutput(ObsLevel.INFO, "Created log file " + _pathFile);
+			KernelLog.startLogFile(writer, dtNow);
+			KernelMut.setLogWriter(writer);
+			Kernel.OBS_KERNEL.write(ObsLevel.INFO, "Created log file " + _pathFile);
 			result.setValid();
 		} catch (IOException exc) {
 			result.caughtException(exc);

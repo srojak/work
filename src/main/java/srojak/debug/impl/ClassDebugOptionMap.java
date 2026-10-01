@@ -22,15 +22,15 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import srojak.core.reflect.PackageClassLocator;
-import srojak.debug.ClassDebugOptions;
 import srojak.debug.DebugOptionNameValue;
+import srojak.debug.control.ClassDebugOptionsMutable;
 
 /**
  * @author Stephen
  *
  */
 public class ClassDebugOptionMap
-		implements ClassDebugOptions {
+		implements ClassDebugOptionsMutable {
 	private final PackageClassLocator _locClass;
 	private final Map<String, ClassDebugOptionEntry> _mapOptions;
 	
@@ -62,6 +62,7 @@ public class ClassDebugOptionMap
 		return entry != null && entry.getValue() != 0;
 	}
 
+	@Override
 	public void putOption(String strName, int nValue) {
 		ClassDebugOptionEntry entry = _mapOptions.get(strName);
 		if (entry == null) {

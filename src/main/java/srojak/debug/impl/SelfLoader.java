@@ -14,15 +14,29 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug.impl;
+
+import srojak.core.Announcer;
+import srojak.core.kernel.Kernel;
+import srojak.core.kernel.SelfLoaderBase;
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultStatusCarrier;
+
 /**
  * @author Stephen
  *
  */
-module srojak.debug {
-	requires transitive srojak.core;
-	exports srojak.debug;
-	exports srojak.debug.control to srojak.core, srojak.debug.config, srojak.utest.debug;
-	exports srojak.debug.tools;
-	exports srojak.debug.impl to srojak.utest.debug, srojak.afw;
-	opens srojak.debug.impl to srojak.debug.config;
+public class SelfLoader 
+		extends SelfLoaderBase {
+
+	@Override
+	protected XResult doLoad() {
+		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.INIT);
+		Announcer ann = Kernel.getAnnouncer();
+		ann.announceMessage(ObsLevel.NOTICE, SelfLoader.class, "loaded");
+		result.setValid();
+		return result;
+	}
 }

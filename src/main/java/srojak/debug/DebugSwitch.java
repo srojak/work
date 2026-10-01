@@ -107,7 +107,7 @@ public interface DebugSwitch
 	 * @param level The level at which to write the message.
 	 * @param activity Identifies the activity that produced the exception.
 	 * @param exc The exception whose contents are to be written.
-	 * @param bShowStack If {@code true}, the stack trace will be written.
+	 * @param bShowStack If {@code true}, the stack trace can be written.
 	 */
 	void writeException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack);
 	

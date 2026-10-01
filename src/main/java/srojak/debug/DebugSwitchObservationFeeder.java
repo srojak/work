@@ -21,7 +21,7 @@ import java.util.Objects;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.ObservationWriterBase;
+import srojak.core.observe.writers.ObservationWriterStandardBase;
 import srojak.debug.impl.DebugSwitchContent;
 
 /**
@@ -29,7 +29,7 @@ import srojak.debug.impl.DebugSwitchContent;
  *
  */
 public final class DebugSwitchObservationFeeder
-		extends ObservationWriterBase {
+		extends ObservationWriterStandardBase {
 	private final DebugSwitchContent _swDebug;
 
 	/**
@@ -50,6 +50,11 @@ public final class DebugSwitchObservationFeeder
 	@Override
 	public ObsLevel getObsLevel() {
 		return _swDebug.getLevel();
+	}
+
+	@Override
+	protected void innerWrite(ObsLevel level, String strText) {
+		_swDebug.write(level, strText);
 	}
 
 	@Override

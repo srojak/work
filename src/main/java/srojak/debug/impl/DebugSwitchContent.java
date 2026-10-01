@@ -31,15 +31,15 @@ import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TraceLevel;
 import srojak.core.reflect.PackageClassLocator;
-import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchKey;
+import srojak.debug.control.DebugSwitchMutable;
 
 /**
  * @author Stephen
  *
  */
 public final class DebugSwitchContent 
-		implements DebugSwitch {
+		implements DebugSwitchMutable {
 	final DebugSwitchKey _key;
 	private ObsLevel _level;
 	private boolean _bShowSource;
@@ -87,6 +87,7 @@ public final class DebugSwitchContent
 		return _level;
 	}
 	
+	@Override
 	public void setLevel(ObsLevel level) {
 		_level = level;
 	}
@@ -113,6 +114,7 @@ public final class DebugSwitchContent
 		return _bShowSource;
 	}
 	
+	@Override
 	public void setShowSourceLocations(boolean bState) {
 		_bShowSource = bState;
 		_sdetail = bState ? SourceDetail.ALL : SourceDetail.CLASS_ONLY;
@@ -194,10 +196,7 @@ public final class DebugSwitchContent
 				sb.append("\n  ");
 				sb.append(exc.getMessage());
 			}
-			DebugNexusCore.writelnException(level, location, exc, sb.toString());
-			if (exc != null && bShowStack) {
-				DebugNexusCore.writeStackTrace(level, exc);
-			}
+			DebugNexusCore.writelnException(level, location, exc, sb.toString(), bShowStack);
 		}
 	}
 

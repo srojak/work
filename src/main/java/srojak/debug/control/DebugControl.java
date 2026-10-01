@@ -14,15 +14,23 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug.control;
+
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.reflect.PackageClassLocator;
+import srojak.debug.DebugSwitchKey;
+
 /**
  * @author Stephen
  *
  */
-module srojak.debug {
-	requires transitive srojak.core;
-	exports srojak.debug;
-	exports srojak.debug.control to srojak.core, srojak.debug.config, srojak.utest.debug;
-	exports srojak.debug.tools;
-	exports srojak.debug.impl to srojak.utest.debug, srojak.afw;
-	opens srojak.debug.impl to srojak.debug.config;
+public interface DebugControl {
+
+	void startReadingConfig(IONodeIdentifier ident);
+	void endReadingConfig(IONodeIdentifier ident);
+	void readingSwitchControlSet(String strName);
+	DebugSwitchMutable getDebugSwitch(DebugSwitchKey key);
+	DebugSwitchMutable createDebugSwitch(DebugSwitchKey key);
+	ClassDebugOptionsMutable getOrCreateClassOptions(PackageClassLocator locClass);
+	void enableBaseClassSwitches(DebugSwitchKey key);
 }

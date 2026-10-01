@@ -24,8 +24,8 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import srojak.core.backplane.ApplicationBackplane;
 import srojak.core.io.DatedFileNameMethods;
+import srojak.core.kernel.Kernel;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
@@ -72,7 +72,7 @@ public class DebugWriterLogFile
 		_print.println("log created for " + _strAppName + " on "
 				+ DebugNexusCore.FORMAT_TIME_STAMP.format(dtNow));
 		// TODO functionally organize, create a writer for the announcement
-		ApplicationBackplane.writeToOutput(ObsLevel.INFO, "Created log file " + _pathFile);
+		Kernel.OBS_KERNEL.write(ObsLevel.INFO, "Created log file " + _pathFile);
 	}
 	
 	public Path getDirectoryPath() {

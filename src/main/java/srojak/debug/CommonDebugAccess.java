@@ -18,7 +18,6 @@ package srojak.debug;
 
 import java.nio.file.Path;
 
-import srojak.core.observe.Announcer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
@@ -29,7 +28,6 @@ import srojak.core.props.PropertiesReadOnly;
  *
  */
 public interface CommonDebugAccess {
-
 	
 	/**
 	 * Get the current properties.
@@ -44,19 +42,26 @@ public interface CommonDebugAccess {
 	ObservationWriter getWriter();
 	
 	/**
-	 * Set the writer for the debug switches.
-	 * @param writer The writer to use.
+	 * The writer for the debug switches is in the kernel.
 	 */
-	void setWriter(ObservationWriter writer);
 	
-	Announcer getAnnouncer();
-	
-	void setAnnouncer(Announcer announcer);
-	
+	/**
+	 * Get the {@code ObsLevel} at which the debug facility will write an announcement.
+	 * @return The current {@code ObsLevel} threshold.
+	 */
 	ObsLevel getAnnounceLevel();
 	
+	/**
+	 * Set the {@code ObsLevel} at which the debug facility will write an announcement.
+	 * @param level The new {@code ObsLevel} threshold.
+	 */
 	void setAnnounceLevel(ObsLevel level);
 	
+	/**
+	 * Get a specialized {@Code ObservationCollector} that forwards all observations to the current
+	 * 	debug writer.
+	 * @return The debug observation collector.
+	 */
 	ObservationCollector getDebugObservationCollector();
 	
 	/**

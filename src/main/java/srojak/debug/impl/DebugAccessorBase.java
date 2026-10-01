@@ -20,8 +20,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import srojak.core.InvalidOperationException;
+import srojak.core.kernel.Kernel;
 import srojak.core.mutable.BooleanMutable;
-import srojak.core.observe.Announcer;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
@@ -76,28 +76,7 @@ public abstract class DebugAccessorBase
 	public ObservationWriter getWriter() {
 		return DebugNexusCore.getWriter();
 	}
-	
-	/**
-	 * Set the writer for the debug switches.
-	 * @param writer The writer to use.
-	 */
-	@Override
-	public void setWriter(ObservationWriter writer) {
-		requireCanModify();
-		DebugNexusCore.setWriter(writer);
-	}
-	
-	@Override
-	public Announcer getAnnouncer() {
-		return DebugNexusCore.getAnnouncer();
-	}
-	
-	@Override
-	public void setAnnouncer(Announcer announcer) {
-		requireCanModify();
-		DebugNexusCore.setAnnouncer(announcer);
-	}
-	
+		
 	@Override
 	public ObsLevel getAnnounceLevel() {
 		return DebugNexusCore.getAnnounceLevel();

@@ -16,19 +16,29 @@
  */
 package srojak.debug;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
-import srojak.core.EnvironmentCharacteristicException;
-import srojak.core.backplane.ApplicationBackplane;
+import srojak.core.io.LogFileLocator;
+import srojak.core.kernel.Kernel;
+import srojak.core.kernel.KernelLog;
+import srojak.core.kernel.priv.KernelOutput;
+import srojak.core.kernel.priv.KernelStore;
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationWriterSource;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
-import srojak.core.props.DebugProperties;
+import srojak.core.observe.sources.ObservationWriterLogFileSource;
+import srojak.core.observe.writers.ObservationWriterUnicodeStream;
 import srojak.core.props.DebugPropertyKeys;
+import srojak.core.reflect.ClassReflector;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultOf;
 import srojak.core.result.XResultStatusCarrier;
-import srojak.debug.impl.DebugNexusCore;
 
 /**
  * @author Stephen
@@ -36,59 +46,76 @@ import srojak.debug.impl.DebugNexusCore;
  */
 public class AppDebugMethods
 		implements DebugPropertyKeys {
-
-	private static final DebugProperties _properties = ApplicationBackplane.getDebugProperties();
-	private static final ObservedActivity _activityCreate = new SingleActivity("create log file");
+	
+	private static final ObservedActivity _activityCreateLog = new SingleActivity("create log file");
 	private static final boolean _useSourceObject = true;
 	
 	public static void setAutoFlush(boolean bState) {
 		// TODO: are we keeping this?
 	}
-
-	public static XResult tryCreateLogFile(Class<?> classApp, String strPrefix) {
-		Objects.requireNonNull(classApp, "classApp");
-		XResultStatusCarrier result = new XResultStatusCarrier(_activityCreate);
-		String strPath = _properties.getProperty(LOG_DIR);
-		if (strPath == null) {
-			result.caughtException(
-					new EnvironmentCharacteristicException("property " 
-							+ LOG_DIR + " is not defined"));
+	
+	private static XResult createLogFile(LogFileLocator locLog) {
+		XResultStatusCarrier result = new XResultStatusCarrier(_activityCreateLog);
+		XResult resultValid = locLog.validate();
+		if (!resultValid.isValid()) {
+			result.copyFrom(resultValid);
 			return result;
 		}
-		Path pathLogDir = Path.of(strPath);
+		ClassReflector reflectApp = Kernel.getAppClass();
+		KernelOutput outputKernel = KernelStore.OUTPUT;
+		LocalDateTime dtNow = LocalDateTime.now();
 		if (_useSourceObject) {
-			DebugLogFileWriterSource source = new DebugLogFileWriterSource(pathLogDir, strPrefix);
-			XResult resultCreate = source.useLogFile(classApp);
-			result.copyFrom(resultCreate);
-		} else {
-			XResultOf<DebugWriterLogFile> resultCreate
-				= DebugWriterLogFile.tryCreate(pathLogDir, classApp, strPrefix);
-			result.copyFrom(resultCreate);
-			if (resultCreate.isValid()) {
-				DebugNexusCore.setWriter(resultCreate.getResult());
+			ObservationWriterSource source = new ObservationWriterLogFileSource(locLog);
+			XResultOf<ObservationWriter> resultWriter = source.createFor(reflectApp.getReferencedClass());
+			if (resultWriter.isValid()) {
+				ObservationWriter writer = resultWriter.getResult();
+				outputKernel.setLogWriter(writer);
+				result.setValid();
+			} else {
+				result.copyFrom(resultWriter);
 			}
+		} else {
+			Path pathFile = locLog.formFile(dtNow);
+			outputKernel.collector().write(ObsLevel.DEBUG, "will write to " + pathFile);
+			ObservationWriterUnicodeStream writer = new ObservationWriterUnicodeStream();
+			try {
+				OutputStream output = Files.newOutputStream(pathFile);
+				writer.assignOutputStream(output);
+			} catch (IOException exc) {
+				result.caughtThrowable(exc);
+				try {
+					writer.close();
+				} catch (IOException e2) {
+					
+				}
+				return result;
+			}
+			writer.setAutoFlush(true);
+			KernelLog.startLogFile(writer, dtNow);
+			outputKernel.setLogWriter(writer);
+			Kernel.OBS_KERNEL.write(ObsLevel.INFO, "Created log file " + pathFile);
+			result.setValid();
 		}
 		return result;
 	}
 	
 	public static XResult tryCreateLogFile(Class<?> classApp) {
-		return tryCreateLogFile(classApp, DebugWriterLogFile.PREFIX_DEBUG);
+		LogFileLocator locLog = new LogFileLocator();
+		return createLogFile(locLog);
+	}
+	
+	public static XResult tryCreateLogFile(Class<?> classApp, String strPrefix) {
+		LogFileLocator locLog = new LogFileLocator(strPrefix);
+		return createLogFile(locLog);
 	}
 	
 	public static XResult tryCreateLogFileIn(Class<?> classApp, String strPrefix, Path pathDir) {
-		Objects.requireNonNull(classApp, "classApp");
-		Objects.requireNonNull(pathDir, "pathDir");
-		XResultStatusCarrier result = new XResultStatusCarrier(_activityCreate);
-		XResultOf<DebugWriterLogFile> resultCreate
-			= DebugWriterLogFile.tryCreate(pathDir, classApp, strPrefix);
-		result.copyFrom(resultCreate);
-		if (resultCreate.isValid()) {
-			DebugNexusCore.setWriter(resultCreate.getResult());
-		}
-		return result;
+		LogFileLocator locLog = new LogFileLocator(pathDir, strPrefix);
+		return createLogFile(locLog);
 	}
 	
 	public static XResult tryCreateLogFileIn(Class<?> classApp, Path pathDir) {
-		return tryCreateLogFileIn(classApp, DebugWriterLogFile.PREFIX_DEBUG, pathDir);
+		LogFileLocator locLog = new LogFileLocator(pathDir);
+		return createLogFile(locLog);
 	}
 }

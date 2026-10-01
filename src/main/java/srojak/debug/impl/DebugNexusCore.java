@@ -16,8 +16,6 @@
  */
 package srojak.debug.impl;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,15 +24,15 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import srojak.core.Announcer;
 import srojak.core.TextMessageRelay;
-import srojak.core.backplane.ApplicationBackplane;
-import srojak.core.observe.Announcer;
+import srojak.core.kernel.priv.KernelOutput;
+import srojak.core.kernel.priv.KernelStore;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.activity.SingleActivity;
-import srojak.core.observe.writers.AnnouncerPrintStream;
 import srojak.core.props.DebugProperties;
 import srojak.core.props.DebugPropertyKeys;
 import srojak.core.reflect.PackageClassLocator;
@@ -51,9 +49,9 @@ public class DebugNexusCore
 	private static final List<SwitchControlSetRecord> _listControlSets;
 	private static final DebugProperties _properties;
 	public static final ObservationCollector DEBUG_OBSV;
+	// TODO: find a common home for this
 	public static final DateTimeFormatter FORMAT_TIME_STAMP;
-	private static ObservationWriter _writer;
-	private static Announcer _announcer;
+	private static KernelOutput _outputKernel;
 	private static ObsLevel _levelAnnounce;
 	private static ObsLevel _levelDefault;
 	private static SwitchCaptureList _listCapture;
@@ -62,18 +60,16 @@ public class DebugNexusCore
 	static {
 		_mapClasses = new HashMap<PackageClassLocator, ClassDebugStore>();
 		_listControlSets = new LinkedList<SwitchControlSetRecord>();
-		_properties = ApplicationBackplane.getDebugProperties();
+		_properties = KernelStore._propsDebug;
 		DEBUG_OBSV = ObservationCollector.makeInstance();
 		DebugWriterForwarder forwarder = new DebugWriterForwarder();
 		DEBUG_OBSV.addWriterPermanent(forwarder);
-		_writer = ApplicationBackplane.WRITER_STD_ERR;
-		_announcer = new AnnouncerPrintStream(System.err);
+		_outputKernel = KernelStore.OUTPUT;
 		_levelAnnounce = ObsLevel.WARN;
 		FORMAT_TIME_STAMP = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 		_levelDefault = ObsLevel.INFO;
 		_listCapture = null;
 		_ctrlSetActive = null;
-		ApplicationBackplane.addShutdownAction(DebugNexusCore::onShutdownCloseWriter);
 	}
 	
 	public static DebugProperties getProperties() {
@@ -85,8 +81,9 @@ public class DebugNexusCore
 		_listControlSets.add(record);
 		_ctrlSetActive = record;
 		// TODO how can this be announced at startup?
-		System.out.println("reading switch control set " + record.getName());
-		_writer.writeDiagnostic("reading switch control set \"" + record.getName() + "\"");
+		String strMessage = "reading switch control set \"" + record.getName() + "\"";
+		_outputKernel.collector().writeNoLocation(ObsLevel.INFO, strMessage);
+		_outputKernel.getLogWriter().writeDiagnostic(strMessage);
 	}
 	
 	public static DebugSwitchContent getContent(DebugSwitchKey key) {
@@ -104,22 +101,13 @@ public class DebugNexusCore
 	
 	private static DebugSwitchContent createClassSwitch(PackageClassLocator locator, Supplier<String> supplierDiagnostic) {
 		if (_properties.isDiagNewSwitchEnabled()) {
-			_writer.writeDiagnostic(supplierDiagnostic.get());
+			_outputKernel.getLogWriter().writeDiagnostic(supplierDiagnostic.get());
 		}
 		DebugSwitchKey key = new DebugSwitchKeyClass(locator);
 		return new DebugSwitchContent(key, _ctrlSetActive);
 	}
 	
-	public static void startConfigFile(Path pathFile) {
-		if (_properties.isDiagNewSwitchEnabled()) {
-			_writer.writeDiagnostic("starting file " + pathFile);
-		}
-	}
-	
-	public static void endConfigFile(Path pathFile) {
-		if (_properties.isDiagNewSwitchEnabled()) {
-			_writer.writeDiagnostic("completed file " + pathFile);
-		}
+	public static void closeControlSet() {
 		_ctrlSetActive = null;
 	}
 	
@@ -131,8 +119,9 @@ public class DebugNexusCore
 	}
 	
 	private static void putNewContent(DebugSwitchContent content, Supplier<String> supplierDiagnostic) {
+		ObservationWriter writer = _outputKernel.getLogWriter();
 		if (_properties.isDiagNewSwitchEnabled()) {
-			_writer.writeDiagnostic(supplierDiagnostic.get());
+			writer.writeDiagnostic(supplierDiagnostic.get());
 		}
 		DebugSwitchKey key = content.getKey();
 		boolean isForClass = !key.hasSubjectName();
@@ -198,6 +187,7 @@ public class DebugNexusCore
 	}
 	
 	public static void enableBaseClassSwitches(DebugSwitchKey keyClass) {
+		ObservationWriter writer = _outputKernel.getLogWriter();
 		boolean bDiagCascade = _properties.isDiagSwitchCascade();
 		ClassDebugStore store = _mapClasses.get(keyClass.getClassLocator());
 		if (store == null) {
@@ -228,7 +218,7 @@ public class DebugNexusCore
 					swBase = store.getClassSwitch();
 					if (_listCapture.isInList(swBase)) {
 						if (bDiagCascade) {
-							_writer.writeDiagnostic("found DebugSwitch in capture list for " + keyBase);
+							writer.writeDiagnostic("found DebugSwitch in capture list for " + keyBase);
 						}
 						if (!swBase.isLevelAtLeast(levelClass)) {
 							swBase.setLevel(levelClass);
@@ -245,15 +235,16 @@ public class DebugNexusCore
 				classBase = classBase.getSuperclass();
 			}
 		} catch (ClassNotFoundException exc) {
-			_writer.writeDiagnostic("unexpected ClassNotFoundException: " + exc.getMessage());
+			writer.writeDiagnostic("unexpected ClassNotFoundException: " + exc.getMessage());
 		} finally {
 			_listCapture = null;
 		}
 	}
 	
 	public static ClassDebugOptionMap createOptionsForClass(PackageClassLocator locClass) {
+		ObservationWriter writer = _outputKernel.getLogWriter();
 		if (_properties.isDiagNewClassOptionsEnabled()) {
-			_writer.writeDiagnostic("creating new class options for " + locClass);
+			writer.writeDiagnostic("creating new class options for " + locClass);
 		}
 		ClassDebugStore storeClass = _mapClasses.get(locClass);
 		if (storeClass == null) {
@@ -275,21 +266,7 @@ public class DebugNexusCore
 	}
 	
 	public static ObservationWriter getWriter() {
-		return _writer;
-	}
-	
-	public static void setWriter(ObservationWriter writer) {
-		Objects.requireNonNull(writer, "writer");
-		_writer = writer;
-	}
-	
-	public static Announcer getAnnouncer() {
-		return _announcer;
-	}
-	
-	public static void setAnnouncer(Announcer announcer) {
-		Objects.requireNonNull(announcer, "announcer");
-		_announcer = announcer;
+		return  _outputKernel.getLogWriter();
 	}
 	
 	public static ObsLevel getAnnounceLevel() {
@@ -311,50 +288,32 @@ public class DebugNexusCore
 	}
 	
 	protected static void writeln(ObsLevel level, SourceLocation location, String strText) {
-		_writer.write(level, location, strText);
+		ObservationWriter writer = _outputKernel.getLogWriter();
+		writer.write(level, location, strText);
 		if (_levelAnnounce.isLevelAtLeast(level)) {
-			_announcer.announce(level, location);
+			Announcer ann = _outputKernel.announcer();
+			ann.announce(level, location);
 		}
 	}
 	
-	protected static void writelnException(ObsLevel level, SourceLocation location, Exception exc, String strText) {
+	protected static void writelnException(ObsLevel level, SourceLocation location, Exception exc, 
+			String strText, boolean bShowStack) {
 		// TODO: pass in activity
-		_writer.writeException(level, location, new SingleActivity("?"), exc, false);
+		ObservationWriter writer = _outputKernel.getLogWriter();
+		writer.writeException(level, location, new SingleActivity("?"), exc, bShowStack);
 		if (_levelAnnounce.isLevelAtLeast(level)) {
-			_announcer.announceException(level, location, exc);
-		}
-	}
-	
-	protected static void writeStackTrace(ObsLevel level, Throwable t) {
-		// TODO: eliminate this because the writers handle it
-		StackTraceElement[] frames = t.getStackTrace();
-		StringBuilder sb = new StringBuilder("Stack trace:");
-		for (StackTraceElement frame : frames) {
-			sb.append("\n    ");
-			sb.append(frame);
+			Announcer ann = _outputKernel.announcer();
+			ann.announceException(level, location, exc);
 		}
 	}
 
 	protected static void writeDiagnostic(String strText) {
-		_writer.writeDiagnostic(strText);
+		ObservationWriter writer = _outputKernel.getLogWriter();
+		writer.writeDiagnostic(strText);
 	}
 	
 	protected static void writeDiagnostic(SourceLocation location, String strText) {
-		_writer.writeDiagnostic(location, strText);
-	}
-	
-	private static void onShutdownCloseWriter() {
-		if (_properties.isDiagShutdownEnabled()) {
-			_writer.writeDiagnostic("notified of shutdown");
-		}
-		if (_writer != ApplicationBackplane.WRITER_STD_ERR) {
-			ObservationWriter writerPrior = _writer;
-			_writer = ApplicationBackplane.WRITER_STD_ERR;
-			try {
-				writerPrior.close();
-			} catch (IOException exc) {
-				_writer.writeDiagnostic("on closing debug writer: " + exc.getMessage());
-			}
-		}
+		ObservationWriter writer = _outputKernel.getLogWriter();
+		writer.writeDiagnostic(location, strText);
 	}
 }

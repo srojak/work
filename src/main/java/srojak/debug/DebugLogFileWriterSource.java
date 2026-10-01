@@ -23,7 +23,8 @@ import java.util.Objects;
  * @author Stephen
  *
  */
-public class DebugLogFileWriterSource 
+@Deprecated(forRemoval = true)
+class DebugLogFileWriterSource 
 		extends DebugLogFileWriterSourceBase {
 
 	public DebugLogFileWriterSource(Path pathDir) {
