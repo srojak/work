@@ -1,5 +1,5 @@
 /**
-  * Copyright © 2026 Stephen Rojak.
+ * Copyright © 2026 Stephen Rojak.
  * 
  * This file is part of the srojak Java portfolio.
  * 
@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package srojak.debug.config;
+
+import srojak.core.io.IONodeIdentifier;
+
 /**
  * @author Stephen
  *
  */
-module srojak.debug.config {
-	requires java.xml;
-	requires transitive srojak.core;
-	requires transitive srojak.mantle;
-	requires transitive srojak.debug;
-	requires transitive srojak.xml;
-	exports srojak.debug.config;
-	opens srojak.debug.config.impl to srojak.core, srojak.afw;
+public interface DebugConfigInputBounds {
+
+	void startReading(IONodeIdentifier ident);
+	void endReading(IONodeIdentifier ident);
 }

@@ -18,6 +18,9 @@ package srojak.debug.config;
 
 import javax.xml.namespace.QName;
 
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
+
 /**
  * @author Stephen
  *
@@ -38,4 +41,6 @@ public interface DebugConfigNames {
 	public static final QName ATTRIB_LOCS = new QName("locs");
 	public static final QName ATTRIB_CASCADE = new QName("cascade");
 	public static final QName ATTRIB_VALUE = new QName("value");
+	
+	static final ObservedActivity ACTIVITY_READ_DEBUG_CONFIG = new SingleActivity("Read DebugConfig File");
 }

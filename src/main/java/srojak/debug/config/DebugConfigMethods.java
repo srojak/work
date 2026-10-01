@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.SourceLocation;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultCarrierOf;
@@ -37,8 +38,9 @@ import srojak.debug.DebugNexus;
 /**
  * @author Stephen
  *
+ * @deprecated this uses the two-pass validation and read
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class DebugConfigMethods {
 		
 	private static final DebugNexus _nexus = new DebugNexus();
@@ -66,7 +68,7 @@ public class DebugConfigMethods {
 		sb.append(classEx.getSimpleName());
 		sb.append(" reading debug config file: ");
 		sb.append(exc.getMessage());	
-		writer.write(ObsLevel.FATAL, sb.toString());
+		writer.write(ObsLevel.FATAL, SourceLocation.caller(2), sb.toString());
 		System.err.println(sb.toString());
 		if (_bShowStackOnException) {
 			StackTraceElement[] frames = exc.getStackTrace();
@@ -87,7 +89,7 @@ public class DebugConfigMethods {
 			result.setValid();
 		} catch (NoSuchFileException exc) {
 			if (bFileMustExist) {
-				writer.write(ObsLevel.FATAL, strFile + " does not exist");
+				writer.write(ObsLevel.FATAL, SourceLocation.here(), strFile + " does not exist");
 				result.caughtException(exc);
 			} else {
 				result.setValid();

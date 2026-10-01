@@ -24,31 +24,34 @@ import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
 import org.xml.sax.SAXException;
 
-import srojak.core.observe.ObservationWriter;
+import srojak.core.functional.IOSupplier;
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.io.IONodeName;
+import srojak.core.io.IONodeType;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
 import srojak.debug.DebugConfigSchema;
-import srojak.debug.impl.DebugNexusCore;
 import srojak.xml.XmlSchemaTool;
-import srojak.xml.stream.XmlParserOptions;
-import srojak.xml.stream.XmlStreamInputBuilder;
 import srojak.xml.stream.errors.XmlStreamErrorHandler;
+import srojak.xml.stream.factories.XmlStreamInputFactory;
 
 /**
  * @author Stephen
  *
  */
 public class DebugConfigReader2Pass {
-	private final XmlStreamInputBuilder _builderStream;
+	private final XmlStreamInputFactory _factoryStream;
 	private XmlStreamErrorHandler _handlerErrors;
-	private DebugConfigParserV1 _parser;
+	private DebugConfigParser _parser;
 	
 	private static Schema _schema = null;
 	
@@ -56,26 +59,39 @@ public class DebugConfigReader2Pass {
 			throws SAXException {
 		if (_schema == null) {
 			DebugConfigSchema sourceSchema = new DebugConfigSchema();
-			InputStream stream = sourceSchema.getResource();
+			InputStream stream = sourceSchema.getResourceStream();
 			XmlSchemaTool toolSchema = new XmlSchemaTool();
 			_schema = toolSchema.readSchemaDirect(new StreamSource(stream));
 		}
-		_builderStream = new XmlStreamInputBuilder();
+		_factoryStream = new XmlStreamInputFactory(true);
 		_handlerErrors = new XmlStreamErrorHandler();
-		_parser = new DebugConfigParserV1(_builderStream);
+		_parser = new DebugConfigParser();
 	}
 	
-	public XmlParserOptions getParserOptions() {
-		return _parser.getOptions();
+	public ObservationCollector getObservationWriter() {
+		return _parser.getObservationCollector();
 	}
 	
-	public ObservationWriter getObservationWriter() {
-		return _parser.getObservationWriter();
-	}
-	
-	public void setObservationWriter(ObservationWriter writer) {
+	public void setObservationWriter(ObservationCollector writer) {
 		Objects.requireNonNull(writer, "writer");
+		/*
 		_parser.setObservationWriter(writer);
+		*/
+	}
+	
+	private void readInput(IONodeIdentifier idSource, IOSupplier<InputStream> supplier)
+			throws IOException, XMLStreamException, SAXException {
+		_parser.startReading(idSource);
+		try (InputStream streamIn = supplier.get())
+		{
+			XMLStreamReader reader = _factoryStream.createStreamReader(DebugConfigNames.ACTIVITY_READ_DEBUG_CONFIG, streamIn);
+			while (reader.hasNext()) {
+				int nEvent = reader.next();
+				_parser.interpret(nEvent);
+			}
+		} finally {
+			_parser.endReading(idSource);
+		}
 	}
 	
 	public void readFrom(String strPath) 
@@ -86,15 +102,14 @@ public class DebugConfigReader2Pass {
 	
 	public void readFrom(Path pathFile) 
 			throws IOException, XMLStreamException, SAXException {
+		// TODO put exception handling here
 		InputStream streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
 		Validator validator = _schema.newValidator();
 		validator.setErrorHandler(_handlerErrors);
 		validator.validate(new StreamSource(streamIn));
 		streamIn.close();
-		DebugNexusCore.startConfigFile(pathFile);
-		streamIn = Files.newInputStream(pathFile, StandardOpenOption.READ);
-		_parser.parse(streamIn);
-		DebugNexusCore.endConfigFile(pathFile);
+		IONodeIdentifier idSource = new IONodeName(IONodeType.FILE, pathFile.toAbsolutePath().toString());
+		readInput(idSource, () -> Files.newInputStream(pathFile, StandardOpenOption.READ));
 	}
 	
 	public XResult validateContent(Path pathFile) {

@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 
 import srojak.core.data.DataErrorSeverity;
 import srojak.core.io.IONodeIdentifier;
+import srojak.core.kernel.Kernel;
 import srojak.core.observe.InvalidObservationLevelException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
@@ -39,29 +40,28 @@ import srojak.debug.control.DebugControlInstanceExt;
 import srojak.debug.control.DebugSwitchMutable;
 import srojak.xml.stream.StreamElementAttribute;
 import srojak.xml.stream.parse.StreamElementAttributeSet;
-import srojak.xml.stream.parse.XmlStreamActionParserBase;
+import srojak.xml.stream.parse.XmlStreamParserBase;
 import srojak.xml.stream.work.StreamElementStringProduct;
 import srojak.xml.stream.work.XmlStreamWorkItemMap;
 
 /**
  * @author Stephen
  *
- * Because the config file does not have element data, the same parser can be used for single-pass
- * 	and two-pass processing
  */
-public class DebugConfigParser 
-		extends XmlStreamActionParserBase 
+public class DebugConfigParser2 
+		extends XmlStreamParserBase
 		implements DebugConfigInputBounds, DebugConfigNames {
 	private ObsLevel _levelDefault;
 	private DebugControl _controller;
-	
+
 	/**
 	 * 
 	 */
-	public DebugConfigParser() {
+	public DebugConfigParser2() {
 		super();
 		_levelDefault = ObsLevel.INFO;
 		_controller = new DebugControlInstanceExt();
+		setObservationCollector(Kernel.OBS_KERNEL);
 	}
 	
 	public ObsLevel getDefaultObsLevel() {
@@ -85,7 +85,7 @@ public class DebugConfigParser
 
 	@Override
 	protected void parseInit() {
-		
+
 	}
 	
 	private ObsLevel readObsLevel(QName nameElement, StreamElementAttributeSet attribs,
@@ -108,7 +108,7 @@ public class DebugConfigParser
 	}
 
 	@Override
-	protected void parseStartElement(QName nameElement,XmlStreamWorkItemMap mapWork, StreamElementAttributeSet attribs)
+	protected void parseStartElement(QName nameElement, XmlStreamWorkItemMap mapWork, StreamElementAttributeSet attribs)
 			throws XMLStreamException {
 		if (nameElement.equals(ELEMENT_PACKAGE)) {
 			Location location = getParserState().getCurentLocation();

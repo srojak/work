@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationWriter;
+import srojak.core.observe.ObservationCollector;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.DebugNexus;
 
@@ -35,9 +35,9 @@ import srojak.debug.DebugNexus;
 public class DebugConfigInterpreter {
 	@SuppressWarnings("unused")
 	private DebugNexus _nexus;
-	private ObservationWriter _writer;
+	private ObservationCollector _writer;
 	
-	public DebugConfigInterpreter(ObservationWriter writer) {
+	public DebugConfigInterpreter(ObservationCollector writer) {
 		Objects.requireNonNull(writer, "writer");
 		_nexus = new DebugNexus();
 		_writer = writer;
