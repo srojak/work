@@ -1,0 +1,77 @@
+/**
+ * Copyright © 2026 Stephen Rojak.
+ * 
+ * This file is part of the srojak Java portfolio.
+ * 
+ * The srojak Java portfolio is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free Software Foundation,
+ * version 3 of the License.
+ * 
+ * The srojak Java portfolio is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this portfolio.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+package srojak.concurrent;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+import srojak.core.NameToken;
+import srojak.core.main.CoreOutputs;
+import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCollector;
+
+/**
+ * @author Stephen
+ *
+ */
+public class StopGate 
+		extends NamedGateBase {
+	private final List<StopBarrier> _listStops;
+	
+	private static final ObservationCollector _obsErr;
+	
+	static {
+		CoreOutputs outputs = new CoreOutputs();
+		_obsErr = outputs.log();
+	}
+	
+	public StopGate(NameToken tokenName) {
+		super(tokenName);
+		_listStops = Collections.synchronizedList(new LinkedList<StopBarrier>());
+	}
+	
+	public boolean isClear() {
+		return _listStops.isEmpty();
+	}
+	
+	public int getStopCount() {
+		return _listStops.size();
+	}
+	
+	public List<StopBarrier> getStops() {
+		return List.copyOf(_listStops);
+	}
+	
+	public StopBarrier addStop(Object objBarrier) {
+		Objects.requireNonNull(objBarrier, "objBarrier");
+		StopBarrier barrier = new StopBarrier(this, objBarrier);
+		_listStops.add(barrier);
+		return barrier;
+	}
+	
+	void removeBarrier(StopBarrier barrier) {
+		_listStops.remove(barrier);
+	}
+	
+	void finalRemove(StopBarrier barrier) {
+		if (_listStops.remove(barrier)) {
+			_obsErr.record(ObsLevel.ERROR, "gate for " + _name + " barrier never properly removed");
+		}
+	}
+}
