@@ -16,12 +16,20 @@
  */
 package srojak.core.io;
 
+import srojak.core.Equatable;
+
 /**
  * @author Stephen
  *
  */
-public interface IONodeIdentifier {
+public interface IONodeIdentifier
+		extends Equatable<IONodeIdentifier> {
 
-	IONodeType getType();
-	String getName();
+	IONodeType nodeType();
+	String name();
+	
+	static final IONodeIdentifier STDIN = new IONodeName(IONodeType.DEVICE, "std input");
+	static final IONodeIdentifier STDOUT = new IONodeName(IONodeType.DEVICE, "std output");
+	static final IONodeIdentifier STDERR = new IONodeName(IONodeType.DEVICE, "std error");
+	static final IONodeIdentifier UNASSIGNED = new IONodeName(IONodeType.ABSTRACT, "unassigned");
 }

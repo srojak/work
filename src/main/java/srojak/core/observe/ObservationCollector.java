@@ -16,125 +16,55 @@
  */
 package srojak.core.observe;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
-import srojak.core.logic.FlagsShortTest;
+import srojak.core.data.DataPassThrough;
+import srojak.core.observe.impl.ObservationCollectorInstance2;
 
 /**
  * @author Stephen
  *
  * Common interface all observation collectors must provide.
+ * 
+ * <h2>Responsibilities</h2>
+ * <ol>
+ * <li>Assign an {@code ObsLevel}.</li>
+ * <li>Locate the caller in the source code.</li>
+ * <li>Collect text content for the observation.</li>
+ * </ol>
+ * 
  */
 public interface ObservationCollector
-	extends TraceCollector {
-	
-	FlagsShortTest getFlags();
-
-	/**
-	 * Write a message at a given observation level.
-	 * @param level The observation level.
-	 * @param strText The text of the message.
-	 */
-	void write(ObsLevel level, String strText);
+	extends TraceCollectorWithClass, ObservationCommonCollector, ObservationCollectWriterStore {
 	
 	/**
 	 * Write a message at a given observation level without location information.
 	 * @param level The observation level.
 	 * @param strText The text of the message.
 	 */
-	void writeNoLocation(ObsLevel level, String strText);
-	
-	/**
-	 * Write a message at an observation level.
-	 * @param level The level at which to write the message.
-	 * @param message The supplier of the message.
-	 */
-	void write(ObsLevel level, Supplier<String> message);
+	void recordNoLocation(ObsLevel level, String strText);
 	
 	/**
 	 * Write a message at an observation level without location information.
 	 * @param level The level at which to write the message.
 	 * @param message The supplier of the message.
 	 */
-	void writeNoLocation(ObsLevel level, Supplier<String> message);
-	
-	/**
-	 * Write a message at an observation level.
-	 * @param level The level at which to write the message.
-	 * @param listPassThrough The observable passthrough list carrying additional data.
-	 * @param message The function to write the message.
-	 */
-	void write(ObsLevel level, ObsPassThroughList listPassThrough, 
-			Function<ObsPassThroughList, String> message);
-	
-	/**
-	 * Write an exception at an observation level.
-	 * @param level The level at which to write the message.
-	 * @param activity Identifies the activity that produced the exception.
-	 * @param exc The exception whose contents are to be written.
-	 * @param bShowStack If {@code true}, the stack trace can be written.
-	 */
-	void writeException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack);
-	
-	/**
-	 * Build a message and write it at a given observation level.
-	 * @param level The observation level.
-	 * @param message The callback to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, Consumer<StringBuilder> message);
-	
-	/**
-	 * Build a message and write it at a given observation level.
-	 * @param level The observation level.
-	 * @param i The {@code int} value to pass through to the callback.
-	 * @param message The callback to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> message);
-	
-	/**
-	 * Build and write a message at an observation level.
-	 * @param level The level at which to write the message.
-	 * @param listPassThrough The observation passthrough list carrying additional data.
-	 * @param messageBuilder The consumer to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
-			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder);
-	
-	/**
-	 * Write a time stamp at a given observation level.
-	 * @param level The observation level.
-	 */
-	void writeTimeStamp(ObsLevel level);
-	
-	/**
-	 * Write a diagnostic message.
-	 * @param strText The text of the message.
-	 */
-	void writeDiagnostic(String strText);
-	
-	/**
-	 * Create an observation collector at a given observation level.
-	 * @param level The observation level.
-	 * @return an observation collector, which will be active if {@code level} is a level
-	 * 		for which the writer is writing.
-	 */
-	SingleObservationCollector createCollector(ObsLevel level);
-	
-	boolean hasPermanentWriters();
-	
-	void addWriter(ObservationWriter writer);
-	
-	void addWriterPermanent(ObservationWriter writer);
-	
-	void removeWriter(ObservationWriter writer);
-	
-	void replaceAllWriters(ObservationWriter writer);
+	void recordNoLocation(ObsLevel level, Supplier<String> message);
 	
 	public static ObservationCollector makeInstance() {
-		return new ObservationCollectorInstance();
+		return new ObservationCollectorInstance2();
+	}
+	
+	/**
+	 * Create a passthrough list for use with a call to write to this debug switch.
+	 * @param objects A set of objects to include in the passthrough list.
+	 * @return A passthrough list containing the input objects, in order.
+	 * 
+	 * If you encounter errors like this:
+	 * Local variable N defined in an enclosing scope must be final or effectively final
+	 * The problem can be overcome through use of a passthrough list.
+	 */
+	static DataPassThrough passThrough(Object... objects) {
+		return DataPassThrough.createFrom(objects);	
 	}
 }

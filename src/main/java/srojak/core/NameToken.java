@@ -30,7 +30,6 @@ public interface NameToken
 	boolean isNameEqual(String strName);
 	boolean isRestricted();
 
-	@SuppressWarnings("exports")
 	public static final NameTokenFixed Anon = new NameTokenFixed("anon");
 	
 	public static NameToken factory(String strName) {

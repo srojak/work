@@ -64,8 +64,7 @@ public class PackageClassLocator
 	}
 	
 	public boolean isJavaClass() {
-		return _strPackage.startsWith("java.") || _strPackage.startsWith("javax.")
-				|| _strPackage.startsWith("jdk.");
+		return ReflectionMethods.isNameJRE(_strPackage);
 	}
 	
 	public boolean isValidated() {

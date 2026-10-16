@@ -16,12 +16,23 @@
  */
 package srojak.core.observe;
 
+import java.time.LocalDateTime;
+import java.util.EnumSet;
+
+import srojak.core.faults.FaultFormat;
+import srojak.core.faults.StructuredFault;
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.observe.code.CodeFaultObservation;
+import srojak.core.observe.code.CodeObservation;
+
 /**
  * @author Stephen
  *
  * The minimum interface every write-to destination must offer
  */
 public interface ObservationCommonWriter {
+	
+	IONodeIdentifier writesTo();
 	
 	/**
 	 * Can this writer write at all?
@@ -43,6 +54,29 @@ public interface ObservationCommonWriter {
 	 * @param strText The text content from the collector.
 	 */
 	void write(SingleObservationCollector collector, SourceLocation locOrigin, String strText);
+	
+	void write(ObsLevel level, String strText);
+	
+	void writeObserved(CodeObservation observation);
+	
+	void write(ObsLevel level, SourceLocation locOrigin, String strText);
+	
+	void writeObservedTrace(CodeObservation observation);
+	
+	@Deprecated(forRemoval = true)
+	void writeTrace(ObsLevel level, SourceLocation locOrigin, String strText);
+	
+	@Deprecated(forRemoval = true)
+	void writeException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc, boolean bShowStack);
+	
+	void writeObservedFault(CodeFaultObservation observation);
+	
+	void writeFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, 
+			EnumSet<FaultFormat> formats, StructuredFault fault);
+	
+	void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs);
+	
+	void writeDiagnostic(String strText);
 	
 	/**
 	 * Write a diagnostic message.

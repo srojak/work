@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import srojak.core.EnvironmentCharacteristicException;
-import srojak.core.kernel.priv.KernelStore;
 import srojak.core.observe.ObservedActivity;
+import srojak.core.props.DebugProperties;
 import srojak.core.props.DebugPropertyKeys;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
@@ -41,12 +41,9 @@ public class LogFileLocator
 	
 	public static final String PREFIX_DEBUG = "debug";
 	
-	private static String getLogDir() {
-		return KernelStore._propsDebug.getProperty(LOG_DIR);
-	}
-	
-	public LogFileLocator() {
-		String strLogDir = getLogDir();
+	public LogFileLocator(DebugProperties propsDebug) {
+		Objects.requireNonNull(propsDebug, "propsDebug");
+		String strLogDir = propsDebug.getProperty(LOG_DIR);
 		if (strLogDir == null) {
 			_pathDir = null;
 		} else {
@@ -56,12 +53,13 @@ public class LogFileLocator
 		_bValidated = false;
 	}
 	
-	public LogFileLocator(String strPrefix) {
+	public LogFileLocator(DebugProperties propsDebug, String strPrefix) {
+		Objects.requireNonNull(propsDebug, "propsDebug");
 		Objects.requireNonNull(strPrefix, "strPrefix");
 		if (strPrefix.isBlank()) {
 			strPrefix = PREFIX_DEBUG;
 		}
-		String strLogDir = getLogDir();
+		String strLogDir = propsDebug.getProperty(LOG_DIR);
 		if (strLogDir == null) {
 			_pathDir = null;
 		} else {

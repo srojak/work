@@ -19,83 +19,88 @@ package srojak.core.observe;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import srojak.core.data.DataPassThrough;
+import srojak.core.observe.code.CodeValue;
+import srojak.core.observe.functional.CodeValuesObservationBuilder;
+
 /**
  * @author Stephen
  *
  */
 public interface TraceCollector {
-	
+
 	/**
 	 * Write a trace message to enter a method.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
 	 */
-	void writeTraceEnter(TraceLevel level, Object objTrace);
+	void traceEnter(TraceLevel level);
 	
 	/**
 	 * Write a trace message to enter a method with additional text.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
 	 * @param strMessage The text of the message.
 	 */
-	void writeTraceEnter(TraceLevel level, Object objTrace, String strMessage);
+	void traceEnter(TraceLevel level, String strMessage);
 	
 	/**
 	 * Write a trace message to enter a method with additional text.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
 	 * @param message The supplier of the additional text.
 	 */
-	void writeTraceEnter(TraceLevel level, Object objTrace, Supplier<String> message);
+	void traceEnter(TraceLevel level, Supplier<String> message);
+	
+	void traceTextEnter(TraceLevel level, TextObservation observation);
 	
 	/**
 	 * Write a trace message to enter a method with additional text.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
-	 * @param listPassThrough The observable passthrough list carrying additional data.
+	 * @param passThrough The observable passthrough list carrying additional data.
 	 * @param message The function to write the message.
 	 */
-	void writeTraceEnter(TraceLevel level, Object objTrace, ObsPassThroughList listPassThrough, 
-			Function<ObsPassThroughList, String> message);
+	void traceEnter(TraceLevel level, DataPassThrough passThrough, 
+			Function<DataPassThrough, String> message);
+	
+	void traceCodeEnter(TraceLevel level, CodeValuesObservationBuilder builderObs);
 	
 	/**
 	 * Write a trace message to return from a method.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
 	 */
-	void writeTraceReturn(TraceLevel level, Object objTrace);
+	void traceReturn(TraceLevel level);
 	
 	/**
 	 * Write a trace message to return from a method with additional text.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
 	 * @param strMessage The text of the message.
 	 */
-	void writeTraceReturn(TraceLevel level, Object objTrace, String strMessage);
+	void traceReturn(TraceLevel level, String strMessage);
 	
 	/**
 	 * Write a trace message to return from a method with additional text.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
 	 * @param message The supplier of the additional text.
 	 */
-	void writeTraceReturn(TraceLevel level, Object objTrace, Supplier<String> message);
+	void traceReturn(TraceLevel level, Supplier<String> message);
 	
 	/**
 	 * Write a trace message to return from a method with additional text.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
-	 * @param listPassThrough The observable passthrough list carrying additional data.
+	 * @param passThrough The observable passthrough list carrying additional data.
 	 * @param message The function to write the message.
 	 */
-	void writeTraceReturn(TraceLevel level, Object objTrace, ObsPassThroughList listPassThrough, 
-			Function<ObsPassThroughList, String> message);
+	void traceReturn(TraceLevel level, DataPassThrough passThrough, 
+			Function<DataPassThrough, String> message);
 
+	void traceCodeReturn(TraceLevel level, CodeValuesObservationBuilder builderObs);
+	
+	void traceTextReturn(TraceLevel level, TextObservation observation);
+	
 	/**
 	 * Write a trace message to return from a method with the value being returned.
 	 * @param level The trace level at which to write the message.
-	 * @param objTrace The object writing the message.
-	 * @param objValue The value being returned, which can be null.
+	 * @param cdValue The captured value being returned.
 	 */
-	void writeTraceReturnValue(TraceLevel level, Object objTrace, Object objValue);
+	void traceReturnValue(TraceLevel level, CodeValue cdValue);
+	
+	void traceThrowing(TraceLevel level, ObservedActivity activity, Exception exc);
 }

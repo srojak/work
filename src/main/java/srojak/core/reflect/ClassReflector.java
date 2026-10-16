@@ -119,6 +119,10 @@ public class ClassReflector
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return _classObj.getAnnotation(annotationClass);
 	}
+	
+	public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
+		return _classObj.getAnnotationsByType(annotationClass);
+	}
 
 	@Override
 	public Stream<Annotation> getAnnotationsAsStream() {

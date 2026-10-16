@@ -16,7 +16,7 @@
  */
 package srojak.core.observe;
 
-import java.io.PrintStream;
+import srojak.core.observe.code.CodeValue;
 
 /**
  * @author Stephen
@@ -24,7 +24,7 @@ import java.io.PrintStream;
  */
 public interface SingleObservationCollector {
 	
-	public ObsLevel getLevel();
+	public ObsLevel getObsLevel();
 	public boolean isActive();
 	public SingleObservationCollector append(boolean value);
 	public SingleObservationCollector append(char value);
@@ -46,11 +46,12 @@ public interface SingleObservationCollector {
      */
 	public SingleObservationCollector append(char[] str, int offset, int len);
 	public SingleObservationCollector appendFormat(String format, Object... args);
+	public SingleObservationCollector addValue(CodeValue value);
 	/**
 	 * If called, must be called before commit.
-	 * @param output
+	 * @param collector
 	 */
-	public void alsoWriteTo(PrintStream output);
+	public void alsoWriteTo(ObservationCollector collector);
 	public void commit();
 
 }

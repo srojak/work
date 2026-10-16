@@ -20,7 +20,11 @@ import java.io.PrintStream;
 import java.util.Objects;
 
 import srojak.core.Announcer;
+import srojak.core.ClassAndContent;
+import srojak.core.faults.FaultType;
+import srojak.core.faults.StructuredFault;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
 
@@ -80,6 +84,27 @@ public class AnnouncerPrintStream
 		sb.append(level);
 		sb.append(", location=");
 		sb.append(location.toString(SourceDetail.PACKAGE_CLASS_METHOD));
+		_streamOut.println(sb.toString());
+		_streamOut.flush();
+	}
+
+	@Override
+	public void announceFault(ObsLevel level, SourceLocation location, ObservedActivity activity,
+			StructuredFault fault) {
+		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(location, "location");
+		Objects.requireNonNull(activity, "activity");
+		Objects.requireNonNull(fault, "fault");
+		StringBuilder sb = new StringBuilder(fault.getFaultType().getFormattedName());
+		if (fault.getFaultType() != FaultType.NULL) {
+			sb.append(" (type=");
+			ClassAndContent cc = fault.getContent();
+			sb.append(cc.getReferencedClassName(false));
+			sb.append(") level=");
+			sb.append(level);
+			sb.append(", location=");
+			sb.append(location.toString(SourceDetail.PACKAGE_CLASS_METHOD));
+		}
 		_streamOut.println(sb.toString());
 		_streamOut.flush();
 	}

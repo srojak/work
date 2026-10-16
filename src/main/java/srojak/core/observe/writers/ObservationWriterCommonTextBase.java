@@ -17,24 +17,39 @@
 package srojak.core.observe.writers;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.EnumSet;
 
+import srojak.core.faults.FaultFormat;
+import srojak.core.faults.FaultMethods;
+import srojak.core.faults.StructuredFault;
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.observe.ObsFormatOption;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.code.CodeFaultObservation;
+import srojak.core.observe.code.CodeObservation;
 
 /**
  * @author Stephen
  *
  */
 public abstract class ObservationWriterCommonTextBase 
-		extends ObservationWriterStandardBase {
+		extends ObservationWriterStandardBase
+		implements ObservationCommon {
 
 	/**
 	 * 
 	 */
 	public ObservationWriterCommonTextBase() {
 		super();
+	}
+	
+	public ObservationWriterCommonTextBase(IONodeIdentifier writesTo) {
+		super(writesTo);
 	}
 	
 	protected abstract void writeln(String strText)
@@ -69,9 +84,23 @@ public abstract class ObservationWriterCommonTextBase
 	}
 
 	@Override
-	protected void innerWrite(ObsLevel level, SourceLocation locOrigin, String strText) {
+	protected void innerWriteObserved(CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+		StringBuilder sb = new StringBuilder();
+		observation.writeSelfTo(sb, optionsFormat);
+		writeOutput(sb);
+	}
+
+	@Override
+	protected void innerWriteObservedFault(CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+		StringBuilder sb = new StringBuilder();
+		observation.writeSelfTo(sb, optionsFormat);
+		writeOutput(sb);
+	}
+
+	@Override
+	protected void innerWrite(ObsLevel level, SourceLocation locOrigin, boolean bIsTrace, String strText) {
 		StringBuilder sb = new StringBuilder(level.getName());
-		if (checkCanShowLocations(level)) {
+		if (bIsTrace || checkCanShowLocations(level)) {
 			sb.append(' ');
 			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
 		}
@@ -91,6 +120,37 @@ public abstract class ObservationWriterCommonTextBase
 		sb.append(": when ");
 		sb.append(activity.describe());
 		ObsWriterTextMethods.formatException(sb, exc, bShowStack);
+		writeOutput(sb);
+	}
+
+	@Override
+	protected void innerWriteFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
+			EnumSet<FaultFormat> formats, StructuredFault fault) {
+		StringBuilder sb = new StringBuilder(level.getName());
+		if (checkCanShowLocations(level)) {
+			sb.append(' ');
+			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
+		}
+		sb.append(": when ");
+		sb.append(activity.describe());
+		if (formats.contains(FaultFormat.Originating)) {
+			sb.append(" throwing");
+		}
+		sb.append(' ');
+		FaultMethods.formatFaultTo(sb, formats, fault);
+		writeOutput(sb);
+	}
+
+	@Override
+	protected void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
+		// TODO Auto-generated method stub
+		StringBuilder sb = new StringBuilder(level.getName());
+		if (checkCanShowLocations(level)) {
+			sb.append(' ');
+			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
+		}
+		sb.append(" time: ");
+		sb.append(FORMAT_TIME_STAMP.format(dtObs));
 		writeOutput(sb);
 	}
 

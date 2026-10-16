@@ -59,6 +59,11 @@ public final class SourceLocationSpecific
 	public String getClassName() {
 		return _strClass;
 	}
+
+	@Override
+	public String getFullClassName() {
+		return _strPackage + "." + _strClass;
+	}
 	
 	@Override
 	public String getMethodName() {

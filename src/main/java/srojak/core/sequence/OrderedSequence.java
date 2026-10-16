@@ -23,7 +23,6 @@ package srojak.core.sequence;
 public interface OrderedSequence {
 
 	long series();
-	String getSeriesTag();
-	long getSequence();
-	String toString();
+	long current();
+	long next();
 }

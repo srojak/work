@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ArrayMethods {
@@ -109,5 +110,16 @@ public class ArrayMethods {
 		for (T item : array) {
 			consumer.accept(item);
 		}
+	}
+	
+	public static <F, T> void mapInto(F[] arrayFrom, T[] arrayTo, Function<F, T> fnMap) {
+		Objects.requireNonNull(arrayFrom, "arrayFrom");
+		Objects.requireNonNull(arrayTo, "arrayTo");
+		Objects.requireNonNull(fnMap, "fnMap");
+		if (arrayFrom.length != arrayTo.length) {
+			throw new IllegalArgumentException("arrays are not of the same length");
+		}
+		for (int idx = 0; idx < arrayFrom.length; idx++)
+			arrayTo[idx] = fnMap.apply(arrayFrom[idx]);
 	}
 }

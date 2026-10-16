@@ -25,7 +25,8 @@ public class ActionCompletedEvent
 		extends CoreEvent {
 	private final int _id;
 	
-	public static final int ID_FILE_READ = 100;
+	public static final int ID_GENERIC = 100;
+	public static final int ID_FILE_READ = 101;
 
 	/**
 	 * @param source

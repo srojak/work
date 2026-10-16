@@ -46,7 +46,7 @@ public abstract class NotifyingValueContainerBase
 	public void addSequentialListenerAndSync(SequentialListener listener) {
 		if (listener != null) {
 			_listeners.add(listener);
-			listener.occurrence(new SequentialEvent(this, SequentialEvent.ID_SYNC, _seq.getValue()));
+			listener.occurrence(new SequentialEvent(this, SequentialEvent.ID_SYNC, _seq.value()));
 		}		
 	}
 
@@ -57,7 +57,7 @@ public abstract class NotifyingValueContainerBase
 	
 	protected void announceChange() {
 		_seq.increment();
-		SequentialEvent event = new SequentialEvent(this, SequentialEvent.ID_CHANGE, _seq.getValue());
+		SequentialEvent event = new SequentialEvent(this, SequentialEvent.ID_CHANGE, _seq.value());
 		_listeners.forEach(ls -> ls.occurrence(event));
 	}
 }

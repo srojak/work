@@ -21,27 +21,34 @@
 module srojak.core {
 	exports srojak.core;
 	exports srojak.core.collections;
-	exports srojak.core.concurrent;
 	exports srojak.core.containers;
 	exports srojak.core.data;
 	exports srojak.core.events;
+	exports srojak.core.faults;
 	exports srojak.core.field;
 	exports srojak.core.functional;
+	exports srojak.core.impl to srojak.kernel;
 	exports srojak.core.io;
-	exports srojak.core.kernel;
-	exports srojak.core.kernel.priv to srojak.afw, srojak.debug;
 	exports srojak.core.keys;
 	exports srojak.core.logic;
+	exports srojak.core.main;
+	exports srojak.core.modules;
 	exports srojak.core.mutable;
 	exports srojak.core.observe;
 	exports srojak.core.observe.activity;
+	exports srojak.core.observe.code;
+	exports srojak.core.observe.functional;
+	exports srojak.core.observe.impl to srojak.kernel, srojak.debug;
 	exports srojak.core.observe.sources;
+	exports srojak.core.observe.text;
 	exports srojak.core.observe.writers;
 	exports srojak.core.props;
 	exports srojak.core.reflect;
 	exports srojak.core.result;
+	exports srojak.core.safety;
 	exports srojak.core.sequence;
 	exports srojak.core.specialized;
 	exports srojak.core.text;
+	exports srojak.core.time;
 	exports srojak.core.tools;
 }

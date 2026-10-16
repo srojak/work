@@ -21,6 +21,7 @@ import java.io.PrintStream;
 import java.util.Objects;
 
 import srojak.core.field.SetOnce;
+import srojak.core.io.IONodeIdentifier;
 
 /**
  * @author Stephen
@@ -33,10 +34,10 @@ public class ObservationWriterPrintStream
 	/**
 	 * @param stream
 	 */
-	public ObservationWriterPrintStream(PrintStream stream) {
-		super();
+	public ObservationWriterPrintStream(IONodeIdentifier writesTo, PrintStream stream) {
+		super(writesTo);
 		_stream = new SetOnce<PrintStream>(SetOnce.DEFAULT);
-		assignPrintStream(stream);
+		assignPrintStream(writesTo, stream);
 	}
 	
 	public ObservationWriterPrintStream() {
@@ -44,7 +45,7 @@ public class ObservationWriterPrintStream
 		_stream = new SetOnce<PrintStream>(SetOnce.DEFAULT);
 	}
 	
-	public void assignPrintStream(PrintStream stream) {
+	public void assignPrintStream(IONodeIdentifier writesTo, PrintStream stream) {
 		Objects.requireNonNull(stream, "stream");
 		if (stream.checkError())
 			throw new IllegalArgumentException("stream is not valid");
@@ -62,7 +63,12 @@ public class ObservationWriterPrintStream
 
 	@Override
 	protected void flushOutput() throws IOException {
-		_stream.get().flush();	
+		PrintStream stream = _stream.get();
+		stream.flush();
+		if (stream.checkError()) {
+			setCanWrite(false);
+			raiseClosedEvent();
+		}
 	}
 
 	@Override

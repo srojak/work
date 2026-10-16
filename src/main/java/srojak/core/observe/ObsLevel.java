@@ -300,10 +300,14 @@ public class ObsLevel
 		return level;
 	}
 	
-	public static void validateEventLevel(ObsLevel level) {
-		Objects.requireNonNull(level, "level");
+	public static void validateEventLevel(ObsLevel level, String strName) {
+		Objects.requireNonNull(level, strName);
 		if (!level.isValidForWriting()) {
-			throw new IllegalArgumentException("level not valid");
+			throw new IllegalArgumentException(strName + " not valid");
 		}
+	}
+	
+	public static void validateEventLevel(ObsLevel level) {
+		validateEventLevel(level, "level");
 	}
 }

@@ -26,8 +26,7 @@ public enum StrobeFrequency
 		implements Comparable<StrobeFrequency> {
 	EVERY_SECOND(TimeUnit.SECONDS),
 	EVERY_MINUTE(TimeUnit.MINUTES),
-	EVERY_HOUR(TimeUnit.HOURS),
-	AT_MIDNIGHT(TimeUnit.DAYS);
+	EVERY_HOUR(TimeUnit.HOURS);
 	
 	private final TimeUnit _unitTime;
 	

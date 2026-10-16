@@ -16,14 +16,20 @@
  */
 package srojak.core.observe.writers;
 
+import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.Objects;
 
+import srojak.core.faults.FaultFormat;
+import srojak.core.faults.StructuredFault;
 import srojak.core.observe.HasObsLevel;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.code.CodeFaultObservation;
+import srojak.core.observe.code.CodeObservation;
 
 /**
  * @author Stephen
@@ -58,7 +64,7 @@ public class ObservationWriterSwitching
 
 	@Override
 	public void write(SingleObservationCollector collector, SourceLocation locOrigin, String strText) {
-		if (useHighWriter(collector.getLevel())) {
+		if (useHighWriter(collector.getObsLevel())) {
 			_writerHigh.write(collector, locOrigin, strText);
 		} else {
 			_writerLow.write(collector, locOrigin, strText);
@@ -78,9 +84,39 @@ public class ObservationWriterSwitching
 
 	@Override
 	public void write(ObsLevel level, String strText) {
-		Objects.requireNonNull(level, "level");
+		ObsLevel.validateEventLevel(level);
 		ObservationWriter writer = useHighWriter(level) ? _writerHigh : _writerLow;
 		writer.write(level, strText == null ? ObsWriterTextMethods.STR_NULL : strText);
+		if (isAutoFlush()) {
+			writer.flush();
+		}
+	}
+
+	@Override
+	public void writeObserved(CodeObservation observation) {
+		Objects.requireNonNull(observation, "observation");
+		ObservationWriter writer = useHighWriter(observation.level()) ? _writerHigh : _writerLow;
+		writer.writeObserved(observation);
+		if (isAutoFlush()) {
+			writer.flush();
+		}
+	}
+
+	@Override
+	public void writeObservedTrace(CodeObservation observation) {
+		Objects.requireNonNull(observation, "observation");
+		ObservationWriter writer = useHighWriter(observation.level()) ? _writerHigh : _writerLow;
+		writer.writeObservedTrace(observation);
+		if (isAutoFlush()) {
+			writer.flush();
+		}
+	}
+
+	@Override
+	public void writeObservedFault(CodeFaultObservation observation) {
+		Objects.requireNonNull(observation, "observation");
+		ObservationWriter writer = useHighWriter(observation.level()) ? _writerHigh : _writerLow;
+		writer.writeObservedFault(observation);
 		if (isAutoFlush()) {
 			writer.flush();
 		}
@@ -97,11 +133,44 @@ public class ObservationWriterSwitching
 	}
 
 	@Override
+	public void writeTrace(ObsLevel level, SourceLocation locOrigin, String strText) {
+		Objects.requireNonNull(level, "level");
+		ObservationWriter writer = useHighWriter(level) ? _writerHigh : _writerLow;
+		writer.writeTrace(level, locOrigin, strText == null ? ObsWriterTextMethods.STR_NULL : strText);
+		if (isAutoFlush()) {
+			writer.flush();
+		}
+	}
+
+	@Override
 	public void writeException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc,
 			boolean bShowStack) {
 		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(activity, "activity");
 		ObservationWriter writer = useHighWriter(level) ? _writerHigh : _writerLow;
 		writer.writeException(level, locOrigin, activity, exc, bShowStack);
+		if (isAutoFlush()) {
+			writer.flush();
+		}
+	}
+
+	@Override
+	public void writeFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
+			EnumSet<FaultFormat> formats, StructuredFault fault) {
+		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(activity, "activity");
+		ObservationWriter writer = useHighWriter(level) ? _writerHigh : _writerLow;
+		writer.writeFault(level, locOrigin, activity, formats, fault);
+		if (isAutoFlush()) {
+			writer.flush();
+		}
+	}
+
+	@Override
+	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
+		Objects.requireNonNull(level, "level");
+		ObservationWriter writer = useHighWriter(level) ? _writerHigh : _writerLow;
+		writer.writeTimeStamp(level, locOrigin, dtObs);
 		if (isAutoFlush()) {
 			writer.flush();
 		}

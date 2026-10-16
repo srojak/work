@@ -19,10 +19,19 @@ package srojak.core.observe;
 import java.io.IOException;
 
 import srojak.core.events.LifeCycleListener;
+import srojak.core.io.IONodeIdentifier;
 
 /**
  * @author Stephen
  *
+ * <h2>Responsibilities</h2>
+ * <ol>
+ * <li>Answer ability to present observation at its {@code ObsLevel}.</li>
+ * <li>Apply options to the observation.</li>
+ * <li>Write the observation to the output destination.</li>
+ * <li>Raise a {@code LifeCycleEvent} if the output cannot be written.</li>
+ * </ol>
+ * 
  */
 public interface ObservationWriter
 		extends HasObsLevel, ObservationCommonWriter {
@@ -61,32 +70,11 @@ public interface ObservationWriter
 	
 	void setShowExceptionStackEnabled(boolean bState);
 	
-	/**
-	 * Can this writer write at all?
-	 * @return {@code true} if the writer can write.
-	 */
-	boolean canWrite();
-
-	/**
-	 * Can this writer write output at the given level?
-	 * @param level The {@code ObsLevel} threshold to test.
-	 * @return {@code true} if the writer can write at the given level.
-	 */
-	boolean canWriteAt(ObsLevel level);
-	
-	void write(ObsLevel level, String strText);
-	
-	void write(ObsLevel level, SourceLocation locOrigin, String strText);
-	
-	void writeException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc, boolean bShowStack);
-	
-	void writeDiagnostic(String strText);
-	
-	void writeDiagnostic(SourceLocation locOrigin, String strText);
-	
 	void flush();
 	
 	void close() throws IOException;
+	
+	void orderlyClose();
 	
 	void addLifeCycleListener(LifeCycleListener listener);
 	

@@ -29,6 +29,7 @@ import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservedActivity;
 
 /**
  * @author Stephen
@@ -78,12 +79,7 @@ public class SingletonContainer<T>
 				try {
 					objClose.close();
 				} catch (Exception exc) {
-					_obsErr.buildAndWrite(ObsLevel.ERROR, sb -> {
-						sb.append("caught ");
-						sb.append(exc.getClass().getSimpleName());
-						sb.append("\n    ");
-						sb.append(exc.getMessage());
-					});
+					_obsErr.recordThrowable(ObsLevel.ERROR, ObservedActivity.CLOSE, exc, false);
 				}
 			}
 			if (_obj instanceof LifeCycleEventOriginating objLC) {

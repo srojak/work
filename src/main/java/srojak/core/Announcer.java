@@ -16,7 +16,9 @@
  */
 package srojak.core;
 
+import srojak.core.faults.StructuredFault;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
 
 /**
@@ -28,4 +30,5 @@ public interface Announcer {
 	void announce(ObsLevel level, SourceLocation location);
 	void announceMessage(ObsLevel level, Class<?> classOrigin, String strMessage);
 	void announceException(ObsLevel level, SourceLocation location, Exception exception);
+	void announceFault(ObsLevel level, SourceLocation location, ObservedActivity activity, StructuredFault fault);
 }

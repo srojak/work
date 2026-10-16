@@ -121,9 +121,9 @@ public class ClassKey {
 			IntegerCounter counter = new IntegerCounter();
 			while (classEval != null) {
 				if (keyTest.equals(classEval)) {
-					if (keySpecific == null || nDepth > counter.getValue()) {
+					if (keySpecific == null || nDepth > counter.value()) {
 						keySpecific = keyTest;
-						nDepth = counter.getValue();
+						nDepth = counter.value();
 						break;
 					}
 				}

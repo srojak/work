@@ -43,7 +43,7 @@ public class LongCounter {
 	 * Gets the current value of the counter.
 	 * @return The current value of the counter.
 	 */
-	public long getValue() {
+	public long value() {
 		return _value;
 	}
 	

@@ -48,6 +48,11 @@ public final class SourceLocationPseudo
 	}
 
 	@Override
+	public String getFullClassName() {
+		return "";
+	}
+
+	@Override
 	public String getMethodName() {
 		return "";
 	}

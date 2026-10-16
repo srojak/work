@@ -102,7 +102,7 @@ public abstract class PropertySetBase
 		return valueOld;
 	}
 	
-	protected boolean evalProperty(String strKey, Predicate<String> predicate) {
+	public boolean evalProperty(String strKey, Predicate<String> predicate) {
 		String strValue = _props.getProperty(strKey);
 		if (strValue == null) {
 			return false;
@@ -111,7 +111,7 @@ public abstract class PropertySetBase
 		}
 	}
 	
-	protected boolean evalBooleanProperty(String strKey, boolean bDefault) {
+	public boolean evalBooleanProperty(String strKey, boolean bDefault) {
 		String strValue = _props.getProperty(strKey);
 		if (strValue == null) {
 			return bDefault;
@@ -120,6 +120,20 @@ public abstract class PropertySetBase
 		} else {
 			return strValue.equalsIgnoreCase("yes") || strValue.equalsIgnoreCase("true");
 		}
+	}
+	
+	public int evalIntProperty(String strKey) {
+		String strValue = _props.getProperty(strKey);
+		if (strValue == null) {
+			return 0;
+		}
+		try {
+			int nValue = Integer.parseInt(strValue);
+			return nValue;
+		} catch (NumberFormatException exc) {
+			
+		}
+		return 0;
 	}
 	
 	protected abstract void postLoad();

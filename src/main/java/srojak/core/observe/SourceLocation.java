@@ -34,6 +34,8 @@ public sealed interface SourceLocation
 	
 	public String getClassName();
 	
+	public String getFullClassName();
+	
 	public String getMethodName();
 	
 	public int getLineNumber();

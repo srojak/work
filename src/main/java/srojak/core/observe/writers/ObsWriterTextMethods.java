@@ -25,6 +25,7 @@ public class ObsWriterTextMethods {
 	public static final String LEADER_DIAG = "*DIAG: ";
 	public static final String STR_NULL = "(null)";
 	
+	@Deprecated(forRemoval = true)
 	public static void formatException(StringBuilder sb, Exception exc, boolean bShowStack) {
 		if (exc != null) {
 			sb.append(" caught ");

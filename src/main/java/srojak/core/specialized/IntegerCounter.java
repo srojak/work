@@ -42,7 +42,7 @@ public class IntegerCounter {
 	 * Gets the current value of the counter.
 	 * @return The current value of the counter.
 	 */
-	public int getValue() {
+	public int value() {
 		return _value;
 	}
 	

@@ -23,5 +23,7 @@ package srojak.core.io;
 public enum IONodeType {
 	DEVICE,
 	FILE,
-	RESOURCE;
+	RESOURCE,
+	SERVICE,
+	ABSTRACT,
 }

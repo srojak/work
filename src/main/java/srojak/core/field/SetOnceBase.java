@@ -19,8 +19,8 @@ package srojak.core.field;
 import java.util.Objects;
 
 import srojak.core.NameToken;
-import srojak.core.OnceFlag;
-import srojak.core.OnceFlagNamed;
+import srojak.core.logic.OnceFlag;
+import srojak.core.logic.OnceFlagNamed;
 
 /**
  * @author Stephen
@@ -57,17 +57,17 @@ public abstract class SetOnceBase
 
 	@Override
 	public boolean isEmpty() {
-		return !_flag.getState();
+		return !_flag.isSet();
 	}
 	
 	public void faultIfAlreadySet() {
-		if (_flag.getState()) {
+		if (_flag.isSet()) {
 			throw new IllegalStateException("value has already been set");
 		}
 	}
 	
 	protected void gettingValue() {
-		if (!_flag.getState()) {
+		if (!_flag.isSet()) {
 			_doWhenNotSet.run();
 		}
 	}

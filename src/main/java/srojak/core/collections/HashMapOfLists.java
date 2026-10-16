@@ -51,7 +51,7 @@ public class HashMapOfLists<K, V>
 	public int flatSize() {
 		IntegerCounter counter = new IntegerCounter();
 		_map.values().forEach(e -> counter.increment(e.size()));
-		return counter.getValue();
+		return counter.value();
 	}
 	
 	public void clear() {

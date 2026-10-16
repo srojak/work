@@ -22,11 +22,13 @@ import java.util.Objects;
  * @author Stephen
  *
  */
-public abstract class NameEquatableKeyBase 
+public abstract class NameEquatableKeyBase
+		extends EquatableSeriesKeyBase
 		implements NameEquatableKey {
 	protected final String _name;
 	
 	public NameEquatableKeyBase(String strName) {
+		super();
 		Objects.requireNonNull(strName, "strName");
 		if (strName.isBlank()) {
 			throw new IllegalArgumentException("strName is blank");
@@ -50,9 +52,13 @@ public abstract class NameEquatableKeyBase
 		return _name.equals(strName);
 	}
 	
-	protected abstract long getRootId();
-	
-	protected abstract String getRootName();
+	protected int commonComparer(NameEquatableKey other) {
+		if (other == null) {
+			return 1;
+		} else {
+			return _name.compareTo(other.getName());
+		}
+	}
 	
 	@Override
 	public int hashCode() {

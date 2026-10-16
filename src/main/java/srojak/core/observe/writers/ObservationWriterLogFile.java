@@ -23,6 +23,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.io.IONodeName;
+import srojak.core.io.IONodeType;
+
 /**
  * @author Stephen
  *
@@ -45,8 +49,9 @@ public class ObservationWriterLogFile
 		_strAppName = objApp.getClass().getName();
 		Path pathFile = _pathDir.resolve(strName);
 		OutputStream streamOut = Files.newOutputStream(pathFile);
+		IONodeIdentifier writesTo = new IONodeName(IONodeType.FILE, pathFile.toString());
 		PrintStream print = new PrintStream(streamOut);
-		assignPrintStream(print);
+		assignPrintStream(writesTo, print);
 		print.println("log created for " + _strAppName);
 	}
 }

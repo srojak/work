@@ -19,10 +19,12 @@ package srojak.core.observe.writers;
 import java.io.IOException;
 import java.util.Objects;
 
+import srojak.core.InvalidOperationException;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
 import srojak.core.events.LifeCycleEvent;
 import srojak.core.events.LifeCycleListener;
+import srojak.core.io.IONodeIdentifier;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
 import srojak.core.observe.ObsLevel;
@@ -35,6 +37,7 @@ import srojak.core.observe.ObservationWriter;
 public abstract class ObservationWriterBase
 		implements ObservationWriter {
 	protected final CommonEventListenerStore _listeners;
+	protected IONodeIdentifier _nodeWrites;
 	private final FlagsInt _flags;
 
 	protected static final ObsLevel DEFAULT_FILTERED_LEVEL = ObsLevel.INFO;
@@ -50,11 +53,29 @@ public abstract class ObservationWriterBase
 	/**
 	 * 
 	 */
-	public ObservationWriterBase() {
+	public ObservationWriterBase(IONodeIdentifier writesTo) {
+		Objects.requireNonNull(writesTo, "writesTo");
 		_listeners = new CommonEventListenerList();
+		_nodeWrites = writesTo;
 		_flags = new FlagsInt();
 	}
 	
+	public ObservationWriterBase() {
+		_listeners = new CommonEventListenerList();
+		_nodeWrites = IONodeIdentifier.UNASSIGNED;
+		_flags = new FlagsInt();
+	}
+	
+	protected void assignWriter(IONodeIdentifier writesTo) {
+		Objects.requireNonNull(writesTo, "writesTo");
+		_nodeWrites = writesTo;
+	}
+	
+	@Override
+	public IONodeIdentifier writesTo() {
+		return _nodeWrites;
+	}
+
 	public final FlagsIntTest getFlags() {
 		return _flags;
 	}
@@ -156,6 +177,20 @@ public abstract class ObservationWriterBase
 			}
 		} finally {
 			raiseClosedEvent();
+		}
+	}
+
+	@Override
+	public void orderlyClose() {
+		if (_flags.test(FLAGS_CLOSABLE)) {
+			try {
+				flush();
+				closeOutput();
+			} catch (IOException exc) {
+				// what can be done with this? forward somewhere?
+			}
+		} else {
+			throw new InvalidOperationException("writer is not closable");
 		}
 	}
 	

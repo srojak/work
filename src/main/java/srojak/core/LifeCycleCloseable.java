@@ -25,4 +25,5 @@ import srojak.core.events.LifeCycleEventOriginating;
 public interface LifeCycleCloseable
 		extends LifeCycleEventOriginating, AutoCloseable {
 	
+	void orderlyClose();
 }

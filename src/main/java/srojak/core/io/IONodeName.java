@@ -33,18 +33,46 @@ public final class IONodeName
 	public IONodeName(IONodeType typeSource, String strName) {
 		Objects.requireNonNull(typeSource, "typeSource");
 		Objects.requireNonNull(strName, "strName");
+		if (strName.isBlank()) {
+			throw new IllegalArgumentException("strName is blank");
+		}
 		_type = typeSource;
 		_name = strName;
 	}
 
 	@Override
-	public IONodeType getType() {
+	public IONodeType nodeType() {
 		return _type;
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return _name;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_type, _name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj instanceof IONodeIdentifier other) {
+			return isEqual(other);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isEqual(IONodeIdentifier obj) {
+		if (obj == null) {
+			return false;
+		} else {
+			return _type.equals(obj.nodeType()) && _name.equals(obj.name());
+		}
 	}
 
 	@Override

@@ -16,13 +16,58 @@
  */
 package srojak.core.sequence;
 
+import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicLong;
+
+import srojak.core.time.CalendarEvent;
+import srojak.core.time.CalendarEventListener;
+
 /**
  * @author Stephen
  *
  */
-public interface DaySequencer {
+public class DaySequencer 
+		extends SequencerBase 
+		implements CalendarEventListener {
+	private long _lnDatePart;
+	private volatile int _sequence;
+	private final AtomicLong _value;
 
-	long series();
-	String getSeriesTag();
-	DaySequential next();
+	/**
+	 * @param idSeries
+	 */
+	public DaySequencer(long idSeries, LocalDate dtStart) {
+		super(idSeries);
+		setDatePart(dtStart);
+		_sequence = 0;
+		_value = new AtomicLong(_lnDatePart << 14);
+	}
+	
+	private void setDatePart(LocalDate dtNow) {
+		_lnDatePart = (((long) dtNow.getYear() & 0x3fL) << 9)
+				| ((long) dtNow.getDayOfYear());
+	}
+	
+	private void setValue(int nSequence) {
+		_value.set((_lnDatePart << 14) | (long) nSequence);
+	}
+
+	@Override
+	public long current() {
+		return _value.get();
+	}
+
+	@Override
+	public long next() {
+		setValue(++_sequence);
+		return _value.get();
+	}
+
+	@Override
+	public void setDate(CalendarEvent event) {
+		setDatePart(event.getDate());
+		_sequence = 0;
+		setValue(_sequence);
+	}
+
 }

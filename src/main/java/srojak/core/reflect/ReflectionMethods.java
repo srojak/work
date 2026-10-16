@@ -28,6 +28,12 @@ import srojak.core.result.XResultOf;
  */
 public class ReflectionMethods 
 		implements ReflectionActivityNames {
+	
+	public static boolean isNameJRE(String strName) {
+		Objects.requireNonNull(strName, "strPackageName");
+		return strName.startsWith("java.") || strName.startsWith("javax.")
+				|| strName.startsWith("jdk.");
+	}
 
 	public static XResultOf<Object> callDefaultConstructor(MethodHandle hConstructor) {
 		Objects.requireNonNull(hConstructor, "hConstructor");

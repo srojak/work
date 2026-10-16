@@ -50,4 +50,7 @@ public class MarkedObservationWriter
 		return _writer;
 	}
 
+	public boolean isForWriter(ObservationWriter writer) {
+		return _writer.equals(writer);
+	}
 }

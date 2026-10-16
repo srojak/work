@@ -16,20 +16,30 @@
  */
 package srojak.core.observe.writers;
 
+import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.Objects;
 
 import srojak.core.TextMessageRelay;
+import srojak.core.faults.FaultFormat;
+import srojak.core.faults.FaultMethods;
+import srojak.core.faults.StructuredFault;
+import srojak.core.observe.ObsFormatOption;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceDetail;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.code.CodeFaultObservation;
+import srojak.core.observe.code.CodeObservation;
 
 /**
  * @author Stephen
  *
  */
 public class ObservationWriterTextRelay 
-		extends ObservationWriterStandardBase {
+		extends ObservationWriterStandardBase
+		implements ObservationCommon {
 	private final TextMessageRelay _relay;
 
 	/**
@@ -50,9 +60,23 @@ public class ObservationWriterTextRelay
 	}
 
 	@Override
-	protected void innerWrite(ObsLevel level, SourceLocation locOrigin, String strText) {
+	protected void innerWriteObserved(CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+		StringBuilder sb = new StringBuilder();
+		observation.writeSelfTo(sb, optionsFormat);
+		_relay.writeln(sb.toString());
+	}
+
+	@Override
+	protected void innerWriteObservedFault(CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+		StringBuilder sb = new StringBuilder();
+		observation.writeSelfTo(sb, optionsFormat);
+		_relay.writeln(sb.toString());
+	}
+
+	@Override
+	protected void innerWrite(ObsLevel level, SourceLocation locOrigin, boolean bIsTrace, String strText) {
 		StringBuilder sb = new StringBuilder(level.getName());
-		if (canShowLocations()) {
+		if (bIsTrace || canShowLocations()) {
 			sb.append(' ');
 			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
 		}
@@ -72,6 +96,37 @@ public class ObservationWriterTextRelay
 		sb.append(": when ");
 		sb.append(activity.describe());
 		ObsWriterTextMethods.formatException(sb, exc, bShowStack);
+		_relay.writeln(sb.toString());
+	}
+
+	@Override
+	protected void innerWriteFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
+			EnumSet<FaultFormat> formats, StructuredFault fault) {
+		StringBuilder sb = new StringBuilder(level.getName());
+		if (canShowLocations()) {
+			sb.append(' ');
+			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
+		}
+		sb.append(": when ");
+		sb.append(activity.describe());
+		if (formats.contains(FaultFormat.Originating)) {
+			sb.append(" throwing");
+		}
+		sb.append(' ');
+		FaultMethods.formatFaultTo(sb, formats, fault);
+		_relay.writeln(sb.toString());
+	}
+
+	@Override
+	protected void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
+		// TODO Auto-generated method stub
+		StringBuilder sb = new StringBuilder(level.getName());
+		if (canShowLocations()) {
+			sb.append(' ');
+			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
+		}
+		sb.append(" time: ");
+		sb.append(FORMAT_TIME_STAMP.format(dtObs));
 		_relay.writeln(sb.toString());
 	}
 
