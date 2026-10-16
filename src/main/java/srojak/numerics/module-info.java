@@ -17,14 +17,19 @@
 /**
  * @author Stephen
  *
+ * Restriction:
+ * This module may not depend upon srojak.afw or srojak.debug.
  */
 module srojak.numerics {
 	requires transitive srojak.core;
-	requires transitive srojak.debug;
 	exports srojak.numerics;
 	exports srojak.numerics.compass;
 	exports srojak.numerics.function;
 	exports srojak.numerics.intervals;
 	exports srojak.numerics.vertices;
+	exports srojak.numerics.vstore;
+	exports srojak.numerics.vstore.collections;
+	exports srojak.numerics.vstore.facades;
+	exports srojak.numerics.vstore.primitives;
 	exports srojak.numerics.weighted;
 }
