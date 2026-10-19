@@ -19,11 +19,11 @@ package srojak.core.observe.writers;
 import java.io.IOException;
 import java.util.Objects;
 
-import srojak.core.InvalidOperationException;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
 import srojak.core.events.LifeCycleEvent;
 import srojak.core.events.LifeCycleListener;
+import srojak.core.excepts.InvalidOperationException;
 import srojak.core.io.IONodeIdentifier;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;

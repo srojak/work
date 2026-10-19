@@ -16,57 +16,54 @@
  */
 package srojak.core.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Objects;
 
 import srojak.core.KeyValue;
+import srojak.core.keys.ClassKey;
 
 /**
  * @author Stephen
  *
  */
 @SuppressWarnings("serial")
-public class KeyValueArrayList<K, V>
-		extends ArrayList<KeyValue<K, V>> 
-		implements KeyValueList<K, V> {
-	private final Class<?> _classValues;
+public class KeyValueLinkedList2<K, V> 
+		extends LinkedList<KeyValue<K, V>>
+		implements KeyValueList2<K, V> {
+	private final ClassKey _ckValues;
 
 	/**
 	 * 
 	 */
-	public KeyValueArrayList(Class<?> classValues) {
+	public KeyValueLinkedList2(Class<?> classValues) {
 		super();
 		Objects.requireNonNull(classValues, "classValues");
-		_classValues = classValues;
+		_ckValues = new ClassKey(classValues);
 	}
 
 	/**
 	 * @param c
 	 */
-	public KeyValueArrayList(Class<?> classValues, Collection<? extends KeyValue<K, V>> c) {
+	public KeyValueLinkedList2(Class<?> classValues, Collection<? extends KeyValue<K, V>> c) {
 		super(c);
 		Objects.requireNonNull(classValues, "classValues");
-		_classValues = classValues;
-	}
-
-	/**
-	 * @param initialCapacity
-	 */
-	public KeyValueArrayList(Class<?> classValues, int initialCapacity) {
-		super(initialCapacity);
-		Objects.requireNonNull(classValues, "classValues");
-		_classValues = classValues;
+		_ckValues = new ClassKey(classValues);
 	}
 
 	@Override
 	public Class<?> getElementClass() {
-		return _classValues;
+		return _ckValues.getReferencedClass();
+	}
+
+	@Override
+	public ClassKey getElementClassKey() {
+		return _ckValues;
 	}
 
 	@Override
 	public boolean replace(KeyValue<K, V> pairNew) {
-		KeyValue<K, V> pair = findByKey(pairNew.getKey());
+		KeyValue<K, V> pair = findByKey(pairNew.key());
 		if (pair == null) {
 			return false;
 		} else {
@@ -78,7 +75,7 @@ public class KeyValueArrayList<K, V>
 
 	@Override
 	public boolean addOrReplace(KeyValue<K, V> pairNew) {
-		KeyValue<K, V> pair = findByKey(pairNew.getKey());
+		KeyValue<K, V> pair = findByKey(pairNew.key());
 		if (pair != null) {
 			remove(pair);
 		}

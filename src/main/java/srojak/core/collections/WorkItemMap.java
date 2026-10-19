@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import srojak.core.CommonCollectionSize;
-import srojak.core.InvalidOperationException;
+import srojak.core.excepts.InvalidOperationException;
 
 /**
  * @author Stephen

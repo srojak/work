@@ -34,7 +34,7 @@ public abstract class KeyedContainerBase<K>
 	}
 
 	@Override
-	public K getKey() {
+	public K key() {
 		return _key;
 	}
 	

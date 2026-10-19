@@ -16,6 +16,14 @@
  */
 package srojak.core;
 
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import srojak.core.containers.KeyMutableValueContainer;
+import srojak.core.containers.KeyValueContainer;
+
 /**
  * @author Stephen
  *
@@ -26,5 +34,17 @@ public interface KeyValue<K, V>
 	
 	boolean isValueNull();
 	
-	V getValue();
+	V value();
+	
+	static <K, V> Stream<KeyValue<K, V>> wrapAll(Collection<? extends V> values, Function<V, K> fnKeyExtract) {
+		Objects.requireNonNull(values, "value");
+		Objects.requireNonNull(fnKeyExtract, "fnKeyExtract");
+		return values.stream().map(v -> new KeyValueContainer<K, V>(fnKeyExtract.apply(v), v));
+	}
+	
+	static <K, V> Stream<KeyValue<K, V>> wrapAllMutable(Collection<? extends V> values, Function<V, K> fnKeyExtract) {
+		Objects.requireNonNull(values, "value");
+		Objects.requireNonNull(fnKeyExtract, "fnKeyExtract");
+		return values.stream().map(v -> new KeyMutableValueContainer<K, V>(fnKeyExtract.apply(v), v));
+	}
 }

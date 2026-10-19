@@ -14,38 +14,38 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-public class RequiredEntityNotPresentException 
+public class DuplicateKeyException 
 		extends RuntimeException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 9083823079360785108L;
+	private static final long serialVersionUID = -5458744547333925198L;
 
 	/**
 	 * 
 	 */
-	public RequiredEntityNotPresentException() {
+	public DuplicateKeyException() {
 		super();
 	}
 
 	/**
 	 * @param message
 	 */
-	public RequiredEntityNotPresentException(String message) {
+	public DuplicateKeyException(String message) {
 		super(message);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public RequiredEntityNotPresentException(Throwable cause) {
+	public DuplicateKeyException(Throwable cause) {
 		super(cause);
 	}
 
@@ -53,7 +53,7 @@ public class RequiredEntityNotPresentException
 	 * @param message
 	 * @param cause
 	 */
-	public RequiredEntityNotPresentException(String message, Throwable cause) {
+	public DuplicateKeyException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -63,8 +63,9 @@ public class RequiredEntityNotPresentException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public RequiredEntityNotPresentException(String message, Throwable cause, boolean enableSuppression,
+	public DuplicateKeyException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
+
 }

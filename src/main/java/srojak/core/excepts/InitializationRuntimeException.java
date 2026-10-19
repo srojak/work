@@ -14,45 +14,44 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-public class IncommensurableValuesException 
+public class InitializationRuntimeException 
 		extends ClassReferencingRuntimeException {
-	private final Class<?> _classCompared;
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7719522077376743071L;
+	private static final long serialVersionUID = -6980279446214233848L;
 
 	/**
 	 * @param classReferenced
 	 */
-	public IncommensurableValuesException(Class<?> classReferenced, Class<?> classCompared) {
+	public InitializationRuntimeException(Class<?> classReferenced) {
 		super(classReferenced);
-		_classCompared = validateClass(classCompared);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param classReferenced
 	 * @param message
 	 */
-	public IncommensurableValuesException(Class<?> classReferenced, Class<?> classCompared, String message) {
+	public InitializationRuntimeException(Class<?> classReferenced, String message) {
 		super(classReferenced, message);
-		_classCompared = validateClass(classCompared);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param classReferenced
 	 * @param cause
 	 */
-	public IncommensurableValuesException(Class<?> classReferenced, Class<?> classCompared, Throwable cause) {
+	public InitializationRuntimeException(Class<?> classReferenced, Throwable cause) {
 		super(classReferenced, cause);
-		_classCompared = validateClass(classCompared);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -60,9 +59,9 @@ public class IncommensurableValuesException
 	 * @param message
 	 * @param cause
 	 */
-	public IncommensurableValuesException(Class<?> classReferenced, Class<?> classCompared, String message, Throwable cause) {
+	public InitializationRuntimeException(Class<?> classReferenced, String message, Throwable cause) {
 		super(classReferenced, message, cause);
-		_classCompared = validateClass(classCompared);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -72,13 +71,10 @@ public class IncommensurableValuesException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public IncommensurableValuesException(Class<?> classReferenced, Class<?> classCompared, String message, Throwable cause,
+	public InitializationRuntimeException(Class<?> classReferenced, String message, Throwable cause,
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(classReferenced, message, cause, enableSuppression, writableStackTrace);
-		_classCompared = validateClass(classCompared);
+		// TODO Auto-generated constructor stub
 	}
 
-	public Class<?> getComparedClass() {
-		return _classCompared;
-	}
 }

@@ -40,12 +40,12 @@ public class NameTokenValueContainer<V>
 
 	@Override
 	public NameToken getNameToken() {
-		return getKey();
+		return key();
 	}
 
 	@Override
 	public boolean isNameTokenEqual(NameToken token) {
-		return token == null ? false : getKey().equals(token);
+		return token == null ? false : key().equals(token);
 	}
 
 }

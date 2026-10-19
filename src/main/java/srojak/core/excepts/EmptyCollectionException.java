@@ -14,54 +14,47 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-public class CycleLimitException
+public class EmptyCollectionException
 		extends RuntimeException {
-	private final String _strStopName;
-
-	public static final String UNDEFINED = "?undef";
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2298402732676147510L;
 
 	/**
 	 * 
 	 */
-	public CycleLimitException(String strStopName) {
+	private static final long serialVersionUID = -4929014033385070794L;
+
+	/**
+	 * 
+	 */
+	public EmptyCollectionException() {
 		super();
-		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
 	 * @param message
 	 */
-	public CycleLimitException(String strStopName, String message) {
+	public EmptyCollectionException(String message) {
 		super(message);
-		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
 	 * @param cause
 	 */
-	public CycleLimitException(String strStopName, Throwable cause) {
+	public EmptyCollectionException(Throwable cause) {
 		super(cause);
-		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public CycleLimitException(String strStopName, String message, Throwable cause) {
+	public EmptyCollectionException(String message, Throwable cause) {
 		super(message, cause);
-		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
@@ -70,14 +63,8 @@ public class CycleLimitException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public CycleLimitException(String strStopName, String message, Throwable cause, 
-			boolean enableSuppression, boolean writableStackTrace) {
+	public EmptyCollectionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-		_strStopName = strStopName != null ? strStopName : UNDEFINED;
-	}
-	
-	public String getStopName() {
-		return _strStopName;
 	}
 
 }

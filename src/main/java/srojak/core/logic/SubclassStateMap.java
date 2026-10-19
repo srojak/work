@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import srojak.core.CommonCollectionSize;
-import srojak.core.DuplicateKeyException;
+import srojak.core.excepts.DuplicateKeyException;
 import srojak.core.keys.ClassKey;
 
 /**

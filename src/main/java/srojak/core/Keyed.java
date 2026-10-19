@@ -22,7 +22,7 @@ package srojak.core;
  */
 public interface Keyed<K> {
 	
-	K getKey();
+	K key();
 	
 	boolean isKeyEqual(K key);
 

@@ -16,16 +16,14 @@
  */
 package srojak.core.collections;
 
-import srojak.core.ClassIdentifiedElements;
 import srojak.core.CommonCollectionSize;
 
 /**
  * @author Stephen
  *
- * @param <K> The type of the key, not the type of the elements
  */
 public interface KeyedAbstractCollection<K> 
-		extends CommonCollectionSize, ClassIdentifiedElements {
+		extends CommonCollectionSize {
 
 	boolean containsKey(K key);
 }

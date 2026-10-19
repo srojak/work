@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.faults;
+
+import srojak.core.containers.ClassAndContentCarrier;
 
 /**
  * @author Stephen
  *
  */
-public interface KeyModifiableValue<K, V> 
-		extends KeyValue<K, V> {
+public interface ExceptionFormatter {
 
-	void setValue(V value);
+	Class<?> classException();
+	void format(Exception exc, ClassAndContentCarrier carrier);
 }

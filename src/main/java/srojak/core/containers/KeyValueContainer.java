@@ -42,7 +42,7 @@ public class KeyValueContainer<K, V>
 	}
 
 	@Override
-	public V getValue() {
+	public V value() {
 		return _value;
 	}
 

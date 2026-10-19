@@ -14,40 +14,47 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-public class ClassMismatchException
-		extends ClassReferencingRuntimeException {
-	
+public class EnvironmentCharacteristicException 
+		extends RuntimeException {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8060189997795946304L;
-	
+	private static final long serialVersionUID = 6569622454040116075L;
+
+	/**
+	 * 
+	 */
+	public EnvironmentCharacteristicException() {
+		super();
+	}
+
 	/**
 	 * @param message
 	 */
-	public ClassMismatchException(Class<?> classObserved, String message) {
-		super(classObserved, message);
+	public EnvironmentCharacteristicException(String message) {
+		super(message);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public ClassMismatchException(Class<?> classObserved, Throwable cause) {
-		super(classObserved, cause);
+	public EnvironmentCharacteristicException(Throwable cause) {
+		super(cause);
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public ClassMismatchException(Class<?> classObserved, String message, Throwable cause) {
-		super(classObserved, message, cause);
+	public EnvironmentCharacteristicException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 	/**
@@ -56,8 +63,9 @@ public class ClassMismatchException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public ClassMismatchException(Class<?> classObserved, String message, Throwable cause, 
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(classObserved, message, cause, enableSuppression, writableStackTrace);
+	public EnvironmentCharacteristicException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
+
 }

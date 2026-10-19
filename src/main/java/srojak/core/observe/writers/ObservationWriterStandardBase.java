@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Objects;
 
-import srojak.core.InvalidOperationException;
+import srojak.core.excepts.InvalidOperationException;
 import srojak.core.faults.FaultFormat;
 import srojak.core.faults.StructuredFault;
 import srojak.core.io.IONodeIdentifier;

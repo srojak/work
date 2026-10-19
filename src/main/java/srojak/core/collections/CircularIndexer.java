@@ -19,7 +19,7 @@ package srojak.core.collections;
 
 import java.util.Objects;
 
-import srojak.core.EmptyCollectionException;
+import srojak.core.excepts.EmptyCollectionException;
 
 /**
  * @author Stephen

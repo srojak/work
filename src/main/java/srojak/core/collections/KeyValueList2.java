@@ -1,0 +1,56 @@
+/**
+ * Copyright © 2026 Stephen Rojak.
+ * 
+ * This file is part of the srojak Java portfolio.
+ * 
+ * The srojak Java portfolio is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free Software Foundation,
+ * version 3 of the License.
+ * 
+ * The srojak Java portfolio is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this portfolio.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+package srojak.core.collections;
+
+import java.util.Iterator;
+import java.util.List;
+
+import srojak.core.KeyValue;
+
+/**
+ * @author Stephen
+ *
+ */
+public interface KeyValueList2<K, V> 
+		extends List<KeyValue<K, V>>, KeyedAbstractClassIdentifiedCollection<K> {
+	
+	boolean replace(KeyValue<K, V> pairNew);
+	
+	boolean addOrReplace(KeyValue<K, V> pairNew);
+
+	default public KeyValue<K, V> findByKey(K key) {
+		Iterator<KeyValue<K, V>> iterator = iterator();
+		while (iterator.hasNext()) {
+			KeyValue<K, V> pair = iterator.next();
+			if (pair.isKeyEqual(key)) {
+				return pair;
+			}
+		}
+		return null;
+	}
+	
+	default public boolean containsKey(K key) {
+		Iterator<KeyValue<K, V>> iterator = iterator();
+		while (iterator.hasNext()) {
+			KeyValue<K, V> pair = iterator.next();
+			if (pair.isKeyEqual(key)) {
+				return true;
+			}
+		}
+		return false;
+	}
+}

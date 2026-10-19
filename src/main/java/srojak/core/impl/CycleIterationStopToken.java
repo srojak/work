@@ -16,7 +16,7 @@
  */
 package srojak.core.impl;
 
-import srojak.core.CycleLimitException;
+import srojak.core.excepts.CycleLimitException;
 import srojak.core.safety.CycleIterationStop;
 
 /**

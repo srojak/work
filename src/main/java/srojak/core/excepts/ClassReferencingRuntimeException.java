@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
+
+import srojak.core.ClassReferencing;
 
 /**
  * @author Stephen
@@ -25,17 +27,13 @@ public abstract class ClassReferencingRuntimeException
 		extends RuntimeException 
 		implements ClassReferencing {
 	private final Class<?> _classReferenced;
-	
-	protected static Class<?> validateClass(Class<?> classArg) {
-		return classArg == null ? UnsuppliedClass.class : classArg;
-	}
 
 	/**
 	 * 
 	 */
 	public ClassReferencingRuntimeException(Class<?> classReferenced) {
 		super();
-		_classReferenced = validateClass(classReferenced);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
@@ -43,7 +41,7 @@ public abstract class ClassReferencingRuntimeException
 	 */
 	public ClassReferencingRuntimeException(Class<?> classReferenced, String message) {
 		super(message);
-		_classReferenced = validateClass(classReferenced);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
@@ -51,7 +49,7 @@ public abstract class ClassReferencingRuntimeException
 	 */
 	public ClassReferencingRuntimeException(Class<?> classReferenced, Throwable cause) {
 		super(cause);
-		_classReferenced = validateClass(classReferenced);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
@@ -60,7 +58,7 @@ public abstract class ClassReferencingRuntimeException
 	 */
 	public ClassReferencingRuntimeException(Class<?> classReferenced, String message, Throwable cause) {
 		super(message, cause);
-		_classReferenced = validateClass(classReferenced);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
@@ -72,15 +70,11 @@ public abstract class ClassReferencingRuntimeException
 	public ClassReferencingRuntimeException(Class<?> classReferenced, String message, Throwable cause, 
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-		_classReferenced = validateClass(classReferenced);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	@Override
 	public Class<?> getReferencedClass() {
 		return _classReferenced;
-	}
-
-	private class UnsuppliedClass {
-		
 	}
 }

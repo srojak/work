@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import srojak.core.EnvironmentCharacteristicException;
+import srojak.core.excepts.EnvironmentCharacteristicException;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.props.DebugProperties;
 import srojak.core.props.DebugPropertyKeys;

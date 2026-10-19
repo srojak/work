@@ -14,49 +14,54 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class InvalidOperationException 
+public class CycleLimitException
 		extends RuntimeException {
-	private final String _strSource;
+	private final String _strStopName;
+
+	public static final String UNDEFINED = "?undef";
 	
 	/**
 	 * 
-	 * @param source The name of the source
 	 */
-	public InvalidOperationException(String strSource) {
+	private static final long serialVersionUID = -2298402732676147510L;
+
+	/**
+	 * 
+	 */
+	public CycleLimitException(String strStopName) {
 		super();
-		_strSource = (strSource == null || strSource.isEmpty()) ? "?" : strSource;
+		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
 	 * @param message
 	 */
-	public InvalidOperationException(String strSource, String message) {
+	public CycleLimitException(String strStopName, String message) {
 		super(message);
-		_strSource = (strSource == null || strSource.isEmpty()) ? "?" : strSource;
+		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
 	 * @param cause
 	 */
-	public InvalidOperationException(String strSource, Throwable cause) {
+	public CycleLimitException(String strStopName, Throwable cause) {
 		super(cause);
-		_strSource = (strSource == null || strSource.isEmpty()) ? "?" : strSource;
+		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public InvalidOperationException(String strSource, String message, Throwable cause) {
+	public CycleLimitException(String strStopName, String message, Throwable cause) {
 		super(message, cause);
-		_strSource = (strSource == null || strSource.isEmpty()) ? "?" : strSource;
+		_strStopName = strStopName != null ? strStopName : UNDEFINED;
 	}
 
 	/**
@@ -65,13 +70,14 @@ public class InvalidOperationException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public InvalidOperationException(String strSource, String message, Throwable cause, 
+	public CycleLimitException(String strStopName, String message, Throwable cause, 
 			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-		_strSource = (strSource == null || strSource.isEmpty()) ? "?" : strSource;
+		_strStopName = strStopName != null ? strStopName : UNDEFINED;
+	}
+	
+	public String getStopName() {
+		return _strStopName;
 	}
 
-	public String getSource() {
-		return _strSource;
-	}
 }

@@ -18,8 +18,6 @@ package srojak.core.faults;
 
 import java.util.EnumSet;
 
-import srojak.core.observe.SourceLocation;
-
 /**
  * @author Stephen
  *

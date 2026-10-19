@@ -14,47 +14,51 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
+
+import srojak.core.ClassReferencing;
 
 /**
  * @author Stephen
  *
  */
-public class DuplicateKeyException 
-		extends RuntimeException {
+@SuppressWarnings("serial")
+public abstract class ClassReferencingCheckedException 
+		extends Exception 
+		implements ClassReferencing {
+	private final Class<?> _classReferenced;
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5458744547333925198L;
-
-	/**
-	 * 
-	 */
-	public DuplicateKeyException() {
+	public ClassReferencingCheckedException(Class<?> classReferenced) {
 		super();
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
 	 * @param message
 	 */
-	public DuplicateKeyException(String message) {
+	public ClassReferencingCheckedException(Class<?> classReferenced, String message) {
 		super(message);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public DuplicateKeyException(Throwable cause) {
+	public ClassReferencingCheckedException(Class<?> classReferenced, Throwable cause) {
 		super(cause);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public DuplicateKeyException(String message, Throwable cause) {
+	public ClassReferencingCheckedException(Class<?> classReferenced, String message, Throwable cause) {
 		super(message, cause);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
 	/**
@@ -63,9 +67,14 @@ public class DuplicateKeyException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public DuplicateKeyException(String message, Throwable cause, boolean enableSuppression,
+	public ClassReferencingCheckedException(Class<?> classReferenced, String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
+		_classReferenced = ExceptionHelpers.validateClass(classReferenced);
 	}
 
+	@Override
+	public Class<?> getReferencedClass() {
+		return _classReferenced;
+	}
 }

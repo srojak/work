@@ -16,11 +16,16 @@
  */
 package srojak.core;
 
+import srojak.core.keys.ClassKey;
+
 /**
  * @author Stephen
  *
+ * The class identification for a collection need not be the exact class of the values.
+ * @see ClassIdentifiedElementsStrict
  */
 public interface ClassIdentifiedElements {
 
 	Class<?> getElementClass();
+	ClassKey getElementClassKey();
 }

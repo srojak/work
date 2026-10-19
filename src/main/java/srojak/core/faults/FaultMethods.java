@@ -17,8 +17,10 @@
 package srojak.core.faults;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import srojak.core.ClassAndContent;
 import srojak.core.containers.ClassAndContentCarrier;
@@ -31,6 +33,17 @@ public class FaultMethods {
 	
 	private static final int SPACES_PER_INDENT = 4;
 	
+	private static final Map<Class<?>, ExceptionFormatter> _mapFormatters;
+	
+	static {
+		_mapFormatters = new HashMap<Class<?>, ExceptionFormatter>();
+	}
+	
+	public static void useFormatter(ExceptionFormatter formatter) {
+		Objects.requireNonNull(formatter, "formatter");
+		_mapFormatters.put(formatter.classException(), formatter);
+	}
+	
 	public static String getThrowableClassName(boolean bUseFullClassName, Throwable t) {
 		Class<?> classThrowable = t.getClass();
 		if (bUseFullClassName) {
@@ -40,18 +53,37 @@ public class FaultMethods {
 		}
 	}
 	
-	public static ClassAndContent defaultContentFormatter(Throwable t) {
-		ClassAndContentCarrier cc = new ClassAndContentCarrier(t.getClass());
+	public static void standardMessageFormat(Throwable t, ClassAndContentCarrier carrier) {
 		String strMessage = t.getMessage();
 		if (strMessage != null) {
 			String[] message = t.getMessage().split("\\R");
-			cc.addContent(message);
+			carrier.addContent(message);
+		}
+	}
+	
+	public static ClassAndContent defaultContentFormatter(Throwable t) {
+		ClassAndContentCarrier cc = new ClassAndContentCarrier(t.getClass());
+		standardMessageFormat(t, cc);
+		return cc;
+	}
+	
+	public static ClassAndContent selectingContentFormatter(Throwable t) {
+		ClassAndContentCarrier cc = new ClassAndContentCarrier(t.getClass());
+		if (t instanceof Exception e) {
+			ExceptionFormatter fmtr = _mapFormatters.get(e.getClass());
+			if (fmtr != null) {
+				fmtr.format(e, cc);
+			} else {
+				standardMessageFormat(e, cc);
+			}
+		} else {
+			standardMessageFormat(t, cc);
 		}
 		return cc;
 	}
 	
 	public static StructuredFault process(Throwable t) {
-		return process(t, FaultMethods::defaultContentFormatter);
+		return process(t, FaultMethods::selectingContentFormatter);
 	}
 
 	public static StructuredFault process(Throwable t, ThrowableContentFormatter formatter) {

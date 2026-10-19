@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import srojak.core.InvalidOperationException;
+import srojak.core.excepts.InvalidOperationException;
 import srojak.core.impl.MarkedObservationWriter;
 import srojak.core.logic.FlagsShort;
 import srojak.core.logic.FlagsShortTest;

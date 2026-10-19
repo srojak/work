@@ -71,7 +71,7 @@ public class NameTokenAndValueList<V>
 		if (name != null) {
 			container = findFirstByName(name);
 		}
-		return container != null ? container.getValue() : null;
+		return container != null ? container.value() : null;
 	}
 	
 	public void add(NameToken name, V value) {

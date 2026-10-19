@@ -24,6 +24,7 @@ module srojak.core {
 	exports srojak.core.containers;
 	exports srojak.core.data;
 	exports srojak.core.events;
+	exports srojak.core.excepts;
 	exports srojak.core.faults;
 	exports srojak.core.field;
 	exports srojak.core.functional;

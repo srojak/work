@@ -18,9 +18,9 @@ package srojak.core.logic;
 
 import java.util.Objects;
 
-import srojak.core.InvalidOperationException;
 import srojak.core.Lockable;
 import srojak.core.NameToken;
+import srojak.core.excepts.InvalidOperationException;
 
 /**
  * @author Stephen

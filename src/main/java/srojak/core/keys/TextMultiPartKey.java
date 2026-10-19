@@ -16,7 +16,9 @@
  */
 package srojak.core.keys;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,6 +30,7 @@ public class TextMultiPartKey
 	private final TextMultiPartKeyPart[] _parts;
 	
 	public static final char SEPARATOR = '|';
+	public static final String REGEX_SEPARATOR = "\\" + String.valueOf(SEPARATOR);
 	public static final TextMultiPartKey NULL = new TextMultiPartKey();
 	
 	public TextMultiPartKey(TextMultiPartKeyPart ... parts) {
@@ -36,6 +39,14 @@ public class TextMultiPartKey
 			throw new IllegalArgumentException("key must have at least one part");
 		}
 		_parts = parts;
+	}
+	
+	public TextMultiPartKey(List<TextMultiPartKeyPart> listParts) {
+		Objects.requireNonNull(listParts, "listParts");
+		if (listParts.isEmpty()) {
+			throw new IllegalArgumentException("key must have at least one part");
+		}
+		_parts = listParts.toArray(new TextMultiPartKeyPart[0]);
 	}
 	
 	private TextMultiPartKey() {
@@ -62,7 +73,7 @@ public class TextMultiPartKey
 		} else {
 			if (_parts.length == obj.size()) {
 				for (int idx = 0; idx < _parts.length; idx++) {
-					if (!_parts[idx].equals(obj.getPart(idx).content())) {
+					if (!_parts[idx].equals(obj.getPart(idx))) {
 						return false;
 					}
 				}
@@ -114,5 +125,18 @@ public class TextMultiPartKey
 			sb.append(_parts[idx++]);
 		}
 		return sb.toString();
+	}
+	
+	public static TextMultiPartKey parse(String strInput) {
+		Objects.requireNonNull(strInput, "strInput");
+		if (strInput.isBlank()) {
+			throw new IllegalArgumentException("strInput is blank");
+		}
+		String[] strParts = strInput.split(REGEX_SEPARATOR);
+		List<TextMultiPartKeyPart> list = new ArrayList<TextMultiPartKeyPart>(strParts.length);
+		for (int idx = 0; idx < strParts.length; idx++) {
+			list.add(new TextMultiPartKeyPart(strParts[idx]));
+		}
+		return new TextMultiPartKey(list);
 	}
 }

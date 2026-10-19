@@ -16,18 +16,18 @@
  */
 package srojak.core.containers;
 
-import srojak.core.KeyModifiableValue;
+import srojak.core.KeyMutableValue;
 
 /**
  * @author Stephen
  *
  */
-public class KeyModifiableValueContainer<K, V>
+public class KeyMutableValueContainer<K, V>
 		extends KeyedContainerBase<K>
-		implements KeyModifiableValue<K, V> {
+		implements KeyMutableValue<K, V> {
 	private V _value;
 	
-	public KeyModifiableValueContainer(K key, V value) {
+	public KeyMutableValueContainer(K key, V value) {
 		super(key);
 		// value can be null
 		_value = value;
@@ -39,7 +39,7 @@ public class KeyModifiableValueContainer<K, V>
 	}
 
 	@Override
-	public V getValue() {
+	public V value() {
 		return _value;
 	}
 

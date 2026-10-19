@@ -14,47 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-public class EmptyCollectionException
-		extends RuntimeException {
-
+public class ClassMismatchException
+		extends ClassReferencingRuntimeException {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4929014033385070794L;
-
-	/**
-	 * 
-	 */
-	public EmptyCollectionException() {
-		super();
-	}
-
+	private static final long serialVersionUID = 8060189997795946304L;
+	
 	/**
 	 * @param message
 	 */
-	public EmptyCollectionException(String message) {
-		super(message);
+	public ClassMismatchException(Class<?> classObserved, String message) {
+		super(classObserved, message);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public EmptyCollectionException(Throwable cause) {
-		super(cause);
+	public ClassMismatchException(Class<?> classObserved, Throwable cause) {
+		super(classObserved, cause);
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public EmptyCollectionException(String message, Throwable cause) {
-		super(message, cause);
+	public ClassMismatchException(Class<?> classObserved, String message, Throwable cause) {
+		super(classObserved, message, cause);
 	}
 
 	/**
@@ -63,8 +56,8 @@ public class EmptyCollectionException
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public EmptyCollectionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
+	public ClassMismatchException(Class<?> classObserved, String message, Throwable cause, 
+			boolean enableSuppression, boolean writableStackTrace) {
+		super(classObserved, message, cause, enableSuppression, writableStackTrace);
 	}
-
 }

@@ -18,7 +18,7 @@ package srojak.core.impl;
 
 import java.util.Objects;
 
-import srojak.core.CycleLimitException;
+import srojak.core.excepts.CycleLimitException;
 import srojak.core.safety.CycleDepthMonitor;
 import srojak.core.safety.CycleDepthStop;
 

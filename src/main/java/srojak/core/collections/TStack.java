@@ -20,7 +20,7 @@ package srojak.core.collections;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
-import srojak.core.EmptyCollectionException;
+import srojak.core.excepts.EmptyCollectionException;
 
 /**
  * @author Stephen

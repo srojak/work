@@ -14,62 +14,57 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.excepts;
 
 /**
  * @author Stephen
  *
  */
-public class ObjectExpiredException 
-		extends ClassReferencingRuntimeException {
+public class RequiredEntityNotPresentException 
+		extends RuntimeException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -692203914675377823L;
+	private static final long serialVersionUID = 9083823079360785108L;
 
 	/**
-	 * @param classReferenced
+	 * 
 	 */
-	public ObjectExpiredException(Class<?> classReferenced) {
-		super(classReferenced);
+	public RequiredEntityNotPresentException() {
+		super();
 	}
 
 	/**
-	 * @param classReferenced
 	 * @param message
 	 */
-	public ObjectExpiredException(Class<?> classReferenced, String message) {
-		super(classReferenced, message);
+	public RequiredEntityNotPresentException(String message) {
+		super(message);
 	}
 
 	/**
-	 * @param classReferenced
 	 * @param cause
 	 */
-	public ObjectExpiredException(Class<?> classReferenced, Throwable cause) {
-		super(classReferenced, cause);
+	public RequiredEntityNotPresentException(Throwable cause) {
+		super(cause);
 	}
 
 	/**
-	 * @param classReferenced
 	 * @param message
 	 * @param cause
 	 */
-	public ObjectExpiredException(Class<?> classReferenced, String message, Throwable cause) {
-		super(classReferenced, message, cause);
+	public RequiredEntityNotPresentException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 	/**
-	 * @param classReferenced
 	 * @param message
 	 * @param cause
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public ObjectExpiredException(Class<?> classReferenced, String message, Throwable cause, boolean enableSuppression,
+	public RequiredEntityNotPresentException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
-		super(classReferenced, message, cause, enableSuppression, writableStackTrace);
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
-
 }
