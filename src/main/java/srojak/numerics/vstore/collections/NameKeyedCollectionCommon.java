@@ -1,5 +1,6 @@
 package srojak.numerics.vstore.collections;
 import srojak.core.CommonCollectionSize;
+import srojak.numerics.vstore.StoreValueKeyed;
 
 /**
  * Copyright © 2026 Stephen Rojak.
@@ -24,6 +25,6 @@ import srojak.core.CommonCollectionSize;
  * The interface common to all name keyed collections.
  */
 public interface NameKeyedCollectionCommon 
-		extends CommonCollectionSize {
+		extends StoreValueKeyed {
 
 }

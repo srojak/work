@@ -14,42 +14,29 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics.vstore.primitives;
+package srojak.numerics.vstore.collections;
+
+import java.util.Map;
 
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.StoreValueFloat;
-import srojak.numerics.vstore.StoreValueScalarBase;
+import srojak.numerics.vstore.primitives.StoreValueLong;
 
 /**
  * @author Stephen
  *
  */
-public class StoreValueFloatInstance 
-		extends StoreValueScalarBase 
-		implements StoreValueFloat {
-	private float _fValue;
+public class NamedLongValueStoreAdapter 
+		extends NamedScalarValueStoreAdapter<StoreValueLong>
+		implements NameKeyedLongCollection {
 
 	/**
-	 * @param key
+	 * @param classStore
+	 * @param storeBase
 	 */
-	public StoreValueFloatInstance(NamedKey key, float valueInitial) {
-		super(key);
-		_fValue = valueInitial;
-	}
-	
-	protected void validate(float value) {
-		// base class method does nothing
-	}
-
-	@Override
-	public float getValue() {
-		return _fValue;
-	}
-
-	@Override
-	public void setValue(float value) {
-		validate(value);
-		_fValue = value;
+	public NamedLongValueStoreAdapter(Class<?> classStore,
+			Map<NamedKey, StoreValueLong> storeBase) {
+		super(classStore, long.class, storeBase);
+		// TODO Auto-generated constructor stub
 	}
 
 }

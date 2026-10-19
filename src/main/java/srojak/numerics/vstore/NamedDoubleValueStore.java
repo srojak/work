@@ -42,6 +42,21 @@ public interface NamedDoubleValueStore
 	double getValueOrDefault(NamedKey key, double valueDefault);
 	
 	/**
+	 * Get the value for the key as a reduced-precision value.
+	 * @param key The key identifying the value.
+	 * @return the value associated with the key, or {@code NaN} if the key is not defined.
+	 */
+	float getValueAsFloat(NamedKey key);
+	
+	/**
+	 * Get the value for the key as a reduced-precision value, or a default value if the key is not defined.
+	 * @param key The key identifying the value.
+	 * @param valueDefault The value to return if the key is not defined.
+	 * @return The value associated with the key, if any, or the default value otherwise.
+	 */
+	float getValueOrDefaultAsFloat(NamedKey key, float valueDefault);
+	
+	/**
 	 * Sets the value for the key.
 	 * @param key The key identifying the value.
 	 * @param value The value to set.

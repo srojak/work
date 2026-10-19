@@ -16,32 +16,37 @@
  */
 package srojak.numerics.vstore.collections;
 
+import java.util.Map;
 import java.util.Objects;
 
-import srojak.core.keys.ClassKey;
+import srojak.core.excepts.InitializationRuntimeException;
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedLongCollection;
+import srojak.numerics.vstore.StoreScalarValue;
 import srojak.numerics.vstore.StoreValueCalculationBase;
-import srojak.numerics.vstore.primitives.StoreValueLong;
 
-@SuppressWarnings("serial")
-public class StoreValueLongList
-		extends StoreValueList<StoreValueLong>
-		implements NameKeyedLongCollection {
+/**
+ * @author Stephen
+ *
+ */
+public class NamedScalarValueStoreAdapter<S extends StoreScalarValue>
+		extends NamedValueStoreAdapter<S> {
 
-	public StoreValueLongList(ClassKey keyStore) {
-		super(keyStore);
+	/**
+	 * @param classStore
+	 * @param classElements
+	 * @param storeBase
+	 */
+	public NamedScalarValueStoreAdapter(Class<?> classStore, Class<?> classElements, Map<NamedKey, S> storeBase) {
+		super(classStore, classElements, storeBase);
 	}
 
-	@Override
-	public StoreValueLong get(NamedKey key) {
-		return super.findByKey(key);
-	}
-
-	@Override
-	public void define(StoreValueLong value) {
+	public void define(S value) {
 		Objects.requireNonNull(value, "value");
-		super.add(value);
+		NamedKey key = value.getKey();
+		if (putIfAbsent(key, value) != null) {
+			throw new InitializationRuntimeException(getStoreKey().getReferencedClass(),
+					key.getName() + " is already defined");
+		}
 		StoreValueCalculationBase calc = value.getCalculation();
 		if (calc != null) {
 			calc.bindTo(this);

@@ -20,8 +20,8 @@ import java.util.Objects;
 import java.util.function.ToIntFunction;
 
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedIntCollection;
 import srojak.numerics.vstore.StoreValueCalculationBindable;
+import srojak.numerics.vstore.collections.NameKeyedIntCollection;
 
 /**
  * @author Stephen

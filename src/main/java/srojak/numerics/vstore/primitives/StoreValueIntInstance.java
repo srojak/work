@@ -48,5 +48,6 @@ public class StoreValueIntInstance
 	public void setValue(int value) {
 		validate(value);
 		_nValue = value;
+		onValueChange(true);
 	}
 }

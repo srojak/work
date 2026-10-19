@@ -18,12 +18,13 @@ package srojak.numerics.vstore.facades;
 
 import java.util.Objects;
 
+import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedDoubleCollection;
 import srojak.numerics.vstore.NamedDoubleValueStore;
 import srojak.numerics.vstore.StoreKeyNotFoundException;
 import srojak.numerics.vstore.StoreValueDouble;
 import srojak.numerics.vstore.StoreValueKeyed;
+import srojak.numerics.vstore.collections.NameKeyedDoubleCollection;
 
 /**
  * @author Stephen
@@ -36,14 +37,16 @@ public abstract class NamedDoubleValueStoreFacade
 	/**
 	 * @param classInstance
 	 */
-	public NamedDoubleValueStoreFacade(Class<?> classInstance) {
-		super(classInstance);
+	public NamedDoubleValueStoreFacade() {
+		super();
+		registerSelf();
 	}
 	
 	protected abstract NameKeyedDoubleCollection storeTyped();
 
 	@Override
 	public double getValue(NamedKey key) {
+		Objects.requireNonNull(key, "key");
 		NameKeyedDoubleCollection store = storeTyped();
 		StoreValueDouble storeValue = store.get(key);
 		return storeValue != null ? storeValue.getValue() : Double.NaN;
@@ -51,9 +54,31 @@ public abstract class NamedDoubleValueStoreFacade
 
 	@Override
 	public double getValueOrDefault(NamedKey key, double valueDefault) {
+		Objects.requireNonNull(key, "key");
 		NameKeyedDoubleCollection store = storeTyped();
 		StoreValueDouble storeValue = store.get(key);
 		return storeValue != null ? storeValue.getValue() : valueDefault;
+	}
+
+	@Override
+	public float getValueAsFloat(NamedKey key) {
+		Objects.requireNonNull(key, "key");
+		NameKeyedDoubleCollection store = storeTyped();
+		StoreValueDouble storeValue = store.get(key);
+		return storeValue != null ? (float) storeValue.getValue() : Float.NaN;
+	}
+
+	@Override
+	public float getValueOrDefaultAsFloat(NamedKey key, float valueDefault) {
+		Objects.requireNonNull(key, "key");
+		NameKeyedDoubleCollection store = storeTyped();
+		StoreValueDouble storeValue = store.get(key);
+		return storeValue != null ? (float) storeValue.getValue() : valueDefault;
+	}
+
+	@Override
+	protected StoreValueKeyed store() {
+		return storeTyped();
 	}
 
 	@Override

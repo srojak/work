@@ -16,40 +16,27 @@
  */
 package srojak.numerics.vstore.collections;
 
-import java.util.Objects;
+import java.util.Map;
 
-import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedLongCollection;
-import srojak.numerics.vstore.StoreValueCalculationBase;
-import srojak.numerics.vstore.primitives.StoreValueLong;
+import srojak.numerics.vstore.StoreValueObj;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class StoreValueLongMap
-		extends StoreValueMap<StoreValueLong>
-		implements NameKeyedLongCollection {
+public class NamedObjValueStoreAdapter<V> 
+		extends NamedScalarValueStoreAdapter<StoreValueObj<V>> 
+		implements NameKeyedObjCollection<V> {
 
-	public StoreValueLongMap(ClassKey keyStore) {
-		super(keyStore);
-	}
-
-	@Override
-	public StoreValueLong get(NamedKey key) {
-		return super.get(key);
-	}
-
-	@Override
-	public void define(StoreValueLong value) {
-		Objects.requireNonNull(value, "value");
-		super.put(value.getKey(), value);	
-		StoreValueCalculationBase calc = value.getCalculation();
-		if (calc != null) {
-			calc.bindTo(this);
-		}
+	/**
+	 * @param classStore
+	 * @param classElements
+	 * @param storeBase
+	 */
+	public NamedObjValueStoreAdapter(Class<?> classStore, Class<?> classElements,
+			Map<NamedKey, StoreValueObj<V>> storeBase) {
+		super(classStore, classElements, storeBase);
 	}
 
 }

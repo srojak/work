@@ -16,40 +16,28 @@
  */
 package srojak.numerics.vstore.collections;
 
-import java.util.Objects;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedDoubleCollection;
-import srojak.numerics.vstore.StoreValueCalculationBase;
-import srojak.numerics.vstore.StoreValueDouble;
+import srojak.numerics.vstore.StoreValueInt;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class StoreValueDoubleList 
-		extends StoreValueList<StoreValueDouble> 
-		implements NameKeyedDoubleCollection {
+public class NamedIntValueStoreAdapter 
+		extends NamedScalarValueStoreAdapter<StoreValueInt>
+		implements NameKeyedIntCollection {
 
-	public StoreValueDoubleList(ClassKey keyStore) {
-		super(keyStore);
+	/**
+	 * @param classStore
+	 * @param storeBase
+	 */
+	public NamedIntValueStoreAdapter(Class<?> classStore,
+			Map<NamedKey, StoreValueInt> storeBase) {
+		super(classStore, int.class, storeBase);
 	}
-
-	@Override
-	public StoreValueDouble get(NamedKey key) {
-		return super.findByKey(key);
-	}
-
-	@Override
-	public void define(StoreValueDouble value) {
-		Objects.requireNonNull(value, "value");
-		super.add(value);
-		StoreValueCalculationBase calc = value.getCalculation();
-		if (calc != null) {
-			calc.bindTo(this);
-		}
-	}
-
+	
 }

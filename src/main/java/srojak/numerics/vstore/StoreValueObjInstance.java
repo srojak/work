@@ -51,5 +51,6 @@ public class StoreValueObjInstance<T>
 			Objects.requireNonNull(value, "value");
 		}
 		_value = value;
+		onValueChange(true);
 	}
 }

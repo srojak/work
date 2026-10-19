@@ -14,29 +14,18 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics.vstore;
+package srojak.numerics.vstore.collections;
+
+import java.util.Map;
 
 import srojak.core.keys.NamedKey;
+import srojak.numerics.vstore.StoreValue;
+import srojak.numerics.vstore.StoreValueKeyed;
 
 /**
  * @author Stephen
  *
- * the interface that a global store of {@code Object} values must provide.
- * @param <V> the type of object to be stored in the global store.
  */
-public interface NameKeyedObjCollection<V>
+public interface NameKeyedCollection<S extends StoreValue> 
 		extends StoreValueKeyed {
-	
-	/**
-	 * Get the value store for a key.
-	 * @param key The key for the value.
-	 * @return the store for the value, or {@code null} if not defined.
-	 */
-	StoreValueObj<V> get(NamedKey key);
-	
-	/**
-	 * Define a value in the store.
-	 * @param value The store for the value.
-	 */
-	void define(StoreValueObj<V> value);
 }

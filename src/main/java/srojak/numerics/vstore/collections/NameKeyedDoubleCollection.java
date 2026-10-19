@@ -18,40 +18,28 @@ package srojak.numerics.vstore.collections;
 
 import java.util.Objects;
 
-import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedFloatCollection;
 import srojak.numerics.vstore.StoreValueCalculationBase;
-import srojak.numerics.vstore.StoreValueFloat;
+import srojak.numerics.vstore.StoreValueDouble;
 
 /**
  * @author Stephen
  *
+ * the interface that a global store of {@code double} values must provide.
  */
-@SuppressWarnings("serial")
-public class StoreValueFloatList 
-		extends StoreValueList<StoreValueFloat> 
-		implements NameKeyedFloatCollection {
-
+public interface NameKeyedDoubleCollection
+		extends NameKeyedCollection<StoreValueDouble> {
+	
 	/**
-	 * @param locator
+	 * Get the value store for a key.
+	 * @param key The key for the value.
+	 * @return the store for the value, or {@code null} if not defined.
 	 */
-	public StoreValueFloatList(ClassKey keyStore) {
-		super(keyStore);
-	}
-
-	@Override
-	public StoreValueFloat get(NamedKey key) {
-		return super.findByKey(key);
-	}
-
-	@Override
-	public void define(StoreValueFloat value) {
-		Objects.requireNonNull(value, "value");
-		super.add(value);
-		StoreValueCalculationBase calc = value.getCalculation();
-		if (calc != null) {
-			calc.bindTo(this);
-		}
-	}
+	StoreValueDouble get(NamedKey key);
+	
+	/**
+	 * Define a value in the store.
+	 * @param value The store for the value.
+	 */
+	void define(StoreValueDouble value);
 }

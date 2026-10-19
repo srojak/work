@@ -17,6 +17,7 @@
 package srojak.numerics.vstore;
 
 import srojak.core.Named;
+import srojak.core.events.StateChangeOriginator;
 import srojak.core.keys.NamedKey;
 
 /**
@@ -25,7 +26,7 @@ import srojak.core.keys.NamedKey;
  * the interface that any object holding a value in a global store must provide.
  */
 public interface StoreValue 
-		extends Named {
+		extends Named, StateChangeOriginator {
 	
 	/**
 	 * Gets the key for the value.

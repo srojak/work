@@ -29,19 +29,17 @@ import srojak.numerics.vstore.TypedNamedKeyedCollection;
  */
 public abstract class TypedNamedStoreFacadeBase
 		implements TypedNamedKeyedCollection {
-	private final ClassKey _keyStore;
 
-	protected TypedNamedStoreFacadeBase(Class<?> classInstance) {
-		Objects.requireNonNull(classInstance, "classInstance");
-		_keyStore = new ClassKey(classInstance);
-	}
-
-	@Override
-	public ClassKey getClassKey() {
-		return _keyStore;
+	protected TypedNamedStoreFacadeBase() {
+		
 	}
 	
 	protected abstract StoreValueKeyed store();
+
+	@Override
+	public ClassKey getClassKey() {
+		return store().getStoreKey();
+	}
 
 	@Override
 	public boolean isEmpty() {
@@ -63,4 +61,13 @@ public abstract class TypedNamedStoreFacadeBase
 		return store().canSetValue(key);
 	}
 	
+	protected abstract void initializeSelf();
+	
+	protected final void registerSelf() {
+		StoreValueKeyed store = store();
+		ClassKey keyStore = store.getStoreKey();
+		if (FacadeCatalog.registerStore(keyStore, store)) {
+			initializeSelf();
+		}
+	}
 }

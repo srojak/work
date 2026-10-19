@@ -14,16 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics.vstore;
+package srojak.numerics.vstore.collections;
 
 import srojak.core.keys.NamedKey;
+import srojak.numerics.vstore.StoreValueKeyed;
+import srojak.numerics.vstore.primitives.StoreValueLong;
 
 /**
+ *
+ * The interface that a global store facade holding {@code long} data must provide.
+ * 
  * @author Stephen
  *
- * The interface that a global store facade holding {@code int} data must provide.
  */
-public interface NameKeyedIntCollection 
+public interface NameKeyedLongCollection 
 		extends StoreValueKeyed {
 	
 	/**
@@ -31,11 +35,12 @@ public interface NameKeyedIntCollection
 	 * @param key The key for the value.
 	 * @return the store for the value, or {@code null} if not defined.
 	 */
-	StoreValueInt get(NamedKey key);
+	StoreValueLong get(NamedKey key);
 	
 	/**
 	 * Define a value in the store.
 	 * @param value The store for the value.
 	 */
-	void define(StoreValueInt value);
+	void define(StoreValueLong value);
+
 }

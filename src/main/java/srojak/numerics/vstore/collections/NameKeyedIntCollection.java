@@ -14,46 +14,32 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics.vstore.primitives;
+package srojak.numerics.vstore.collections;
 
 import java.util.Objects;
 
 import srojak.core.keys.NamedKey;
 import srojak.numerics.vstore.StoreValueCalculationBase;
-import srojak.numerics.vstore.StoreValueDerivedBase;
-import srojak.numerics.vstore.StoreValueFloat;
+import srojak.numerics.vstore.StoreValueInt;
 
 /**
  * @author Stephen
  *
+ * The interface that a global store facade holding {@code int} data must provide.
  */
-public class StoreValueFloatDerived 
-		extends StoreValueDerivedBase 
-		implements StoreValueFloat {
-	private final StoreValueCalculationFloat _calc;
-
+public interface NameKeyedIntCollection 
+		extends NameKeyedCollection<StoreValueInt> {
+	
 	/**
-	 * @param key
+	 * Get the value store for a key.
+	 * @param key The key for the value.
+	 * @return the store for the value, or {@code null} if not defined.
 	 */
-	public StoreValueFloatDerived(NamedKey key, StoreValueCalculationFloat calculation) {
-		super(key);
-		Objects.requireNonNull(calculation, "calculation");
-		_calc = calculation;
-	}
-
-	@Override
-	public StoreValueCalculationBase getCalculation() {
-		return _calc;
-	}
-
-	@Override
-	public float getValue() {
-		return _calc.calculate();
-	}
-
-	@Override
-	public void setValue(float value) {
-		throw new UnsupportedOperationException("cannot set value for " + getKey().getName());	
-	}
-
+	StoreValueInt get(NamedKey key);
+	
+	/**
+	 * Define a value in the store.
+	 * @param value The store for the value.
+	 */
+	void define(StoreValueInt value);
 }

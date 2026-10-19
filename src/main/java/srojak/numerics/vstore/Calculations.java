@@ -22,9 +22,11 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 
 import srojak.core.keys.NamedKey;
-import srojak.numerics.function.ToFloatFunction;
+import srojak.numerics.vstore.collections.NameKeyedDoubleCollection;
+import srojak.numerics.vstore.collections.NameKeyedIntCollection;
+import srojak.numerics.vstore.collections.NameKeyedLongCollection;
+import srojak.numerics.vstore.collections.NameKeyedObjCollection;
 import srojak.numerics.vstore.primitives.StoreValueCalculationDouble;
-import srojak.numerics.vstore.primitives.StoreValueCalculationFloat;
 import srojak.numerics.vstore.primitives.StoreValueCalculationInt;
 import srojak.numerics.vstore.primitives.StoreValueCalculationLong;
 
@@ -38,12 +40,6 @@ public class Calculations {
 			ToDoubleFunction<NameKeyedDoubleCollection> calculation,
 			NamedKey dependentCar, NamedKey ... dependentCdr) {
 		return new StoreValueCalculationDouble(calculation, dependentCar, dependentCdr);
-	}
-	
-	public static StoreValueCalculationFloat makeFloat(
-			ToFloatFunction<NameKeyedFloatCollection> calculation,
-			NamedKey dependentCar, NamedKey ... dependentCdr) {
-		return new StoreValueCalculationFloat(calculation, dependentCar, dependentCdr);
 	}
 	
 	public static StoreValueCalculationInt makeInt(

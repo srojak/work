@@ -16,43 +16,25 @@
  */
 package srojak.numerics.vstore.collections;
 
-import java.util.Objects;
+import java.util.Map;
 
-import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedFloatCollection;
-import srojak.numerics.vstore.StoreValueCalculationBase;
-import srojak.numerics.vstore.StoreValueFloat;
+import srojak.numerics.vstore.StoreValueDouble;
 
 /**
  * @author Stephen
  *
  */
-@SuppressWarnings("serial")
-public class StoreValueFloatMap
-		extends StoreValueMap<StoreValueFloat>
-		implements NameKeyedFloatCollection {
+public class NamedDoubleValueStoreAdapter 
+		extends NamedScalarValueStoreAdapter<StoreValueDouble>
+		implements NameKeyedDoubleCollection {
 
 	/**
-	 * @param locator
+	 * @param classStore
+	 * @param storeBase
 	 */
-	public StoreValueFloatMap(ClassKey keyStore) {
-		super(keyStore);
-	}
-
-	@Override
-	public StoreValueFloat get(NamedKey key) {
-		return super.get(key);
-	}
-
-	@Override
-	public void define(StoreValueFloat value) {
-		Objects.requireNonNull(value, "value");
-		super.put(value.getKey(), value);	
-		StoreValueCalculationBase calc = value.getCalculation();
-		if (calc != null) {
-			calc.bindTo(this);
-		}
+	public NamedDoubleValueStoreAdapter(Class<?> classStore, Map<NamedKey, StoreValueDouble> storeBase) {
+		super(classStore, double.class, storeBase);
 	}
 
 }

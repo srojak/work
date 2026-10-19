@@ -20,8 +20,8 @@ import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.NameKeyedDoubleCollection;
 import srojak.numerics.vstore.StoreValueCalculationBindable;
+import srojak.numerics.vstore.collections.NameKeyedDoubleCollection;
 
 /**
  * @author Stephen

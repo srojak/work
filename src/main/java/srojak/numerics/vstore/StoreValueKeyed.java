@@ -16,7 +16,9 @@
  */
 package srojak.numerics.vstore;
 
-import srojak.core.CommonCollectionSize;
+import java.util.stream.Stream;
+
+import srojak.core.ClassIdentCommonCollection;
 import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
 
@@ -26,7 +28,7 @@ import srojak.core.keys.NamedKey;
  * The interface that all stores of any type must provide to be accepted into the global store.
  */
 public interface StoreValueKeyed
-		extends CommonCollectionSize {
+		extends ClassIdentCommonCollection {
 	
 	/**
 	 * Gets the key for the global store.
@@ -45,7 +47,7 @@ public interface StoreValueKeyed
 	 * Get all the keys in the store
 	 * @return an array of all the keys currently in the store.
 	 */
-	NamedKey[] getAllKeys();
+	Stream<NamedKey> allKeys();
 	
 	/**
 	 * Can the value associated with this key be changed directly?

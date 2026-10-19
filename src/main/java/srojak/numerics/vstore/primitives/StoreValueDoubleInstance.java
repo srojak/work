@@ -50,5 +50,6 @@ public class StoreValueDoubleInstance
 	public void setValue(double value) {
 		validate(value);
 		_dValue = value;
+		onValueChange(true);
 	}
 }

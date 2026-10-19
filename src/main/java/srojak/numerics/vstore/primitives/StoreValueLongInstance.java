@@ -49,6 +49,7 @@ public class StoreValueLongInstance
 	public void setValue(long value) {
 		validate(value);
 		_lnValue = value;
+		onValueChange(true);
 	}
 
 }

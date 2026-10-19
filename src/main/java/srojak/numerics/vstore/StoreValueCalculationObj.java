@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import srojak.core.keys.NamedKey;
+import srojak.numerics.vstore.collections.NameKeyedObjCollection;
 
 /**
  * @author Stephen
