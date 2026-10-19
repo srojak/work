@@ -14,35 +14,21 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.text;
+package srojak.mantle.trees;
 
-import java.util.Objects;
-
-import srojak.mantle.Labeled;
+import srojak.core.keys.MultiPartKey;
 
 /**
  * @author Stephen
  *
  */
-public abstract class LabeledEnvelopeBase<T>
-		implements Labeled<T> {
-	private final String _strLabel;
+public interface MultiLevelTree<E> {
 
-	/**
-	 * 
-	 */
-	protected LabeledEnvelopeBase(String strLabel) {
-		Objects.requireNonNull(strLabel, "strLabel");
-		_strLabel = strLabel;
-	}
-
-	@Override
-	public boolean isLabelEqual(String strText) {
-		return _strLabel.equals(strText);
-	}
-
-	@Override
-	public String toString() {
-		return _strLabel;
-	}
+	boolean isEmpty();
+	boolean containsKey(MultiPartKey key);
+	E getValue(MultiPartKey key);
+	MultiLevelTreeNode<E> getNode(MultiPartKey key);
+	void putValue(MultiPartKey key, E value);
+	boolean putValueIfAbsent(MultiPartKey key, E value);
+	boolean removeValue(MultiPartKey key);
 }

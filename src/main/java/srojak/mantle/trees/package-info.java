@@ -14,14 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.functional;
-
 /**
  * @author Stephen
  *
  */
-@FunctionalInterface
-public interface TreeDepthArgPredicate<N, U> {
-
-	boolean test(int depth, N node);
-}
+package srojak.mantle.trees;

@@ -14,17 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle;
-
-import srojak.core.ClassIdentifiedElements;
-import srojak.core.CommonCollectionSize;
-
 /**
  * @author Stephen
  *
  */
-public interface ClassIdentifiedListCommon
-		extends CommonCollectionSize, ClassIdentifiedElements {
-
-	boolean contains(Object obj);
-}
+package srojak.mantle.vstore;

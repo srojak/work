@@ -103,7 +103,7 @@ public class SortedList<E>
 		if (o == null || _list.isEmpty()) {
 			return false;
 		}
-		if (_list.isElementAssignableFrom(o.getClass())) {
+		if (_list.isObjectAssignable(o)) {
 			@SuppressWarnings("unchecked")
 			E other = (E)o;
 			return findIndex(other) >= 0;
@@ -156,8 +156,10 @@ public class SortedList<E>
 		if (c == null || _list.isEmpty()) {
 			return false;
 		}
-		for (Object co : c) {
-			if (_list.isElementAssignableFrom(co.getClass())) {
+		Iterator<?> iterator = c.iterator();
+		while (iterator.hasNext()) {
+			Object co = iterator.next();
+			if (_list.isObjectAssignable(co)) {
 				@SuppressWarnings("unchecked")
 				E other = (E)co;
 				if (findIndex(other) < 0) {
@@ -226,7 +228,7 @@ public class SortedList<E>
 		if (o == null || _list.isEmpty()) {
 			return -1;
 		}
-		if (_list.isElementAssignableFrom(o.getClass())) {
+		if (_list.isObjectAssignable(o)) {
 			@SuppressWarnings("unchecked")
 			E other = (E)o;
 			return findIndex(other);
@@ -240,7 +242,7 @@ public class SortedList<E>
 		if (o == null || _list.isEmpty()) {
 			return -1;
 		}
-		if (_list.isElementAssignableFrom(o.getClass())) {
+		if (_list.isObjectAssignable(o)) {
 			@SuppressWarnings("unchecked")
 			E other = (E)o;
 			return findIndex(other);

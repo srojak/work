@@ -16,6 +16,8 @@
  */
 package srojak.mantle.text;
 
+import srojak.core.text.LabeledEnvelope;
+
 /**
  * @author Stephen
  *

@@ -14,14 +14,23 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.functional;
+package srojak.mantle.vstore;
+
+import srojak.core.keys.NamedKey;
+import srojak.numerics.vstore.StoreValueList;
+import srojak.numerics.vstore.StoreValueListCommon;
+import srojak.numerics.vstore.TypedNamedKeyedCollection;
 
 /**
  * @author Stephen
  *
  */
-@FunctionalInterface
-public interface TreeDepthArgConsumer<N, U> {
+public interface NamedListValueStore
+		extends TypedNamedKeyedCollection {
 
-	void accept(int depth, N node, U arg);
+	StoreValueListCommon getList(NamedKey key);
+	
+	<V> StoreValueList<V> getListAs(NamedKey key, Class<V> classElement);
+	
+	<V> StoreValueList<V> addList(NamedKey key, StoreValueList<V> list);
 }

@@ -14,50 +14,33 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.impl;
+package srojak.mantle.reflect;
 
 import java.util.Objects;
 
-import srojak.mantle.CycleDepthMonitor;
-import srojak.mantle.CycleDepthStop;
+import srojak.core.ObjectFactory;
 
 /**
  * @author Stephen
  *
  */
-public class CycleDepthStopToken
-		implements CycleDepthStop {
-	private final String _strName;
-	private final int _nLimit;
-
-	/**
-	 * 
-	 */
-	public CycleDepthStopToken(String strName, int limit) {
-		Objects.requireNonNull(strName, "strName");
-		if (strName.isBlank()) {
-			throw new IllegalArgumentException("strName is blank");
-		}
-		if (limit <= 0) {
-			throw new IllegalArgumentException("limit must be positive");
-		}
-		_strName = strName;
-		_nLimit = limit;
+public abstract class ClassIdentifiedFactoryBase<T>
+		implements ObjectFactory {
+	private final Class<T> _classProduct;
+	
+	protected ClassIdentifiedFactoryBase(Class<T> classProduct) {
+		Objects.requireNonNull(classProduct, "classProduct");
+		_classProduct = classProduct;		
 	}
 
 	@Override
-	public String getName() {
-		return _strName;
+	public final Class<?> getProductClass() {
+		return _classProduct;
 	}
+	
+	protected abstract T innerFactory();
 
-	@Override
-	public int getLimit() {
-		return _nLimit;
+	public final T create() {
+		return innerFactory();
 	}
-
-	@Override
-	public CycleDepthMonitor createMonitor() {
-		return new CycleDepthMonitorToken(this);
-	}
-
 }

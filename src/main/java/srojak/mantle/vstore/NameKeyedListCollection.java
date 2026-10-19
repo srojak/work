@@ -14,15 +14,20 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle;
+package srojak.mantle.vstore;
 
-import srojak.core.WrappedEquatable;
+import srojak.core.keys.NamedKey;
+import srojak.numerics.vstore.StoreValueKeyed;
+import srojak.numerics.vstore.StoreValueListCommon;
 
 /**
  * @author Stephen
  *
  */
-public interface Labeled<T>
-		extends LabeledObject, WrappedEquatable<T> {
+public interface NameKeyedListCollection
+		extends StoreValueKeyed {
 
+	StoreValueListCommon get(NamedKey key);
+	
+	void define(StoreValueListCommon list);
 }

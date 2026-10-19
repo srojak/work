@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
 
+import srojak.core.keys.ClassKey;
+
 /**
  * @author Stephen
  *
@@ -27,7 +29,7 @@ import java.util.Objects;
 public class TypedLinkedList<E>
 		extends LinkedList<E> 
 		implements TypedList<E> {
-	private final Class<E> _classElement;
+	private final ClassKey _ckElements;
 	
 	/**
 	 * 
@@ -40,7 +42,7 @@ public class TypedLinkedList<E>
 	public TypedLinkedList(Class<E> classElement) {
 		super();
 		Objects.requireNonNull(classElement, "classElement");
-		_classElement = classElement;
+		_ckElements = new ClassKey(classElement);
 	}
 
 	/**
@@ -49,17 +51,16 @@ public class TypedLinkedList<E>
 	public TypedLinkedList(Class<E> classElement, Collection<? extends E> c) {
 		super(c);
 		Objects.requireNonNull(classElement, "classElement");
-		_classElement = classElement;
+		_ckElements = new ClassKey(classElement);
 	}
 
 	@Override
-	public Class<E> getElementClass() {
-		return _classElement;
+	public Class<?> getElementClass() {
+		return _ckElements.getReferencedClass();
 	}
 
 	@Override
-	public boolean isElementAssignableFrom(Class<?> classOther) {
-		Objects.requireNonNull(classOther, "classOther");
-		return _classElement.isAssignableFrom(classOther);
+	public ClassKey getElementClassKey() {
+		return _ckElements;
 	}
 }

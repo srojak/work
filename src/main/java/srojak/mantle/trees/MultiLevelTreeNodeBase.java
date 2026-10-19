@@ -14,55 +14,61 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.text;
+package srojak.mantle.trees;
+
+import java.util.Objects;
+
+import srojak.core.keys.MultiPartKeyPart;
 
 /**
  * @author Stephen
  *
  */
-public class LabeledEnvelopeStub<T>
-	extends LabeledEnvelopeBase<T> {
-
-	/**
-	 * @param strLabel
-	 */
-	public LabeledEnvelopeStub(String strLabel) {
-		super(strLabel);
+public abstract class MultiLevelTreeNodeBase<E>
+		implements MultiLevelTreeNode<E> {
+	private E _value;
+	
+	protected MultiLevelTreeNodeBase() {
+		_value = null;
 	}
 
 	@Override
-	public T getWrapped() {
-		return null;
+	public abstract boolean containsKey(MultiPartKeyPart keyPart);
+
+	@Override
+	public boolean hasValue() {
+		return _value != null;
 	}
 
 	@Override
-	public boolean isValueEqual(T value) {
-		return false;
+	public E getValue() {
+		return _value;
 	}
 
 	@Override
-	public boolean hasObject() {
-		return false;
+	public void putValue(E value) {
+		Objects.requireNonNull(value, "value");
+		_value = value;
 	}
 
 	@Override
-	public Object getWrappedObject() {
-		return null;
+	public boolean putValueIfAbsent(E value) {
+		Objects.requireNonNull(value, "value");
+		if (_value == null) {
+			_value = value;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
-	public Object getObject() {
-		return null;
+	public boolean removeValue() {
+		if (_value != null) {
+			_value = null;
+			return true;
+		} else {
+			return false;
+		}
 	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return false;
-	}
-
 }

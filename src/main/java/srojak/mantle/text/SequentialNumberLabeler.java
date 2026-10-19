@@ -16,6 +16,7 @@
  */
 package srojak.mantle.text;
 
+import srojak.core.text.LabeledEnvelope;
 import srojak.core.tools.StringMethods;
 
 /**

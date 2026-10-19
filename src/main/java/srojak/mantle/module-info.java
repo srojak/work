@@ -26,6 +26,7 @@ module srojak.mantle {
 	requires transitive srojak.numerics;
 	requires transitive srojak.debug;
 	exports srojak.mantle;
+	exports srojak.mantle.base;
 	exports srojak.mantle.collections;
 	exports srojak.mantle.decorated;
 	exports srojak.mantle.functional;
@@ -35,4 +36,6 @@ module srojak.mantle {
 	exports srojak.mantle.reflect;
 	exports srojak.mantle.restbl;
 	exports srojak.mantle.text;
+	exports srojak.mantle.trees;
+	exports srojak.mantle.vstore;
 }

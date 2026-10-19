@@ -14,14 +14,31 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle;
+package srojak.mantle.reflect;
+
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @author Stephen
  *
  */
-public interface CycleDepthMonitor {
+public class ClassIdentifiedFunctionalFactory<T> 
+		extends ClassIdentifiedFactoryBase<T> {
+	private final Supplier<T> _factory; 
 
-	int getDepth();
-	CycleDepthMonitor increment();
+	/**
+	 * @param classProduct
+	 */
+	public ClassIdentifiedFunctionalFactory(Class<T> classProduct, Supplier<T> fnFactory) {
+		super(classProduct);
+		Objects.requireNonNull(fnFactory, "fnFactory");
+		_factory = fnFactory;
+	}
+
+	@Override
+	protected T innerFactory() {
+		return _factory.get();
+	}
+
 }

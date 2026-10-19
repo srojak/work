@@ -80,12 +80,12 @@ public class ReflectTool {
 				try {
 					objField = fx.get(objOwner);
 				} catch (IllegalArgumentException exc) {
-					_swDebug.writeException(ObsLevel.ERROR, activity, exc, true);
+					_swDebug.recordException(ObsLevel.ERROR, activity, exc, true);
 					return false;
 				} catch (IllegalAccessException exc) {
-					_swDebug.write(ObsLevel.ALERT, () -> "illegal access to "
+					_swDebug.record(ObsLevel.ALERT, () -> "illegal access to "
 						+ f.getName() + " in class " + classOwner.getName());
-					_swDebug.writeException(ObsLevel.ERROR, activity, exc, false);
+					_swDebug.recordException(ObsLevel.ERROR, activity, exc, false);
 					return false;
 				}
 				@SuppressWarnings("unchecked")

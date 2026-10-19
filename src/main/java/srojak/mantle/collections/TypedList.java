@@ -22,16 +22,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import srojak.mantle.ClassIdentifiedListCommon;
+import srojak.core.ClassIdentifiedElementsStrict;
+import srojak.core.ClassIdentifiedListCommon;
 
 /**
  * @author Stephen
  *
  */
 public interface TypedList<E> 
-		extends List<E>, ClassIdentifiedListCommon {
-	
-	boolean isElementAssignableFrom(Class<?> classOther);
+		extends List<E>, ClassIdentifiedListCommon, ClassIdentifiedElementsStrict {
 	
 	default public List<E> where(Predicate<E> predicate) {
 		Objects.requireNonNull(predicate, "predicate");

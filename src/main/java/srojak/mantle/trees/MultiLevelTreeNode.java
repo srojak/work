@@ -14,14 +14,27 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.functional;
+package srojak.mantle.trees;
+
+import java.util.stream.Stream;
+
+import srojak.core.keys.MultiPartKeyPart;
 
 /**
  * @author Stephen
  *
  */
-@FunctionalInterface
-public interface TreeDepthArgFunction<N, U, R> {
+public interface MultiLevelTreeNode<E> {
 
-	R apply(int depth, N node, U arg);
+	boolean containsKey(MultiPartKeyPart keyPart);
+	boolean hasValue();
+	E getValue();
+	void putValue(E value);
+	boolean putValueIfAbsent(E value);
+	boolean removeValue();
+	boolean hasNodes();
+	int nodes();
+	MultiLevelTreeNode<E> getNode(MultiPartKeyPart keyPart);
+	MultiLevelTreeNode<E> getOrAddNode(MultiPartKeyPart keyPart);
+	Stream<MultiPartKeyPart> allNodeKeys();
 }

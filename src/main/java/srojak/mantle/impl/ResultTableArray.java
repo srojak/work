@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 
+import srojak.core.keys.ClassKey;
 import srojak.mantle.restbl.ResultChoice;
 import srojak.mantle.restbl.ResultTable;
 import srojak.numerics.IRandomSource;
@@ -32,7 +33,7 @@ import srojak.numerics.IRandomSource;
 public class ResultTableArray<T>
 		implements ResultTable<T> {
 	private final ResultChoiceEntry<T>[] _table;
-	private final Class<T> _classValues;
+	private final ClassKey _ckValues;
 	private final String _name;
 	private int _totalWidth;
 	
@@ -45,7 +46,7 @@ public class ResultTableArray<T>
 		Objects.requireNonNull(classValues, "classValues");
 		Objects.requireNonNull(list, "list");
 		_table = list.toArray((ResultChoiceEntry<T>[]) Array.newInstance(ResultChoiceEntry.class, 0));
-		_classValues = classValues;
+		_ckValues = new ClassKey(classValues);
 		_name = strName;
 		calculateTotal();
 	}
@@ -87,7 +88,12 @@ public class ResultTableArray<T>
 
 	@Override
 	public Class<?> getElementClass() {
-		return _classValues;
+		return _ckValues.getReferencedClass();
+	}
+
+	@Override
+	public ClassKey getElementClassKey() {
+		return _ckValues;
 	}
 
 	@Override
