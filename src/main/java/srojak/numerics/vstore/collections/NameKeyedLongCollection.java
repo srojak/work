@@ -18,7 +18,7 @@ package srojak.numerics.vstore.collections;
 
 import srojak.core.keys.NamedKey;
 import srojak.numerics.vstore.StoreValueKeyed;
-import srojak.numerics.vstore.primitives.StoreValueLong;
+import srojak.numerics.vstore.StoreValueLong;
 
 /**
  *

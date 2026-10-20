@@ -17,9 +17,7 @@
 package srojak.numerics.vstore.collections;
 
 import java.util.Map;
-import java.util.stream.Stream;
 
-import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
 import srojak.numerics.vstore.StoreValueInt;
 

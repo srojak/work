@@ -19,7 +19,7 @@ package srojak.numerics.vstore.collections;
 import java.util.Map;
 
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.primitives.StoreValueLong;
+import srojak.numerics.vstore.StoreValueLong;
 
 /**
  * @author Stephen

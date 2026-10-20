@@ -16,10 +16,7 @@
  */
 package srojak.numerics.vstore.collections;
 
-import java.util.Objects;
-
 import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.StoreValueCalculationBase;
 import srojak.numerics.vstore.StoreValueDouble;
 
 /**

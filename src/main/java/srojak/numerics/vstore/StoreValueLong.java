@@ -14,29 +14,15 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.numerics.vstore.collections;
-
-import srojak.core.keys.NamedKey;
-import srojak.numerics.vstore.StoreValueFloat;
-import srojak.numerics.vstore.StoreValueKeyed;
+package srojak.numerics.vstore;
 
 /**
  * @author Stephen
  *
  */
-public interface NameKeyedFloatCollection 
-		extends StoreValueKeyed {
+public interface StoreValueLong
+		extends StoreScalarValue {
 	
-	/**
-	 * Get the value store for a key.
-	 * @param key The key for the value.
-	 * @return the store for the value, or {@code null} if not defined.
-	 */
-	StoreValueFloat get(NamedKey key);
-	
-	/**
-	 * Define a value in the store.
-	 * @param value The store for the value.
-	 */
-	void define(StoreValueFloat value);
+	long getValue();
+	void setValue(long value);
 }

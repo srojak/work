@@ -1,5 +1,4 @@
 package srojak.numerics.vstore.collections;
-import srojak.core.CommonCollectionSize;
 import srojak.numerics.vstore.StoreValueKeyed;
 
 /**
