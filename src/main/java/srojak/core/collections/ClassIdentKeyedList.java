@@ -16,8 +16,6 @@
  */
 package srojak.core.collections;
 
-import srojak.core.KeyedList;
-
 /**
  * @author Stephen
  *

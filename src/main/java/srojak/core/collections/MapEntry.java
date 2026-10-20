@@ -14,15 +14,38 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core;
+package srojak.core.collections;
 
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
+import srojak.core.KeyMutableValue;
 
 /**
  * @author Stephen
  *
  */
-public interface KeyedList<K, V> 
-		extends Map<K, V>, CommonCollectionSize {
+class MapEntry<K, V> 
+		implements Entry<K, V> {
+	private final KeyMutableValue<K, V> _pair;
+	
+	public MapEntry(KeyMutableValue<K, V> pair) {
+		Objects.requireNonNull(pair, "pair");
+		_pair = pair;
+	}
 
+	@Override
+	public K getKey() {
+		return _pair.key();
+	}
+
+	@Override
+	public V getValue() {
+		return _pair.value();
+	}
+
+	@Override
+	public V setValue(V value) {
+		return _pair.exchangeValue(value);
+	}
 }

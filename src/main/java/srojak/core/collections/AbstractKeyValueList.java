@@ -26,6 +26,7 @@ import java.util.Set;
 import srojak.core.CommonCollectionSize;
 import srojak.core.KeyMutableValue;
 import srojak.core.containers.KeyMutableValueContainer;
+import srojak.core.tools.StreamMethods;
 
 /**
  * @author Stephen
@@ -58,7 +59,7 @@ public abstract class AbstractKeyValueList<K, V>
 		return list().isEmpty();
 	}
 	
-	protected KeyMutableValue<K, V> findByKey(Object key) {
+	public KeyMutableValue<K, V> findPairByKey(Object key) {
 		Iterator<KeyMutableValue<K, V>> iterator = list().iterator();
 		while (iterator.hasNext()) {
 			KeyMutableValue<K, V> pair = iterator.next();
@@ -71,7 +72,7 @@ public abstract class AbstractKeyValueList<K, V>
 
 	@Override
 	public boolean containsKey(Object key) {
-		KeyMutableValue<K, V> pair = findByKey(key);
+		KeyMutableValue<K, V> pair = findPairByKey(key);
 		return pair != null;
 	}
 
@@ -89,7 +90,7 @@ public abstract class AbstractKeyValueList<K, V>
 
 	@Override
 	public V get(Object key) {
-		KeyMutableValue<K, V> pair = findByKey(key);
+		KeyMutableValue<K, V> pair = findPairByKey(key);
 		if (pair != null) {
 			return pair.value();
 		} else {
@@ -99,7 +100,7 @@ public abstract class AbstractKeyValueList<K, V>
 
 	@Override
 	public V put(K key, V value) {
-		KeyMutableValue<K, V> pair = findByKey(key);
+		KeyMutableValue<K, V> pair = findPairByKey(key);
 		V valuePrior = null;
 		if (pair != null) {
 			valuePrior = pair.value();
@@ -128,8 +129,11 @@ public abstract class AbstractKeyValueList<K, V>
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
-		// TODO Auto-generated method stub
-		
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            K key = e.getKey();
+            V value = e.getValue();
+            put(key, value);
+        }
 	}
 
 	@Override
@@ -139,20 +143,19 @@ public abstract class AbstractKeyValueList<K, V>
 
 	@Override
 	public Set<K> keySet() {
-		// TODO Auto-generated method stub
-		return null;
+		List<KeyMutableValue<K, V>> list = list();
+		return StreamMethods.toSet(list.stream().map(e -> e.key()), list.size());
 	}
 
 	@Override
 	public Collection<V> values() {
-		// TODO Auto-generated method stub
-		return null;
+		return list().stream().map(e -> e.value()).toList();
 	}
 
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
-		// TODO Auto-generated method stub
-		return null;
+		List<KeyMutableValue<K, V>> list = list();
+		return StreamMethods.toSet(list.stream().map(e -> new MapEntry<K, V>(e)), list.size());
 	}
 
 }

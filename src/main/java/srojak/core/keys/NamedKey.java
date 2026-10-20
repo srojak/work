@@ -18,6 +18,7 @@ package srojak.core.keys;
 
 import java.util.Objects;
 
+import srojak.core.Equatable;
 import srojak.core.Named;
 
 /**
@@ -25,7 +26,7 @@ import srojak.core.Named;
  *
  */
 public final class NamedKey 
-		implements Named {
+		implements Named, Equatable<NamedKey> {
 	private final String _strName;
 	
 	public NamedKey(String strName) {
@@ -39,6 +40,11 @@ public final class NamedKey
 	@Override
 	public String getName() {
 		return _strName;
+	}
+
+	@Override
+	public boolean isEqual(NamedKey obj) {
+		return this == obj;
 	}
 
 	@Override

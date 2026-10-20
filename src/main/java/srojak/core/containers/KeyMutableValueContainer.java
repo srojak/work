@@ -50,6 +50,14 @@ public class KeyMutableValueContainer<K, V>
 	}
 
 	@Override
+	public V exchangeValue(V newValue) {
+		// newValue can be null
+		V valuePrior = _value;
+		_value = newValue;
+		return valuePrior;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("KeyValue [");

@@ -16,7 +16,7 @@
  */
 package srojak.core.collections;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -28,10 +28,11 @@ import srojak.core.keys.NamedKey;
  */
 public class NameKeyedMap<E>
 		implements NameKeyedMapReadOnly<E> {
-	private final HashMap<NamedKey, E> _map;
+	private final Map<NamedKey, E> _map;
 	
-	public NameKeyedMap() {
-		_map = new HashMap<NamedKey, E>();
+	public NameKeyedMap(Map<NamedKey, E> store) {
+		Objects.requireNonNull(store, "store");
+		_map = store;
 	}
 
 	@Override

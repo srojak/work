@@ -69,6 +69,20 @@ public abstract sealed class NameTokenBase
 	}
 
 	@Override
+	public boolean isEqual(NameToken obj) {
+		// only valid for NameTokenCommon
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (obj instanceof NameTokenBase other) {
+				return getSeries() == other.getSeries()
+						&& _strName.equals(other._strName);
+		} else
+			return false;
+	}
+
+	@Override
 	public int compareTo(NameToken o) {
 		if (o == null)
 			return 1;

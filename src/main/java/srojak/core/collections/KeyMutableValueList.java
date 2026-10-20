@@ -21,6 +21,6 @@ package srojak.core.collections;
  *
  */
 public interface KeyMutableValueList<K, V>
-		extends KeyValueList<K, V> {
+		extends KeyValueList<K, V>, MutableValueList<V> {
 
 }

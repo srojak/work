@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import srojak.core.KeyMutableValue;
-import srojak.core.KeyedList;
 
 /**
  * @author Stephen
@@ -66,12 +65,24 @@ public class KeyedLinkedList<K, V>
 		return _list.removeLast();
 	}
 
+	public void addFirst(KeyMutableValue<K, V> e) {
+		_list.addFirst(e);
+	}
+
+	public void addLast(KeyMutableValue<K, V> e) {
+		_list.addLast(e);
+	}
+
 	public KeyMutableValue<K, V> peek() {
 		return _list.peek();
 	}
 
 	public KeyMutableValue<K, V> poll() {
 		return _list.poll();
+	}
+
+	public KeyMutableValue<K, V> element() {
+		return _list.element();
 	}
 
 	public boolean offer(KeyMutableValue<K, V> e) {

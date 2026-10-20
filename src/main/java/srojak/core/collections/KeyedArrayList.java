@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import srojak.core.KeyMutableValue;
-import srojak.core.KeyedList;
 
 /**
  * @author Stephen
@@ -46,7 +45,7 @@ public class KeyedArrayList<K, V>
 	}
 	
 	public KeyedArrayList(Collection<? extends V> values, Function<V, K> fnKeyExtract) {
-		Objects.requireNonNull(values, "value");
+		Objects.requireNonNull(values, "values");
 		Objects.requireNonNull(fnKeyExtract, "fnKeyExtract");
 		_list = new ArrayList<KeyMutableValue<K, V>>(
 				values.stream().map(v -> bindPair(fnKeyExtract.apply(v), v)).toList());

@@ -24,4 +24,5 @@ public interface KeyMutableValue<K, V>
 		extends KeyValue<K, V> {
 
 	void setValue(V value);
+	V exchangeValue(V newValue);
 }

@@ -16,6 +16,8 @@
  */
 package srojak.core.impl;
 
+import srojak.core.NameToken;
+
 /**
  * @author Stephen
  *
@@ -44,6 +46,11 @@ public final class NameTokenFixed
 
 	@Override
 	public boolean isNameEqual(String strName) {
+		return false;
+	}
+
+	@Override
+	public boolean isEqual(NameToken obj) {
 		return false;
 	}
 

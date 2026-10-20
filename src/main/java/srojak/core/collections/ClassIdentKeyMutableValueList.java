@@ -16,41 +16,13 @@
  */
 package srojak.core.collections;
 
-import java.util.Iterator;
-import java.util.List;
-
-import srojak.core.KeyValue;
+import srojak.core.ClassIdentifiedElements;
 
 /**
  * @author Stephen
  *
  */
-public interface KeyValueList2<K, V> 
-		extends List<KeyValue<K, V>>, KeyedAbstractClassIdentifiedCollection<K> {
-	
-	boolean replace(KeyValue<K, V> pairNew);
-	
-	boolean addOrReplace(KeyValue<K, V> pairNew);
+public interface ClassIdentKeyMutableValueList<K, V> 
+		extends KeyMutableValueList<K, V>, ClassIdentifiedElements {
 
-	default public KeyValue<K, V> findByKey(K key) {
-		Iterator<KeyValue<K, V>> iterator = iterator();
-		while (iterator.hasNext()) {
-			KeyValue<K, V> pair = iterator.next();
-			if (pair.isKeyEqual(key)) {
-				return pair;
-			}
-		}
-		return null;
-	}
-	
-	default public boolean containsKey(K key) {
-		Iterator<KeyValue<K, V>> iterator = iterator();
-		while (iterator.hasNext()) {
-			KeyValue<K, V> pair = iterator.next();
-			if (pair.isKeyEqual(key)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

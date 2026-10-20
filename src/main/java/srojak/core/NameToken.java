@@ -24,7 +24,7 @@ import srojak.core.impl.NameTokenFixed;
  *
  */
 public interface NameToken
-		extends Named, StringComparable, Comparable<NameToken> {
+		extends Named, Equatable<NameToken>, StringComparable, Comparable<NameToken> {
 	int hashCode();
 	boolean equals(Object obj);
 	boolean isNameEqual(String strName);
