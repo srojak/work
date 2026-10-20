@@ -17,11 +17,14 @@
 package srojak.cdo.swing.panels;
 
 import java.awt.LayoutManager;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import srojak.cdo.HasCDOProperties;
 import srojak.cdo.swing.interact.ComponentEnabledStateManager;
 import srojak.cdo.swing.interact.ComponentEnablingFacade;
 import srojak.core.NameToken;
@@ -36,11 +39,13 @@ import srojak.core.observe.activity.SingleActivity;
 @SuppressWarnings("serial")
 public class NameTokenTagPanel
 		extends JPanel 
-		implements NameTokenTagged {
+		implements NameTokenTagged, HasCDOProperties {
 	private final NameToken _token;
+	private final HashMap<String, Object> _mapProperties;
 	private final ComponentEnabledStateManager _mgrEnabled;
 	
 	protected static final ObservedActivity ACTIVITY_GET_FROM_DOCUMENT = new SingleActivity("get from document");
+	protected static final ObservedActivity ACTIVITY_CHANGE_DOCUMENT = new SingleActivity("change document");
 
 	/**
 	 * 
@@ -49,6 +54,8 @@ public class NameTokenTagPanel
 		super();
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		setName(_token.getName());
+		_mapProperties = new HashMap<String, Object>();
 		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
@@ -59,6 +66,8 @@ public class NameTokenTagPanel
 		super(layout);
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		setName(_token.getName());
+		_mapProperties = new HashMap<String, Object>();
 		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
@@ -69,6 +78,8 @@ public class NameTokenTagPanel
 		super(isDoubleBuffered);
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
+		setName(_token.getName());
+		_mapProperties = new HashMap<String, Object>();
 		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
@@ -81,6 +92,7 @@ public class NameTokenTagPanel
 		Objects.requireNonNull(tokenName, "tokenName");
 		_token = tokenName;
 		setName(_token.getName());
+		_mapProperties = new HashMap<String, Object>();
 		_mgrEnabled = new ComponentEnabledStateManager(this);
 	}
 
@@ -121,5 +133,29 @@ public class NameTokenTagPanel
 	
 	public void removeChild(ComponentEnablingFacade facade) {
 		_mgrEnabled.removeChild(facade);
+	}
+
+	@Override
+	public boolean hasCDOProperty(String strName) {
+		return _mapProperties.containsKey(strName);
+	}
+
+	@Override
+	public Object getCDOProperty(String strName) {
+		return _mapProperties.get(strName);
+	}
+
+	@Override
+	public void setCDOProperty(String strName, Object objValue) {
+		Objects.requireNonNull(strName, "strName");
+		Objects.requireNonNull(objValue, "objValue");
+		Object objPrior = _mapProperties.put(strName, objValue);
+		super.firePropertyChange(strName, objPrior, objValue);
+	}
+
+	@Override
+	public void visitCDOProperties(BiConsumer<String, Object> visitor) {
+		Objects.requireNonNull(visitor, "visitor");
+		_mapProperties.forEach(visitor);
 	}
 }

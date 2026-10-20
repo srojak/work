@@ -41,6 +41,7 @@ import srojak.cdo.swing.status.StatusBarTextItem;
 import srojak.core.NameToken;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
+import srojak.core.logic.OnceRunnable;
 import srojak.core.result.XResult;
 
 /**
@@ -56,6 +57,7 @@ public class CommonAppFrame
 	private final AppFrameExitControl _ctlExit;
     private final ResourceImage _resCommonIcon;
     private final NameTokenTagPanel _panelLower;
+    private final OnceRunnable _onceCompleteSetup;
     private final FlagsInt _flagsStart;
     
     public static final int START_MINSIZE_CURSIZE = 0x1;
@@ -83,6 +85,7 @@ public class CommonAppFrame
 		_ctlExit.attach(frameMain);
 		_panelLower = new NameTokenTagPanel(NameToken.factory(ClassToken, "LowerPanel"), new BorderLayout());
         _ctnContent.add(_panelLower, BorderLayout.SOUTH);
+        _onceCompleteSetup = new OnceRunnable(() -> completeSetup(), true);
         _flagsStart = new FlagsInt();
         
         _barMenu = new JMenuBar();
@@ -114,11 +117,11 @@ public class CommonAppFrame
     	}
     }
     
-    public StatusBarTextItem addStatusBarTextItem(int nWidth) {
+    protected StatusBarTextItem addStatusBarTextItem(int nWidth, String strInitialText) {
     	if (nWidth < 10) {
     		throw new IllegalArgumentException("allowable width is too small");
     	}
-    	StatusBarTextItem itemStatus = new StatusBarTextItem(nWidth, "Ready");
+    	StatusBarTextItem itemStatus = new StatusBarTextItem(nWidth, strInitialText);
         _barStatus.add(itemStatus);
         return itemStatus;
     }
@@ -154,6 +157,10 @@ public class CommonAppFrame
     
     protected void completeSetup() {
     	// base class method does nothing   	
+    }
+    
+    protected void doCompleteSetup() {
+    	_onceCompleteSetup.execute();
     }
     
     protected void buildMenus() {
@@ -221,7 +228,7 @@ public class CommonAppFrame
 	
 	public static <A extends CommonAppFrame> void start(A app) {
 		Objects.requireNonNull(app, "app");
-		app.completeSetup();
+		app.doCompleteSetup();
 		app.buildMenus();
 		javax.swing.SwingUtilities.invokeLater(app);
 	}

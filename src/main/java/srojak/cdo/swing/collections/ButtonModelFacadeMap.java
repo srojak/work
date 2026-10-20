@@ -40,6 +40,6 @@ public class ButtonModelFacadeMap
 
 	public ButtonModelFacadeMap() {
 		super();
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH);
+		_swDebugClass.traceEnter(TraceLevel.HIGH);
 	}
 }

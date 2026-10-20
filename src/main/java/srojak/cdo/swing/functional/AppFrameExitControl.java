@@ -16,6 +16,7 @@
  */
 package srojak.cdo.swing.functional;
 
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -71,6 +72,8 @@ public class AppFrameExitControl
 		@Override
 		public void windowClosing(WindowEvent e) {
 			if (tryClosing()) {
+				Window window = e.getWindow();
+				window.dispose();
 				System.exit(0);
 			}
 		}

@@ -32,6 +32,7 @@ import srojak.cdo.swing.FileChooserSelectionMode;
 import srojak.core.io.FileExistence;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.TraceLevel;
+import srojak.core.observe.code.CodeValueMethods;
 import srojak.debug.DebugNexus;
 import srojak.debug.DebugSwitch;
 import srojak.debug.DebugSwitchTool;
@@ -139,30 +140,33 @@ public class FileChooserConfirming
 	@Override
 	public int showOpenDialog(Component parent) 
 			throws HeadlessException {
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "OpenDialog");
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "OpenDialog");
 		_fexActive = _fexOpen;
 		int nReturn = super.showOpenDialog(parent);
-		_swDebugClass.writeTraceReturn(TraceLevel.HIGH, () -> "returning " + nReturn);
+		_swDebugClass.traceReturnValue(TraceLevel.HIGH, 
+				CodeValueMethods.capture(CodeValueMethods.NAME_RETURN, nReturn));
 		return nReturn;
 	}
 
 	@Override
 	public int showSaveDialog(Component parent) 
 			throws HeadlessException {
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "SaveDialog");
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "SaveDialog");
 		_fexActive = _fexSave;
 		int nReturn = super.showSaveDialog(parent);
-		_swDebugClass.writeTraceReturn(TraceLevel.HIGH, () -> "returning " + nReturn);
+		_swDebugClass.traceReturnValue(TraceLevel.HIGH, 
+				CodeValueMethods.capture(CodeValueMethods.NAME_RETURN, nReturn));
 		return nReturn;
 	}
 
 	@Override
 	public int showDialog(Component parent, String approveButtonText) 
 			throws HeadlessException {
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "CustomDialog");
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "CustomDialog");
 		_fexActive = _fexCustom;
 		int nReturn = super.showDialog(parent, approveButtonText);
-		_swDebugClass.writeTraceReturn(TraceLevel.HIGH, () -> "returning " + nReturn);
+		_swDebugClass.traceReturnValue(TraceLevel.HIGH, 
+				CodeValueMethods.capture(CodeValueMethods.NAME_RETURN, nReturn));
 		return nReturn;
 	}
 
@@ -240,7 +244,7 @@ public class FileChooserConfirming
 	@Override
 	public void approveSelection() {
 		File fileSelected = getSelectedFile();
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "path = \""
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "path = \""
 				+ fileSelected.getAbsolutePath() + "\"");
 		switch (_fexActive) {
 		case Any:
@@ -266,7 +270,7 @@ public class FileChooserConfirming
 		}
 		
 		if (_bInferExt && !fileSelected.isDirectory()) {
-			_swDebugClass.write(ObsLevel.DEBUG, "will attempt to infer extension");
+			_swDebugClass.record(ObsLevel.DEBUG, "will attempt to infer extension");
 			FileFilter filterCurrent = getFileFilter();
 			String strExtension = null;
 			if (filterCurrent instanceof FileNameExtensionFilter filterExt) {
@@ -276,14 +280,14 @@ public class FileChooserConfirming
 				}
 			}
 			if (strExtension != null) {
-				_swDebugClass.write(ObsLevel.DEBUG, "inferred extension is ." + strExtension);
+				_swDebugClass.record(ObsLevel.DEBUG, "inferred extension is ." + strExtension);
 				String strFileBaseName = fileSelected.getName().toLowerCase();
 				int index = strFileBaseName.lastIndexOf('.');
 				if (index < 0) {
 					String strFileName = fileSelected.getAbsolutePath();
 					File fileReplace = new File(strFileName + "." + strExtension);
 					setSelectedFile(fileReplace);
-					_swDebugClass.write(ObsLevel.DEBUG, () -> "changed file name to \""
+					_swDebugClass.record(ObsLevel.DEBUG, () -> "changed file name to \""
 						+ fileReplace.getName() + "\"");
 				}
 			}

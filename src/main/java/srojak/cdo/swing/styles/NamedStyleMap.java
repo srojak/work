@@ -14,31 +14,40 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.cdo.swing.collections;
+package srojak.cdo.swing.styles;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
 import javax.swing.text.AttributeSet;
 
 import srojak.cdo.swing.StyleName;
-import srojak.core.DuplicateKeyException;
+import srojak.core.events.MapChangeVerbEvent;
+import srojak.core.events.MapChangeVerbListener;
+import srojak.core.events.SingleEventListenerList;
+import srojak.core.events.SingleEventListenerStore;
+import srojak.core.excepts.DuplicateKeyException;
 
 /**
  * @author Stephen
  *
  */
 @SuppressWarnings("serial")
-public class NamedStyleMap
-		extends HashMap<StyleName, AttributeSet> {
+public class NamedStyleMap 
+		extends KeyedStyleMap<StyleName> 
+		implements NamedStyleMapReadOnly {
+	private final SingleEventListenerStore<MapChangeVerbListener> _listeners;
 
-	/**
-	 * 
-	 */
 	public NamedStyleMap() {
 		super();
+		_listeners = new SingleEventListenerList<MapChangeVerbListener>();
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		MapChangeVerbEvent event = new MapChangeVerbEvent(this, MapChangeVerbEvent.VERB_CLEAR);
+		_listeners.forEach(ls -> ls.mapChanged(event));
 	}
 
 	@Override
@@ -48,22 +57,30 @@ public class NamedStyleMap
 		if (containsKey(key)) {
 			throw new DuplicateKeyException();
 		}
-		return super.put(key, value);
+		AttributeSet stylePrior = super.put(key, value);
+		MapChangeVerbEvent event = new MapChangeVerbEvent(this, MapChangeVerbEvent.VERB_ADD, key, value);
+		_listeners.forEach(ls -> ls.mapChanged(event));
+		return stylePrior;
 	}
 
 	@Override
-	public void putAll(Map<? extends StyleName, ? extends AttributeSet> m) {
-		Objects.requireNonNull(m, "m");
-		for (Map.Entry<? extends StyleName, ? extends AttributeSet> entry : m.entrySet()) {
-			put(entry.getKey(), entry.getValue());
+	public AttributeSet remove(Object key) {
+		AttributeSet stylePrior = super.remove(key);
+		if (stylePrior != null) {
+			MapChangeVerbEvent event = new MapChangeVerbEvent(this, MapChangeVerbEvent.VERB_REMOVE, key, stylePrior);
+			_listeners.forEach(ls -> ls.mapChanged(event));
 		}
+		return stylePrior;
 	}
 
 	@Override
-	public AttributeSet putIfAbsent(StyleName key, AttributeSet value) {
-		Objects.requireNonNull(key, "key");
-		Objects.requireNonNull(value, "value");
-		return super.putIfAbsent(key, value);
+	public boolean remove(Object key, Object value) {
+		boolean bResult = super.remove(key, value);
+		if (bResult) {
+			MapChangeVerbEvent event = new MapChangeVerbEvent(this, MapChangeVerbEvent.VERB_REMOVE, key, value);
+			_listeners.forEach(ls -> ls.mapChanged(event));
+		}
+		return bResult;
 	}
 
 	@Override
@@ -86,5 +103,12 @@ public class NamedStyleMap
 	public void replaceAll(BiFunction<? super StyleName, ? super AttributeSet, ? extends AttributeSet> function) {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	public void addChangeListener(MapChangeVerbListener listener) {
+		_listeners.add(listener);
+	}
+	
+	public void removeChangeListener(MapChangeVerbListener listener) {
+		_listeners.remove(listener);
+	}
 }

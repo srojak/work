@@ -71,11 +71,18 @@ public class AppFrameContainer {
 	}
     
     public int showOpenFileDialog(JFileChooser chooser) {
+    	Objects.requireNonNull(chooser, "chooser");
     	return chooser.showOpenDialog(_frame);
     }
     
     public int showSaveFileDialog(JFileChooser chooser) {
+    	Objects.requireNonNull(chooser, "chooser");
     	return chooser.showSaveDialog(_frame);
+    }
+    
+    public int showCustomFileDialog(JFileChooser chooser, String strButtonLabel) {
+    	Objects.requireNonNull(chooser, "chooser");
+    	return chooser.showDialog(_frame, strButtonLabel);
     }
     
    	public <T extends Window> T createWithParentFrame(Function<JFrame, T> function) {

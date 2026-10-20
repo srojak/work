@@ -57,7 +57,7 @@ public class DxButtonModelFacade
 	
 	public DxButtonModelFacade(NameToken name, ButtonModel modelBase) {
 		super(name, modelBase);
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> getNameIdentfier());
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> getNameIdentfier());
 		_listeners = new CommonEventListenerList();
 		_decorators = new HashMap<NameToken, Decorator>();
 		_model.addActionListener(e -> {
@@ -131,7 +131,7 @@ public class DxButtonModelFacade
 
 	@Override
 	public void setEnabled(boolean b) {
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> getNameIdentfier()
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> getNameIdentfier()
 				+ " currently " + super.isEnabled() + ", set to " + b);
 		super.setEnabled(b);
 	}

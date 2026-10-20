@@ -21,11 +21,9 @@
 module srojak.cdo {
 	requires transitive java.desktop;
 	requires transitive srojak.core;
-	requires transitive srojak.mantle;
 	requires transitive srojak.numerics;
-	requires transitive srojak.events;
-	requires srojak.debug;
 	exports srojak.cdo;
 	exports srojak.cdo.containers;
 	exports srojak.cdo.events;
+	exports srojak.cdo.props;
 }

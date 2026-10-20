@@ -54,7 +54,7 @@ public class ComponentStateLinkage
 
 	public ComponentStateLinkage(JComponent parent) {
 		Objects.requireNonNull(parent, "parent");
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "parent " + parent.getName());
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "parent " + parent.getName());
 		_parent = parent;
 		_listChildren = new LinkedList<JComponent>();
 		_parent.addContainerListener(new LinkageContainerListener());
@@ -67,14 +67,14 @@ public class ComponentStateLinkage
 		@Override
 		public void componentAdded(ContainerEvent e) {
 			JComponent child = (JComponent) e.getChild();
-			_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "adding child " + child.getName() + " to parent " + _parent.getName());
+			_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> "adding child " + child.getName() + " to parent " + _parent.getName());
 			_listChildren.add(child);
 		}
 
 		@Override
 		public void componentRemoved(ContainerEvent e) {
 			JComponent child = (JComponent) e.getChild();
-			_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "removing child " + child.getName() + " from parent " + _parent.getName());
+			_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> "removing child " + child.getName() + " from parent " + _parent.getName());
 			_listChildren.remove(child);
 		}
 		

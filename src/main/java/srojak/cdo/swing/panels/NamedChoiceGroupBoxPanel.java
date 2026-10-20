@@ -200,7 +200,7 @@ public class NamedChoiceGroupBoxPanel
 		NameIdentifiedButtonModel nib 
 			= ListMethods.findInList(_listButtons, i -> i.isNameEqual(strName));
 		if (nib == null) {
-			_swDebugClass.write(ObsLevel.ERROR, 
+			_swDebugClass.record(ObsLevel.ERROR, 
 					() -> "no button model for name=" + StringMethods.encloseInQuotes(strName));
 		}
 		return nib;
@@ -213,7 +213,7 @@ public class NamedChoiceGroupBoxPanel
 		public void actionPerformed(ActionEvent e) {
 			ButtonModel modelButton = (ButtonModel) e.getSource();
 			String strName = modelButton.getActionCommand();
-			_swDebugClass.write(ObsLevel.DEBUG, 
+			_swDebugClass.record(ObsLevel.DEBUG, 
 					() -> "panel " + getNameTag() + " button " + strName + " clicked");
 			NamedChoiceModel model = _model.getModel();
 			model.setSelectionByName(strName);
@@ -258,7 +258,7 @@ public class NamedChoiceGroupBoxPanel
 			NamedChoiceModel model = _model.getModel();
 			switch (event.getVerb()) {
 			case CollectionChangeEvent.VERB_CLEAR:
-				_swDebugClass.write(ObsLevel.WARN, () -> "no provision for removing items");
+				_swDebugClass.record(ObsLevel.WARN, () -> "no provision for removing items");
 				break;
 				
 			case CollectionChangeEvent.VERB_ADD_MULT:
@@ -297,7 +297,7 @@ public class NamedChoiceGroupBoxPanel
 
 		@Override
 		public void update(ObjectValueChangeEvent event) {
-			_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> event.toDataString());
+			_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> event.toDataString());
 			
 		}
 
@@ -305,7 +305,7 @@ public class NamedChoiceGroupBoxPanel
 		public void stateChanged(NameAndStateChangeEvent event) {
 			NameIdentifiedButtonModel nib 
 				= findButtonModelByName(event.getName());
-			_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, 
+			_swDebugClass.traceEnter(TraceLevel.MEDIUM, 
 					() -> event.toDataString());
 			if (nib == null) {
 				return;
@@ -315,7 +315,7 @@ public class NamedChoiceGroupBoxPanel
 			} else {
 				nib.setEnabled(false);
 				ButtonModel modelButton = nib.getModel();
-				_swDebugClass.write(ObsLevel.DEBUG2, 
+				_swDebugClass.record(ObsLevel.DEBUG2, 
 						() -> "button selected state is " + modelButton.isSelected());
 				if (modelButton.isSelected()) {
 					modelButton.setSelected(false);

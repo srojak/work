@@ -19,7 +19,7 @@ package srojak.cdo.swing.functional;
 import java.awt.Dimension;
 
 import srojak.cdo.ScaleControl;
-import srojak.cdo.swing.GuiDoubleStore;
+import srojak.cdo.swing.ScaleValues;
 
 /**
  * @author Stephen
@@ -34,9 +34,9 @@ public class CatalogScaleControl
 	public CatalogScaleControl(double dOriginalScale, Dimension dmSurface) {
 		super(dOriginalScale, dmSurface);
 		
-		GuiDoubleStore storeDbls = new GuiDoubleStore();
-		double dScaleLimitHigh = storeDbls.getValue(GuiDoubleStore.SCALE_HIGH_LIMIT);
-		double dScaleLimitLow = storeDbls.getValue(GuiDoubleStore.SCALE_LOW_LIMIT);
+		ScaleValues storeDbls = new ScaleValues();
+		double dScaleLimitHigh = storeDbls.getValue(ScaleValues.SCALE_HIGH_LIMIT);
+		double dScaleLimitLow = storeDbls.getValue(ScaleValues.SCALE_LOW_LIMIT);
 		setLimits(dScaleLimitLow, dScaleLimitHigh, false);
 	}
 }

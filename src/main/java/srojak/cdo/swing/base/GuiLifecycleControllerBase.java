@@ -113,7 +113,7 @@ public abstract class GuiLifecycleControllerBase
 			throw new IllegalStateException("already attached to a window");
 		}
 		String strWindowClass = window.getClass().getSimpleName();
-		_swDebugClass.write(ObsLevel.DEBUG, () -> "attaching to " + strWindowClass);
+		_swDebugClass.record(ObsLevel.DEBUG, () -> "attaching to " + strWindowClass);
 		window.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -136,7 +136,7 @@ public abstract class GuiLifecycleControllerBase
 	@Override
 	public void close() {
 		String strClassName = getClass().getSimpleName();
-		_swDebugClass.write(ObsLevel.INFO, () -> "closing instance of " + strClassName);
+		_swDebugClass.record(ObsLevel.INFO, () -> "closing instance of " + strClassName);
 		List<LifeCycleListener> list = _listeners.getListeners(LifeCycleListener.class);
 		_listeners.clear();
 		closeSelf();

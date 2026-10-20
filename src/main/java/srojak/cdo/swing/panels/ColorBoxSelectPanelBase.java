@@ -33,10 +33,10 @@ import javax.swing.event.ChangeListener;
 
 import srojak.cdo.swing.components.ResponsiveRect;
 import srojak.cdo.swing.models.ColorBoxSelectModelBase;
-import srojak.core.InvalidOperationException;
 import srojak.core.NameToken;
 import srojak.core.events.CommonEventListenerList;
 import srojak.core.events.CommonEventListenerStore;
+import srojak.core.excepts.InvalidOperationException;
 import srojak.core.tools.ListMethods;
 import srojak.events.CollectionChangeEvent;
 import srojak.events.CollectionChangeListener;

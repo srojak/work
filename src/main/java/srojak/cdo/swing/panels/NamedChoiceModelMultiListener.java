@@ -66,10 +66,10 @@ public class NamedChoiceModelMultiListener
 	public void stateChanged(NameAndStateChangeEvent event) {
 		NameIdentifiedButtonModel nib 
 			= _common.findButtonModelByName(event.getName());
-		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, 
+		_swDebugClass.traceEnter(TraceLevel.MEDIUM, 
 				() -> event.toDataString());
 		if (nib == null) {
-			_swDebugClass.write(ObsLevel.WARN, () -> "button name " + event.getName() + " not found");
+			_swDebugClass.record(ObsLevel.WARN, () -> "button name " + event.getName() + " not found");
 			return;
 		}
 		_common.changeNamedButonState(nib, event.getState());
@@ -77,7 +77,7 @@ public class NamedChoiceModelMultiListener
 
 	@Override
 	public void update(ObjectValueChangeEvent event) {
-		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> event.toDataString());
+		_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> event.toDataString());
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class NamedChoiceModelMultiListener
 		NamedChoiceModel model = _common.getModel();
 		switch (event.getVerb()) {
 		case CollectionChangeEvent.VERB_CLEAR:
-			_swDebugClass.write(ObsLevel.WARN, () -> "no provision for removing items");
+			_swDebugClass.record(ObsLevel.WARN, () -> "no provision for removing items");
 			break;
 			
 		case CollectionChangeEvent.VERB_ADD_MULT:

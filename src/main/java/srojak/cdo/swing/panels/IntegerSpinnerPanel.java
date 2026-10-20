@@ -24,11 +24,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import srojak.core.NameToken;
-import srojak.core.events.SingleEventListenerList;
-import srojak.core.events.SingleEventListenerStore;
 import srojak.events.IntValueChangeEvent;
-import srojak.events.IntValueChangeListener;
 import srojak.events.IntValueChangeEventOriginator;
+import srojak.events.IntValueChangeListener;
 
 /**
  * @author Stephen

@@ -17,13 +17,76 @@
 package srojak.cdo;
 
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+
+import srojak.core.Labeled;
+import srojak.core.text.LabeledEnvelope;
+import srojak.core.tools.ListMethods;
 
 /**
  * @author Stephen
  *
  */
-public class ColorMethods {
+public class ColorMethods 
+	implements ExtColors {
+	
+	private static final LinkedList<Labeled<Color>> _listCommonColors;
+	
+	static {
+		_listCommonColors = new LinkedList<Labeled<Color>>(List.of(
+				new LabeledEnvelope<Color>(Color.WHITE, "WHITE"),
+				new LabeledEnvelope<Color>(Color.LIGHT_GRAY, "LIGHT_GRAY"),
+				new LabeledEnvelope<Color>(Color.GRAY , "GRAY"),
+				new LabeledEnvelope<Color>(Color.DARK_GRAY, "DARK_GRAY"),
+				new LabeledEnvelope<Color>(Color.BLACK, "BLACK"),
+				new LabeledEnvelope<Color>(Color.RED, "RED"),
+				new LabeledEnvelope<Color>(Color.PINK, "PINK"),
+				new LabeledEnvelope<Color>(Color.ORANGE, "ORANGE"),
+				new LabeledEnvelope<Color>(Color.YELLOW, "YELLOW"),
+				new LabeledEnvelope<Color>(Color.GREEN, "GREEN"),
+				new LabeledEnvelope<Color>(Color.MAGENTA, "MAGENTA"),
+				new LabeledEnvelope<Color>(Color.CYAN, "CYAN"),
+				new LabeledEnvelope<Color>(Color.BLUE, "BLUE"),
+				VIVID_GREEN,
+				DARK_GREEN,
+				EMERALD,
+				SAGE,
+				FOREST_GREEN,
+				TURQUOISE,
+				DARK_CYAN,
+				CARAMEL,
+				BROWN));
+	}
+	
+	public static List<Labeled<Color>> getAllKnownColors() {
+		return List.copyOf(_listCommonColors);
+	}
+	
+	public static void addKnownColor(Color color, String strLabel) {
+		Objects.requireNonNull(color);
+		Objects.requireNonNull(strLabel);
+		if (strLabel.isBlank()) {
+			throw new IllegalArgumentException("strLabel is blank");
+		}
+		_listCommonColors.add(new LabeledEnvelope<Color>(color, strLabel));
+	}
+	
+	public static String formatColor(Color color) {
+		Objects.requireNonNull(color);
+		return "r=" + color.getRed() + ",g=" + color.getGreen() + ",b=" + color.getBlue();
+	}
+	
+	public static String formatColorMatchKnown(Color color) {
+		Objects.requireNonNull(color);
+		Labeled<Color> colorKnown = ListMethods.findInList(_listCommonColors, e -> e.getWrapped().equals(color));
+		if (colorKnown == null) {
+			return formatColor(color);
+		} else {
+			return colorKnown.toString();
+		}
+	}
 
 	public static Color changeAlpha(Color color, int alpha) {
 		Objects.requireNonNull(color, "color");

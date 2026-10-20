@@ -47,7 +47,7 @@ public class AppFrameTestAccessor {
 		Objects.requireNonNull(ctnrFrame, "ctnrFrame");
 		SourceLocation caller = SourceLocation.caller();
 		PackageClassLocator locSelf = _swDebugClass.getClassLocator();
-		_swDebugClass.write(ObsLevel.NOTICE, locSelf.getFullName() + " called from " + caller);
+		_swDebugClass.record(ObsLevel.NOTICE, locSelf.getFullName() + " called from " + caller);
 		_frame = ctnrFrame.getFrame();
 	}
 	

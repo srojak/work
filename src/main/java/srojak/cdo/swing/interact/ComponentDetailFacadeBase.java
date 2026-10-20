@@ -26,7 +26,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import srojak.cdo.swing.event.ChangeEventOriginator;
-import srojak.core.InvalidOperationException;
+import srojak.core.excepts.InvalidOperationException;
 
 /**
  * @author Stephen

@@ -25,13 +25,9 @@ import javax.imageio.ImageIO;
 
 import srojak.core.field.SetOnce;
 import srojak.core.field.SetOnceConditions;
-import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
 import srojak.core.result.XResultStatusCarrier;
-import srojak.debug.DebugNexus;
-import srojak.debug.DebugSwitch;
-import srojak.debug.DebugSwitchTool;
 
 /**
  * @author Stephen
@@ -42,11 +38,7 @@ public class ResourceImage {
 	private final String _strName;
 	private final SetOnce<Image> _image;
 	
-	private static final DebugSwitch _swDebugClass;
-	
 	static {
-		DebugNexus debug = new DebugNexus();
-		_swDebugClass = debug.getSwitch(DebugSwitchTool.makeClassKey(ResourceImage.class));
 	}
 	
 	/**
@@ -70,7 +62,6 @@ public class ResourceImage {
 		if (urlImage == null) {
 			String strMessage = "cannot locate resource \"" + _strName + "\" using "
 					+ _classOwner.getName();
-			_swDebugClass.write(ObsLevel.ERROR, strMessage);
 			result.caughtException(new IOException(strMessage));
 		} else {
 			try {
@@ -85,7 +76,7 @@ public class ResourceImage {
 	}
 	
 	public boolean isValid() {
-		return _image.hasBeenSet();
+		return !_image.isEmpty();
 	}
 	
 	public String getOriginName() {

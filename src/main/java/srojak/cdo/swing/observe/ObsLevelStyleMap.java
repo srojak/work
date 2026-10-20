@@ -26,19 +26,18 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import srojak.cdo.ExtColors;
 import srojak.cdo.swing.StyleBuilder;
-import srojak.core.CommonCollectionSize;
 import srojak.core.observe.ObsLevel;
 
 /**
  * @author Stephen
  *
  */
-public class ObsLevelStyleMap
-		implements CommonCollectionSize {
-	private final HashMap<ObsLevel, StyleBuilder> _map;
+public class ObsLevelStyleMap {
 	
 	private static final HashMap<ObsLevel, StyleBuilder> _mapBase;
+	private static StyleBuilder _styleDiag;
 	
 	static {
 		_mapBase = new HashMap<ObsLevel, StyleBuilder>();
@@ -48,8 +47,8 @@ public class ObsLevelStyleMap
 		_mapBase.put(ObsLevel.NOTICE, a -> { makeColorPlain(a, Color.RED); } );
 		_mapBase.put(ObsLevel.ERROR, a -> { makeColorPlain(a, Color.RED); } );
 		_mapBase.put(ObsLevel.WARN, a -> { makeColorPlain(a, Color.ORANGE); } );
-		_mapBase.put(ObsLevel.INFO, a -> { makeColorPlain(a, Color.GREEN); } );
-		_mapBase.put(ObsLevel.DETAIL, a -> { makeColorPlain(a, Color.CYAN); } );
+		_mapBase.put(ObsLevel.INFO, a -> { makeColorPlain(a, ExtColors.EMERALD.getWrapped()); } );
+		_mapBase.put(ObsLevel.DETAIL, a -> { makeColorPlain(a, ExtColors.DARK_CYAN.getWrapped()); } );
 		_mapBase.put(ObsLevel.TRACE, a -> { makeColorBold(a, Color.BLUE); } );
 		_mapBase.put(ObsLevel.DEBUG, a -> { makeColorPlain(a, Color.BLUE); } );
 		_mapBase.put(ObsLevel.TRACE2, a -> { makeColorBold(a, Color.BLUE); } );
@@ -59,6 +58,8 @@ public class ObsLevelStyleMap
 		_mapBase.put(ObsLevel.FINE, a -> { makeColorPlain(a, Color.DARK_GRAY); } );
 		_mapBase.put(ObsLevel.FINER, a -> { makeColorPlain(a, Color.DARK_GRAY); } );
 		_mapBase.put(ObsLevel.FINEST, a -> { makeColorPlain(a, Color.DARK_GRAY); } );
+		
+		_styleDiag = a -> { makeColorBold(a, Color.BLACK); };
 	}
 		
 	private static void makeColorBold(MutableAttributeSet attrs, Color color) {
@@ -71,26 +72,16 @@ public class ObsLevelStyleMap
 		StyleConstants.setBold(attrs, false);
 	}
 	
-	public ObsLevelStyleMap() {
-		_map = new HashMap<ObsLevel, StyleBuilder>(_mapBase);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return _map.isEmpty();
-	}
-
-	@Override
-	public int size() {
-		return _map.size();
+	public static int size() {
+		return _mapBase.size();
 	}
 	
-	public boolean containsKey(ObsLevel level) {
-		return _map.containsKey(level);
+	public static boolean containsKey(ObsLevel level) {
+		return _mapBase.containsKey(level);
 	}
 	
-	public AttributeSet getStyle(ObsLevel level) {
-		StyleBuilder builder = _map.get(level);
+	public static AttributeSet getStyle(ObsLevel level) {
+		StyleBuilder builder = _mapBase.get(level);
 		if (builder == null) {
 			throw new NoSuchElementException("level not found");
 		}
@@ -99,9 +90,15 @@ public class ObsLevelStyleMap
 		return style;
 	}
 	
-	public void define(ObsLevel level, StyleBuilder builder) {
+	public static AttributeSet getDiagnosticStyle() {
+		SimpleAttributeSet style = new SimpleAttributeSet();
+		_styleDiag.accept(style);
+		return style;
+	}
+	
+	public static void define(ObsLevel level, StyleBuilder builder) {
 		Objects.requireNonNull(level, "level");
 		Objects.requireNonNull(builder, "builder");
-		_map.put(level, builder);
+		_mapBase.put(level, builder);
 	}
 }

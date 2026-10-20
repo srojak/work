@@ -59,7 +59,7 @@ public abstract class DataPanelControllerBase
 	 */
 	public DataPanelControllerBase(NameToken tokenKey) {
 		super(tokenKey);
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "key = " + tokenKey.getName());
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "key = " + tokenKey.getName());
 		_listeners = new CommonEventListenerList();
 	}
 
@@ -97,7 +97,7 @@ public abstract class DataPanelControllerBase
 	@Override
 	public void close() {
 		String strClassName = getClass().getSimpleName();
-		_swDebugClass.write(ObsLevel.INFO, () -> "closing instance of " + strClassName);
+		_swDebugClass.record(ObsLevel.INFO, () -> "closing instance of " + strClassName);
 		List<LifeCycleListener> list = _listeners.getListeners(LifeCycleListener.class);
 		_listeners.clear();
 		closeSelf();

@@ -22,21 +22,16 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.Objects;
 
-import srojak.debug.DebugSwitch;
-
 /**
  * @author Stephen
  *
  */
 public abstract class ScalingDrawingToolBase {
 	protected final Scaler _scaler;
-	protected final DebugSwitch _swDebug;
 	
-	protected ScalingDrawingToolBase(DebugSwitch swDebug, Scaler scaler) {
-		Objects.requireNonNull(swDebug, "swDebug");
+	protected ScalingDrawingToolBase(Scaler scaler) {
 		Objects.requireNonNull(scaler, "scaler");
 		_scaler = scaler;
-		_swDebug = swDebug;
 	}
 	
 	public void drawSquareBorder(Graphics2D g, Rectangle rectSquare, Stroke strokeBorder, Color color) {

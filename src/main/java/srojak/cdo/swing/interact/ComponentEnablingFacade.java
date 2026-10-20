@@ -23,9 +23,9 @@ import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 
 import srojak.cdo.swing.VisualPropertyNames;
+import srojak.concurrent.StopBarrier;
+import srojak.concurrent.StopGate;
 import srojak.core.NameToken;
-import srojak.core.concurrent.StopBarrier;
-import srojak.core.concurrent.StopGate;
 import srojak.core.events.StateChangeCodes;
 import srojak.core.events.StateChangeEvent;
 import srojak.core.events.StateChangeListener;

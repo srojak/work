@@ -137,7 +137,7 @@ public class ScrollingStyledMessagePanel
 			_docText.insertString(nLength, "\n", _styleBase);
 			
 		} catch (BadLocationException e) {
-			_swDebugClass.writeException(ObsLevel.WARN, new SingleActivity("writing to document"), e, false);
+			_swDebugClass.recordException(ObsLevel.WARN, new SingleActivity("writing to document"), e, false);
 		}
 	}
 
@@ -175,9 +175,9 @@ public class ScrollingStyledMessagePanel
 		try {
 			kitEdit.write(writer, _docText, nStart, nEnd - nStart);
 		} catch (IOException e) {
-			_swDebugClass.writeException(ObsLevel.WARN, activity, e, false);
+			_swDebugClass.recordException(ObsLevel.WARN, activity, e, false);
 		} catch (BadLocationException e) {
-			_swDebugClass.writeException(ObsLevel.WARN, activity, e, false);
+			_swDebugClass.recordException(ObsLevel.WARN, activity, e, false);
 		}
 		return writer.toString();		
 	}

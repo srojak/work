@@ -32,13 +32,16 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import srojak.cdo.AWTCommon;
+import srojak.cdo.ExtColors;
 import srojak.cdo.swing.StyleName;
 import srojak.cdo.swing.StyledTextMessageRelay;
-import srojak.cdo.swing.collections.NamedStyleMap;
 import srojak.cdo.swing.event.ActionListenerTextAreaCopy;
 import srojak.cdo.swing.event.ActionListenerTextAreaHTMLCopy;
 import srojak.cdo.swing.event.ActionListenerTextAreaSelectAll;
 import srojak.cdo.swing.panels.ScrollingStyledMessagePanel;
+import srojak.cdo.swing.styles.MonospaceTextStyleNames;
+import srojak.cdo.swing.styles.NamedStyleMap;
+import srojak.cdo.swing.styles.NamedStyleMapReadOnly;
 import srojak.mantle.quants.TextBlockSize;
 
 /**
@@ -47,14 +50,10 @@ import srojak.mantle.quants.TextBlockSize;
  */
 public class CommonStyledMessageAppFrame 
 		extends CommonAppFrame 
-		implements Runnable {
-	protected final NamedStyleMap _mapStyles;
+		implements Runnable, MonospaceTextStyleNames {
+	private final NamedStyleMap _mapStyles;
 	private final ScrollingStyledMessagePanel _panelText;
 	
-	protected static final StyleName STYLE_MONO_BLACK_12 = StyleName.makeKey("MonoBlack12");
-	protected static final StyleName STYLE_MONO_BLUE_12 = StyleName.makeKey("MonoBlue12");
-	protected static final StyleName STYLE_MONO_RED_12 = StyleName.makeKey("MonoRed12");
-
 	/**
 	 * @param strAppName
 	 */
@@ -62,6 +61,7 @@ public class CommonStyledMessageAppFrame
 		super(strAppName);
 		Objects.requireNonNull(sizeMessagePanel, "sizeMessagePanel");
 		
+		// TODO: fix encapsulation problem caused here
 		_mapStyles = new NamedStyleMap();
 		_panelText = new ScrollingStyledMessagePanel(ScrollingStyledMessagePanel.PANEL_NAME);
 		_panelText.setFont(new Font(AWTCommon.FONT_FAMILY_MONOSPACED, Font.PLAIN, 12));
@@ -73,32 +73,46 @@ public class CommonStyledMessageAppFrame
         addToLowerPanel(_panelText, BorderLayout.CENTER);
 	}
 	
-	protected void createStyles() {
+	protected void createStyles(NamedStyleMap mapStyles) {
         MutableAttributeSet style = new SimpleAttributeSet();
         StyleConstants.setBackground(style, Color.WHITE);
         StyleConstants.setForeground(style, Color.BLACK);
         StyleConstants.setFontFamily(style, AWTCommon.FONT_FAMILY_MONOSPACED);
         StyleConstants.setFontSize(style, 12);
-        _mapStyles.put(STYLE_MONO_BLACK_12, style);
+        mapStyles.put(STYLE_MONO_BLACK_12, style);
         
         style = new SimpleAttributeSet();
         StyleConstants.setBackground(style, Color.WHITE);
         StyleConstants.setForeground(style, Color.BLUE);
         StyleConstants.setFontFamily(style, AWTCommon.FONT_FAMILY_MONOSPACED);
         StyleConstants.setFontSize(style, 12);
-        _mapStyles.put(STYLE_MONO_BLUE_12, style);
+        mapStyles.put(STYLE_MONO_BLUE_12, style);
         
         style = new SimpleAttributeSet();
         StyleConstants.setBackground(style, Color.WHITE);
         StyleConstants.setForeground(style, Color.RED);
         StyleConstants.setFontFamily(style, AWTCommon.FONT_FAMILY_MONOSPACED);
         StyleConstants.setFontSize(style, 12);
-        _mapStyles.put(STYLE_MONO_RED_12, style);
+        mapStyles.put(STYLE_MONO_RED_12, style);
+        
+        style = new SimpleAttributeSet();
+        StyleConstants.setBackground(style, Color.WHITE);
+        StyleConstants.setForeground(style, Color.MAGENTA);
+        StyleConstants.setFontFamily(style, AWTCommon.FONT_FAMILY_MONOSPACED);
+        StyleConstants.setFontSize(style, 12);
+        mapStyles.put(STYLE_MONO_MAGENTA_12, style);
+       
+        style = new SimpleAttributeSet();
+        StyleConstants.setBackground(style, Color.WHITE);
+        StyleConstants.setForeground(style, ExtColors.DARK_GREEN.getWrapped());
+        StyleConstants.setFontFamily(style, AWTCommon.FONT_FAMILY_MONOSPACED);
+        StyleConstants.setFontSize(style, 12);
+        mapStyles.put(STYLE_MONO_DARK_GREEN_12, style);
 	}
 
 	@Override
 	protected void completeSetup() {
-		createStyles();
+		createStyles(_mapStyles);
 		super.completeSetup();
 	}
 
@@ -132,6 +146,14 @@ public class CommonStyledMessageAppFrame
 
 		});
 	}
+	
+	public NamedStyleMapReadOnly getStyleMap() {
+		return _mapStyles;
+	}
+	
+	protected AttributeSet getStyle(StyleName name) {
+		return _mapStyles.get(name);
+	}
 
 	protected ScrollingStyledMessagePanel getMessagePanel() {
 		return _panelText;
@@ -141,7 +163,7 @@ public class CommonStyledMessageAppFrame
 		return _panelText;
 	}
 	
-	protected void relayText(AttributeSet style, String strText) {
+	public void relayText(AttributeSet style, String strText) {
     	Objects.requireNonNull(style, "style");
     	Objects.requireNonNull(strText, "strText");
 		_panelText.writeln(style, strText);

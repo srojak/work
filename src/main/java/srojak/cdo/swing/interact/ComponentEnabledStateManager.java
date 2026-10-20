@@ -27,9 +27,9 @@ import java.util.Objects;
 import javax.swing.JComponent;
 
 import srojak.cdo.swing.VisualPropertyNames;
+import srojak.concurrent.StopBarrier;
+import srojak.concurrent.StopGate;
 import srojak.core.NameToken;
-import srojak.core.concurrent.StopBarrier;
-import srojak.core.concurrent.StopGate;
 import srojak.core.observe.TraceLevel;
 import srojak.core.tools.ListMethods;
 import srojak.debug.DebugNexus;
@@ -62,7 +62,7 @@ public class ComponentEnabledStateManager
 	public ComponentEnabledStateManager(JComponent parent) {
 		Objects.requireNonNull(parent, "parent");
 		final Class<?> classParent = parent.getClass();
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> "parent(class=" + classParent.getName() + ")");
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> "parent(class=" + classParent.getName() + ")");
 		_parent = parent;
 		_listChildren = new LinkedList<ComponentEnablingFacade>();
 		_gateStopHierChange = new StopGate(ClassToken);

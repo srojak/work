@@ -123,7 +123,7 @@ public class NamedChoiceGroupCommonStore {
 		NameIdentifiedButtonModel nib 
 			= ListMethods.findInList(_listButtons, i -> i.isNameEqual(strName));
 		if (nib == null) {
-			_swDebugClass.write(ObsLevel.ERROR, 
+			_swDebugClass.record(ObsLevel.ERROR, 
 					() -> "no button model for name=" + StringMethods.encloseInQuotes(strName));
 		}
 		return nib;
@@ -174,7 +174,7 @@ public class NamedChoiceGroupCommonStore {
 		} else {
 			niButton.setEnabled(false);
 			ButtonModel modelButton = niButton.getModel();
-			_swDebugClass.write(ObsLevel.DEBUG2, 
+			_swDebugClass.record(ObsLevel.DEBUG2, 
 					() -> "button selected state is " + modelButton.isSelected());
 			if (modelButton.isSelected()) {
 				modelButton.setSelected(false);
@@ -202,7 +202,7 @@ public class NamedChoiceGroupCommonStore {
 			ButtonModel modelButton = (ButtonModel) e.getSource();
 			String strName = modelButton.getActionCommand();
 			NameToken tokenPanel = _connectorPanel.getPanelNameTag();
-			_swDebugClass.write(ObsLevel.DEBUG, 
+			_swDebugClass.record(ObsLevel.DEBUG, 
 					() -> "panel " + tokenPanel + " button " + strName + " clicked");
 			NamedChoiceModel model = _model.getModel();
 			model.setSelectionByName(strName);

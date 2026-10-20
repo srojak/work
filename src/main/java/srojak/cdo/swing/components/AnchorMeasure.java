@@ -103,25 +103,25 @@ public class AnchorMeasure
 	@Override
 	public void addNotify() {
 		super.addNotify();
-		_swDebugClass.writeTraceEnter(TraceLevel.HIGH, () -> " name = " + _token.getName());
+		_swDebugClass.traceEnter(TraceLevel.HIGH, () -> " name = " + _token.getName());
 		Container parent = getParent();
 		while (parent != null) {
 			if (parent instanceof JPanel panel) {
 				_panel.set(panel);
 				_szBox.setSize(panel.getSize());
-				_swDebugClass.write(ObsLevel.DEBUG, "size is now " + AWTFormatters.formatDimension(_szBox));
+				_swDebugClass.record(ObsLevel.DEBUG, "size is now " + AWTFormatters.formatDimension(_szBox));
 				panel.addComponentListener(new MeasureComponentListener());
 				break;
 			}
 		}
 		if (parent == null) {
-			_swDebugClass.write(ObsLevel.WARN, "did not find a parent panel");
+			_swDebugClass.record(ObsLevel.WARN, "did not find a parent panel");
 		}
 	}
 
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
-		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "x=" + x + ",y=" + y
+		_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> "x=" + x + ",y=" + y
 				+ ", width=" + width + ", height=" + height);
 		super.setBounds(x, y, width, height);
 		_szBox.setSize(width, height);
@@ -130,7 +130,7 @@ public class AnchorMeasure
 
 	@Override
 	public void setBounds(Rectangle r) {
-		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "r=" + AWTFormatters.formatRectangle(r));
+		_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> "r=" + AWTFormatters.formatRectangle(r));
 		super.setBounds(r);
 		_szBox.setSize(r.getSize());
 		sendResync();
@@ -141,7 +141,7 @@ public class AnchorMeasure
 	}
 	
 	private void sendResync() {
-		_swDebugClass.write(ObsLevel.DEBUG, 
+		_swDebugClass.record(ObsLevel.DEBUG, 
 			() -> "resync: size is now " + AWTFormatters.formatDimension(_szBox));
 		ResyncEvent event = new ResyncEvent(this);
 		_listeners.forEach(ls -> ls.receive(event));

@@ -16,14 +16,8 @@
  */
 package srojak.cdo.swing.lists;
 
-import java.awt.Color;
 import java.util.Objects;
 
-import javax.swing.JLabel;
-import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
-
-import srojak.cdo.swing.CellRendererSettings;
 import srojak.core.TextRepresentation;
 
 /**

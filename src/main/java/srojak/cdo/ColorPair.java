@@ -58,7 +58,7 @@ public class ColorPair {
 
 	@Override
 	public String toString() {
-		return "background=color[" + AWTFormatters.formatColor(_colorBack)
-			+ "], foreground=color[" + AWTFormatters.formatColor(_colorFore) + "]";
+		return "background=color[" + ColorMethods.formatColor(_colorBack)
+			+ "], foreground=color[" + ColorMethods.formatColor(_colorFore) + "]";
 	}
 }
