@@ -19,7 +19,9 @@ package srojak.kernel.modules.services;
 import srojak.core.modules.ModuleLocator;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.result.XResultClass;
-import srojak.core.result.XResultInt;
+import srojak.core.result.XResultOf;
+import srojak.core.specialized.StatusAccumulator;
+import srojak.kernel.modules.ModuleLayerKey;
 import srojak.kernel.services.KernelService;
 
 /**
@@ -31,5 +33,6 @@ public interface KernelModuleLoaderService
 
 	XResultClass moduleLoadClass(ModuleLocator locModule, PackageClassLocator locator);
 	XResultClass forwardLoadClass(ModuleLocator locModule, PackageClassLocator locator);
-	XResultInt loadModuleEagerly(ModuleLocator locModule);
+	XResultOf<ModuleLayerKey> loadModuleEagerly(ModuleLayerKey keyOverLayer, ModuleLocator locModule,
+			StatusAccumulator status);
 }

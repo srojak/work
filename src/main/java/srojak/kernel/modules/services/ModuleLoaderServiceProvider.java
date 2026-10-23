@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,14 +42,18 @@ import srojak.core.modules.ModuleName;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.reflect.PackageClassLocator;
+import srojak.core.result.XResult;
+import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultClass;
 import srojak.core.result.XResultClassCarrier;
 import srojak.core.result.XResultInt;
 import srojak.core.result.XResultIntCarrier;
-import srojak.core.specialized.IntegerCounter;
+import srojak.core.result.XResultOf;
+import srojak.core.specialized.StatusAccumulator;
 import srojak.kernel.Kernel;
 import srojak.kernel.KernelCentralStore;
 import srojak.kernel.KernelServiceException;
+import srojak.kernel.modules.ModuleLayerKey;
 import srojak.kernel.modules.ModuleServiceNames;
 import srojak.kernel.modules.NamedModuleList;
 import srojak.kernel.services.AppKernelService;
@@ -154,52 +159,33 @@ public class ModuleLoaderServiceProvider
 	}
 
 	@Override
-	public XResultInt loadModuleEagerly(ModuleLocator locModule) {
+	public XResultOf<ModuleLayerKey> loadModuleEagerly(ModuleLayerKey keyOverLayer, ModuleLocator locModule,
+			StatusAccumulator status) {
+		Objects.requireNonNull(keyOverLayer, "keyOverLayer");
 		Objects.requireNonNull(locModule, "locModule");
-		XResultIntCarrier result = new XResultIntCarrier(new SingleActivity("forward load"));
-		ModuleName nameModule = locModule.name();
-		Path pathBin = pathToBin(locModule);
-		ModuleFinder finder = ModuleFinder.of(pathBin);
+		Objects.requireNonNull(status, "status");
+		XResultCarrierOf<ModuleLayerKey> result = new XResultCarrierOf<ModuleLayerKey>(new SingleActivity("forward load"));
+		ModuleLayer layerBase = _serviceCatalog.get().getModuleLayer(keyOverLayer);
+		if (layerBase == null) {
+			result.caughtException(new NoSuchElementException("module layer " + keyOverLayer));
+			return result;
+		}
+		ModuleFinder finder = createModuleFinder(locModule);
 		Set<ModuleReference> references = finder.findAll();
-		List<String> listModuleNames = references.stream()
-				.map(ModuleReference::descriptor)
-				.map(ModuleDescriptor::name)
-				.collect(Collectors.toList());
-		OBS_OUT.record(ObsLevel.DEBUG, "found " + listModuleNames.size() + " modules");
+		ModuleLayer layer = createNewModuleLayer(layerBase, finder, references);
+		ModuleLayerKey key = _serviceCatalog.get().addModuleLayer(layer);
+		if (isVerbose()) {
+			OBS_OUT.record(ObsLevel.DEBUG, "created new layer " + layer);
+		}
 		
-		ModuleLayer layerBoot = ModuleLayer.boot();
-		Configuration config = layerBoot.configuration().resolve(finder, ModuleFinder.of(), listModuleNames);
-		
-		ClassLoader cloaderSys = ClassLoader.getSystemClassLoader();
-		ModuleLayer layer = layerBoot.defineModulesWithOneLoader(config, cloaderSys);
-		OBS_OUT.record(ObsLevel.DEBUG, "created new layer " + layer);
-		
-		IntegerCounter counter = new IntegerCounter();
-		for (ModuleReference refMod : references) {
-			ModuleDescriptor descriptor = refMod.descriptor();
-			String strModule2 = descriptor.name();
-			ClassLoader cloaderModule = layer.findLoader(strModule2);
-			try (ModuleReader reader = refMod.open()) {
-				reader.list().forEach(res -> {
-					if (res.endsWith(".class") && !res.equals("module-info.class")) {
-						String strClassName = res.substring(0, res.length() - 6).replace('/', '.');
-						try {
-							@SuppressWarnings("unused")
-							Class<?> classNew = cloaderModule.loadClass(strClassName);
-							counter.increment();
-						} catch (ClassNotFoundException exc) {
-							OBS_OUT.record(ObsLevel.ERROR, "cannot load class " + strClassName);
-						}
-					}
-				});
-			} catch (IOException e) {
-				e.printStackTrace();
+		XResult resultClassLoad = loadLayerClasses(layer, references, status);
+		result.copyFrom(resultClassLoad);
+		if (resultClassLoad.isValid()) {
+			result.setResult(key);
+			if (isVerbose()) {
+				OBS_OUT.record(ObsLevel.INFO, "loaded " + status.successes() + " classes");
 			}
 		}
-		OBS_OUT.record(ObsLevel.INFO, "loaded " + counter.value() + " classes");
-		_serviceCatalog.get().addModuleLayer(layer);
-		result.setResult(counter.value());
 		return result;
 	}
-
 }

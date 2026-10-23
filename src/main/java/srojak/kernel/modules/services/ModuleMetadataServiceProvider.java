@@ -24,12 +24,15 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import srojak.core.KeyedIndirectReference;
-import srojak.core.ObjectExpiredException;
 import srojak.core.containers.KeyedIndirectStrongReference;
 import srojak.core.containers.KeyedIndirectWeakReference;
+import srojak.core.excepts.ObjectExpiredException;
 import srojak.core.modules.ModuleName;
+import srojak.core.observe.CoreObservers;
+import srojak.core.observe.ObsLevel;
 import srojak.core.sequence.OrderedSequence;
 import srojak.core.sequence.SimpleSequencer;
+import srojak.core.specialized.IntegerCounter;
 import srojak.core.tools.ListMethods;
 import srojak.kernel.KernelCentralStore;
 import srojak.kernel.modules.ModuleLayerKey;
@@ -50,6 +53,7 @@ public class ModuleMetadataServiceProvider
 		implements KernelModuleMetadataService {
 	private final OrderedSequence _seqLayers;
 	private final ModuleLayer _layerBoot;
+	private final ModuleLayerKey _keyBootLayer;
 	private final Map<ModuleName, NamedModuleListObj> _mapModules;
 	private final List<KeyedIndirectReference<ModuleLayerKey, ModuleLayer>> _listLayers;
 	private final List<Module> _listUnnamed;
@@ -61,24 +65,42 @@ public class ModuleMetadataServiceProvider
 		super();
 		_seqLayers = new SimpleSequencer(ModuleLayerKeyObj.serialClassUID);
 		_layerBoot = ModuleLayer.boot();
+		_keyBootLayer = new ModuleLayerKeyObj(_seqLayers.next());
 		_mapModules = new HashMap<ModuleName, NamedModuleListObj>();
 		_listLayers = new LinkedList<KeyedIndirectReference<ModuleLayerKey, ModuleLayer>>();
 		_listUnnamed = new LinkedList<Module>();
 	}
 	
-	private void getModulesFromLayer(ModuleLayer layer, boolean bUseStrongReference) {
+	private void getModulesFromLayer(ModuleLayerKey key, ModuleLayer layer, boolean bUseStrongReference) {
+		if (isVerbose()) {
+			CoreObservers.OBS_LOG.record(ObsLevel.DETAIL, "analyzing layer " + key + " for modules");
+		}
+		IntegerCounter counterNamed = new IntegerCounter();
+		IntegerCounter counterUnnamed = new IntegerCounter();
 		for (Module module : layer.modules()) {
 			if (module.isNamed()) {
 				ModuleName name = ModuleName.fromModule(module);
+				counterNamed.increment();
+				if (isVerbose()) {
+					CoreObservers.OBS_LOG.record(ObsLevel.DETAIL, "found module " + name.getName());
+				}
 				NamedModuleListObj listModules = _mapModules.get(name);
-				if (listModules != null) {
+				if (listModules == null) {
 					listModules = new NamedModuleListObj(name);
 					_mapModules.put(name, listModules);
-					listModules.addModule(module, bUseStrongReference);
 				}
+				listModules.addModule(module, bUseStrongReference);
 			} else {
 				_listUnnamed.add(module);
+				counterUnnamed.increment();
+				if (isVerbose()) {
+					CoreObservers.OBS_LOG.record(ObsLevel.DETAIL, "found unnamed module");
+				}
 			}
+		}
+		if (isVerbose()) {
+			CoreObservers.OBS_LOG.record(ObsLevel.DETAIL, "found " + counterNamed.value()
+							+ " named and " + counterUnnamed.value() + " unnamed modules");
 		}
 	}
 	
@@ -92,7 +114,7 @@ public class ModuleMetadataServiceProvider
 			KeyedIndirectReference<ModuleLayerKey, ModuleLayer> reference
 					= new KeyedIndirectWeakReference<ModuleLayerKey, ModuleLayer>(key, layer);
 			_listLayers.add(reference);
-			getModulesFromLayer(layer, false);
+			getModulesFromLayer(key, layer, false);
 			for (ModuleLayer p : layer.parents()) {
 				applyLayers(p);
 			}
@@ -105,13 +127,12 @@ public class ModuleMetadataServiceProvider
 	@Override
 	public void initialize(KernelCentralStore store) {
 		// the boot layer gets a strong reference
-		ModuleLayerKey key = new ModuleLayerKeyObj(_seqLayers.next());
 		KeyedIndirectReference<ModuleLayerKey, ModuleLayer> reference
-				= new KeyedIndirectStrongReference<ModuleLayerKey, ModuleLayer>(key, _layerBoot);
+				= new KeyedIndirectStrongReference<ModuleLayerKey, ModuleLayer>(_keyBootLayer, _layerBoot);
 		_listLayers.add(reference);
-		getModulesFromLayer(_layerBoot, true);
+		getModulesFromLayer(_keyBootLayer, _layerBoot, true);
 		for (ModuleLayer p : _layerBoot.parents()) {
-			applyLayers(_layerBoot);
+			applyLayers(p);
 		}
 	}
 
@@ -123,6 +144,11 @@ public class ModuleMetadataServiceProvider
 	@Override
 	public ModuleLayer getBootModuleLayer() {
 		return _layerBoot;
+	}
+
+	@Override
+	public ModuleLayerKey getBootModuleLayerKey() {
+		return _keyBootLayer;
 	}
 
 	@Override
@@ -151,6 +177,34 @@ public class ModuleMetadataServiceProvider
 				throw new ObjectExpiredException(ModuleLayer.class);
 			}
 			return layer;
+		}
+	}
+
+	@Override
+	public KernelModuleMetadataInfo getInfo() {
+		return new Info();
+	}
+
+	public class Info
+		implements KernelModuleMetadataInfo {
+		
+		Info() {
+			
+		}
+
+		@Override
+		public int getLayerCount() {
+			return _listLayers.size();
+		}
+
+		@Override
+		public int getNamedModuleCount() {
+			return _mapModules.size();
+		}
+
+		@Override
+		public int getUnnamedModuleCount() {
+			return _listUnnamed.size();
 		}
 	}
 }

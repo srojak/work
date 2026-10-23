@@ -30,6 +30,9 @@ public interface KernelModuleMetadataService
 
 	NamedModuleList getModules(ModuleName nmModule);
 	ModuleLayer getBootModuleLayer();
+	ModuleLayerKey getBootModuleLayerKey();
 	ModuleLayerKey addModuleLayer(ModuleLayer layer);
 	ModuleLayer getModuleLayer(ModuleLayerKey key);
+	
+	KernelModuleMetadataInfo getInfo();
 }
