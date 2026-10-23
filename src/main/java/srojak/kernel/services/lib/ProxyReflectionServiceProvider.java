@@ -20,7 +20,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
-import srojak.core.ClassMismatchException;
+import srojak.core.excepts.ClassMismatchException;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.reflect.ParameterTypeSet;
 import srojak.core.reflect.ReflectionProxy;

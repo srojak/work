@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import srojak.core.DuplicateKeyException;
+import srojak.core.excepts.DuplicateKeyException;
 import srojak.core.field.SetOnce;
 import srojak.core.keys.ClassKey;
 import srojak.core.sequence.DaySequencer;
@@ -98,6 +98,7 @@ public class SequenceServiceProvider
 		}
 		long lnSeries = System.identityHashCode(keyClass.getReferencedClass());
 		DaySequencer sequencer = new DaySequencer(lnSeries, _endptCalendar.mostRecentDate());
+		_endptCalendar.addLifeCycleListener(sequencer);
 		_endptCalendar.addCalendarListener(sequencer);
 		_mapClassSequences.put(keyClass, sequencer);
 	}
@@ -121,6 +122,7 @@ public class SequenceServiceProvider
 		}
 		long lnSeries = System.identityHashCode(keySequence.getName());
 		DaySequencer sequencer = new DaySequencer(lnSeries, _endptCalendar.mostRecentDate());
+		_endptCalendar.addLifeCycleListener(sequencer);
 		_endptCalendar.addCalendarListener(sequencer);
 		_mapNameKeyedSequences.put(keySequence, sequencer);
 	}

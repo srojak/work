@@ -19,9 +19,9 @@ package srojak.kernel;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import srojak.core.EnvironmentCharacteristicException;
+import srojak.core.excepts.EnvironmentCharacteristicException;
 import srojak.core.main.CoreCentral;
-import srojak.core.main.CoreOutputs;
+import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
@@ -51,7 +51,7 @@ public class KernelLog
 	public static final ObservationCollector OBS_LOG;
 	
 	static {
-		CoreOutputs outputs = new CoreOutputs();
+		CoreCollectors outputs = new CoreCollectors();
 		OBS_LOG = outputs.log();
 	}
 	
@@ -63,7 +63,7 @@ public class KernelLog
 	}
 	
 	public static ObservationWriter getLogWriter() {
-		CoreOutputs outputs = new CoreOutputs();
+		CoreCollectors outputs = new CoreCollectors();
 		return outputs.getLogWriter();
 	}
 	
@@ -90,7 +90,7 @@ public class KernelLog
 		if (resultWriter.isValid()) {
 			LocalDateTime dtNow = LocalDateTime.now();
 			ObservationWriter writer = resultWriter.getResult();
-			CoreOutputs outputs = new CoreOutputs();
+			CoreCollectors outputs = new CoreCollectors();
 			outputs.startLogFile(writer, dtNow);
 			outputs.setLogWriter(writer);
 		}

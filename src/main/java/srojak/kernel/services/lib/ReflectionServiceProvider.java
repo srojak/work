@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.reflect.PackageClassLocator;
+import srojak.core.reflect.ParameterTypeSet;
 import srojak.core.reflect.Reflectory;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultClass;
@@ -107,6 +108,36 @@ public class ReflectionServiceProvider
 	}
 
 	@Override
+	public <T> XResultOf<T> createInstanceOf(Class<T> classTarget, Class<?> classImplementation,
+			ParameterTypeSet typeParams, Object... params) {
+		Objects.requireNonNull(classTarget, "classTarget");
+		Objects.requireNonNull(classImplementation, "classImplementation");
+		Objects.requireNonNull(typeParams, "typeParams");
+		Objects.requireNonNull(params, "params");
+		XResultCarrierOf<T> result = new XResultCarrierOf<T>(ACTIVITY_CREATE_INST);
+		try {
+			Constructor<?> constructor = classImplementation.getDeclaredConstructor(typeParams.parameterTypes());
+			Object objInstance = constructor.newInstance(params);
+			@SuppressWarnings("unchecked")
+			T instance = (T) objInstance;
+			result.setResult(instance);
+		} catch (IllegalAccessException exc) {
+			result.caughtThrowable(exc);
+		} catch (InstantiationException exc) {
+			result.caughtThrowable(exc);
+		} catch (IllegalArgumentException exc) {
+			result.caughtThrowable(exc);
+		} catch (InvocationTargetException exc) {
+			result.caughtThrowable(exc);
+		} catch (NoSuchMethodException exc) {
+			result.caughtThrowable(exc);
+		} catch (SecurityException exc) {
+			result.caughtThrowable(exc);
+		}
+		return result;
+	}
+
+	@Override
 	public <T> XResultOf<T> createInstanceOf(Reflectory reflectory, Class<T> classTarget,
 			Class<?> classImplementation) {
 		Objects.requireNonNull(reflectory, "reflectory");
@@ -132,4 +163,31 @@ public class ReflectionServiceProvider
 		return result;
 	}
 
+	@Override
+	public <T> XResultOf<T> createInstanceOf(Reflectory reflectory, Class<T> classTarget, Class<?> classImplementation,
+			ParameterTypeSet typeParams, Object... params) {
+		Objects.requireNonNull(reflectory, "reflectory");
+		Objects.requireNonNull(classTarget, "classTarget");
+		Objects.requireNonNull(classImplementation, "classImplementation");
+		Objects.requireNonNull(typeParams, "typeParams");
+		Objects.requireNonNull(params, "params");
+		XResultCarrierOf<T> result = new XResultCarrierOf<T>(ACTIVITY_CREATE_INST);
+		try {
+			Constructor<?> constructor = reflectory.getConstructor(classImplementation, typeParams);
+			reflectory.setAccessible("constructor", constructor, true);
+			Object objInstance = reflectory.makeInstance(constructor, params);
+			@SuppressWarnings("unchecked")
+			T instance = (T) objInstance;
+			result.setResult(instance);
+		} catch (NoSuchMethodException exc) {
+			result.caughtException(exc);
+			result.setModifierFlag(MOD_FROM_SURROUND);
+		} catch (SecurityException exc) {
+			result.caughtException(exc);
+			result.setModifierFlag(MOD_FROM_SURROUND);
+		} catch (Throwable t) {
+			result.caughtThrowable(t);
+		}
+		return result;
+	}
 }

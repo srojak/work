@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import srojak.core.Announcer;
 import srojak.core.impl.CoreCentralStore;
-import srojak.core.main.CoreOutputs;
+import srojak.core.main.CoreCollectors;
 import srojak.core.main.CoreOperations;
 import srojak.core.modules.ModuleName;
 import srojak.core.observe.CoreObservers;
@@ -47,34 +47,9 @@ public class Kernel {
 	
 	private static final CoreCentralStore _store = CoreCentralStore._instance;
 	private static final ObservationCollector OBS_LOG = CoreObservers.OBS_LOG;
-
-	/**
-	 * @deprecated Use static value from CoreObservers instead.
-	 */
-	@Deprecated(forRemoval = true)
-	public static final ObservationCollector OBS_KERNEL_OUT;
-	
-	/**
-	 * @deprecated Use static value from CoreObservers instead.
-	 */
-	@Deprecated(forRemoval = true)
-	public static final ObservationCollector OBS_KERNEL_ERR;
-	
-	/**
-	 * @deprecated Use static value from CoreObservers instead.
-	 */
-	@Deprecated(forRemoval = true)
-	public static final ObservationCollector OBS_KERNEL_CONS;
 	
 	public static final ObservedActivity ACTIVITY_GET_REFL = new SingleActivity("get core reflectory");
 	public static final ObservedActivity ACTIVITY_GET_SERVICE = new SingleActivity("get kernel service");
-	
-	static {
-		CoreOutputs outputs = new CoreOutputs();
-		OBS_KERNEL_OUT = outputs.output();
-		OBS_KERNEL_ERR = outputs.error();
-		OBS_KERNEL_CONS = outputs.error();
-	}
 	
 	public static void initialize() {
 		KernelStore.initialize();
@@ -88,23 +63,10 @@ public class Kernel {
 		KernelStore.initialize();
 	}
 	
-	@Deprecated
-	public static void initialize(Class<?> classApp) {
-		Objects.requireNonNull(classApp, "classApp");
-		CoreOperations start = new CoreOperations(classApp);
-		start.initialize();
-		KernelStore.initialize();
-	}
-	
 	public static Announcer getAnnouncer() {
 		// TODO: should the kernel have its own announcer?
-		CoreOutputs outputs = new CoreOutputs();
+		CoreCollectors outputs = new CoreCollectors();
 		return outputs.announcer();
-	}
-	
-	@Deprecated(forRemoval = true)
-	public static DebugProperties getDebugProperties() {
-		return _store.getDebugProperties();
 	}
 	
 	public static void registerObservationWriter(ObservationWriter writer) {

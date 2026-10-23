@@ -16,8 +16,6 @@
  */
 package srojak.kernel.endpoints;
 
-import java.time.LocalDateTime;
-
 import srojak.core.time.Strobe;
 import srojak.kernel.KernelServiceEndpoint;
 

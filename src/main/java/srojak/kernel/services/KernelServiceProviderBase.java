@@ -19,7 +19,7 @@ package srojak.kernel.services;
 import java.util.Objects;
 
 import srojak.concurrent.queues.BlockingRunnableQueueClient;
-import srojak.core.InvalidClassDefinitionException;
+import srojak.core.excepts.InvalidClassDefinitionException;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
 import srojak.core.reflect.ClassReflector;

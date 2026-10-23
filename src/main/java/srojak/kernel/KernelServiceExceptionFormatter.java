@@ -16,14 +16,29 @@
  */
 package srojak.kernel;
 
-import srojak.core.result.XResult;
+import srojak.core.containers.ClassAndContentCarrier;
+import srojak.core.faults.ExceptionFormatterBase;
 
 /**
  * @author Stephen
  *
  */
-public interface Loader {
+public class KernelServiceExceptionFormatter 
+		extends ExceptionFormatterBase {
 
-	boolean isLoaded();
-	XResult load();
+	/**
+	 * @param classException
+	 */
+	public KernelServiceExceptionFormatter() {
+		super(KernelServiceException.class);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void format(Exception exc, ClassAndContentCarrier carrier) {
+		KernelServiceException e = (KernelServiceException) exc;
+		carrier.addContent("service name: " + e.getServiceName());
+		useStandardMessageFormat(e, carrier);
+	}
+
 }

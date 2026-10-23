@@ -23,7 +23,7 @@ import srojak.core.events.LifeCycleEvent;
 import srojak.core.events.LifeCycleListener;
 import srojak.core.io.IONodeIdentifier;
 import srojak.core.main.CoreCentral;
-import srojak.core.main.CoreOutputs;
+import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCommon;
@@ -57,7 +57,7 @@ public class KernelLogManager
 	}
 	
 	void initialize() {
-		CoreOutputs outputs = new CoreOutputs();
+		CoreCollectors outputs = new CoreCollectors();
 		_collectLog.addWriterPermanent(outputs.getLogWriter());
 	}
 	
@@ -102,7 +102,7 @@ public class KernelLogManager
 			ObservationWriter writerClosed = (ObservationWriter) event.getSource();
 			if (_writerLog == writerClosed) {
 				_writerLog = _writerErr;
-				CoreOutputs outputs = new CoreOutputs();				
+				CoreCollectors outputs = new CoreCollectors();				
 				outputs.announcer().announceMessage(ObsLevel.ALERT, Kernel.class, "debug writer closed");
 				DebugProperties properties = CoreCentral.getDebugProperties();
 				if (properties.isDiagCloseEnabled()) {

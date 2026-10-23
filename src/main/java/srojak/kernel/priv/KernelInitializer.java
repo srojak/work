@@ -20,12 +20,15 @@ import java.nio.file.Path;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
+import srojak.core.faults.ExceptionFormatter;
+import srojak.core.faults.FaultMethods;
 import srojak.core.impl.CoreCentralStore;
 import srojak.core.observe.CoreObservers;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservedActivity;
 import srojak.kernel.KernelProperties;
 import srojak.kernel.KernelServiceException;
+import srojak.kernel.KernelServiceExceptionFormatter;
 import srojak.kernel.services.lib.EndpointServiceProvider;
 import srojak.kernel.services.lib.ProxyReflectionServiceProvider;
 import srojak.kernel.services.lib.ReflectionServiceProvider;
@@ -40,14 +43,18 @@ class KernelInitializer
 		implements Runnable, CoreObservers {
 	private final CyclicBarrier _barrier;
 	private final Path _pathAppDir;
+	private boolean _bVerbose;
 	
 	KernelInitializer() {
 		_barrier = new CyclicBarrier(2, () -> clearOfBarrier());
-		_pathAppDir = CoreCentralStore._instance.getAppDirPath();		
+		_pathAppDir = CoreCentralStore._instance.getAppDirPath();
+		_bVerbose = true;	// to start with
 	}
 	
 	private void clearOfBarrier() {
-		OBS_LOG.record(ObsLevel.DETAIL, "cleared the init barrier");
+		if (_bVerbose) {
+			OBS_LOG.record(ObsLevel.DETAIL, "cleared the init barrier");
+		}
 	}
 	
 	private void fellThrough(String strThread, Exception exc) {
@@ -55,6 +62,9 @@ class KernelInitializer
 	}
 
 	void mainActions() {
+		ExceptionFormatter formatter = new KernelServiceExceptionFormatter();
+		FaultMethods.useFormatter(formatter);
+		
 		try {
 			_barrier.await();
 		} catch (InterruptedException | BrokenBarrierException exc) {
@@ -66,6 +76,7 @@ class KernelInitializer
 	public void run() {
 		// these properties must be loaded first	
 		KernelStore._propsKernel.loadFrom(_pathAppDir, KernelProperties.PROPERTIES_FILE_NAME);
+		_bVerbose = KernelStore._propsKernel.evalBooleanProperty("init.verbose", false);
 		
 		KernelStore._services.define(EndpointServiceProvider.class);
 		KernelStore._services.define(ScheduleServiceProvider.class);

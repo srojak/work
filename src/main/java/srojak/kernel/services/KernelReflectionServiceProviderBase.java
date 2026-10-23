@@ -16,16 +16,18 @@
  */
 package srojak.kernel.services;
 
+import java.lang.module.ModuleFinder;
+import java.lang.module.ModuleReference;
 import java.nio.file.Path;
+import java.util.Set;
 
-import srojak.core.main.CoreCentral;
 import srojak.core.modules.ModuleLocator;
 import srojak.core.observe.CoreObservers;
-import srojak.core.observe.ObsLevel;
-import srojak.core.props.DevEnvProperties;
 import srojak.core.reflect.ReflectionActivityNames;
+import srojak.core.reflect.lib.ReflectionModuleHelper;
+import srojak.core.result.XResult;
 import srojak.core.result.XResultModifierFlags;
-import srojak.kernel.priv.KernelStore;
+import srojak.core.specialized.StatusAccumulator;
 
 /**
  * @author Stephen
@@ -34,29 +36,30 @@ import srojak.kernel.priv.KernelStore;
 public abstract class KernelReflectionServiceProviderBase
 		extends KernelServiceProviderBase
 		implements XResultModifierFlags, ReflectionActivityNames, CoreObservers {
+	private final ReflectionModuleHelper _helperModule;
 
 	/**
 	 * 
 	 */
 	public KernelReflectionServiceProviderBase() {
 		super();
+		_helperModule = new ReflectionModuleHelper(isVerbose());
 	}
 
 	protected Path pathToBin(ModuleLocator locModule) {
-		if (locModule.isDevEnv()) {
-			DevEnvProperties propsDevEnv = CoreCentral.getDevEnvProperties();
-			if (propsDevEnv.isEclipse()) {
-				Path pathWorkspace = locModule.getStartPaths().get(0);
-				StringBuilder sbPath = new StringBuilder(locModule.name().getName());
-				sbPath.append("\\bin\\");
-				Path pathDir = pathWorkspace.resolve(sbPath.toString());
-				if (isVerbose()) {
-					OBS_OUT.record(ObsLevel.DEBUG, "path is " + pathDir);
-				}
-				return pathDir;
-			}
-		}
-		// TODO: implement other options
-		throw new UnsupportedOperationException("not implemented yet");
+		return _helperModule.pathToBin(locModule);
+	}
+	
+	protected ModuleFinder createModuleFinder(ModuleLocator locModule) {
+		return _helperModule.createModuleFinder(locModule);
+	}
+	
+	protected ModuleLayer createNewModuleLayer(ModuleLayer layerBase, ModuleFinder finder, 
+			Set<ModuleReference> references) {
+		return _helperModule.createNewModuleLayer(layerBase, finder, references);
+	}
+	
+	protected XResult loadLayerClasses(ModuleLayer layer, Set<ModuleReference> references, StatusAccumulator status) {
+		return _helperModule.loadLayerClasses(layer, references, status);
 	}
 }

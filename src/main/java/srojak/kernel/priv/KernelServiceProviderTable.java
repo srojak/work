@@ -23,8 +23,8 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import srojak.core.InvalidClassDefinitionException;
-import srojak.core.InvalidOperationException;
+import srojak.core.excepts.InvalidClassDefinitionException;
+import srojak.core.excepts.InvalidOperationException;
 import srojak.core.tools.ArrayMethods;
 import srojak.core.tools.ListMethods;
 import srojak.kernel.KernelServiceException;

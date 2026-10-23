@@ -18,7 +18,7 @@ package srojak.kernel;
 
 import java.nio.file.Path;
 
-import srojak.core.EnvironmentCharacteristicException;
+import srojak.core.excepts.EnvironmentCharacteristicException;
 import srojak.core.main.CoreCentral;
 import srojak.core.modules.ModuleLocatorBase;
 import srojak.core.modules.ModuleName;

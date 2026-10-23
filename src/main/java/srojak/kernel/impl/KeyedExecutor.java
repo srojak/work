@@ -17,7 +17,6 @@
 package srojak.kernel.impl;
 
 import srojak.kernel.ExecutorServiceHandle;
-import srojak.kernel.ExecutorServiceHandleObj;
 
 /**
  * @author Stephen

@@ -17,6 +17,7 @@
 package srojak.kernel.services;
 
 import srojak.core.reflect.PackageClassLocator;
+import srojak.core.reflect.ParameterTypeSet;
 import srojak.core.reflect.Reflectory;
 import srojak.core.result.XResultClass;
 import srojak.core.result.XResultOf;
@@ -32,6 +33,9 @@ public interface KernelReflectionService
 	XResultClass findClass(Reflectory reflectory, Module module, PackageClassLocator locator);
 	
 	<T> XResultOf<T> createInstanceOf(Class<T> classTarget, Class<?> classImplementation);
+	<T> XResultOf<T> createInstanceOf(Class<T> classTarget, Class<?> classImplementation,
+			ParameterTypeSet typeParams, Object ... params);
 	<T> XResultOf<T> createInstanceOf(Reflectory reflectory, Class<T> classTarget, Class<?> classImplementation);
-	
+	<T> XResultOf<T> createInstanceOf(Reflectory reflectory, Class<T> classTarget, Class<?> classImplementation,
+			ParameterTypeSet typeParams, Object ... params);
 }
