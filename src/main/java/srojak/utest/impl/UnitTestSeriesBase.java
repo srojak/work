@@ -19,7 +19,8 @@ package srojak.utest.impl;
 import java.util.Objects;
 
 import srojak.core.Named;
-import srojak.core.observe.HasSingleChangeableObservationCollector;
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.observe.HasReplaceableObservationCollector;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
@@ -29,7 +30,7 @@ import srojak.utest.UnitTestSeries;
 import srojak.utest.identifiers.TestInstanceIdentifier;
 
 public abstract class UnitTestSeriesBase
-		implements Named, HasSingleChangeableObservationCollector {
+		implements Named, HasReplaceableObservationCollector {
 	private ObservationCollector _collectObs;	
 	private final String _strName;
 	protected final UnitTestOptions _options;
@@ -43,7 +44,7 @@ public abstract class UnitTestSeriesBase
 		_strName = strName;
 		_options = new UnitTestOptions();
 		_nFailed = 0;		
-		ObservationWriterPrintStream writer = new ObservationWriterPrintStream(System.err);
+		ObservationWriterPrintStream writer = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.err);
 		writer.enableLevelFilter();
 		writer.setObsLevel(OBS_LEVEL_DEFAULT);
 		_collectObs.addWriterPermanent(writer);
@@ -110,7 +111,7 @@ public abstract class UnitTestSeriesBase
 	}
 	
 	protected void writeOwnMessage(ObsLevel level, String strText) {
-		_collectObs.write(level, strText);
+		_collectObs.record(level, strText);
 	}
 	
 	protected void writeOwnOutcomeMessage(TestOutcome outcome, String strLine) {
@@ -118,13 +119,13 @@ public abstract class UnitTestSeriesBase
 	}
 	
 	void writeMessage(ObsLevel level, String strText) {
-		_collectObs.write(level, strText);
+		_collectObs.record(level, strText);
 	}
 	
 	void writeOutcomeMessage(TestOutcome outcome, String strLine) {
 		ObsLevel level = outcome == TestOutcome.PASS 
 				? UnitTestSeries.LEVEL_NON_FAILURE : ObsLevel.ERROR;
-		_collectObs.write(level, strLine);
+		_collectObs.record(level, strLine);
 	}
 	
 	void writeStack(ObsLevel level, Exception exc) {
@@ -136,7 +137,7 @@ public abstract class UnitTestSeriesBase
 				sb.append("\n    ");
 				sb.append(frame);
 			}
-			_collectObs.write(level, sb.toString());
+			_collectObs.record(level, sb.toString());
 		}
 	}
 }

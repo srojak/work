@@ -39,7 +39,7 @@ public class SequentialTestIdentifier
 	@Override
 	public TestInstanceIdentifier createInstance() {
 		_counter.increment();
-		return new TestInstanceIdentifier("#" + _counter.getValue());
+		return new TestInstanceIdentifier("#" + _counter.value());
 	}
 
 }

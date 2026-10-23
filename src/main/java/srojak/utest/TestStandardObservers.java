@@ -18,6 +18,7 @@ package srojak.utest;
 
 import java.io.PrintStream;
 
+import srojak.core.io.IONodeIdentifier;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
@@ -28,20 +29,20 @@ import srojak.core.observe.writers.ObservationWriterPrintStream;
  */
 public interface TestStandardObservers {
 	
-	public static final ObservationCollector TEST_OBSV_OUT = makeStandardObserver(System.out);
-	public static final ObservationCollector TEST_OBSV_ERR = makeStandardObserver(System.err);
+	public static final ObservationCollector TEST_OBSV_OUT = makeStandardObserver(IONodeIdentifier.STDOUT, System.out);
+	public static final ObservationCollector TEST_OBSV_ERR = makeStandardObserver(IONodeIdentifier.STDERR, System.err);
 	
-	private static ObservationWriter makePrintStreamWriter(PrintStream stream, boolean bEnableLevelFilter) {
-		ObservationWriterPrintStream writer = new ObservationWriterPrintStream(stream);
+	private static ObservationWriter makePrintStreamWriter(IONodeIdentifier writesTo, PrintStream stream, boolean bEnableLevelFilter) {
+		ObservationWriterPrintStream writer = new ObservationWriterPrintStream(writesTo, stream);
 		if (bEnableLevelFilter) {
 			writer.enableLevelFilter();
 		}
 		return writer;
 	}
 
-	private static ObservationCollector makeStandardObserver(PrintStream stream) {
+	private static ObservationCollector makeStandardObserver(IONodeIdentifier writesTo, PrintStream stream) {
 		ObservationCollector collector = ObservationCollector.makeInstance();
-		ObservationWriter writer = makePrintStreamWriter(stream, false);
+		ObservationWriter writer = makePrintStreamWriter(writesTo, stream, false);
 		collector.addWriterPermanent(writer);
 		return collector;
 	}

@@ -21,6 +21,10 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationCollectorSource;
+import srojak.core.observe.sources.ObservationCollectorCommonErrorSource;
+import srojak.core.observe.sources.ObservationCollectorCommonOutputSource;
 import srojak.core.result.XResult;
 import srojak.numerics.ConditionSense;
 import srojak.numerics.OrderedComparison;
