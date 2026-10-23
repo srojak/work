@@ -52,7 +52,7 @@ import srojak.core.result.XResult;
  *
  */
 public class ObservationCollectorInstance2 
-		extends ObservationCollectorBase 
+		extends ObservationCollectorWriterBase 
 		implements ObservationCollector, ObservationCommon {
 	
 	public ObservationCollectorInstance2() {

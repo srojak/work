@@ -57,4 +57,8 @@ public class CoreCentral {
 		Objects.requireNonNull(action, "action");
 		_store.addShutdownAction(action);
 	}
+	
+	public static CoreReflectionService getReflectionService() {
+		return new CoreReflectionServiceProvider();
+	}
 }

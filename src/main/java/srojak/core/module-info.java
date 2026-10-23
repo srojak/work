@@ -45,6 +45,7 @@ module srojak.core {
 	exports srojak.core.observe.writers;
 	exports srojak.core.props;
 	exports srojak.core.reflect;
+	exports srojak.core.reflect.lib to srojak.kernel, srojak.kernel.modules;
 	exports srojak.core.result;
 	exports srojak.core.safety;
 	exports srojak.core.sequence;

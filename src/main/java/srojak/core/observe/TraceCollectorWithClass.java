@@ -22,9 +22,18 @@ import srojak.core.observe.functional.CodeValuesObservationBuilder;
 /**
  * @author Stephen
  *
+ * Methods providing tracing with class identification.
+ * 
+ * Note that for methods taking an {@code objTrace} parameter, this parameter may be {@code null}.
+ * In that case, the class for the object will be {@code NullObject}.
  */
 public interface TraceCollectorWithClass {
 	
+	/**
+	 * Write a trace message to enter a method.
+	 * @param level The trace level at which to write the message.
+	 * @param classTrace The class of the method writing the message.
+	 */
 	void traceEnter(TraceLevel level, Class<?> classTrace);
 	
 	/**
@@ -34,6 +43,12 @@ public interface TraceCollectorWithClass {
 	 */
 	void traceEnterObject(TraceLevel level, Object objTrace);
 
+	/**
+	 * Write a trace message to enter a method with additional content.
+	 * @param level The trace level at which to write the message.
+	 * @param classTrace The class of the method writing the message.
+	 * @param strMessage The text of the message.
+	 */
 	void traceEnter(TraceLevel level, Class<?> classTrace, String strMessage);
 
 	/**
@@ -52,6 +67,11 @@ public interface TraceCollectorWithClass {
 	
 	void traceCodeEnterObject(TraceLevel level, Object objTrace, CodeValuesObservationBuilder builderObs);
 
+	/**
+	 * Write a trace message to return from a method.
+	 * @param level The trace level at which to write the message.
+	 * @param classTrace The class of the method writing the message.
+	 */
 	void traceReturn(TraceLevel level, Class<?> classTrace);
 	
 	/**
@@ -61,6 +81,12 @@ public interface TraceCollectorWithClass {
 	 */
 	void traceReturnObject(TraceLevel level, Object objTrace);
 	
+	/**
+	 * Write a trace message to return from a method with additional text.
+	 * @param level The trace level at which to write the message.
+	 * @param classTrace The class of the method writing the message.
+	 * @param strMessage The text of the message.
+	 */
 	void traceReturn(TraceLevel level, Class<?> classTrace, String strMessage);
 	
 	/**

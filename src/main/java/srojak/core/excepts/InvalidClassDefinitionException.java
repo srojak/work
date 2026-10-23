@@ -16,6 +16,9 @@
  */
 package srojak.core.excepts;
 
+import srojak.core.faults.ExceptionFormatter;
+import srojak.core.faults.FaultMethods;
+
 /**
  * @author Stephen
  *
@@ -27,6 +30,11 @@ public class InvalidClassDefinitionException
 	 * 
 	 */
 	private static final long serialVersionUID = 8719007942604447675L;
+	
+	static {
+		ExceptionFormatter formatter = new CommonExceptionFormatter(InvalidClassDefinitionException.class);
+		FaultMethods.useFormatter(formatter);
+	}
 
 	/**
 	 * @param classReferenced

@@ -31,6 +31,9 @@ import srojak.core.result.XResult;
  */
 public interface ObservationCommonCollector 
 		extends TraceCollector {
+	
+	boolean isPrimaryCollector();
+	
 	/**
 	 * Write a message at a given observation level.
 	 * @param level The observation level.

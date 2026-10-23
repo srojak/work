@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import srojak.core.field.SetOnce;
 import srojak.core.logic.OnceFlag;
-import srojak.core.main.CoreOutputs;
+import srojak.core.main.CoreCollectors;
 import srojak.core.props.ConfigProperties;
 import srojak.core.props.DebugProperties;
 import srojak.core.props.DevEnvProperties;
@@ -37,7 +37,7 @@ public class CoreCentralStore {
 	private final SetOnce<ClassReflector> _reflectorApp;
 	private final Runtime _runtime;
 	private final LinkedList<Runnable> _queueShutdown;
-	private final CoreOutputs _outputs;
+	private final CoreCollectors _outputs;
 	
 	private final DevEnvProperties _propsDevEnv;
 	private final ConfigProperties _propsConfig;
@@ -65,7 +65,7 @@ public class CoreCentralStore {
 		_propsDevEnv.loadFromParent();
 		
 		// initially build the log writer over _writerErr
-		_outputs = new CoreOutputs();
+		_outputs = new CoreCollectors();
 
 	}
 	
@@ -101,7 +101,7 @@ public class CoreCentralStore {
 		System.out.println(String.format("Memory: %,d used, %,d free", memUsed, memFree));
 	}
 	
-	public CoreOutputs getOutputs() {
+	public CoreCollectors getOutputs() {
 		return _outputs;
 	}
 	

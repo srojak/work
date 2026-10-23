@@ -16,6 +16,11 @@
  */
 package srojak.core.excepts;
 
+import srojak.core.containers.ClassAndContentCarrier;
+import srojak.core.faults.ExceptionFormatter;
+import srojak.core.faults.ExceptionFormatterBase;
+import srojak.core.faults.FaultMethods;
+
 /**
  * @author Stephen
  *
@@ -23,6 +28,11 @@ package srojak.core.excepts;
 public class IncommensurableValuesException 
 		extends ClassReferencingRuntimeException {
 	private final Class<?> _classCompared;
+	
+	static {
+		ExceptionFormatter formatter = new MyExceptionFormatter();
+		FaultMethods.useFormatter(formatter);
+	}
 
 	/**
 	 * 
@@ -80,5 +90,25 @@ public class IncommensurableValuesException
 
 	public Class<?> getComparedClass() {
 		return _classCompared;
+	}
+	
+	private static class MyExceptionFormatter
+			extends ExceptionFormatterBase {
+
+		/**
+		 * 
+		 */
+		protected MyExceptionFormatter() {
+			super(IncommensurableValuesException.class);
+		}
+
+		@Override
+		public void format(Exception exc, ClassAndContentCarrier carrier) {
+			IncommensurableValuesException e = (IncommensurableValuesException) exc;
+			carrier.addContent("referenced class: " + e.getReferencedClass().getName());
+			carrier.addContent("compared class: " + e.getComparedClass().getName());
+			useStandardMessageFormat(e, carrier);
+		}
+		
 	}
 }

@@ -17,7 +17,7 @@
 package srojak.core.observe.code;
 
 import srojak.core.observe.ObservationCommon;
-import srojak.core.observe.impl.Unknown;
+import srojak.core.observe.impl.NullObject;
 
 /**
  * @author Stephen
@@ -32,7 +32,7 @@ public class CodeValueObject
 	 * @param strName
 	 */
 	public CodeValueObject(String strName, Object objValue) {
-		super(strName, objValue != null ? objValue.getClass() : Unknown.class);
+		super(strName, objValue != null ? objValue.getClass() : NullObject.class);
 		_objValue = objValue;
 	}
 

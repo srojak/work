@@ -17,6 +17,8 @@
 package srojak.core.excepts;
 
 import srojak.core.ClassReferencing;
+import srojak.core.containers.ClassAndContentCarrier;
+import srojak.core.faults.ExceptionFormatterBase;
 
 /**
  * @author Stephen
@@ -76,5 +78,23 @@ public abstract class ClassReferencingRuntimeException
 	@Override
 	public Class<?> getReferencedClass() {
 		return _classReferenced;
+	}
+	
+	protected static class CommonExceptionFormatter
+			extends ExceptionFormatterBase {
+
+		/**
+		 * @param classException
+		 */
+		protected CommonExceptionFormatter(Class<?> classException) {
+			super(classException);
+		}
+
+		@Override
+		public void format(Exception exc, ClassAndContentCarrier carrier) {
+			ClassReferencingRuntimeException e = (ClassReferencingRuntimeException) exc;
+			carrier.addContent("referenced class: " + e.getReferencedClass().getName());
+			useStandardMessageFormat(e, carrier);
+		}		
 	}
 }

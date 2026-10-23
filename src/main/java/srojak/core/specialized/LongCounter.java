@@ -16,12 +16,15 @@
  */
 package srojak.core.specialized;
 
+import srojak.core.Resettable;
+
 /**
  * @author Stephen
  *
  * A long integer counter object that can be used by lambdas.
  */
-public class LongCounter {
+public class LongCounter
+		implements Resettable {
 	private long _value;
 
 	/**
@@ -37,6 +40,14 @@ public class LongCounter {
 	 */
 	public LongCounter() {
 		this(0L);
+	}
+	
+	/**
+	 * Reset the counter.
+	 */
+	@Override
+	public void reset() {
+		_value = 0L;
 	}
 	
 	/**

@@ -71,7 +71,7 @@ public abstract class EquatableSequentialKeyBase
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getRootName());
-		sb.append('[');
+		sb.append("[0x");
 		sb.append(Long.toHexString(_value));
 		sb.append(']');
 		return sb.toString();

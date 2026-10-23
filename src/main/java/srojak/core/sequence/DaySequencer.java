@@ -19,6 +19,8 @@ package srojak.core.sequence;
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicLong;
 
+import srojak.core.events.LifeCycleEvent;
+import srojak.core.events.LifeCycleListener;
 import srojak.core.time.CalendarEvent;
 import srojak.core.time.CalendarEventListener;
 
@@ -28,10 +30,12 @@ import srojak.core.time.CalendarEventListener;
  */
 public class DaySequencer 
 		extends SequencerBase 
-		implements CalendarEventListener {
+		implements CalendarEventListener, LifeCycleListener {
 	private long _lnDatePart;
 	private volatile int _sequence;
 	private final AtomicLong _value;
+	private boolean _bActive;
+	// TODO: tell it the source has gone away
 
 	/**
 	 * @param idSeries
@@ -41,6 +45,7 @@ public class DaySequencer
 		setDatePart(dtStart);
 		_sequence = 0;
 		_value = new AtomicLong(_lnDatePart << 14);
+		_bActive = true;
 	}
 	
 	private void setDatePart(LocalDate dtNow) {
@@ -50,6 +55,11 @@ public class DaySequencer
 	
 	private void setValue(int nSequence) {
 		_value.set((_lnDatePart << 14) | (long) nSequence);
+	}
+
+	@Override
+	public boolean isActive() {
+		return _bActive;
 	}
 
 	@Override
@@ -68,6 +78,13 @@ public class DaySequencer
 		setDatePart(event.getDate());
 		_sequence = 0;
 		setValue(_sequence);
+	}
+
+	@Override
+	public void receive(LifeCycleEvent event) {
+		if (event.getID() == LifeCycleEvent.ID_CLOSED) {
+			_bActive = false;
+		}
 	}
 
 }

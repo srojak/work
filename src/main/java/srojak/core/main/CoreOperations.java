@@ -16,7 +16,6 @@
  */
 package srojak.core.main;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -87,8 +86,8 @@ public class CoreOperations
 			ObservationWriter writer = resultWriter.getResult();
 			writer.setShowLocations(true);
 			writer.setShowExceptionStackEnabled(true);
-			CoreOutputs outputs = new CoreOutputs();
-			outputs.startLogFile(writer, LocalDateTime.now());
+			CoreCollectors outputs = new CoreCollectors();
+			//outputs.startLogFile(writer, LocalDateTime.now());
 			outputs.setLogWriter(writer);
 		} else {
 			OBS_ERR.recordThrowable(ObsLevel.FATAL, resultWriter.getActivity(), resultWriter.getException(), false);

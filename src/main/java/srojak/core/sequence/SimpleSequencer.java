@@ -35,6 +35,11 @@ public class SimpleSequencer
 	}
 
 	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
 	public long current() {
 		return _sequence.get();
 	}

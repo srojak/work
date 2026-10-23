@@ -21,9 +21,8 @@ import java.util.Objects;
 
 import srojak.core.observe.ObsFormatOption;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.SourceLocation;
-import srojak.core.observe.impl.Unknown;
+import srojak.core.observe.impl.NullObject;
 
 /**
  * @author Stephen
@@ -44,7 +43,7 @@ public class CodeObjectValueObsInstance
 		Objects.requireNonNull(strName, "strName");
 		_name = strName;
 		if (objValue == null) {
-			_value = new Unknown();
+			_value = new NullObject();
 		} else {
 			_value = objValue;
 		}

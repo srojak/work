@@ -16,6 +16,9 @@
  */
 package srojak.core.excepts;
 
+import srojak.core.faults.ExceptionFormatter;
+import srojak.core.faults.FaultMethods;
+
 /**
  * @author Stephen
  *
@@ -27,6 +30,11 @@ public class InitializationRuntimeException
 	 * 
 	 */
 	private static final long serialVersionUID = -6980279446214233848L;
+	
+	static {
+		ExceptionFormatter formatter = new CommonExceptionFormatter(InitializationRuntimeException.class);
+		FaultMethods.useFormatter(formatter);
+	}
 
 	/**
 	 * @param classReferenced

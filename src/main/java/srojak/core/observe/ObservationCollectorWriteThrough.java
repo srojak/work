@@ -14,12 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.impl;
+package srojak.core.observe;
+
+import java.util.List;
 
 /**
  * @author Stephen
  *
  */
-public class Unknown {
+public interface ObservationCollectorWriteThrough {
+	
+	boolean isPrimaryCollector();
 
+	List<ObservationWriter> getAllWriters();
+	
+	List<ObservationWriter> getWriters(ObsLevel level);
 }

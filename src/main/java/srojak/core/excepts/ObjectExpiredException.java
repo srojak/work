@@ -16,6 +16,9 @@
  */
 package srojak.core.excepts;
 
+import srojak.core.faults.ExceptionFormatter;
+import srojak.core.faults.FaultMethods;
+
 /**
  * @author Stephen
  *
@@ -27,6 +30,11 @@ public class ObjectExpiredException
 	 * 
 	 */
 	private static final long serialVersionUID = -692203914675377823L;
+	
+	static {
+		ExceptionFormatter formatter = new CommonExceptionFormatter(ObjectExpiredException.class);
+		FaultMethods.useFormatter(formatter);
+	}
 
 	/**
 	 * @param classReferenced

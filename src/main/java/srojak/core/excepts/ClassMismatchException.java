@@ -16,6 +16,9 @@
  */
 package srojak.core.excepts;
 
+import srojak.core.faults.ExceptionFormatter;
+import srojak.core.faults.FaultMethods;
+
 /**
  * @author Stephen
  *
@@ -27,6 +30,11 @@ public class ClassMismatchException
 	 * 
 	 */
 	private static final long serialVersionUID = 8060189997795946304L;
+	
+	static {
+		ExceptionFormatter formatter = new CommonExceptionFormatter(ClassMismatchException.class);
+		FaultMethods.useFormatter(formatter);
+	}
 	
 	/**
 	 * @param message

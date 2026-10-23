@@ -31,12 +31,18 @@ import srojak.core.specialized.IntegerCounter;
 public class ClassKey {
 	private final Class<?> _classRef;
 	
-	public ClassKey(Class<?> classRef) {
+	public ClassKey(Class<?> classRef, boolean bAllowInterfaces) {
 		Objects.requireNonNull(classRef, "classRef");
-		if (classRef.isInterface()) {
-			throw new IllegalArgumentException(classRef.getSimpleName() + " is an interface");
+		if (!bAllowInterfaces) {
+			if (classRef.isInterface()) {
+				throw new IllegalArgumentException(classRef.getSimpleName() + " is an interface");
+			}
 		}
 		_classRef = classRef;
+	}
+	
+	public ClassKey(Class<?> classRef) {
+		this(classRef, false);
 	}
 	
 	public Class<?> getReferencedClass() {

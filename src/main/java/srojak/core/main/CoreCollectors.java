@@ -41,7 +41,7 @@ import srojak.core.tools.EnvTool;
  * @author Stephen
  *
  */
-public class CoreOutputs {
+public class CoreCollectors {
 	
 	private static final Announcer _announcer;
 	private static final ObservationCollectorLockableInstance _collectOut;
@@ -76,7 +76,7 @@ public class CoreOutputs {
 	/**
 	 * 
 	 */
-	public CoreOutputs() {
+	public CoreCollectors() {
 		
 		
 	}
@@ -136,7 +136,7 @@ public class CoreOutputs {
 			ObservationWriter writerClosed = (ObservationWriter) event.getSource();
 			if (_writerLog.isCurrentWriter(writerClosed)) {
 				_writerLog.restoreDefaultWriter(false);
-				_announcer.announceMessage(ObsLevel.ALERT, CoreOutputs.class, "active primary log writer closed");
+				_announcer.announceMessage(ObsLevel.ALERT, CoreCollectors.class, "active primary log writer closed");
 			}
 			DebugProperties properties = CoreCentral.getDebugProperties();
 			if (properties.isDiagCloseEnabled()) {

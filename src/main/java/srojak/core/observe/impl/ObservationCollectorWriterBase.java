@@ -27,6 +27,8 @@ import srojak.core.logic.FlagsShort;
 import srojak.core.logic.FlagsShortTest;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollectWriterStore;
+import srojak.core.observe.ObservationCollectorFlags;
+import srojak.core.observe.ObservationCollectorWriteThrough;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.code.CodeValuesObservation;
 
@@ -34,25 +36,28 @@ import srojak.core.observe.code.CodeValuesObservation;
  * @author Stephen
  *
  */
-public abstract class ObservationCollectorBase
-		implements ObservationCollectWriterStore {
+public abstract class ObservationCollectorWriterBase
+		implements ObservationCollectWriterStore, ObservationCollectorWriteThrough, ObservationCollectorFlags {
 	private final List<MarkedObservationWriter> _listWriters;
 	private final FlagsShort _flags;
 	
-	public static final short FLAGS_HAS_PERM_WRITER = 0x1;
-	public static final short FLAGS_WRITERS_LOCKED = 0x2;
-	public static final short FLAGS_USE_FULL_CLASS_NAMES = 0x4;
-	
-	protected ObservationCollectorBase() {
+	protected ObservationCollectorWriterBase() {
 		_listWriters = new LinkedList<MarkedObservationWriter>();
 		_flags = new FlagsShort();
 	}
-	
-	protected synchronized List<ObservationWriter> getAllWriters() {
-		return _listWriters.stream().map(i -> i.getWrapped()).toList();
+
+	@Override
+	public boolean isPrimaryCollector() {
+		return true;
 	}
 	
-	protected synchronized List<ObservationWriter> getWriters(ObsLevel level) {
+	@Override
+	public synchronized List<ObservationWriter> getAllWriters() {
+		return _listWriters.stream().map(i -> i.getWrapped()).toList();
+	}
+
+	@Override
+	public synchronized List<ObservationWriter> getWriters(ObsLevel level) {
 		return _listWriters.stream().map(i -> i.getWrapped()).filter(w -> w.canWriteAt(level)).toList();
 	}
 

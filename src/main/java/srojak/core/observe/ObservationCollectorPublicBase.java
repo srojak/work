@@ -16,14 +16,14 @@
  */
 package srojak.core.observe;
 
-import srojak.core.observe.impl.ObservationCollectorBase;
+import srojak.core.observe.impl.AbstractObservationCollectorWithWriters;
 
 /**
  * @author Stephen
  *
  */
 public abstract class ObservationCollectorPublicBase 
-		extends ObservationCollectorBase {
+		extends AbstractObservationCollectorWithWriters {
 
 	public ObservationCollectorPublicBase() {
 		super();

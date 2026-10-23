@@ -23,6 +23,7 @@ package srojak.core.sequence;
 public interface OrderedSequence {
 
 	long series();
+	boolean isActive();
 	long current();
 	long next();
 }

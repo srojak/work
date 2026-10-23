@@ -16,10 +16,8 @@
  */
 package srojak.core.observe;
 
-import java.util.function.Supplier;
-
-import srojak.core.data.DataPassThrough;
-import srojak.core.observe.impl.ObservationCollectorInstance2;
+import srojak.core.observe.impl.ObservationCollectorInstance;
+import srojak.core.observe.impl.ObservationCollectorOverlayInstance;
 
 /**
  * @author Stephen
@@ -35,36 +33,9 @@ import srojak.core.observe.impl.ObservationCollectorInstance2;
  * 
  */
 public interface ObservationCollector
-	extends TraceCollectorWithClass, ObservationCommonCollector, ObservationCollectWriterStore {
-	
-	/**
-	 * Write a message at a given observation level without location information.
-	 * @param level The observation level.
-	 * @param strText The text of the message.
-	 */
-	void recordNoLocation(ObsLevel level, String strText);
-	
-	/**
-	 * Write a message at an observation level without location information.
-	 * @param level The level at which to write the message.
-	 * @param message The supplier of the message.
-	 */
-	void recordNoLocation(ObsLevel level, Supplier<String> message);
+	extends ObservationCollectorCore, ObservationCollectWriterStore {
 	
 	public static ObservationCollector makeInstance() {
-		return new ObservationCollectorInstance2();
-	}
-	
-	/**
-	 * Create a passthrough list for use with a call to write to this debug switch.
-	 * @param objects A set of objects to include in the passthrough list.
-	 * @return A passthrough list containing the input objects, in order.
-	 * 
-	 * If you encounter errors like this:
-	 * Local variable N defined in an enclosing scope must be final or effectively final
-	 * The problem can be overcome through use of a passthrough list.
-	 */
-	static DataPassThrough passThrough(Object... objects) {
-		return DataPassThrough.createFrom(objects);	
+		return new ObservationCollectorInstance();
 	}
 }

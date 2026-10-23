@@ -169,7 +169,7 @@ public class SingleObservationCollectorObj
 	@Override
 	public void alsoWriteTo(ObservationCollector collector) {
 		Objects.requireNonNull(collector, "collector");
-		ObservationCollectorBase cbase = (ObservationCollectorBase) collector;
+		ObservationCollectorWriterBase cbase = (ObservationCollectorWriterBase) collector;
 		cbase.writeCodeObservation(_obsCode);
 	}
 

@@ -16,12 +16,15 @@
  */
 package srojak.core.specialized;
 
+import srojak.core.Resettable;
+
 /**
  * @author Stephen
  *
  * An integer counter object that can be used by lambdas.
  */
-public class IntegerCounter {
+public class IntegerCounter
+		implements Resettable {
 	private int _value;
 	
 	/**
@@ -34,6 +37,7 @@ public class IntegerCounter {
 	/**
 	 * Reset the counter.
 	 */
+	@Override
 	public void reset() {
 		_value = 0;
 	}

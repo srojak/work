@@ -16,7 +16,7 @@
  */
 package srojak.core.observe;
 
-import srojak.core.main.CoreOutputs;
+import srojak.core.main.CoreCollectors;
 
 /**
  * @author Stephen
@@ -24,7 +24,7 @@ import srojak.core.main.CoreOutputs;
  */
 public interface CoreObservers {
 
-	public static final CoreOutputs OUTPUTS = new CoreOutputs();
+	public static final CoreCollectors OUTPUTS = new CoreCollectors();
 	public static final ObservationCollector OBS_OUT = OUTPUTS.output();
 	public static final ObservationCollector OBS_ERR = OUTPUTS.error();
 	public static final ObservationCollector OBS_LOG = OUTPUTS.log();

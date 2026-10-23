@@ -78,7 +78,7 @@ public class ObservationWriterLogFileSource
 			ObservationWriterUnicodeStream writer = new ObservationWriterUnicodeStream();
 			writer.assignOutputStream(stream);
 			writer.setAutoFlush(true);
-			CoreOutputs outputs = new CoreOutputs();
+			CoreCollectors outputs = new CoreCollectors();
 			outputs.startLogFile(writer, dtNow);
 			result.setResult(writer);
 			CoreObservers.OBS_OUT.recordNoLocation(ObsLevel.INFO, "Created log file " + pathFile);
