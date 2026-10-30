@@ -14,50 +14,41 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
+package srojak.core.reflect;
 
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public abstract class CodeValueCommonBase
-		implements CodeValue {
-	private final String _name;
-	private final Class<?> _classValue;
-	
-	public CodeValueCommonBase(String strName, Class<?> classValue) {
-		Objects.requireNonNull(strName, "strName");
-		Objects.requireNonNull(classValue, "classValue");
-		if (strName.isBlank()) {
-			throw new IllegalArgumentException("strName is blank");
+public class SynthClosedDelegate 
+		extends AbstractSynthDelegate {
+	private final WeakReference<Object> _instance;
+
+	/**
+	 * @param method
+	 */
+	public SynthClosedDelegate(Object objInstance, Method method) {
+		super(method);
+		Objects.requireNonNull(objInstance, "objInstance");
+		_instance = new WeakReference<Object>(objInstance);
+	}
+
+	@Override
+	public boolean isClosed() {
+		return false;
+	}
+
+	@Override
+	protected Object getInstance() {
+		Object objInstance = _instance.get();
+		if (objInstance == null) {
+			invalidate();
 		}
-		_name = strName;
-		_classValue = classValue;
-	}
-	
-	protected abstract String formatValue();
-
-	@Override
-	public final String name() {
-		return _name;
+		return objInstance;
 	}
 
-	@Override
-	public Class<?> valueClass() {
-		return _classValue;
-	}
-
-	@Override
-	public abstract Object value();
-
-	@Override
-	public final String format() {
-		if (_name.startsWith("*")) {
-			return formatValue();
-		} else {
-			return _name + "=" + formatValue();
-		}
-	}	
 }

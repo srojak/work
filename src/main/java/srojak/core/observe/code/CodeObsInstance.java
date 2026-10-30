@@ -19,8 +19,10 @@ package srojak.core.observe.code;
 import java.util.EnumSet;
 import java.util.Objects;
 
+import srojak.core.Announcer;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
+import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsFormatOption;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsWriterMethods;
@@ -42,6 +44,7 @@ public class CodeObsInstance
 	protected StringBuilder _sbContent;
 	
 	protected static final int FLAGS_SHOW_FULL_CLASS_NAMES = 0x1;
+	protected static final CoreCollectors _collectors = new CoreCollectors();
 	
 	public CodeObsInstance(ObsLevel level, SourceLocation location) {
 		ObsLevel.validateEventLevel(level);
@@ -162,8 +165,13 @@ public class CodeObsInstance
 	public CodeObservationWriting appendValue(String strInitial, CodeValue cdValue) {
 		Objects.requireNonNull(strInitial, "strInitial");
 		Objects.requireNonNull(cdValue, "cdValue");
-		_sbContent.append(strInitial);
-		_sbContent.append(cdValue.format());
+		try {
+			_sbContent.append(strInitial);
+			_sbContent.append(cdValue.format());
+		} catch (OutOfMemoryError err) {
+			Announcer ann = _collectors.announcer();
+			ann.announceMessage(ObsLevel.ALERT, this.getClass(), "memory expansion error formatting " + cdValue.name());
+		}
 		return this;
 	}
 

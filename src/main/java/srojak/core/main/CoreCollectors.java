@@ -44,16 +44,19 @@ import srojak.core.tools.EnvTool;
 public class CoreCollectors {
 	
 	private static final Announcer _announcer;
+	private static final ObservationCollectorLockableInstance _collectNull;
 	private static final ObservationCollectorLockableInstance _collectOut;
 	private static final ObservationCollectorLockableInstance _collectErr;
 	private static final ObservationCollectorLockableInstance _collectLog;
 	private static final ObservationWriterBase _writerOut;
 	private static final ObservationWriterBase _writerErr;
 	private static final PrimaryLogWriter _writerLog;
+	private static ObsLevel _levelAlerts;
 	
 	static {
 		_announcer = new AnnouncerPrintStream(System.err);
 		
+		_collectNull = new ObservationCollectorLockableInstance();
 		_collectOut = new ObservationCollectorLockableInstance();
 		_collectErr = new ObservationCollectorLockableInstance();
 		_collectLog = new ObservationCollectorLockableInstance();
@@ -66,11 +69,16 @@ public class CoreCollectors {
 		_collectOut.addWriter(_writerOut);
 		_collectErr.addWriter(_writerErr);
 		_collectLog.addWriter(_writerLog);
+		
+		_collectNull.setObsLevel(ObsLevel.NONE);		
+		_collectNull.lockWriters();
+		_collectNull.lockObsLevel();
+		
 		_collectOut.lockWriters();
 		_collectErr.lockWriters();
 		_collectLog.lockWriters();
 		
-		// TODO: gather function from KernelLogManager
+		_levelAlerts = ObsLevel.ALERT;
 	}
 
 	/**
@@ -79,6 +87,10 @@ public class CoreCollectors {
 	public CoreCollectors() {
 		
 		
+	}
+	
+	public ObservationCollector nullCollector() {
+		return _collectNull;
 	}
 	
 	public ObservationCollector output() {
@@ -118,6 +130,10 @@ public class CoreCollectors {
 	
 	public Announcer announcer() {
 		return _announcer;
+	}
+	
+	public boolean shouldAlert(ObsLevel level) {
+		return _levelAlerts.isLevelAtLeast(level);
 	}
 	
 	public boolean canHighWriterShowLocations() {

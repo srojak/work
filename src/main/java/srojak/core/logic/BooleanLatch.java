@@ -29,48 +29,30 @@ import srojak.core.events.StateChangeListener;
  *
  */
 public class BooleanLatch
-	implements BooleanLatchReadOnly {
+		extends BooleanFlag
+		implements BooleanLatchReadOnly {
 	private final LinkedList<StateChangeListener> _listeners;
-	private boolean _bState;
 	
 	public BooleanLatch() {
-		_bState = false;
+		super();
 		_listeners = new LinkedList<StateChangeListener>();
 	}
 	
 	public BooleanLatch(boolean bStateInitial) {
-		_bState = bStateInitial;
+		super(bStateInitial);
 		_listeners = new LinkedList<StateChangeListener>();
 	}
 	
 	@Override
-	public boolean getState() {
-		return _bState;
-	}
-	
-	public void propagate() {
+	protected void stateChangedTo(boolean bState) {
 		ListIterator<StateChangeListener> iter = _listeners.listIterator();
 		StateChangeEvent event = null;
 		while (iter.hasNext()) {
 			if (event == null) {
-				event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, _bState);
+				event = new StateChangeEvent(this, StateChangeCodes.SC_SELF, bState);
 			}
 			iter.next().stateChanged(event);
 		}
-	}
-	
-	/**
-	 * Sets the state of the latch.
-	 * @param bState
-	 * @return
-	 */
-	public boolean setState(boolean bState) {
-		if (_bState == bState) {
-			return false;
-		}
-		_bState = bState;
-		propagate();
-		return true;
 	}
 
 	@Override

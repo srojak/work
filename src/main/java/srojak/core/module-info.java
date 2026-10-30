@@ -20,6 +20,7 @@
  */
 module srojak.core {
 	exports srojak.core;
+	exports srojak.core.cancel;
 	exports srojak.core.collections;
 	exports srojak.core.containers;
 	exports srojak.core.data;
@@ -37,7 +38,9 @@ module srojak.core {
 	exports srojak.core.mutable;
 	exports srojak.core.observe;
 	exports srojak.core.observe.activity;
+	exports srojak.core.observe.adapters;
 	exports srojak.core.observe.code;
+	exports srojak.core.observe.code.values;
 	exports srojak.core.observe.functional;
 	exports srojak.core.observe.impl to srojak.kernel, srojak.debug;
 	exports srojak.core.observe.sources;

@@ -25,6 +25,7 @@ import srojak.core.excepts.InvalidOperationException;
 import srojak.core.impl.MarkedObservationWriter;
 import srojak.core.logic.FlagsShort;
 import srojak.core.logic.FlagsShortTest;
+import srojak.core.observe.HasObsLevel;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollectWriterStore;
 import srojak.core.observe.ObservationCollectorFlags;
@@ -37,13 +38,15 @@ import srojak.core.observe.code.CodeValuesObservation;
  *
  */
 public abstract class ObservationCollectorWriterBase
-		implements ObservationCollectWriterStore, ObservationCollectorWriteThrough, ObservationCollectorFlags {
+		implements ObservationCollectWriterStore, ObservationCollectorWriteThrough, HasObsLevel, ObservationCollectorFlags {
 	private final List<MarkedObservationWriter> _listWriters;
 	private final FlagsShort _flags;
+	private ObsLevel _levelFilter;
 	
 	protected ObservationCollectorWriterBase() {
 		_listWriters = new LinkedList<MarkedObservationWriter>();
 		_flags = new FlagsShort();
+		_levelFilter = ObsLevel.FINEST;
 	}
 
 	@Override
@@ -88,6 +91,29 @@ public abstract class ObservationCollectorWriterBase
 	@Override
 	public void setUseFullClassNames(boolean bState) {
 		_flags.apply(bState, FLAGS_USE_FULL_CLASS_NAMES);
+	}
+
+	@Override
+	public boolean isObsLevelLocked() {
+		return _flags.test(FLAGS_OBS_LEVEL_LOCKED);
+	}
+	
+	protected void lockObsLevel() {
+		_flags.set(FLAGS_OBS_LEVEL_LOCKED);
+	}
+
+	@Override
+	public ObsLevel getObsLevel() {
+		return _levelFilter;
+	}
+
+	@Override
+	public void setObsLevel(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
+		if (isObsLevelLocked()) {
+			throw new InvalidOperationException("obs level is locked");
+		}
+		_levelFilter = level;
 	}
 
 	@Override

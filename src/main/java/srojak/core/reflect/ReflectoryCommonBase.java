@@ -18,12 +18,13 @@ package srojak.core.reflect;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Objects;
 
-import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.CoreObservers;
+import srojak.core.observe.ObservationCollectorCore;
 import srojak.core.observe.TraceLevel;
 import srojak.core.observe.code.CodeValueMethods;
-import srojak.core.observe.sources.ObservationCollectorCommonErrorSource;
 
 /**
  * @author Stephen
@@ -31,48 +32,54 @@ import srojak.core.observe.sources.ObservationCollectorCommonErrorSource;
  */
 public abstract class ReflectoryCommonBase 
 		implements Reflectory {
-	private ObservationCollector _collector;
+	private ObservationCollectorCore _collector;
 	
 	public ReflectoryCommonBase() {
-		//_collector = KernelLog.OBS_LOG;
-		ObservationCollectorCommonErrorSource source = new ObservationCollectorCommonErrorSource();
-		_collector = source.getCollector();
+		_collector = CoreObservers.OBS_NULL;
 	}
 
 	@Override
-	public ObservationCollector getObservationCollector() {
+	public ObservationCollectorCore getObservationCollector() {
 		return _collector;
 	}
 	
 	@Override
-	public void setObservationCollector(ObservationCollector collector) {
+	public void setObservationCollector(ObservationCollectorCore collector) {
 		Objects.requireNonNull(collector, "collector");
 		_collector = collector;
 	}
 
-	protected abstract Class<?> getClassFrom(ObservationCollector collObs, String strFullClassName)
+	protected abstract Class<?> getClassFrom(ObservationCollectorCore collObs, String strFullClassName)
 				throws ClassNotFoundException;
 	
-	protected abstract Class<?> getClassFrom(ObservationCollector collObs, String strFullClassName,
+	protected abstract Class<?> getClassFrom(ObservationCollectorCore collObs, String strFullClassName,
 			boolean bInitialize, ClassLoader loader)
 				throws ClassNotFoundException;
 	
-	protected abstract Class<?> getClassFrom(ObservationCollector collObs, Module module, String strFullClassName)
+	protected abstract Class<?> getClassFrom(ObservationCollectorCore collObs, Module module, String strFullClassName)
 				throws ClassNotFoundException;
 	
-	protected abstract void setAccessible(ObservationCollector collObs, String strIdentifier, 
+	protected abstract void setAccessible(ObservationCollectorCore collObs, String strIdentifier, 
 			AccessibleObject obj, boolean bState) 
-					throws SecurityException;
+				throws SecurityException;
 	
-	protected abstract Constructor<?> getDefaultConstructor(ObservationCollector collObs, Class<?> classImpl)
+	protected abstract Constructor<?> getDefaultConstructor(ObservationCollectorCore collObs, Class<?> classImpl)
 				throws NoSuchMethodException, SecurityException;
 	
-	protected abstract Constructor<?> getConstructor(ObservationCollector collObs, Class<?> classImpl, Class<?>[] parameterTypes)
+	protected abstract Constructor<?> getConstructor(ObservationCollectorCore collObs, Class<?> classImpl, Class<?>[] parameterTypes)
 				throws NoSuchMethodException, SecurityException;
 	
-	protected abstract Object makeInstance(ObservationCollector collObs, Constructor<?> constructor, Object[] args) 
+	protected abstract Object makeInstance(ObservationCollectorCore collObs, Constructor<?> constructor, Object[] args) 
 				throws Throwable;
 
+	protected abstract Method getMethod(ObservationCollectorCore collObs, Class<?> classOwner, String strMethodName, 
+			Class<?>[] parameterTypes)
+				throws NoSuchMethodException, SecurityException;
+	
+	protected abstract Method getDeclaredMethod(ObservationCollectorCore collObs, Class<?> classOwner, String strMethodName, 
+			Class<?>[] parameterTypes)
+				throws NoSuchMethodException, SecurityException;
+	
 	@Override
 	public Class<?> getClassFrom(PackageClassLocator locator) throws ClassNotFoundException {
 		Objects.requireNonNull(locator, "locator");
@@ -144,5 +151,31 @@ public abstract class ReflectoryCommonBase
 			cb.addNamedValue(CodeValueMethods.capture("cons for class", constructor.getDeclaringClass().getName()));
 		});
 		return makeInstance(_collector, constructor, args);
+	}
+
+	@Override
+	public Method getMethod(Class<?> classOwner, String strMethodName, ParameterTypeSet setParams)
+			throws NoSuchMethodException, SecurityException {
+		Objects.requireNonNull(classOwner, "classOwner");
+		Objects.requireNonNull(strMethodName, "strMethodName");
+		Objects.requireNonNull(setParams, "setParams");
+		_collector.traceCodeEnterObject(TraceLevel.MEDIUM, this, cb -> {
+			cb.addNamedValue(CodeValueMethods.capture("class", classOwner.getName()));
+			cb.addNamedValue(CodeValueMethods.capture("strMethodName", strMethodName));
+		});
+		return getMethod(_collector, classOwner, strMethodName, setParams.parameterTypes());
+	}
+
+	@Override
+	public Method getDeclaredMethod(Class<?> classOwner, String strMethodName, ParameterTypeSet setParams)
+			throws NoSuchMethodException, SecurityException {
+		Objects.requireNonNull(classOwner, "classOwner");
+		Objects.requireNonNull(strMethodName, "strMethodName");
+		Objects.requireNonNull(setParams, "setParams");
+		_collector.traceCodeEnterObject(TraceLevel.MEDIUM, this, cb -> {
+			cb.addNamedValue(CodeValueMethods.capture("class", classOwner.getName()));
+			cb.addNamedValue(CodeValueMethods.capture("strMethodName", strMethodName));
+		});
+		return getDeclaredMethod(_collector, classOwner, strMethodName, setParams.parameterTypes());
 	}
 }

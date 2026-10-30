@@ -16,9 +16,17 @@
  */
 package srojak.core.observe.code;
 
+import java.lang.invoke.MethodType;
 import java.text.DecimalFormat;
 
 import srojak.core.observe.ObservationCommon;
+import srojak.core.observe.code.values.CodeValueBoolean;
+import srojak.core.observe.code.values.CodeValueDouble;
+import srojak.core.observe.code.values.CodeValueInt;
+import srojak.core.observe.code.values.CodeValueLong;
+import srojak.core.observe.code.values.CodeValueMethodType;
+import srojak.core.observe.code.values.CodeValueObject;
+import srojak.core.observe.code.values.CodeValueString;
 
 /**
  * @author Stephen
@@ -60,6 +68,10 @@ public class CodeValueMethods
 
 	public static CodeValue capture(String strName, String value) {
 		return new CodeValueString(strName, value);
+	}
+	
+	public static CodeValue capture(String strName, MethodType typeMethod) {
+		return new CodeValueMethodType(strName, typeMethod);
 	}
 	
 	public static CodeValue captureObject(String strName, Object value) {

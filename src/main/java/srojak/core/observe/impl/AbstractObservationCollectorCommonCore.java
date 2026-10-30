@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import srojak.core.Announcer;
 import srojak.core.data.DataPassThrough;
 import srojak.core.faults.FaultFormat;
 import srojak.core.faults.FaultMethods;
 import srojak.core.faults.StructuredFault;
 import srojak.core.logic.FlagsShort;
 import srojak.core.logic.FlagsShortTest;
+import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollectorFlags;
 import srojak.core.observe.ObservationWriter;
@@ -51,9 +53,11 @@ import srojak.core.result.XResult;
  */
 public abstract class AbstractObservationCollectorCommonCore
 		implements ObservationCollectorFlags {
+	private final CoreCollectors _collectors;
 	protected final FlagsShort _flags;
 		
 	protected AbstractObservationCollectorCommonCore() {
+		_collectors = new CoreCollectors();
 		_flags = new FlagsShort();
 	}
 
@@ -85,28 +89,66 @@ public abstract class AbstractObservationCollectorCommonCore
 		_flags.apply(bState, FLAGS_USE_FULL_CLASS_NAMES);
 	}
 	
+	protected void suppressAlerts() {
+		_flags.set(FLAGS_SUPPRESS_ALERTS);
+	}
+
+	@Override
+	public boolean isObsLevelLocked() {
+		return _flags.test(FLAGS_OBS_LEVEL_LOCKED);
+	}
+	
+	protected void lockObsLevelAtCurrent() {
+		_flags.set(FLAGS_OBS_LEVEL_LOCKED);
+	}
+	
 	public boolean isPrimaryCollector() {
 		return false;
+	}
+	
+	protected void escalate(ObsLevel level, SourceLocation location) {
+		if (_collectors.shouldAlert(level) && !_flags.test(FLAGS_SUPPRESS_ALERTS)) {
+			Announcer ann = _collectors.announcer();
+			ann.announce(level, location);
+		}
+	}
+	
+	protected void escalateMessage(ObsLevel level, String strMessage) {
+		if (_collectors.shouldAlert(level) && !_flags.test(FLAGS_SUPPRESS_ALERTS)) {
+			Announcer ann = _collectors.announcer();
+			ann.announceMessage(level, this.getClass(), strMessage);
+		}
+	}
+	
+	protected void escalateFault(ObsLevel level, SourceLocation location, ObservedActivity activity, StructuredFault fault) {
+		if (_collectors.shouldAlert(level) && !_flags.test(FLAGS_SUPPRESS_ALERTS)) {
+			Announcer ann = _collectors.announcer();
+			ann.announceFault(level, location, activity, fault);
+		}		
 	}
 
 	protected void record(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strText) {
 		listWriters.forEach(w -> w.write(level, location, strText));
+		escalate(level, location);
 	}
 
 	protected void record(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Supplier<String> message) {
 		String strMessage = message.get();
 		listWriters.forEach(w -> w.write(level, location, strMessage));
+		escalate(level, location);
 	}
 
 	protected void record(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, DataPassThrough passThrough, Function<DataPassThrough, String> message) {
 		String strMessage = message.apply(passThrough);
 		listWriters.forEach(w -> w.write(level, location, strMessage));
+		escalate(level, location);
 	}
 
 	protected void recordClassOf(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strName, Object objValue) {
 		CodeObjectValueObsInstance instance = new CodeObjectValueObsInstance(level, location, strName, objValue);
 		instance.setShowFullClassNames(true);
 		listWriters.forEach(w -> w.writeObserved(instance));
+		escalate(level, location);
 	}
 
 	protected void recordThrowable(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, ObservedActivity activity, Throwable t, boolean bShowStack) {
@@ -116,19 +158,23 @@ public abstract class AbstractObservationCollectorCommonCore
 		}
 		StructuredFault fault = FaultMethods.process(t);
 		listWriters.forEach(w -> w.writeFault(level, location, activity, formats, fault));
+		escalateFault(level, location, activity, fault);
 	}
 
 	protected void recordResult(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, XResult result, boolean bShowStack) {
 		if (result.isValid()) {
 			String strMessage = result.getActivity().describe() + " succeeded";
 			listWriters.forEach(w -> w.write(level, location, strMessage));
+			escalate(level, location);
 		} else {
 			EnumSet<FaultFormat> formats = EnumSet.of(FaultFormat.ShowCauses);
 			if (bShowStack) {
 				formats.add(FaultFormat.ShowStack);
 			}
 			StructuredFault fault = FaultMethods.process(result.getThrowable());
-			listWriters.forEach(w -> w.writeFault(level, location, result.getActivity(), formats, fault));
+			ObservedActivity activity = result.getActivity();
+			listWriters.forEach(w -> w.writeFault(level, location, activity, formats, fault));
+			escalateFault(level, location, activity, fault);
 		}
 	}
 
@@ -136,12 +182,14 @@ public abstract class AbstractObservationCollectorCommonCore
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		builderMessage.build(instance);
 		listWriters.forEach(w -> w.writeObserved(instance));
+		escalate(level, location);
 	}
 
 	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, int i, CodeObservationBuilderWithInt builderMessage) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		builderMessage.build(instance, i);
 		listWriters.forEach(w -> w.writeObserved(instance));
+		escalate(level, location);
 	}
 
 	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, DataPassThrough passThrough,
@@ -149,11 +197,13 @@ public abstract class AbstractObservationCollectorCommonCore
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		builderMessage.build(instance, passThrough);
 		listWriters.forEach(w -> w.writeObserved(instance));
+		escalate(level, location);
 	}
 
 	protected void timeStamp(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level) {
 		final LocalDateTime dtNow = LocalDateTime.now();
 		listWriters.forEach(w -> w.writeTimeStamp(level, location, dtNow));
+		escalate(level, location);
 	}
 
 	protected void recordDiagnostic(List<ObservationWriter> listWriters, SourceLocation location, String strText) {
@@ -162,11 +212,13 @@ public abstract class AbstractObservationCollectorCommonCore
 
 	protected void recordNoLocation(List<ObservationWriter> listWriters, ObsLevel level, String strText) {
 		listWriters.forEach(w -> w.write(level, strText));
+		escalate(level, SourceLocation.redacted());
 	}
 
 	protected void recordNoLocation(List<ObservationWriter> listWriters, ObsLevel level, Supplier<String> message) {
 		String strMessage = message.get();
 		listWriters.forEach(w -> w.write(level, strMessage));
+		escalate(level, SourceLocation.redacted());
 	}
 	
 	// TraceCollector methods

@@ -14,35 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
+package srojak.core.reflect;
 
-import java.text.DecimalFormat;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Stephen
  *
  */
-public class CodeValueLong 
-		extends CodeValueDecimalBase {
-	private final long _value;
+public interface SynthDelegate {
 
-	/**
-	 * @param strName
-	 * @param formatDecimal
-	 */
-	public CodeValueLong(String strName, DecimalFormat formatDecimal, long value) {
-		super(strName, long.class, formatDecimal);
-		_value = value;
-	}
-
-	@Override
-	public Object value() {
-		return Long.valueOf(_value);
-	}
-
-	@Override
-	protected String formatValue() {
-		return _formatter.format(_value);
-	}
-
+	boolean isClosed();
+	boolean isValid();
+	String getMethodName();
+	Class<?> getReturnType();
+	Object invoke(Object ... args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 }

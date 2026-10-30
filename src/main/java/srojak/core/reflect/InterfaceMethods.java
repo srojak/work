@@ -16,9 +16,16 @@
  */
 package srojak.core.reflect;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import srojak.core.tools.BitMethods;
 
 /**
  * @author Stephen
@@ -52,18 +59,34 @@ public class InterfaceMethods {
 		return interfaces;
 	}
 	
+	private static List<Method> getNonStaticMethods(Class<?> classIntf) {
+		Method[] methods = classIntf.getMethods();
+		List<Method> listMethods = new ArrayList<Method>(methods.length);
+		Arrays.stream(methods).filter(m -> !Modifier.isStatic(m.getModifiers())).forEach(m -> listMethods.add(m));
+		return listMethods;
+	}
+	
+	public static Method getFunctionalInterfaceMethod(Class<?> classIntf) {
+		if (!classIntf.isInterface()) {
+			throw new IllegalArgumentException(classIntf.getSimpleName() + " is not an interface");
+		}
+		// any interface with a single instance method is a functional interface,
+		// whether annotated or not
+		List<Method> listMethods = getNonStaticMethods(classIntf);
+		if (listMethods.size() == 1) {
+			return listMethods.get(0);
+		} else {
+			return null;
+		}
+	}
+	
 	public static boolean isFunctionalInterface(Class<?> classIntf) {
 		if (!classIntf.isInterface()) {
 			throw new IllegalArgumentException(classIntf.getSimpleName() + " is not an interface");
 		}
-		HashSet<Class<?>> interfaces = new HashSet<Class<?>>();		
-		innerExpand(interfaces, classIntf);
-		for (Class<?> i : interfaces) {
-			FunctionalInterface a = i.getAnnotation(FunctionalInterface.class);
-			if (a != null) {
-				return true;
-			}
-		}
-		return false;
+		// any interface with a single instance method is a functional interface,
+		// whether annotated or not
+		List<Method> listMethods = getNonStaticMethods(classIntf);
+		return listMethods.size() == 1;
 	}
 }

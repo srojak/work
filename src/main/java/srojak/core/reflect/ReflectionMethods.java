@@ -17,6 +17,7 @@
 package srojak.core.reflect;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Executable;
 import java.util.Objects;
 
 import srojak.core.result.XResultCarrierOf;

@@ -22,9 +22,9 @@ package srojak.core.observe;
  */
 public interface SourceDetailFlags {
 	
-	public static int FLAG_PACKAGE = 010;
-	public static int FLAG_CLASS = 04;
-	public static int FLAG_METHOD = 02;
-	public static int FLAG_LINE = 01;
+	static int FLAG_PACKAGE = 010;
+	static int FLAG_CLASS = 04;
+	static int FLAG_METHOD = 02;
+	static int FLAG_LINE = 01;
 
 }

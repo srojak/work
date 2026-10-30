@@ -25,6 +25,7 @@ import srojak.core.main.CoreCollectors;
 public interface CoreObservers {
 
 	public static final CoreCollectors OUTPUTS = new CoreCollectors();
+	public static final ObservationCollector OBS_NULL = OUTPUTS.nullCollector();
 	public static final ObservationCollector OBS_OUT = OUTPUTS.output();
 	public static final ObservationCollector OBS_ERR = OUTPUTS.error();
 	public static final ObservationCollector OBS_LOG = OUTPUTS.log();

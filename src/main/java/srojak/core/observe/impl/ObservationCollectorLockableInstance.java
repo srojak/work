@@ -21,7 +21,7 @@ package srojak.core.observe.impl;
  *
  */
 public class ObservationCollectorLockableInstance 
-		extends ObservationCollectorInstance2 {
+		extends ObservationCollectorInstance {
 
 	/**
 	 * 
@@ -32,5 +32,9 @@ public class ObservationCollectorLockableInstance
 
 	public void lockWriters() {
 		super.lockWritersInPlace();
+	}
+	
+	public void lockObsLevel() {
+		super.lockObsLevelAtCurrent();
 	}
 }

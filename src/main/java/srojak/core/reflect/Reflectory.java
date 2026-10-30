@@ -18,6 +18,7 @@ package srojak.core.reflect;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import srojak.core.observe.HasReplaceableObservationCollector;
 
@@ -43,4 +44,8 @@ public interface Reflectory
 			throws NoSuchMethodException, SecurityException;
 	Object makeInstance(Constructor<?> constructor, Object ... args)
 			throws Throwable;
+	Method getMethod(Class<?> classOwner, String strMethodName, ParameterTypeSet setParams)
+			throws NoSuchMethodException, SecurityException;
+	Method getDeclaredMethod(Class<?> classOwner, String strMethodName, ParameterTypeSet setParams)
+			throws NoSuchMethodException, SecurityException;
 }

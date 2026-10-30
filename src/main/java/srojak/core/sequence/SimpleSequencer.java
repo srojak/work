@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class SimpleSequencer 
 		extends SequencerBase {
-	private final AtomicLong _sequence;
+	protected final AtomicLong _sequence;
 
 	/**
 	 * @param idSeries

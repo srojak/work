@@ -22,5 +22,5 @@ package srojak.core.observe;
  */
 public interface HasSingleObservationCollector {
 
-	ObservationCollector getObservationCollector();
+	ObservationCollectorCore getObservationCollector();
 }

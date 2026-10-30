@@ -21,7 +21,7 @@ import java.util.Objects;
 import srojak.core.observe.CoreObservers;
 import srojak.core.observe.HasReplaceableObservationCollector;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationCollectorCore;
 
 /**
  * @author Stephen
@@ -30,7 +30,7 @@ import srojak.core.observe.ObservationCollector;
 public class VisibleClassLoader 
 		extends ClassLoader 
 		implements HasReplaceableObservationCollector {
-	private ObservationCollector _obsCollect;
+	private ObservationCollectorCore _obsCollect;
 
 	/**
 	 * 
@@ -58,12 +58,12 @@ public class VisibleClassLoader
 	}
 
 	@Override
-	public ObservationCollector getObservationCollector() {
+	public ObservationCollectorCore getObservationCollector() {
 		return _obsCollect;
 	}
 
 	@Override
-	public void setObservationCollector(ObservationCollector collector) {
+	public void setObservationCollector(ObservationCollectorCore collector) {
 		Objects.requireNonNull(collector, "collector");
 		_obsCollect = collector;
 	}

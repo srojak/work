@@ -14,35 +14,8 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
-
-import java.text.DecimalFormat;
-
 /**
  * @author Stephen
  *
  */
-public class CodeValueInt 
-		extends CodeValueDecimalBase {
-	private final int _value;
-	
-	/**
-	 * @param strName
-	 * @param formatDecimal
-	 */
-	public CodeValueInt(String strName, DecimalFormat formatDecimal, int value) {
-		super(strName, int.class, formatDecimal);
-		_value = value;
-	}
-
-	@Override
-	public Object value() {
-		return Integer.valueOf(_value);
-	}
-
-	@Override
-	protected String formatValue() {
-		return _formatter.format(_value);
-	}
-
-}
+package srojak.core.observe.code.values;

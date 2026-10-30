@@ -18,6 +18,7 @@ package srojak.core.mutable;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Stephen
@@ -26,7 +27,7 @@ import java.util.Objects;
 public class LongMutable 
 		extends MutableBase
 		implements Serializable, Comparable<LongMutable> {
-	private long _value;
+	private AtomicLong _value;
 
 	/**
 	 * 
@@ -38,16 +39,16 @@ public class LongMutable
 	 */
 	public LongMutable(long valueInitial) {
 		super();
-		_value = valueInitial;
+		_value = new AtomicLong(valueInitial);
 	}
 	
 	public long getValue() {
-		return _value;
+		return _value.get();
 	}
 	
 	public boolean setValue(long valueNew) {
-		if (_value != valueNew) {
-			_value = valueNew;
+		long valuePrior = _value.getAndSet(valueNew);
+		if (valuePrior != valueNew) {
 			whenValueChanged();
 			return true;
 		} else {
@@ -58,12 +59,12 @@ public class LongMutable
 	@Override
 	public int compareTo(LongMutable o) {
 		Objects.requireNonNull(o, "o");
-		return Long.compare(_value, o._value);
+		return Long.compare(_value.get(), o._value.get());
 	}
 
 	@Override
 	public int hashCode() {
-		return Long.hashCode(_value);
+		return Long.hashCode(_value.get());
 	}
 
 	@Override
@@ -73,9 +74,9 @@ public class LongMutable
 		} else if (obj == null) {
 			return false;
 		} else if (obj instanceof LongMutable other) {
-			return _value == other._value;
+			return _value.get() == other._value.get();
 		} else if (obj instanceof Long other) {
-			return _value == other.longValue();
+			return _value.get() == other.longValue();
 		} else {
 			return false;
 		}
@@ -83,7 +84,7 @@ public class LongMutable
 
 	@Override
 	public String toString() {
-		return Long.toString(_value);
+		return Long.toString(_value.get());
 	}
 	
 	public static LongMutable parse(String str)

@@ -23,5 +23,5 @@ package srojak.core.observe;
 public interface HasReplaceableObservationCollector
 	extends HasSingleObservationCollector {
 
-	void setObservationCollector(ObservationCollector collector);
+	void setObservationCollector(ObservationCollectorCore collector);
 }

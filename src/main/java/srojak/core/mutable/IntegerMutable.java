@@ -18,6 +18,7 @@ package srojak.core.mutable;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Stephen
@@ -26,7 +27,7 @@ import java.util.Objects;
 public class IntegerMutable
 		extends MutableBase
 		implements Serializable, Comparable<IntegerMutable> {
-	private int _value;
+	private final AtomicInteger _value;
 
 	/**
 	 * 
@@ -35,16 +36,16 @@ public class IntegerMutable
 	
 	public IntegerMutable(int valueInitial) {
 		super();
-		_value = valueInitial;
+		_value = new AtomicInteger(valueInitial);
 	}
 	
 	public int getValue() {
-		return _value;
+		return _value.get();
 	}
 	
 	public boolean setValue(int valueNew) {
-		if (_value != valueNew) {
-			_value = valueNew;
+		int valuePrior = _value.getAndSet(valueNew);
+		if (valuePrior != valueNew) {
 			whenValueChanged();
 			return true;
 		} else {
@@ -55,12 +56,12 @@ public class IntegerMutable
 	@Override
 	public int compareTo(IntegerMutable o) {
 		Objects.requireNonNull(o, "o");
-		return Integer.compare(_value, o._value);
+		return Integer.compare(_value.get(), o._value.get());
 	}
 
 	@Override
 	public int hashCode() {
-		return _value;
+		return _value.get();
 	}
 
 	@Override
@@ -70,9 +71,9 @@ public class IntegerMutable
 		} else if (obj == null) {
 			return false;
 		} else if (obj instanceof IntegerMutable other) {
-			return _value == other._value;
+			return _value.get() == other._value.get();
 		} else if (obj instanceof Integer other) {
-			return _value == other.intValue();
+			return _value.get() == other.intValue();
 		} else {
 			return false;
 		}
@@ -80,7 +81,7 @@ public class IntegerMutable
 
 	@Override
 	public String toString() {
-		return Integer.toString(_value);
+		return Integer.toString(_value.get());
 	}
 	
 	public static IntegerMutable parse(String str)

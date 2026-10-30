@@ -129,7 +129,7 @@ public class ObservationCollectorInstance
 		ObsLevel.validateEventLevel(levelIfFaulted, "levelIfFaulted");
 		SourceLocation location = SourceLocation.caller();
 		if (!result.isValid()) {
-				level = levelIfFaulted;
+			level = levelIfFaulted;
 		}
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
@@ -202,7 +202,6 @@ public class ObservationCollectorInstance
 		ObsLevel.validateEventLevel(level);
 		List<ObservationWriter> listActive = getWriters(level);
 		recordNoLocation(listActive, level, strText);
-		listActive.forEach(w -> w.write(level, strText));
 	}
 
 	@Override

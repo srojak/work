@@ -17,9 +17,12 @@
 package srojak.core.observe.impl;
 
 import java.util.List;
+import java.util.Objects;
 
+import srojak.core.excepts.InvalidOperationException;
 import srojak.core.faults.FaultFormat;
 import srojak.core.faults.FaultMethods;
+import srojak.core.observe.HasObsLevel;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
@@ -36,15 +39,35 @@ import srojak.core.observe.functional.CodeValuesObservationBuilder;
  *
  */
 public class AbstractObservationCollectorCore 
-		extends AbstractObservationCollectorCommonCore {
+		extends AbstractObservationCollectorCommonCore
+		implements HasObsLevel {
+	private ObsLevel _levelFilter;
 
 	/**
 	 * 
 	 */
 	protected AbstractObservationCollectorCore() {
 		super();
+		_levelFilter = ObsLevel.FINEST;
 	}
 
+	@Override
+	public ObsLevel getObsLevel() {
+		return _levelFilter;
+	}
+
+	@Override
+	public void setObsLevel(ObsLevel level) {
+		Objects.requireNonNull(level, "level");
+		if (isObsLevelLocked()) {
+			throw new InvalidOperationException("obs level is locked");
+		}
+		_levelFilter = level;
+	}
+	
+	protected boolean isObsLevelOverFilter(ObsLevel level) {
+		return _levelFilter.isLevelAtLeast(level);
+	}
 
 	protected void traceEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);

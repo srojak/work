@@ -14,37 +14,44 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
+package srojak.core.observe.code.values;
 
 import srojak.core.observe.ObservationCommon;
+import srojak.core.observe.impl.NullObject;
 
 /**
  * @author Stephen
  *
  */
-public class CodeValueString
-		extends CodeValueCommonBase {
-	private final String _value;
+public class CodeValueObject 
+		extends CodeValueCommonBase 
+		implements ObservationCommon {
+	private final Object _objValue;
 
 	/**
 	 * @param strName
 	 */
-	public CodeValueString(String strName, String strValue) {
-		super(strName, String.class);
-		_value = strValue;
+	public CodeValueObject(String strName, Object objValue) {
+		super(strName, objValue != null ? objValue.getClass() : NullObject.class);
+		_objValue = objValue;
+	}
+
+	public CodeValueObject(String strName, Class<?> classValue) {
+		super(strName, classValue);
+		_objValue = null;
 	}
 
 	@Override
 	public Object value() {
-		return _value;
+		return _objValue;
 	}
 
 	@Override
 	protected String formatValue() {
-		if (_value == null) {
-			return ObservationCommon.STR_NULL;
+		if (_objValue == null) {
+			return STR_NULL;
 		} else {
-			return "\"" + _value + "\"";
+			return _objValue.toString();
 		}
 	}
 

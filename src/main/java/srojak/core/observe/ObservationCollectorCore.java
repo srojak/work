@@ -25,7 +25,7 @@ import srojak.core.data.DataPassThrough;
  *
  */
 public interface ObservationCollectorCore 
-		extends ObservationCommonCollector, TraceCollectorWithClass {
+		extends ObservationCommonCollector, TraceCollectorWithClass, HasObsLevel {
 	
 	/**
 	 * Write a message at a given observation level without location information.

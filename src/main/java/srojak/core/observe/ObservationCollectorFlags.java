@@ -27,9 +27,12 @@ public interface ObservationCollectorFlags {
 	static final short FLAGS_HAS_PERM_WRITER = 0x1;
 	static final short FLAGS_WRITERS_LOCKED = 0x2;
 	static final short FLAGS_USE_FULL_CLASS_NAMES = 0x4;
+	static final short FLAGS_SUPPRESS_ALERTS = 0x8;
+	static final short FLAGS_OBS_LEVEL_LOCKED = 0x10;
 
 	FlagsShortTest getFlags();
 	boolean hasPermanentWriters();
 	boolean areWritesLocked();
 	boolean useFullClassNames();
+	boolean isObsLevelLocked();
 }

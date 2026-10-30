@@ -14,31 +14,23 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
+package srojak.core.sequence;
 
 /**
  * @author Stephen
  *
  */
-public class CodeValueBoolean 
-		extends CodeValueCommonBase {
-	private final boolean _value;
+public class ResettableSequencer 
+		extends SimpleSequencer {
 
 	/**
-	 * @param strName
+	 * @param idSeries
 	 */
-	public CodeValueBoolean(String strName, boolean value) {
-		super(strName, boolean.class);
-		_value = value;
+	public ResettableSequencer(long idSeries) {
+		super(idSeries);
 	}
 
-	@Override
-	public Object value() {
-		return Boolean.valueOf(_value);
-	}
-
-	@Override
-	protected String formatValue() {
-		return Boolean.toString(_value);
+	public void reset() {
+		_sequence.set(0L);
 	}
 }

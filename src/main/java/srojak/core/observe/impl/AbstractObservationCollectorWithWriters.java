@@ -58,7 +58,11 @@ public class AbstractObservationCollectorWithWriters
 
 	@Override
 	public synchronized List<ObservationWriter> getWriters(ObsLevel level) {
-		return _listWriters.stream().map(i -> i.getWrapped()).filter(w -> w.canWriteAt(level)).toList();
+		if (isObsLevelOverFilter(level)) {
+			return _listWriters.stream().map(i -> i.getWrapped()).filter(w -> w.canWriteAt(level)).toList();
+		} else {
+			return List.of();
+		}
 	}
 
 	@Override

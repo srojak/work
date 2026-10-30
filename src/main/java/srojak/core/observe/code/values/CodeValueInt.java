@@ -14,26 +14,35 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
+package srojak.core.observe.code.values;
 
 import java.text.DecimalFormat;
-import java.util.Objects;
 
 /**
  * @author Stephen
  *
  */
-public abstract class CodeValueDecimalBase
-		extends CodeValueCommonBase {
-	protected final DecimalFormat _formatter;
-
+public class CodeValueInt 
+		extends CodeValueDecimalBase {
+	private final int _value;
+	
 	/**
 	 * @param strName
+	 * @param formatDecimal
 	 */
-	public CodeValueDecimalBase(String strName, Class<?> classValue, DecimalFormat formatDecimal) {
-		super(strName, classValue);
-		Objects.requireNonNull(formatDecimal, "formatDecimal");
-		_formatter = formatDecimal;
+	public CodeValueInt(String strName, DecimalFormat formatDecimal, int value) {
+		super(strName, int.class, formatDecimal);
+		_value = value;
+	}
+
+	@Override
+	public Object value() {
+		return Integer.valueOf(_value);
+	}
+
+	@Override
+	protected String formatValue() {
+		return _formatter.format(_value);
 	}
 
 }

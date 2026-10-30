@@ -14,35 +14,24 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.code;
+package srojak.core.cancel;
 
-import java.text.DecimalFormat;
+import srojak.core.Disposable;
 
 /**
  * @author Stephen
  *
  */
-public class CodeValueDouble 
-		extends CodeValueDecimalBase {
-	private final double _value;
+public sealed interface Cancellation
+		extends Disposable
+		permits CancellationActiveBase, CancellationToken, CancellationNotifying {
 
-	/**
-	 * @param strName
-	 * @param formatDecimal
-	 */
-	public CodeValueDouble(String strName, DecimalFormat formatDecimal, double value) {
-		super(strName, double.class, formatDecimal);
-		_value = value;
+	void registerOwnThread();
+	void unregisterOwnThread();
+	boolean isCancelRequested();
+	void throwIfCancelled();
+	
+	static Cancellation nullToken() {
+		return new CancellationToken();
 	}
-
-	@Override
-	public Object value() {
-		return Double.valueOf(_value);
-	}
-
-	@Override
-	protected String formatValue() {
-		return _formatter.format(_value);
-	}
-
 }

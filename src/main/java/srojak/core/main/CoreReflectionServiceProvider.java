@@ -29,7 +29,7 @@ import srojak.core.modules.ModuleLocator;
 import srojak.core.modules.ModuleName;
 import srojak.core.observe.CoreObservers;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationCollectorCore;
 import srojak.core.observe.TraceLevel;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.reflect.PackageClassLocator;
@@ -51,7 +51,7 @@ import srojak.core.specialized.StatusAccumulator;
  */
 public class CoreReflectionServiceProvider 
 		implements CoreReflectionService, ReflectionActivityNames, XResultModifierFlags {
-	private ObservationCollector _obsCollect;
+	private ObservationCollectorCore _obsCollect;
 	private boolean _bVerbose;
 	
 	CoreReflectionServiceProvider() {
@@ -60,12 +60,12 @@ public class CoreReflectionServiceProvider
 	}
 
 	@Override
-	public ObservationCollector getObservationCollector() {
+	public ObservationCollectorCore getObservationCollector() {
 		return _obsCollect;
 	}
 
 	@Override
-	public void setObservationCollector(ObservationCollector collector) {
+	public void setObservationCollector(ObservationCollectorCore collector) {
 		Objects.requireNonNull(collector, "collector");
 		_obsCollect = collector;
 	}

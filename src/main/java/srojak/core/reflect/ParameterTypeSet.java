@@ -16,6 +16,10 @@
  */
 package srojak.core.reflect;
 
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.util.Objects;
+
 import srojak.core.CommonCollectionSize;
 
 /**
@@ -43,6 +47,34 @@ public class ParameterTypeSet
 	public Class<?>[] parameterTypes() {
 		return _params;
 	}
+	
+	public boolean matchesExact(Executable execable) {
+		Objects.requireNonNull(execable, "execable");
+		Class<?>[] execParams = execable.getParameterTypes();
+		if (execParams.length == _params.length) {
+			for (int idx = 0; idx < _params.length; idx++) {
+				if (execParams[idx] != _params[idx]) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean matchesAssignable(Executable execable) {
+		Objects.requireNonNull(execable, "execable");
+		Class<?>[] execParams = execable.getParameterTypes();
+		if (execParams.length == _params.length) {
+			for (int idx = 0; idx < _params.length; idx++) {
+				if (!execParams[idx].isAssignableFrom(_params[idx])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public String toString() {
@@ -57,5 +89,10 @@ public class ParameterTypeSet
 		}
 		sb.append(']');
 		return sb.toString();
+	}
+	
+	public static ParameterTypeSet forExecutable(Executable execable) {
+		Objects.requireNonNull(execable, "execable");
+		return new ParameterTypeSet(execable.getParameterTypes());
 	}
 }
