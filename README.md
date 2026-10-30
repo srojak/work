@@ -12,5 +12,6 @@ The Java code is organized in these modules:
 * srojak.kernel: Classes to provide shared application services, including reflection support.
 * srojak.utest: Classes to organize unit testing.
 * srojak.xml: Classes to read and write XML data.
+* srojak.generate: Classes to generate Java code.
 * srojak.cdo: Common desktop objects; depends on AWT but not swing.
 * srojak.cdo.swing: Basic UI classes using swing.
