@@ -57,7 +57,7 @@ public class DebugConfigInterpreter {
 	protected void InterpretPackageElement(Element elemPackage) {
 		String strName = elemPackage.getAttribute("name");
 		if (strName == null) {
-			_writer.write(ObsLevel.ERROR, "Package has no name");
+			_writer.record(ObsLevel.ERROR, "Package has no name");
 			return;
 		}
 		NodeList listClasses = elemPackage.getElementsByTagName("Class");
@@ -73,7 +73,7 @@ public class DebugConfigInterpreter {
 		String strName = elemClass.getAttribute("name");
 		String strLevel = elemClass.getAttribute("level");
 		if (strName == null) {
-			_writer.write(ObsLevel.ERROR, "Class in package " + strPackageName + " has no name");
+			_writer.record(ObsLevel.ERROR, "Class in package " + strPackageName + " has no name");
 			return;
 		}
 		PackageClassLocator locClass = new PackageClassLocator(strPackageName, strName);
@@ -83,7 +83,7 @@ public class DebugConfigInterpreter {
 			try {
 				level = ObsLevel.parse(strLevel);
 			} catch (IllegalArgumentException exc) {
-				_writer.write(ObsLevel.WARN, "Class " + locClass 
+				_writer.record(ObsLevel.WARN, "Class " + locClass 
 						+ " has unrecognized debug level [" + strLevel + "]");
 			}
 		}
@@ -95,7 +95,7 @@ public class DebugConfigInterpreter {
 		@SuppressWarnings("unused")
 		String strLevel = elemSubject.getAttribute("level");
 		if (strName == null) {
-			_writer.write(ObsLevel.ERROR, "Subject in class " + locClass + " has no name");
+			_writer.record(ObsLevel.ERROR, "Subject in class " + locClass + " has no name");
 			return;
 		}
 		

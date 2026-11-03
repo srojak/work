@@ -28,6 +28,7 @@ import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.core.result.XResult;
+import srojak.debug.DebugConfigFileReader;
 import srojak.debug.DebugConfigSchema;
 import srojak.xml.stream.XmlStreamContentValidatingReaderBase;
 import srojak.xml.stream.factories.XmlStreamInputFactory;
@@ -37,8 +38,9 @@ import srojak.xml.stream.factories.XmlStreamParserFactory;
  * @author Stephen
  *
  */
-public final class DebugConfigFileReader 
-		extends XmlStreamContentValidatingReaderBase<DebugConfigParser2> {
+public final class DebugConfigReaderImpl 
+		extends XmlStreamContentValidatingReaderBase<DebugConfigParser2> 
+		implements DebugConfigFileReader {
 	private final XmlStreamInputFactory _factoryInput;
 	private ObservationWriterPrintStream _writerClass;
 	private ObservationWriterPrintStream _writerParser;
@@ -52,16 +54,30 @@ public final class DebugConfigFileReader
 	/**
 	 * 
 	 */
-	public DebugConfigFileReader() {
+	public DebugConfigReaderImpl() {
 		super(_factoryParser);
 		_factoryInput = new XmlStreamInputFactory(true);
-		_writerClass = new ObservationWriterPrintStream(System.err);
+		_writerClass = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.err);
 		_writerClass.enableLevelFilter();
-		_writerParser = new ObservationWriterPrintStream(System.out);
+		_writerParser = new ObservationWriterPrintStream(IONodeIdentifier.STDOUT, System.out);
 		_writerParser.enableLevelFilter();
 		_writerParser.setObsLevel(ObsLevel.WARN);
 		_collectObs.addWriter(_writerClass);
-		_factoryInput.getObservationCollector().addWriter(_writerClass);;
+		// TODO: stop playing with the writers
+		//_factoryInput.getObservationCollector().addWriter(_writerClass);;
+		_parser.getObservationCollector().addWriter(_writerParser);
+	}
+	
+	public DebugConfigReaderImpl(DebugConfigParser2 parser) {
+		super(parser);
+		_factoryInput = new XmlStreamInputFactory(true);
+		_writerClass = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.err);
+		_writerClass.enableLevelFilter();
+		_writerParser = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.out);
+		_writerParser.enableLevelFilter();
+		_writerParser.setObsLevel(ObsLevel.WARN);
+		_collectObs.addWriter(_writerClass);
+		//_factoryInput.getObservationCollector().addWriter(_writerClass);;
 		_parser.getObservationCollector().addWriter(_writerParser);
 	}
 
@@ -71,14 +87,17 @@ public final class DebugConfigFileReader
 		return super.readSchemaFrom(ACTIVITY_GET_SCHEMA, resourceSchema);
 	}
 	
+	@Override
 	public void setClassWriterObsLevel(ObsLevel level) {
 		_writerClass.setObsLevel(level);
 	}
 	
+	@Override
 	public void setParserWriterObsLevel(ObsLevel level) {
 		_writerParser.setObsLevel(level);
 	}
 	
+	@Override
 	public XResult readConfigFile(Path pathFile, FileExistence exists) {
 		Objects.requireNonNull(pathFile, "pathFile");
 		Objects.requireNonNull(exists, "exists");
@@ -89,6 +108,7 @@ public final class DebugConfigFileReader
 		return result;
 	}
 	
+	@Override
 	public XResult readConfigFile(String strFile, FileExistence exists) {
 		Objects.requireNonNull(strFile, "strFile");
 		Objects.requireNonNull(exists, "exists");

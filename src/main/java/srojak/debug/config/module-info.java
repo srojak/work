@@ -25,5 +25,7 @@ module srojak.debug.config {
 	requires transitive srojak.debug;
 	requires transitive srojak.xml;
 	exports srojak.debug.config;
+	exports srojak.debug.config.link to srojak.kernel;
+	opens srojak.debug.config.link to srojak.kernel;
 	opens srojak.debug.config.impl to srojak.core, srojak.afw;
 }

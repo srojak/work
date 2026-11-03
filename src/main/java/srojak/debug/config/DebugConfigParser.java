@@ -24,8 +24,10 @@ import javax.xml.stream.XMLStreamException;
 
 import srojak.core.data.DataErrorSeverity;
 import srojak.core.io.IONodeIdentifier;
+import srojak.core.keys.InstanceNumberKey;
 import srojak.core.observe.InvalidObservationLevelException;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObsLevelInstancePolicyHolder;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.core.result.XResultInt;
@@ -33,9 +35,10 @@ import srojak.core.result.XResultOf;
 import srojak.debug.DebugSwitchKey;
 import srojak.debug.DebugSwitchTool;
 import srojak.debug.config.impl.ClassElementProduct;
+import srojak.debug.config.impl.DebugAccess;
+import srojak.debug.config.impl.InstancePolicyProduct;
 import srojak.debug.control.ClassDebugOptionsMutable;
 import srojak.debug.control.DebugControl;
-import srojak.debug.control.DebugControlInstanceExt;
 import srojak.debug.control.DebugSwitchMutable;
 import srojak.xml.stream.StreamElementAttribute;
 import srojak.xml.stream.parse.StreamElementAttributeSet;
@@ -61,7 +64,8 @@ public class DebugConfigParser
 	public DebugConfigParser() {
 		super();
 		_levelDefault = ObsLevel.INFO;
-		_controller = new DebugControlInstanceExt();
+		//_controller = new DebugControlInstanceExt();
+		_controller = DebugAccess.getDebugController(true);
 	}
 	
 	public ObsLevel getDefaultObsLevel() {
@@ -100,7 +104,7 @@ public class DebugConfigParser
 				Location loc = super.getParserState().getCurentLocation();
 				ObservationCollector writer = getObservationCollector();
 				String strMessage = String.format("attribute %s: unrecognized value \"%s\"", ATTRIB_LEVEL, strLevel);
-				writer.write(ObsLevel.WARN, "line " + loc.getLineNumber() + ", element " + nameElement + ", " + strMessage);
+				writer.record(ObsLevel.WARN, "line " + loc.getLineNumber() + ", element " + nameElement + ", " + strMessage);
 				recordElementParseError(loc, nameElement, DataErrorSeverity.WARN, strMessage);
 			}
 		}
@@ -134,6 +138,7 @@ public class DebugConfigParser
 				ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
 				boolean bShowSource = attribs.readBooleanAttribValue(ATTRIB_LOCS);
 				boolean bCascade = attribs.readBooleanAttribValue(ATTRIB_CASCADE);
+				StreamElementAttribute attribInstancePolicy = attribs.findAttributeByName(ATTRIB_INSTANCE_POLICY);
 				ClassElementProduct product = new ClassElementProduct(ELEMENT_CLASS, location, locator);
 				mapWork.assign(ELEMENT_CLASS, product);
 				DebugSwitchKey key = DebugSwitchTool.makeClassKey(locator);
@@ -141,10 +146,20 @@ public class DebugConfigParser
 				if (sw == null) {
 					sw = _controller.createDebugSwitch(key);
 				}
-				sw.setLevel(level);
+				sw.setObsLevel(level);
 				sw.setShowSourceLocations(bShowSource);
 				if (bCascade) {
 					_controller.enableBaseClassSwitches(key);
+				}
+				if (attribInstancePolicy != null) {
+					String strPolicyName = attribInstancePolicy.getValue();
+					ObsLevelInstancePolicyHolder policy = _controller.getInstancePolicy(strPolicyName);
+					if (policy == null) {
+						recordElementParseError(location, ELEMENT_CLASS, DataErrorSeverity.WARN, 
+								"policy " + strPolicyName + " not defined");
+					} else {
+						sw.applyInstancePolicy(policy);
+					}
 				}
 			}
 		} else if (nameElement.equals(ELEMENT_SUBJECT)) {
@@ -159,15 +174,26 @@ public class DebugConfigParser
 					recordElementParseError(location, ELEMENT_SUBJECT, DataErrorSeverity.ERROR, "element has no name");
 					return;
 				}
-				ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
+				StreamElementAttribute attribInstancePolicy = attribs.findAttributeByName(ATTRIB_INSTANCE_POLICY);
 				boolean bShowSource = attribs.readBooleanAttribValue(ATTRIB_LOCS);
+				ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
 				DebugSwitchKey key = DebugSwitchTool.makeClassSubjectKey(locClass, strSubjectName);
 				DebugSwitchMutable sw = _controller.getDebugSwitch(key);
 				if (sw == null) {
 					sw = _controller.createDebugSwitch(key);
 				}
-				sw.setLevel(level);
+				sw.setObsLevel(level);
 				sw.setShowSourceLocations(bShowSource);
+				if (attribInstancePolicy != null) {
+					String strPolicyName = attribInstancePolicy.getValue();
+					ObsLevelInstancePolicyHolder policy = _controller.getInstancePolicy(strPolicyName);
+					if (policy == null) {
+						recordElementParseError(location, ELEMENT_SUBJECT, DataErrorSeverity.WARN, 
+								"policy " + strPolicyName + " not defined");
+					} else {
+						sw.applyInstancePolicy(policy);
+					}
+				}
 			}
 		} else if (nameElement.equals(ELEMENT_OPTION)) {
 			if (mapWork.containsKey(ELEMENT_CLASS)) {
@@ -192,6 +218,39 @@ public class DebugConfigParser
 				ClassDebugOptionsMutable options = _controller.getOrCreateClassOptions(locClass);
 				options.putOption(strOptionName, nValue);
 			}
+		} else if (nameElement.equals(ELEMENT_OVERRIDE)) {
+			if (mapWork.containsKey(ELEMENT_INSTANCE_POLICY)) {
+				Location location = getParserState().getCurentLocation();
+				InstancePolicyProduct policy = mapWork.getAs(ELEMENT_INSTANCE_POLICY);
+				int nInstance = 0;
+				XResultInt resultInstance = attribs.readIntAttribValue(ATTRIB_INSTANCE);				
+				if (resultInstance.isValid()) {
+					nInstance = resultInstance.getResult();
+				} else {
+					recordElementParseError(location, ELEMENT_OVERRIDE, DataErrorSeverity.ERROR, "instance is not a number");
+					return;
+				}
+				ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
+				policy.policy().setOverride(new InstanceNumberKey(nInstance), level);
+			}
+		} else if (nameElement.equals(ELEMENT_INSTANCE_POLICY)) {
+			Location location = getParserState().getCurentLocation();
+			String strPolicyName = null;
+			XResultOf<String> result = attribs.readRequiredStringAttribValue(ATTRIB_NAME);
+			if (result.isValid()) {
+				strPolicyName = result.getResult();
+			} else {
+				recordElementParseError(location, ELEMENT_INSTANCE_POLICY, DataErrorSeverity.ERROR, "element has no name");
+				return;
+			}
+			if (_controller.containsInstancePolicy(strPolicyName)) {
+				recordElementParseError(location, ELEMENT_INSTANCE_POLICY, DataErrorSeverity.ERROR,
+						strPolicyName + " is already defined");
+				return;
+			}
+			ObsLevel level = readObsLevel(nameElement, attribs, _levelDefault);
+			InstancePolicyProduct product = new InstancePolicyProduct(ELEMENT_INSTANCE_POLICY, location, strPolicyName, level);
+			mapWork.assign(ELEMENT_INSTANCE_POLICY, product);
 		} else if (nameElement.equals(ELEMENT_CTRLSET)) {
 			StreamElementAttribute attrName = attribs.findAttributeByName(ATTRIB_NAME);
 			_controller.readingSwitchControlSet(attrName.getValue());
@@ -202,8 +261,14 @@ public class DebugConfigParser
 	protected void parseEndElement(QName nameElement, XmlStreamWorkItemMap mapWork, String strElementText) {
 		if (nameElement.equals(ELEMENT_CLASS)) {
 			mapWork.removeIfAssigned(ELEMENT_CLASS);
-		} else if (nameElement.equals(ELEMENT_PACKAGE))
+		} else if (nameElement.equals(ELEMENT_INSTANCE_POLICY)) {
+			if (mapWork.containsKey(ELEMENT_INSTANCE_POLICY)) {
+				InstancePolicyProduct policy = mapWork.takeAs(ELEMENT_INSTANCE_POLICY);
+				_controller.defineInstancePolicy(policy.getName(), policy.policy());
+			}
+		} else if (nameElement.equals(ELEMENT_PACKAGE)) {
 			mapWork.removeIfAssigned(ELEMENT_PACKAGE);
+		}
 	}
 
 }

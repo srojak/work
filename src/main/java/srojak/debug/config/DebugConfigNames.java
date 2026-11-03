@@ -31,6 +31,9 @@ public interface DebugConfigNames {
 
 	public static final QName ELEMENT_SWITCHES = new QName("DebugSwitches");
 	public static final QName ELEMENT_CTRLSET = new QName("SwitchControlSet");
+	public static final QName ELEMENT_INSTANCE_POLICIES = new QName("InstancePolicies");
+	public static final QName ELEMENT_INSTANCE_POLICY = new QName("InstancePolicy");
+	public static final QName ELEMENT_OVERRIDE = new QName("Override");
 	public static final QName ELEMENT_PACKAGE = new QName("Package");
 	public static final QName ELEMENT_CLASS = new QName("Class");
 	public static final QName ELEMENT_SUBJECT = new QName("Subject");
@@ -41,6 +44,8 @@ public interface DebugConfigNames {
 	public static final QName ATTRIB_LOCS = new QName("locs");
 	public static final QName ATTRIB_CASCADE = new QName("cascade");
 	public static final QName ATTRIB_VALUE = new QName("value");
+	public static final QName ATTRIB_INSTANCE = new QName("instance");
+	public static final QName ATTRIB_INSTANCE_POLICY = new QName("instancePolicy");
 	
 	static final ObservedActivity ACTIVITY_READ_DEBUG_CONFIG = new SingleActivity("Read DebugConfig File");
 }

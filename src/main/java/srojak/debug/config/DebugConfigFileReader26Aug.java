@@ -26,7 +26,8 @@ import javax.xml.validation.Schema;
 
 import srojak.core.field.SetOnce;
 import srojak.core.io.FileExistence;
-import srojak.core.kernel.Kernel;
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.observe.CoreObservers;
 import srojak.core.observe.HasSingleObservationCollector;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
@@ -68,9 +69,9 @@ public final class DebugConfigFileReader26Aug
 		_schema = new SetOnce<Schema>(SetOnce.DEFAULT);
 		_parser = new DebugConfigParser();
 		_factoryInput = new XmlStreamInputFactory(true);
-		_collectObs = ObservationCollector.makeInstance();
-		_factoryInput.setObservationCollector(Kernel.OBS_KERNEL);
-		ObservationWriterPrintStream wr = new ObservationWriterPrintStream(System.err);
+		_collectObs = ObservationCollector.create();
+		_factoryInput.setObservationCollector(CoreObservers.OBS_LOG);
+		ObservationWriterPrintStream wr = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.err);
 		wr.enableLevelFilter();
 		wr.setObsLevel(ObsLevel.DETAIL);
 		_writer = wr;
@@ -122,7 +123,7 @@ public final class DebugConfigFileReader26Aug
 		sb.append(classEx.getSimpleName());
 		sb.append(" reading debug config file: ");
 		sb.append(exc.getMessage());	
-		_collectObs.write(ObsLevel.FATAL, sb.toString());
+		_collectObs.record(ObsLevel.FATAL, sb.toString());
 		// TODO: show stack in writer
 		if (_bShowStackOnException) {
 			StackTraceElement[] frames = exc.getStackTrace();

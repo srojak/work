@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamException;
 
 import srojak.core.data.DataErrorSeverity;
 import srojak.core.io.IONodeIdentifier;
-import srojak.core.kernel.Kernel;
+import srojak.core.observe.CoreObservers;
 import srojak.core.observe.InvalidObservationLevelException;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
@@ -34,9 +34,9 @@ import srojak.core.result.XResultOf;
 import srojak.debug.DebugSwitchKey;
 import srojak.debug.DebugSwitchTool;
 import srojak.debug.config.impl.ClassElementProduct;
+import srojak.debug.config.impl.DebugAccess;
 import srojak.debug.control.ClassDebugOptionsMutable;
 import srojak.debug.control.DebugControl;
-import srojak.debug.control.DebugControlInstanceExt;
 import srojak.debug.control.DebugSwitchMutable;
 import srojak.xml.stream.StreamElementAttribute;
 import srojak.xml.stream.parse.StreamElementAttributeSet;
@@ -60,8 +60,9 @@ public class DebugConfigParser2
 	public DebugConfigParser2() {
 		super();
 		_levelDefault = ObsLevel.INFO;
-		_controller = new DebugControlInstanceExt();
-		setObservationCollector(Kernel.OBS_KERNEL);
+		//_controller = new DebugControlInstanceExt();
+		_controller = DebugAccess.getDebugController(true);
+		setObservationCollector(CoreObservers.OBS_LOG);
 	}
 	
 	public ObsLevel getDefaultObsLevel() {
@@ -100,7 +101,7 @@ public class DebugConfigParser2
 				Location loc = super.getParserState().getCurentLocation();
 				ObservationCollector writer = getObservationCollector();
 				String strMessage = String.format("attribute %s: unrecognized value \"%s\"", ATTRIB_LEVEL, strLevel);
-				writer.write(ObsLevel.WARN, "line " + loc.getLineNumber() + ", element " + nameElement + ", " + strMessage);
+				writer.record(ObsLevel.WARN, "line " + loc.getLineNumber() + ", element " + nameElement + ", " + strMessage);
 				recordElementParseError(loc, nameElement, DataErrorSeverity.WARN, strMessage);
 			}
 		}
@@ -141,7 +142,7 @@ public class DebugConfigParser2
 				if (sw == null) {
 					sw = _controller.createDebugSwitch(key);
 				}
-				sw.setLevel(level);
+				sw.setObsLevel(level);
 				sw.setShowSourceLocations(bShowSource);
 				if (bCascade) {
 					_controller.enableBaseClassSwitches(key);
@@ -166,7 +167,7 @@ public class DebugConfigParser2
 				if (sw == null) {
 					sw = _controller.createDebugSwitch(key);
 				}
-				sw.setLevel(level);
+				sw.setObsLevel(level);
 				sw.setShowSourceLocations(bShowSource);
 			}
 		} else if (nameElement.equals(ELEMENT_OPTION)) {
