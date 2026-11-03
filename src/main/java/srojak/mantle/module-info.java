@@ -26,13 +26,16 @@ module srojak.mantle {
 	requires transitive srojak.numerics;
 	requires transitive srojak.debug;
 	exports srojak.mantle;
+	exports srojak.mantle.atoms;
 	exports srojak.mantle.base;
 	exports srojak.mantle.collections;
 	exports srojak.mantle.decorated;
 	exports srojak.mantle.functional;
 	exports srojak.mantle.impl to srojak.utest.mantle;
 	exports srojak.mantle.io;
+	exports srojak.mantle.outcome;
 	exports srojak.mantle.quants;
+	exports srojak.mantle.stats;
 	exports srojak.mantle.reflect;
 	exports srojak.mantle.restbl;
 	exports srojak.mantle.text;

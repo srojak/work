@@ -39,13 +39,13 @@ public class TypedArrayList<E>
 	public TypedArrayList(Class<E> classElement) {
 		super();
 		Objects.requireNonNull(classElement, "classElement");
-		_ckElements = new ClassKey(classElement);
+		_ckElements = new ClassKey(classElement, true);
 	}
 	
 	public TypedArrayList(Class<E> classElement, Collection<? extends E> c) {
 		super(c);
 		Objects.requireNonNull(classElement, "classElement");
-		_ckElements = new ClassKey(classElement);
+		_ckElements = new ClassKey(classElement, true);
 	}
 
 	@Override
