@@ -23,5 +23,6 @@ module srojak.concurrent {
 	requires transitive srojak.numerics;
 	exports srojak.concurrent;
 	exports srojak.concurrent.functional;
+	exports srojak.concurrent.locking;
 	exports srojak.concurrent.queues;
 }

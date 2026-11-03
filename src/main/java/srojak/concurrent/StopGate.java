@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import srojak.core.NameToken;
-import srojak.core.main.CoreOutputs;
+import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 
@@ -37,7 +37,7 @@ public class StopGate
 	private static final ObservationCollector _obsErr;
 	
 	static {
-		CoreOutputs outputs = new CoreOutputs();
+		CoreCollectors outputs = new CoreCollectors();
 		_obsErr = outputs.log();
 	}
 	
