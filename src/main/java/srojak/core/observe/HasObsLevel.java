@@ -22,6 +22,15 @@ package srojak.core.observe;
  */
 public interface HasObsLevel {
 
+	/**
+	 * Get the observation level assigned to the object.
+	 * @return The current observation level assigned to the object.
+	 */
 	ObsLevel getObsLevel();
+	
+	/**
+	 * Set the observation level assigned to the object.
+	 * @param level The new observation level to use.
+	 */
 	void setObsLevel(ObsLevel level);
 }

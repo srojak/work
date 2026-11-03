@@ -87,5 +87,5 @@ public interface CodeObservation {
 	 * @param sb The {@code StringBuilder} to which text is to be written.
 	 * @param optionsFormat Formatting options for writing.
 	 */
-	void writeSelfTo(StringBuilder sb, EnumSet<ObsFormatOption> optionsFormat);
+	void writeSelfTo(StringBuilder sb, String strLead, EnumSet<ObsFormatOption> optionsFormat);
 }

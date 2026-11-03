@@ -32,6 +32,7 @@ import srojak.core.logic.FlagsShortTest;
 import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollectorFlags;
+import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
@@ -52,7 +53,7 @@ import srojak.core.result.XResult;
  *
  */
 public abstract class AbstractObservationCollectorCommonCore
-		implements ObservationCollectorFlags {
+		implements ObservationCollectorFlags, ObservationCommon {
 	private final CoreCollectors _collectors;
 	protected final FlagsShort _flags;
 		
@@ -72,7 +73,7 @@ public abstract class AbstractObservationCollectorCommonCore
 	}
 
 	@Override
-	public boolean areWritesLocked() {
+	public boolean areWritersLocked() {
 		return _flags.test(FLAGS_WRITERS_LOCKED);
 	}
 	
@@ -102,6 +103,15 @@ public abstract class AbstractObservationCollectorCommonCore
 		_flags.set(FLAGS_OBS_LEVEL_LOCKED);
 	}
 	
+	@Override
+	public boolean showSourceLocations() {
+		return !_flags.test(FLAGS_SUPPRESS_SOURCE);
+	}
+	
+	protected void setSuppressSourceLocations(boolean bState) {
+		_flags.apply(bState, FLAGS_SUPPRESS_SOURCE);
+	}
+
 	public boolean isPrimaryCollector() {
 		return false;
 	}
@@ -144,24 +154,27 @@ public abstract class AbstractObservationCollectorCommonCore
 		escalate(level, location);
 	}
 
-	protected void recordClassOf(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strName, Object objValue) {
+	protected void recordClassOf(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level,
+			String strLead, String strName, Object objValue) {
 		CodeObjectValueObsInstance instance = new CodeObjectValueObsInstance(level, location, strName, objValue);
 		instance.setShowFullClassNames(true);
-		listWriters.forEach(w -> w.writeObserved(instance));
+		listWriters.forEach(w -> w.writeObserved(strLead, instance));
 		escalate(level, location);
 	}
 
-	protected void recordThrowable(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, ObservedActivity activity, Throwable t, boolean bShowStack) {
+	protected void recordThrowable(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			ObservedActivity activity, String strLead, Throwable t, boolean bShowStack) {
 		EnumSet<FaultFormat> formats = EnumSet.of(FaultFormat.ShowCauses);
 		if (bShowStack) {
 			formats.add(FaultFormat.ShowStack);
 		}
 		StructuredFault fault = FaultMethods.process(t);
-		listWriters.forEach(w -> w.writeFault(level, location, activity, formats, fault));
+		listWriters.forEach(w -> w.writeFault(level, location, activity, formats, strLead, fault));
 		escalateFault(level, location, activity, fault);
 	}
 
-	protected void recordResult(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, XResult result, boolean bShowStack) {
+	protected void recordResult(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, XResult result, boolean bShowStack) {
 		if (result.isValid()) {
 			String strMessage = result.getActivity().describe() + " succeeded";
 			listWriters.forEach(w -> w.write(level, location, strMessage));
@@ -173,36 +186,45 @@ public abstract class AbstractObservationCollectorCommonCore
 			}
 			StructuredFault fault = FaultMethods.process(result.getThrowable());
 			ObservedActivity activity = result.getActivity();
-			listWriters.forEach(w -> w.writeFault(level, location, activity, formats, fault));
+			listWriters.forEach(w -> w.writeFault(level, location, activity, formats, strLead, fault));
 			escalateFault(level, location, activity, fault);
 		}
 	}
 
-	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, CodeObservationBuilder builderMessage) {
+	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, CodeObservationBuilder builderMessage) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		builderMessage.build(instance);
-		listWriters.forEach(w -> w.writeObserved(instance));
+		listWriters.forEach(w -> w.writeObserved(strLead, instance));
 		escalate(level, location);
 	}
 
-	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, int i, CodeObservationBuilderWithInt builderMessage) {
+	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, int i, CodeObservationBuilderWithInt builderMessage) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		builderMessage.build(instance, i);
-		listWriters.forEach(w -> w.writeObserved(instance));
+		listWriters.forEach(w -> w.writeObserved(strLead, instance));
 		escalate(level, location);
 	}
 
-	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, DataPassThrough passThrough,
-			CodeObservationBuilderWithPassThrough builderMessage) {
+	protected void observe(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, DataPassThrough passThrough, CodeObservationBuilderWithPassThrough builderMessage) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		builderMessage.build(instance, passThrough);
-		listWriters.forEach(w -> w.writeObserved(instance));
+		listWriters.forEach(w -> w.writeObserved(strLead, instance));
 		escalate(level, location);
 	}
+	
+	protected void observeWithValues(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, CodeValuesObservationBuilder builderObs) {
+		CodeValuesObsInstance instance = new CodeValuesObsInstance(level, location);
+		builderObs.build(instance);
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
+	}
 
-	protected void timeStamp(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level) {
+	protected void timeStamp(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strLead) {
 		final LocalDateTime dtNow = LocalDateTime.now();
-		listWriters.forEach(w -> w.writeTimeStamp(level, location, dtNow));
+		listWriters.forEach(w -> w.writeTimeStamp(level, location, strLead, dtNow));
 		escalate(level, location);
 	}
 
@@ -223,78 +245,86 @@ public abstract class AbstractObservationCollectorCommonCore
 	
 	// TraceCollector methods
 
-	protected void traceEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level) {
+	protected void traceEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strLead) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.ENTERING);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strMessage) {
+	protected void traceEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, String strMessage) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.ENTERING);
 		instance.appendContent(", ");
 		instance.appendContent(strMessage);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceTextEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, TextObservation observation) {
+	protected void traceTextEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, TextObservation observation) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.ENTERING);
 		instance.appendContent(", ");
 		instance.appendFrom(observation);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceCodeEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, CodeValuesObservationBuilder builderObs) {
+	protected void traceCodeEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, CodeValuesObservationBuilder builderObs) {
 		CodeValuesObsInstance instance = new CodeValuesObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.ENTERING);
 		instance.appendContent(", ");
 		builderObs.build(instance);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level) {
+	protected void traceReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strLead) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.RETURNING);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, String strMessage) {
+	protected void traceReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, String strMessage) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(", ");
 		instance.appendContent(strMessage);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceCodeReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, CodeValuesObservationBuilder builderObs) {
+	protected void traceCodeReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, CodeValuesObservationBuilder builderObs) {
 		CodeValuesObsInstance instance = new CodeValuesObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(", ");
 		builderObs.build(instance);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceTextReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, TextObservation observation) {
+	protected void traceTextReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, TextObservation observation) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(", ");
 		instance.appendFrom(observation);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceReturnValue(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, CodeValue cdValue) {
+	protected void traceReturnValue(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			String strLead, CodeValue cdValue) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(ObservationCommonText.VALUE);
 		instance.appendValue(" ", cdValue);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 
-	protected void traceThrowing(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, ObservedActivity activity, Exception exc) {
+	protected void traceThrowing(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			ObservedActivity activity, String strLead, Exception exc) {
 		CodeFaultObsInstance instance = new CodeFaultObsInstance(level, location, activity);
 		instance.formatFault().add(FaultFormat.Originating);
 		instance.setFault(FaultMethods.process(exc));
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(strLead, instance));
 	}
 }

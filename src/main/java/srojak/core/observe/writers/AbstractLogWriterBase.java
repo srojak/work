@@ -76,21 +76,21 @@ public abstract class AbstractLogWriterBase
 	}
 
 	@Override
-	public void writeObserved(CodeObservation observation) {
+	public void writeObserved(String strLead, CodeObservation observation) {
 		Objects.requireNonNull(observation, "observation");
 		ObsLevel level = observation.level();
 		ObservationWriter writerLog = getCurrentLogWriter();
-		writerLog.writeObserved(observation);
+		writerLog.writeObserved(strLead, observation);
 		if (isAutoFlush()) {
 			writerLog.flush();
 		}
 	}
 
 	@Override
-	public void writeObservedTrace(CodeObservation observation) {
+	public void writeObservedTrace(String strLead, CodeObservation observation) {
 		Objects.requireNonNull(observation, "observation");
 		ObservationWriter writerLog = getCurrentLogWriter();
-		writerLog.writeObservedTrace(observation);
+		writerLog.writeObservedTrace(strLead, observation);
 		if (isAutoFlush()) {
 			writerLog.flush();
 		}
@@ -138,10 +138,10 @@ public abstract class AbstractLogWriterBase
 	}
 
 	@Override
-	public void writeObservedFault(CodeFaultObservation observation) {
+	public void writeObservedFault(String strLead, CodeFaultObservation observation) {
 		Objects.requireNonNull(observation, "observation");
 		ObservationWriter writerLog = getCurrentLogWriter();
-		writerLog.writeObservedFault(observation);
+		writerLog.writeObservedFault(strLead, observation);
 		if (isAutoFlush()) {
 			writerLog.flush();
 		}
@@ -149,25 +149,25 @@ public abstract class AbstractLogWriterBase
 
 	@Override
 	public void writeFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
-			EnumSet<FaultFormat> formats, StructuredFault fault) {
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault) {
 		ObsLevel.validateEventLevel(level);
 		Objects.requireNonNull(locOrigin, "locOrigin");
 		Objects.requireNonNull(activity, "activity");
 		Objects.requireNonNull(formats, "formats");
 		Objects.requireNonNull(fault, "fault");
 		ObservationWriter writerLog = getCurrentLogWriter();
-		writerLog.writeFault(level, locOrigin, activity, formats, fault);
+		writerLog.writeFault(level, locOrigin, activity, formats, strLead, fault);
 		if (isAutoFlush()) {
 			writerLog.flush();
 		}
 	}
 
 	@Override
-	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
+	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs) {
 		ObsLevel.validateEventLevel(level);
 		Objects.requireNonNull(dtObs, "dtObs");
 		ObservationWriter writerLog = getCurrentLogWriter();
-		writerLog.writeTimeStamp(level, locOrigin, dtObs);
+		writerLog.writeTimeStamp(level, locOrigin, strLead, dtObs);
 		if (isAutoFlush()) {
 			writerLog.flush();
 		}

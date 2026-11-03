@@ -16,8 +16,7 @@
  */
 package srojak.core.observe;
 
-import srojak.core.observe.impl.ObservationCollectorInstance;
-import srojak.core.observe.impl.ObservationCollectorOverlayInstance;
+import srojak.core.observe.impl.ObservationCollectorBox;
 
 /**
  * @author Stephen
@@ -35,7 +34,7 @@ import srojak.core.observe.impl.ObservationCollectorOverlayInstance;
 public interface ObservationCollector
 	extends ObservationCollectorCore, ObservationCollectWriterStore {
 	
-	public static ObservationCollector makeInstance() {
-		return new ObservationCollectorInstance();
+	public static ObservationCollector create() {
+		return new ObservationCollectorBox();
 	}
 }

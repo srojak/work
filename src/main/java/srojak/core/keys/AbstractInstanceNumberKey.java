@@ -14,41 +14,51 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.io;
+package srojak.core.keys;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Objects;
-
-import srojak.core.TextMessageRelay;
+import srojak.core.InstanceNumberCommon;
 
 /**
  * @author Stephen
  *
  */
-public class TextRelayTextPrinter 
-		extends LineBasedTextPrinterBase {
-	private final TextMessageRelay _relay;
-
-	/**
-	 * 
-	 */
-	public TextRelayTextPrinter(TextMessageRelay relay) {
-		super();
-		Objects.requireNonNull(relay, "relay");
-		_relay = relay;
-		setReady();
+public abstract class AbstractInstanceNumberKey 
+		implements InstanceNumberCommon {
+	protected final int _instance;
+	
+	protected AbstractInstanceNumberKey(int number) {
+		_instance = number;		
 	}
 
 	@Override
-	protected void writeFromBuffer(ByteArrayOutputStream buffer) throws IOException {
-		_relay.writeln(buffer.toString());
+	public boolean isExcluded() {
+		return false;
 	}
 
 	@Override
-	protected void innerClose() throws IOException {
-		// nothing to do
-		
+	public int number() {
+		return _instance;
 	}
 
+	@Override
+	public boolean isNumericallyEqual(int nValue) {
+		return _instance == nValue;
+	}
+	
+	@Override
+	public boolean isNumericallyEqual(InstanceNumberCommon other) {
+		return _instance == other.number();
+	}
+
+	protected abstract String getLabel();
+	
+	@Override
+	public String toString() {
+		return String.valueOf(_instance);
+	}
+	
+	@Override
+	public String toDetailedString() {
+		return getLabel() + "[" + String.valueOf(_instance) + "]";
+	}
 }

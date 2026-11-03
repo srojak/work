@@ -20,7 +20,7 @@ import srojak.core.io.IONodeIdentifier;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCollectorSource;
 import srojak.core.observe.ObservationWriter;
-import srojak.core.observe.impl.ObservationCollectorLockableInstance;
+import srojak.core.observe.impl.ObservationCollectorLockableBox;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 
 /**
@@ -32,7 +32,7 @@ public class ObservationCollectorCommonErrorSource
 
 	@Override
 	public ObservationCollector getCollector() {
-		ObservationCollectorLockableInstance oc = new ObservationCollectorLockableInstance();
+		ObservationCollectorLockableBox oc = new ObservationCollectorLockableBox();
 		ObservationWriter writer = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.err);
 		writer.setAutoFlush(true);
 		oc.addWriterPermanent(writer);

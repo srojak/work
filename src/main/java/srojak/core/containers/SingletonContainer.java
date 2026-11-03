@@ -41,7 +41,7 @@ public class SingletonContainer<T>
 	private final ObjectLifeCycleListener _listenerLife;
 	private T _obj;
 	
-	private static ObservationCollector _obsErr = ObservationCollector.makeInstance();
+	private static ObservationCollector _obsErr = ObservationCollector.create();
 	
 	public static ObservationCollector getObservationWriter() {
 		return _obsErr;

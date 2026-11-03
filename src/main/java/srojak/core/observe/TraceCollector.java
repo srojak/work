@@ -23,7 +23,7 @@ import srojak.core.data.DataPassThrough;
 import srojak.core.observe.code.CodeValue;
 import srojak.core.observe.functional.CodeValuesObservationBuilder;
 
-/**
+/**isNumericallyEqual
  * @author Stephen
  *
  */

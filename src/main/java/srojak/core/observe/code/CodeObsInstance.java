@@ -252,10 +252,11 @@ public class CodeObsInstance
 	}
 
 	@Override
-	public void writeSelfTo(StringBuilder sb, EnumSet<ObsFormatOption> optionsFormat) {
+	public void writeSelfTo(StringBuilder sb, String strLead, EnumSet<ObsFormatOption> optionsFormat) {
 		Objects.requireNonNull(sb, "sb");
 		Objects.requireNonNull(optionsFormat, "optionsFormat");
 		sb.append(_level.getName());
+		sb.append(strLead);
 		innerWriteOrigin(sb, optionsFormat);
 		innerWriteOriginClass(sb, optionsFormat);
 		if (_sbContent.length() > 0) {

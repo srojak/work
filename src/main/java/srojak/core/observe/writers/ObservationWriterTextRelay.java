@@ -60,16 +60,16 @@ public class ObservationWriterTextRelay
 	}
 
 	@Override
-	protected void innerWriteObserved(CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+	protected void innerWriteObserved(String strLead, CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
 		StringBuilder sb = new StringBuilder();
-		observation.writeSelfTo(sb, optionsFormat);
+		observation.writeSelfTo(sb, strLead, optionsFormat);
 		_relay.writeln(sb.toString());
 	}
 
 	@Override
-	protected void innerWriteObservedFault(CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+	protected void innerWriteObservedFault(String strLead, CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
 		StringBuilder sb = new StringBuilder();
-		observation.writeSelfTo(sb, optionsFormat);
+		observation.writeSelfTo(sb, strLead, optionsFormat);
 		_relay.writeln(sb.toString());
 	}
 
@@ -101,8 +101,9 @@ public class ObservationWriterTextRelay
 
 	@Override
 	protected void innerWriteFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
-			EnumSet<FaultFormat> formats, StructuredFault fault) {
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault) {
 		StringBuilder sb = new StringBuilder(level.getName());
+		sb.append(strLead);
 		if (canShowLocations()) {
 			sb.append(' ');
 			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
@@ -118,9 +119,9 @@ public class ObservationWriterTextRelay
 	}
 
 	@Override
-	protected void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
-		// TODO Auto-generated method stub
+	protected void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs) {
 		StringBuilder sb = new StringBuilder(level.getName());
+		sb.append(strLead);
 		if (canShowLocations()) {
 			sb.append(' ');
 			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));

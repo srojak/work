@@ -16,17 +16,12 @@
  */
 package srojak.core.observe.impl;
 
-import java.time.LocalDateTime;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import srojak.core.data.DataPassThrough;
-import srojak.core.faults.FaultFormat;
-import srojak.core.faults.FaultMethods;
-import srojak.core.faults.StructuredFault;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCommon;
@@ -36,11 +31,7 @@ import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.SourceLocation;
 import srojak.core.observe.TextObservation;
 import srojak.core.observe.TraceLevel;
-import srojak.core.observe.code.CodeFaultObsInstance;
-import srojak.core.observe.code.CodeObjectValueObsInstance;
-import srojak.core.observe.code.CodeObsInstance;
 import srojak.core.observe.code.CodeValue;
-import srojak.core.observe.code.CodeValuesObsInstance;
 import srojak.core.observe.functional.CodeObservationBuilder;
 import srojak.core.observe.functional.CodeObservationBuilderWithInt;
 import srojak.core.observe.functional.CodeObservationBuilderWithPassThrough;
@@ -51,20 +42,24 @@ import srojak.core.result.XResult;
  * @author Stephen
  *
  */
-public class ObservationCollectorInstance2 
-		extends ObservationCollectorWriterBase 
+public class ObservationCollectorBox
+		extends AbstractObservationCollectorWithWriters
 		implements ObservationCollector, ObservationCommon {
 	
-	public ObservationCollectorInstance2() {
+	/**
+	 * 
+	 */
+	public ObservationCollectorBox() {
 		super();
 	}
 
 	@Override
 	public void record(ObsLevel level, String strText) {
 		ObsLevel.validateEventLevel(level);
+		Objects.requireNonNull(strText, "strText");
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
-		listActive.forEach(w -> w.write(level, location, strText));
+		record(listActive, location, level, strText);
 	}
 
 	@Override
@@ -74,8 +69,7 @@ public class ObservationCollectorInstance2
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			String strMessage = message.get();
-			listActive.forEach(w -> w.write(level, location, strMessage));
+			record(listActive, location, level, message);
 		}
 	}
 
@@ -88,8 +82,7 @@ public class ObservationCollectorInstance2
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			String strMessage = message.apply(passThrough);
-			listActive.forEach(w -> w.write(level, location, strMessage));
+			record(listActive, location, level, passThrough, message);
 		}
 	}
 	
@@ -100,9 +93,7 @@ public class ObservationCollectorInstance2
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			CodeObjectValueObsInstance instance = new CodeObjectValueObsInstance(level, location, strName, objValue);
-			instance.setShowFullClassNames(true);
-			listActive.forEach(w -> w.writeObserved(instance));
+			recordClassOf(listActive, location, level, STR_EMPTY, strName, objValue);
 		}
 	}
 
@@ -117,9 +108,7 @@ public class ObservationCollectorInstance2
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			CodeObjectValueObsInstance instance = new CodeObjectValueObsInstance(level, location, strName, objValue);
-			instance.setShowFullClassNames(true);
-			listActive.forEach(w -> w.writeObserved(instance));
+			recordClassOf(listActive, location, level, STR_EMPTY, strName, objValue);
 		}
 	}
 
@@ -130,12 +119,7 @@ public class ObservationCollectorInstance2
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			EnumSet<FaultFormat> formats = EnumSet.of(FaultFormat.ShowCauses);
-			if (bShowStack) {
-				formats.add(FaultFormat.ShowStack);
-			}
-			StructuredFault fault = FaultMethods.process(t);
-			listActive.forEach(w -> w.writeFault(level, location, activity, formats, fault));
+			recordThrowable(listActive, location, level, activity, STR_EMPTY, t, bShowStack);
 		}
 	}
 
@@ -143,24 +127,14 @@ public class ObservationCollectorInstance2
 	public void recordResult(ObsLevel level, ObsLevel levelIfFaulted, XResult result, boolean bShowStack) {
 		ObsLevel.validateEventLevel(level);
 		ObsLevel.validateEventLevel(levelIfFaulted, "levelIfFaulted");
+		Objects.requireNonNull(result, "result");
 		SourceLocation location = SourceLocation.caller();
 		if (!result.isValid()) {
-				level = levelIfFaulted;
+			level = levelIfFaulted;
 		}
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			final ObsLevel level2 = level;
-			if (result.isValid()) {
-				String strMessage = result.getActivity().describe() + " succeeded";
-				listActive.forEach(w -> w.write(level2, location, strMessage));
-			} else {
-				EnumSet<FaultFormat> formats = EnumSet.of(FaultFormat.ShowCauses);
-				if (bShowStack) {
-					formats.add(FaultFormat.ShowStack);
-				}
-				StructuredFault fault = FaultMethods.process(result.getThrowable());
-				listActive.forEach(w -> w.writeFault(level2, location, result.getActivity(), formats, fault));
-			}
+			recordResult(listActive, location, level, STR_EMPTY, result, bShowStack);
 		}
 	}
 
@@ -171,9 +145,7 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(level, location);
-			builderMessage.build(instance);
-			listActive.forEach(w -> w.writeObserved(instance));
+			observe(listActive, location, level, STR_EMPTY, builderMessage);
 		}
 	}
 
@@ -184,9 +156,7 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(level, location);
-			builderMessage.build(instance, i);
-			listActive.forEach(w -> w.writeObserved(instance));
+			observe(listActive, location, level, STR_EMPTY, i, builderMessage);
 		}
 	}
 
@@ -199,9 +169,18 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(level, location);
-			builderMessage.build(instance, passThrough);
-			listActive.forEach(w -> w.writeObserved(instance));
+			observe(listActive, location, level, STR_EMPTY, passThrough, builderMessage);
+		}
+	}
+
+	@Override
+	public void observeWithValues(ObsLevel level, CodeValuesObservationBuilder builderObs) {
+		ObsLevel.validateEventLevel(level);
+		Objects.requireNonNull(builderObs, "builderObs");		
+		SourceLocation location = SourceLocation.caller();
+		List<ObservationWriter> listActive = getWriters(level);
+		if (!listActive.isEmpty()) {
+			observeWithValues(listActive, location, level, STR_EMPTY, builderObs);
 		}
 	}
 
@@ -211,8 +190,7 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			final LocalDateTime dtNow = LocalDateTime.now();
-			listActive.forEach(w -> w.writeTimeStamp(level, location, dtNow));
+			timeStamp(listActive, location, level, STR_EMPTY);
 		}
 	}
 
@@ -220,7 +198,7 @@ public class ObservationCollectorInstance2
 	public void recordDiagnostic(String strText) {
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listWriters = getAllWriters();
-		listWriters.forEach(w -> w.writeDiagnostic(location, strText));
+		recordDiagnostic(listWriters, location, strText);
 	}
 
 	@Override
@@ -228,14 +206,14 @@ public class ObservationCollectorInstance2
 		ObsLevel.validateEventLevel(level);
 		SourceLocation location = SourceLocation.caller();
 		List<ObservationWriter> listActive = getWriters(level);
-		return new SingleObservationCollectorObj(listActive, level, location);
+		return new SingleObservationCollectorObj(listActive, level, getObsLevel(), location, STR_EMPTY);
 	}
 
 	@Override
 	public void recordNoLocation(ObsLevel level, String strText) {
 		ObsLevel.validateEventLevel(level);
 		List<ObservationWriter> listActive = getWriters(level);
-		listActive.forEach(w -> w.write(level, strText));
+		recordNoLocation(listActive, level, strText);
 	}
 
 	@Override
@@ -244,8 +222,7 @@ public class ObservationCollectorInstance2
 		Objects.requireNonNull(message, "message");
 		List<ObservationWriter> listActive = getWriters(level);
 		if (!listActive.isEmpty()) {
-			String strMessage = message.get();
-			listActive.forEach(w -> w.write(level, strMessage));
+			recordNoLocation(listActive, level, message);
 		}
 	}
 	
@@ -257,25 +234,20 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.ENTERING);
-				listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceEnter(listActive, location, levelObs, STR_EMPTY);
 		}		
 	}
 
 	@Override
 	public void traceEnter(TraceLevel level, String strMessage) {
 		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(strMessage, "strMessage");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();			
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendContent(strMessage);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceEnter(listActive, location, levelObs, STR_EMPTY, strMessage);
 		}		
 	}
 
@@ -286,12 +258,8 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendContent(message.get());
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceEnter(listActive, location, levelObs, STR_EMPTY, message.get());
 		}		
 	}
 
@@ -302,12 +270,8 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendFrom(observation);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();		
+			traceTextEnter(listActive, location, levelObs, STR_EMPTY, observation);
 		}		
 	}
 
@@ -320,12 +284,8 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendContent(message.apply(passThrough));
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceEnter(listActive, location, levelObs, STR_EMPTY, message.apply(passThrough));
 		}		
 	}
 
@@ -336,12 +296,8 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeValuesObsInstance instance = new CodeValuesObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			builderObs.build(instance);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceCodeEnter(listActive, location, levelObs, STR_EMPTY, builderObs);
 		}		
 	}
 
@@ -352,24 +308,19 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, STR_EMPTY);
 		}		
 	}
 
 	@Override
 	public void traceReturn(TraceLevel level, String strMessage) {
 		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(strMessage, "strMessage");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendContent(strMessage);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, STR_EMPTY, strMessage);
 		}		
 	}
 
@@ -381,11 +332,7 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendContent(message.get());
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, STR_EMPTY, message.get());
 		}		
 	}
 
@@ -399,11 +346,7 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendContent(message.apply(passThrough));
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, STR_EMPTY, message.apply(passThrough));
 		}		
 	}
 
@@ -414,12 +357,8 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeValuesObsInstance instance = new CodeValuesObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			builderObs.build(instance);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();		
+			traceCodeReturn(listActive, location, levelObs, STR_EMPTY, builderObs);
 		}		
 	}
 
@@ -430,28 +369,20 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendFrom(observation);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceTextReturn(listActive, location, levelObs, STR_EMPTY, observation);
 		}		
 	}
 
 	@Override
-	public void traceReturnValue(TraceLevel level,  CodeValue cdValue) {
+	public void traceReturnValue(TraceLevel level, CodeValue cdValue) {
 		Objects.requireNonNull(level, "level");
 		Objects.requireNonNull(cdValue, "cdValue");		
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(ObservationCommonText.VALUE);
-			instance.appendValue(" ", cdValue);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturnValue(listActive, location, levelObs, STR_EMPTY, cdValue);
 		}		
 	}
 
@@ -463,10 +394,7 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeFaultObsInstance instance = new CodeFaultObsInstance(levelObs, location, activity);
-			instance.formatFault().add(FaultFormat.Originating);
-			instance.setFault(FaultMethods.process(exc));
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceThrowing(listActive, location, levelObs, activity, STR_EMPTY, exc);
 		}		
 	}
 	
@@ -480,31 +408,21 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceEnter(listActive, location, levelObs, classTrace);
 		}
 	}
 
 	@Override
 	public void traceEnterObject(TraceLevel level, Object objTrace) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.ENTERING);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceEnter(listActive, location, levelObs, objTrace.getClass());
 		}
 	}
 
@@ -516,35 +434,21 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendContent(strMessage);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceEnter(listActive, location, levelObs, classTrace, strMessage);
 		}
 	}
 
 	@Override
 	public void traceEnterObject(TraceLevel level, Object objTrace, String strMessage) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendContent(strMessage);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceEnter(listActive, location, levelObs, objTrace.getClass(), strMessage);
 		}
 	}
 
@@ -557,36 +461,22 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendFrom(observation);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceTextEnter(listActive, location, levelObs, classTrace, observation);
 		}
 	}
 
 	@Override
 	public void traceTextEnterObject(TraceLevel level, Object objTrace, TextObservation observation) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		Objects.requireNonNull(observation, "observation");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			instance.appendFrom(observation);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceTextEnter(listActive, location, levelObs, objTrace.getClass(), observation);
 		}
 	}
 
@@ -598,37 +488,23 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeValuesObsInstance instance = new CodeValuesObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			builderObs.build(instance);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceCodeEnter(listActive, location, levelObs, classTrace, builderObs);
 		}		
 	}
 
 	@Override
 	public void traceCodeEnterObject(TraceLevel level, Object objTrace, CodeValuesObservationBuilder builderObs) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		Objects.requireNonNull(builderObs, "builderObs");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeValuesObsInstance instance = new CodeValuesObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.ENTERING);
-			instance.appendContent(", ");
-			builderObs.build(instance);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceCodeEnter(listActive, location, levelObs, objTrace.getClass(), builderObs);
 		}		
 	}
 
@@ -640,31 +516,21 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, classTrace);
 		}
 	}
 
 	@Override
 	public void traceReturnObject(TraceLevel level, Object objTrace) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.RETURNING);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, objTrace.getClass());
 		}
 	}
 
@@ -676,35 +542,21 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendContent(strMessage);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, classTrace);
 		}
 	}
 
 	@Override
 	public void traceReturnObject(TraceLevel level, Object objTrace, String strMessage) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendContent(strMessage);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturn(listActive, location, levelObs, objTrace.getClass());
 		}
 	}
 
@@ -717,36 +569,22 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendFrom(observation);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceTextReturn(listActive, location, levelObs, classTrace, observation);
 		}
 	}
 
 	@Override
 	public void traceTextReturnObject(TraceLevel level, Object objTrace, TextObservation observation) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		Objects.requireNonNull(observation, "observation");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			instance.appendFrom(observation);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceTextReturn(listActive, location, levelObs, objTrace.getClass(), observation);
 		}
 	}
 
@@ -758,37 +596,23 @@ public class ObservationCollectorInstance2
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeValuesObsInstance instance = new CodeValuesObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			builderObs.build(instance);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceCodeReturn(listActive, location, levelObs, classTrace, builderObs);
 		}		
 	}
 
 	@Override
 	public void traceCodeReturnObject(TraceLevel level, Object objTrace, CodeValuesObservationBuilder builderObs) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		Objects.requireNonNull(builderObs, "builderObs");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
-			SourceLocation location = SourceLocation.caller();			
-			CodeValuesObsInstance instance = new CodeValuesObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(", ");
-			builderObs.build(instance);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			SourceLocation location = SourceLocation.caller();
+			traceCodeReturn(listActive, location, levelObs, objTrace.getClass(), builderObs);
 		}		
 	}
 
@@ -800,35 +624,21 @@ public class ObservationCollectorInstance2
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(ObservationCommonText.VALUE);
-			instance.appendValue("", cdValue);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturnValue(listActive, location, levelObs, classTrace, cdValue);
 		}		
 	}
 
 	@Override
 	public void traceReturnObjectValue(TraceLevel level, Object objTrace,  CodeValue cdValue) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeObsInstance instance = new CodeObsInstance(levelObs, location);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.appendContent(ObservationCommonText.RETURNING);
-			instance.appendContent(ObservationCommonText.VALUE);
-			instance.appendValue("", cdValue);
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceReturnValue(listActive, location, levelObs, objTrace.getClass(), cdValue);
 		}		
 	}
 
@@ -837,41 +647,26 @@ public class ObservationCollectorInstance2
 		Objects.requireNonNull(level, "level");
 		Objects.requireNonNull(classTrace, "classTrace");
 		Objects.requireNonNull(activity, "activity");
-		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(activity, "activity");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeFaultObsInstance instance = new CodeFaultObsInstance(levelObs, location, activity);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(classTrace);
-			instance.formatFault().add(FaultFormat.Originating);
-			instance.setFault(FaultMethods.process(exc));
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceThrowing(listActive, location, levelObs, classTrace, activity, exc);
 		}		
 	}
 
 	@Override
 	public void traceObjectThrowing(TraceLevel level, Object objTrace, ObservedActivity activity, Exception exc) {
 		Objects.requireNonNull(level, "level");
-		Objects.requireNonNull(objTrace, "objTrace");
+		if (objTrace == null) {
+			objTrace = new NullObject();
+		}
 		Objects.requireNonNull(activity, "activity");
 		ObsLevel levelObs = level.getObsLevel();
 		List<ObservationWriter> listActive = getWriters(levelObs);
 		if (!listActive.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			CodeFaultObsInstance instance = new CodeFaultObsInstance(levelObs, location, activity);
-			if (useFullClassNames()) {
-				instance.setShowFullClassNames(true);
-			}
-			instance.setOriginClass(objTrace.getClass());
-			instance.formatFault().add(FaultFormat.Originating);
-			instance.setFault(FaultMethods.process(exc));
-			listActive.forEach(w -> w.writeObservedTrace(instance));
+			traceThrowing(listActive, location, levelObs, objTrace.getClass(), activity, exc);
 		}		
 	}
-
 }

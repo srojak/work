@@ -61,8 +61,8 @@ public class CodeValuesObsInstance
 	}
 
 	@Override
-	public void writeSelfTo(StringBuilder sb, EnumSet<ObsFormatOption> optionsFormat) {
-		super.writeSelfTo(sb, optionsFormat);
+	public void writeSelfTo(StringBuilder sb, String strLead, EnumSet<ObsFormatOption> optionsFormat) {
+		super.writeSelfTo(sb, strLead, optionsFormat);
 		if (!_listNamedValues.isEmpty()) {
 			sb.append("\nnamed values:");
 			_listNamedValues.forEach(nv -> {

@@ -16,7 +16,7 @@
  */
 package srojak.core.observe;
 
-import srojak.core.observe.impl.ObservationCollectorOverlayInstance;
+import srojak.core.observe.impl.ObservationCollectorOverlayBox;
 
 /**
  * @author Stephen
@@ -29,7 +29,7 @@ public interface ObservationCollectorOverlay
 	
 	void removeCollector(ObservationCollector collector);
 	
-	public static ObservationCollectorOverlay makeInstance() {
-		return new ObservationCollectorOverlayInstance();
+	public static ObservationCollectorOverlay create() {
+		return new ObservationCollectorOverlayBox();
 	}
 }

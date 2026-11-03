@@ -14,27 +14,14 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.core.observe.impl;
+package srojak.core;
 
 /**
  * @author Stephen
  *
  */
-public class ObservationCollectorLockableInstance 
-		extends ObservationCollectorInstance {
+public interface EquatableWithExclusions<T> extends Equatable<T> {
 
-	/**
-	 * 
-	 */
-	public ObservationCollectorLockableInstance() {
-		
-	}
-
-	public void lockWriters() {
-		super.lockWritersInPlace();
-	}
-	
-	public void lockObsLevel() {
-		super.lockObsLevelAtCurrent();
-	}
+	boolean isExcluded();
+	boolean isComprehensivelyEqual(T obj);
 }

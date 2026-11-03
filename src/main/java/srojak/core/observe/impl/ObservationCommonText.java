@@ -26,7 +26,7 @@ public class ObservationCommonText {
 
 	public static final String ENTERING = "entering";
 	public static final String RETURNING = "returning";
-	public static final String VALUE = " value = ";
+	public static final String VALUE = " value: ";
 	
 	public static StringBuilder startTraceEnter() {
 		StringBuilder sb = new StringBuilder(ENTERING);

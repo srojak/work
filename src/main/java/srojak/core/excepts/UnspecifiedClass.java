@@ -22,4 +22,10 @@ package srojak.core.excepts;
  */
 class UnspecifiedClass {
 
+	@Override
+	public String toString() {
+		return "?unspecified";
+	}
+
+	
 }

@@ -44,12 +44,12 @@ import srojak.core.result.XResult;
  * @author Stephen
  *
  */
-public class ObservationCollectorOverlayInstance
+public class ObservationCollectorOverlayBox
 		extends AbstractObservationCollectorCore
 		implements ObservationCollectorOverlay {
 	private final List<ObservationCollectorWriteThrough> _listCollectors;
 	
-	public ObservationCollectorOverlayInstance() {
+	public ObservationCollectorOverlayBox() {
 		super();
 		_listCollectors = new LinkedList<ObservationCollectorWriteThrough>();
 	}
@@ -133,7 +133,7 @@ public class ObservationCollectorOverlayInstance
 		SourceLocation location = SourceLocation.caller();
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
-			recordClassOf(listWriters, location, level, strName, objValue);
+			recordClassOf(listWriters, location, level, STR_EMPTY, strName, objValue);
 		}
 	}
 
@@ -148,7 +148,7 @@ public class ObservationCollectorOverlayInstance
 		SourceLocation location = SourceLocation.caller();
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
-			recordClassOf(listWriters, location, level, strName, objValue);
+			recordClassOf(listWriters, location, level, STR_EMPTY, strName, objValue);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class ObservationCollectorOverlayInstance
 		SourceLocation location = SourceLocation.caller();
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
-			recordThrowable(listWriters, location, level, activity, t, bShowStack);
+			recordThrowable(listWriters, location, level, activity, STR_EMPTY, t, bShowStack);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class ObservationCollectorOverlayInstance
 		}
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
-			recordResult(listWriters, location, level, result, bShowStack);
+			recordResult(listWriters, location, level, STR_EMPTY, result, bShowStack);
 		}
 	}
 
@@ -184,7 +184,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			observe(listWriters, location, level, builderMessage);
+			observe(listWriters, location, level, STR_EMPTY, builderMessage);
 		}
 	}
 
@@ -195,7 +195,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			observe(listWriters, location, level, i, builderMessage);
+			observe(listWriters, location, level, STR_EMPTY, i, builderMessage);
 		}
 	}
 
@@ -208,7 +208,18 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			observe(listWriters, location, level, passThrough, builderMessage);
+			observe(listWriters, location, level, STR_EMPTY, passThrough, builderMessage);
+		}
+	}
+
+	@Override
+	public void observeWithValues(ObsLevel level, CodeValuesObservationBuilder builderObs) {
+		ObsLevel.validateEventLevel(level);
+		Objects.requireNonNull(builderObs, "builderObs");		
+		SourceLocation location = SourceLocation.caller();
+		ObservationWritersUniqueList listWriters = getWriters(level);
+		if (!listWriters.isEmpty()) {
+			observeWithValues(listWriters, location, level, STR_EMPTY, builderObs);
 		}
 	}
 
@@ -218,7 +229,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(level);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			timeStamp(listWriters, location, level);
+			timeStamp(listWriters, location, level, STR_EMPTY);
 		}
 	}
 
@@ -234,7 +245,7 @@ public class ObservationCollectorOverlayInstance
 		ObsLevel.validateEventLevel(level);
 		SourceLocation location = SourceLocation.caller();
 		ObservationWritersUniqueList listWriters = getWriters(level);
-		return new SingleObservationCollectorObj(listWriters, level, location);
+		return new SingleObservationCollectorObj(listWriters, level, getObsLevel(), location, STR_EMPTY);
 	}
 
 	@Override
@@ -263,7 +274,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceEnter(listWriters, location, levelObs);
+			traceEnter(listWriters, location, levelObs, STR_EMPTY);
 		}
 	}
 
@@ -275,7 +286,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceEnter(listWriters, location, levelObs, strMessage);
+			traceEnter(listWriters, location, levelObs, STR_EMPTY, strMessage);
 		}
 	}
 
@@ -287,7 +298,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceEnter(listWriters, location, levelObs, message.get());
+			traceEnter(listWriters, location, levelObs, STR_EMPTY, message.get());
 		}
 	}
 
@@ -299,7 +310,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceTextEnter(listWriters, location, levelObs, observation);
+			traceTextEnter(listWriters, location, levelObs, STR_EMPTY, observation);
 		}
 	}
 
@@ -312,7 +323,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceEnter(listWriters, location, levelObs, message.apply(passThrough));
+			traceEnter(listWriters, location, levelObs, STR_EMPTY, message.apply(passThrough));
 		}
 	}
 
@@ -324,7 +335,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceCodeEnter(listWriters, location, levelObs, builderObs);
+			traceCodeEnter(listWriters, location, levelObs, STR_EMPTY, builderObs);
 		}
 	}
 
@@ -335,7 +346,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceReturn(listWriters, location, levelObs);
+			traceReturn(listWriters, location, levelObs, STR_EMPTY);
 		}
 	}
 
@@ -347,7 +358,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceReturn(listWriters, location, levelObs, strMessage);
+			traceReturn(listWriters, location, levelObs, STR_EMPTY, strMessage);
 		}
 	}
 
@@ -359,7 +370,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceReturn(listWriters, location, levelObs, message.get());
+			traceReturn(listWriters, location, levelObs, STR_EMPTY, message.get());
 		}
 	}
 
@@ -372,7 +383,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceReturn(listWriters, location, levelObs, message.apply(passThrough));
+			traceReturn(listWriters, location, levelObs, STR_EMPTY, message.apply(passThrough));
 		}
 	}
 
@@ -384,7 +395,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceCodeReturn(listWriters, location, levelObs, builderObs);
+			traceCodeReturn(listWriters, location, levelObs, STR_EMPTY, builderObs);
 		}
 	}
 
@@ -396,7 +407,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceTextReturn(listWriters, location, levelObs, observation);
+			traceTextReturn(listWriters, location, levelObs, STR_EMPTY, observation);
 		}
 	}
 
@@ -408,7 +419,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceReturnValue(listWriters, location, levelObs, cdValue);
+			traceReturnValue(listWriters, location, levelObs, STR_EMPTY, cdValue);
 		}
 	}
 
@@ -420,7 +431,7 @@ public class ObservationCollectorOverlayInstance
 		ObservationWritersUniqueList listWriters = getWriters(levelObs);
 		if (!listWriters.isEmpty()) {
 			SourceLocation location = SourceLocation.caller();
-			traceThrowing(listWriters, location, levelObs, activity, exc);
+			traceThrowing(listWriters, location, levelObs, activity, STR_EMPTY, exc);
 		}
 	}
 	

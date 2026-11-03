@@ -76,7 +76,7 @@ public class AbstractObservationCollectorCore
 		}
 		instance.setOriginClass(classTrace);
 		instance.appendContent(ObservationCommonText.ENTERING);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, String strMessage) {
@@ -88,10 +88,11 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.ENTERING);
 		instance.appendContent(", ");
 		instance.appendContent(strMessage);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
-	protected void traceTextEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, TextObservation observation) {
+	protected void traceTextEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			Class<?> classTrace, TextObservation observation) {
 		CodeObsInstance instance = new CodeObsInstance(level, location);
 		if (useFullClassNames()) {
 			instance.setShowFullClassNames(true);
@@ -100,10 +101,11 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.ENTERING);
 		instance.appendContent(", ");
 		instance.appendFrom(observation);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
-	protected void traceCodeEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, CodeValuesObservationBuilder builderObs) {
+	protected void traceCodeEnter(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, 
+			Class<?> classTrace, CodeValuesObservationBuilder builderObs) {	
 		CodeValuesObsInstance instance = new CodeValuesObsInstance(level, location);
 		if (useFullClassNames()) {
 			instance.setShowFullClassNames(true);
@@ -112,7 +114,7 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.ENTERING);
 		instance.appendContent(", ");
 		builderObs.build(instance);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace) {
@@ -122,7 +124,7 @@ public class AbstractObservationCollectorCore
 		}
 		instance.setOriginClass(classTrace);
 		instance.appendContent(ObservationCommonText.RETURNING);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, String strMessage) {
@@ -134,7 +136,7 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(", ");
 		instance.appendContent(strMessage);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceTextReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, TextObservation observation) {
@@ -146,7 +148,7 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(", ");
 		instance.appendFrom(observation);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceCodeReturn(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, CodeValuesObservationBuilder builderObs) {
@@ -158,7 +160,7 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(", ");
 		builderObs.build(instance);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceReturnValue(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, CodeValue cdValue) {
@@ -170,7 +172,7 @@ public class AbstractObservationCollectorCore
 		instance.appendContent(ObservationCommonText.RETURNING);
 		instance.appendContent(ObservationCommonText.VALUE);
 		instance.appendValue("", cdValue);
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 
 	protected void traceThrowing(List<ObservationWriter> listWriters, SourceLocation location, ObsLevel level, Class<?> classTrace, ObservedActivity activity, Exception exc) {
@@ -181,6 +183,6 @@ public class AbstractObservationCollectorCore
 		instance.setOriginClass(classTrace);
 		instance.formatFault().add(FaultFormat.Originating);
 		instance.setFault(FaultMethods.process(exc));
-		listWriters.forEach(w -> w.writeObservedTrace(instance));
+		listWriters.forEach(w -> w.writeObservedTrace(STR_EMPTY, instance));
 	}
 }

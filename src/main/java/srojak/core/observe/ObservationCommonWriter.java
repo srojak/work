@@ -57,11 +57,11 @@ public interface ObservationCommonWriter {
 	
 	void write(ObsLevel level, String strText);
 	
-	void writeObserved(CodeObservation observation);
+	void writeObserved(String strLead, CodeObservation observation);
 	
 	void write(ObsLevel level, SourceLocation locOrigin, String strText);
 	
-	void writeObservedTrace(CodeObservation observation);
+	void writeObservedTrace(String strLead, CodeObservation observation);
 	
 	@Deprecated(forRemoval = true)
 	void writeTrace(ObsLevel level, SourceLocation locOrigin, String strText);
@@ -69,12 +69,12 @@ public interface ObservationCommonWriter {
 	@Deprecated(forRemoval = true)
 	void writeException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc, boolean bShowStack);
 	
-	void writeObservedFault(CodeFaultObservation observation);
+	void writeObservedFault(String strLead, CodeFaultObservation observation);
 	
 	void writeFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, 
-			EnumSet<FaultFormat> formats, StructuredFault fault);
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault);
 	
-	void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs);
+	void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs);
 	
 	void writeDiagnostic(String strText);
 	

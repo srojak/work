@@ -25,11 +25,8 @@ import srojak.core.events.LifeCycleEventOriginating;
  * @author Stephen
  *
  */
-public interface CommonPrintWriter
-		extends Closeable, LifeCycleEventOriginating {
+public interface CommonPrintWriter {
 
-	boolean isFaulted();
-	boolean isClosed();
 	void flush();
 	CommonPrintWriter format(String format, Object ... args);
 	CommonPrintWriter format(Locale lcl, String format, Object ... args);

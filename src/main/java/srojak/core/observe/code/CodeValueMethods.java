@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.code.values.CodeValueBoolean;
 import srojak.core.observe.code.values.CodeValueDouble;
+import srojak.core.observe.code.values.CodeValueEnum;
 import srojak.core.observe.code.values.CodeValueInt;
 import srojak.core.observe.code.values.CodeValueLong;
 import srojak.core.observe.code.values.CodeValueMethodType;
@@ -72,6 +73,10 @@ public class CodeValueMethods
 	
 	public static CodeValue capture(String strName, MethodType typeMethod) {
 		return new CodeValueMethodType(strName, typeMethod);
+	}
+	
+	public static <T extends Enum<T>> CodeValue captureEnum(String strName, Class<T> classEnum, T value) {
+		return new CodeValueEnum<T>(strName, classEnum, value);
 	}
 	
 	public static CodeValue captureObject(String strName, Object value) {

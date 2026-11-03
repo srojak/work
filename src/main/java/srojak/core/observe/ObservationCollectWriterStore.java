@@ -32,7 +32,7 @@ public interface ObservationCollectWriterStore {
 	
 	boolean hasPermanentWriters();
 	
-	boolean areWritesLocked();
+	boolean areWritersLocked();
 	
 	void addWriter(ObservationWriter writer);
 	

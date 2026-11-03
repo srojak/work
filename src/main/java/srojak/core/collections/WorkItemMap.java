@@ -23,7 +23,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import srojak.core.CommonCollectionSize;
-import srojak.core.excepts.InvalidOperationException;
+import srojak.core.excepts.DuplicateKeyException;
+import srojak.core.excepts.KeyNotFoundException;
 
 /**
  * @author Stephen
@@ -59,7 +60,7 @@ public class WorkItemMap<K, V>
 		// it is an error if the key is not found
 		V value = _map.get(key);
 		if (value == null) {
-			throw new NoSuchElementException("no entry for " + key);
+			throw new KeyNotFoundException(key, "no entry for key");
 		}
 		return value;
 	}
@@ -73,7 +74,7 @@ public class WorkItemMap<K, V>
 	public V take(K key) {
 		V value = _map.remove(key);
 		if (value == null) {
-			throw new NoSuchElementException("no entry for " + key);
+			throw new KeyNotFoundException(key, "no entry for key");
 		}
 		return value;
 	}
@@ -88,7 +89,7 @@ public class WorkItemMap<K, V>
 		Objects.requireNonNull(key, "key");
 		Objects.requireNonNull(value, "value");
 		if (_map.containsKey(key)) {
-			throw new InvalidOperationException(key.toString(), "already assigned");
+			throw new DuplicateKeyException(key, "key already assigned");
 		}
 		_map.put(key, value);
 	}

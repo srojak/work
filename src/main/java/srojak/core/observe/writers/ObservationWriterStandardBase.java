@@ -27,6 +27,7 @@ import srojak.core.io.IONodeIdentifier;
 import srojak.core.observe.ObsFormatOption;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsLevelFilterDecorator;
+import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.SourceLocation;
@@ -38,7 +39,8 @@ import srojak.core.observe.code.CodeObservation;
  *
  */
 public abstract class ObservationWriterStandardBase 
-		extends ObservationWriterBase {
+		extends ObservationWriterBase
+		implements ObservationCommon {
 	private ObsLevelFilterDecorator _filterLevel;
 
 	/**
@@ -100,19 +102,19 @@ public abstract class ObservationWriterStandardBase
 	
 	protected abstract void innerWrite(ObsLevel level, String strText);
 	
-	protected abstract void innerWriteObserved(CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat);
+	protected abstract void innerWriteObserved(String strLead, CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat);
 	
 	protected abstract void innerWrite(ObsLevel level, SourceLocation locOrigin, boolean bIsTrace, String strText);
 	
 	protected abstract void innerWriteException(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity, Exception exc,
 			boolean bShowStack);
 	
-	protected abstract void innerWriteObservedFault(CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat);
+	protected abstract void innerWriteObservedFault(String strLead, CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat);
 	
 	protected abstract void innerWriteFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
-			EnumSet<FaultFormat> formats, StructuredFault fault);
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault);
 	
-	protected abstract void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs);
+	protected abstract void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs);
 	
 	protected abstract void innerWriteDiagnostic(String strText);
 	
@@ -128,13 +130,13 @@ public abstract class ObservationWriterStandardBase
 	}
 
 	@Override
-	public void writeObserved(CodeObservation observation) {
+	public void writeObserved(String strLead, CodeObservation observation) {
 		Objects.requireNonNull(observation, "observation");
 		EnumSet<ObsFormatOption> optionsFormat = EnumSet.noneOf(ObsFormatOption.class);
 		if (canShowLocations()) {
 			optionsFormat.add(ObsFormatOption.CanShowSourceLocations);
 		}
-		innerWriteObserved(observation, optionsFormat);
+		innerWriteObserved(strLead, observation, optionsFormat);
 		if (isAutoFlush()) {
 			flush();
 		}
@@ -150,11 +152,11 @@ public abstract class ObservationWriterStandardBase
 	}
 
 	@Override
-	public void writeObservedTrace(CodeObservation observation) {
+	public void writeObservedTrace(String strLead, CodeObservation observation) {
 		Objects.requireNonNull(observation, "observation");
 		EnumSet<ObsFormatOption> optionsFormat 
 			= EnumSet.of(ObsFormatOption.CanShowSourceLocations, ObsFormatOption.ShowFullSourceLocations);
-		innerWriteObserved(observation, optionsFormat);
+		innerWriteObserved(strLead, observation, optionsFormat);
 		if (isAutoFlush()) {
 			flush();
 		}
@@ -181,7 +183,7 @@ public abstract class ObservationWriterStandardBase
 	}
 
 	@Override
-	public void writeObservedFault(CodeFaultObservation observation) {
+	public void writeObservedFault(String strLead, CodeFaultObservation observation) {
 		Objects.requireNonNull(observation, "observation");
 		EnumSet<ObsFormatOption> optionsFormat = EnumSet.noneOf(ObsFormatOption.class);
 		if (canShowLocations()) {
@@ -193,22 +195,22 @@ public abstract class ObservationWriterStandardBase
 
 	@Override
 	public void writeFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
-			EnumSet<FaultFormat> formats, StructuredFault fault) {
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault) {
 		Objects.requireNonNull(level, "level");
 		Objects.requireNonNull(activity, "activity");
 		Objects.requireNonNull(formats, "formats");
 		Objects.requireNonNull(fault, "fault");
-		innerWriteFault(level, locOrigin, activity, formats, fault);
+		innerWriteFault(level, locOrigin, activity, formats, strLead, fault);
 		if (isAutoFlush()) {
 			flush();
 		}
 	}
 
 	@Override
-	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
+	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs) {
 		Objects.requireNonNull(level, "level");
 		Objects.requireNonNull(dtObs, "dtObs");
-		innerWriteTimeStamp(level, locOrigin, dtObs);
+		innerWriteTimeStamp(level, locOrigin, strLead, dtObs);
 		if (isAutoFlush()) {
 			flush();
 		}

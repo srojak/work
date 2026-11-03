@@ -29,10 +29,12 @@ public interface ObservationCollectorFlags {
 	static final short FLAGS_USE_FULL_CLASS_NAMES = 0x4;
 	static final short FLAGS_SUPPRESS_ALERTS = 0x8;
 	static final short FLAGS_OBS_LEVEL_LOCKED = 0x10;
+	static final short FLAGS_SUPPRESS_SOURCE = 0x20;
 
 	FlagsShortTest getFlags();
 	boolean hasPermanentWriters();
-	boolean areWritesLocked();
+	boolean areWritersLocked();
 	boolean useFullClassNames();
 	boolean isObsLevelLocked();
+	boolean showSourceLocations();
 }

@@ -22,46 +22,52 @@ import java.util.Objects;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObsWriterMethods;
 import srojak.core.observe.ObservationCollector;
+import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservationCommonWriter;
 import srojak.core.observe.SingleObservationCollector;
 import srojak.core.observe.SourceLocation;
-import srojak.core.observe.code.CodeValuesObsInstance;
-import srojak.core.observe.code.CodeObsInstance;
 import srojak.core.observe.code.CodeValue;
+import srojak.core.observe.code.CodeValuesObsInstance;
 
 /**
  * @author Stephen
  *
  */
 public class SingleObservationCollectorObj
-		implements SingleObservationCollector, AutoCloseable {
+		implements SingleObservationCollector, ObservationCommon, AutoCloseable {
 	private final List<? extends ObservationCommonWriter> _listWriters;
 	private final CodeValuesObsInstance _obsCode;
-	private boolean _bIsLevelOn;
+	private final String _strLead;
+	private boolean _bIsEnabled;
 	private boolean _bCommitted;
 	
 	/**
 	 * 
 	 */
 	public SingleObservationCollectorObj(List<? extends ObservationCommonWriter> listActiveWriters, 
-			ObsLevel level, SourceLocation locOrigin) {
+			ObsLevel level, ObsLevel levelFilter, SourceLocation locOrigin, String strLead) {
 		Objects.requireNonNull(listActiveWriters, "listActiveWriters");
 		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(levelFilter, "levelFilter");
 		Objects.requireNonNull(locOrigin, "locOrigin");
+		Objects.requireNonNull(strLead, "strLead");
 		_obsCode = new CodeValuesObsInstance(level, locOrigin);
 		_listWriters = listActiveWriters;
-		_bIsLevelOn = !_listWriters.isEmpty();
+		_strLead = strLead;
+		_bIsEnabled = levelFilter.isLevelAtLeast(level) && !_listWriters.isEmpty();
 		_bCommitted = false;
 	}
 	
 	public SingleObservationCollectorObj(ObservationCommonWriter writer,
-			ObsLevel level, SourceLocation locOrigin) {
+			ObsLevel level, ObsLevel levelFilter, SourceLocation locOrigin, String strLead) {
 		Objects.requireNonNull(writer, "writer");
 		Objects.requireNonNull(level, "level");
+		Objects.requireNonNull(levelFilter, "levelFilter");
 		Objects.requireNonNull(locOrigin, "locOrigin");
 		_listWriters = List.of(writer);
 		_obsCode = new CodeValuesObsInstance(level, locOrigin);
-		_bIsLevelOn = writer.canWriteAt(level);
+		_strLead = strLead;
+		_bIsEnabled = levelFilter.isLevelAtLeast(level) && writer.canWriteAt(level);
 		_bCommitted = false;
 	}
 
@@ -72,7 +78,7 @@ public class SingleObservationCollectorObj
 
 	@Override
 	public boolean isActive() {
-		return _bIsLevelOn;
+		return _bIsEnabled;
 	}
 
 	@Override
@@ -170,21 +176,21 @@ public class SingleObservationCollectorObj
 	public void alsoWriteTo(ObservationCollector collector) {
 		Objects.requireNonNull(collector, "collector");
 		ObservationCollectorWriterBase cbase = (ObservationCollectorWriterBase) collector;
-		cbase.writeCodeObservation(_obsCode);
+		cbase.writeCodeObservation(_strLead, _obsCode);
 	}
 
 	@Override
 	public void commit() {
-		if (_bIsLevelOn) {
-			_listWriters.forEach(w -> w.writeObserved(_obsCode));
+		if (_bIsEnabled) {
+			_listWriters.forEach(w -> w.writeObserved(_strLead, _obsCode));
 		}
 		_obsCode.releaseContent();
-		_bIsLevelOn = false;
+		_bIsEnabled = false;
 	}
 
 	@Override
 	public void close() throws Exception {
-		if (_bIsLevelOn && !_bCommitted) {
+		if (_bIsEnabled && !_bCommitted) {
 			_listWriters.forEach(w -> w.writeDiagnostic(_obsCode.origin(), "collector never committed"));
 		}
 	}

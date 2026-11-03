@@ -30,7 +30,8 @@ import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.SourceLocation;
-import srojak.core.observe.impl.ObservationCollectorLockableInstance;
+import srojak.core.observe.impl.LogObservationCollector;
+import srojak.core.observe.impl.ObservationCollectorLockableBox;
 import srojak.core.observe.writers.ObservationWriterBase;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.core.props.DebugProperties;
@@ -44,10 +45,10 @@ import srojak.core.tools.EnvTool;
 public class CoreCollectors {
 	
 	private static final Announcer _announcer;
-	private static final ObservationCollectorLockableInstance _collectNull;
-	private static final ObservationCollectorLockableInstance _collectOut;
-	private static final ObservationCollectorLockableInstance _collectErr;
-	private static final ObservationCollectorLockableInstance _collectLog;
+	private static final ObservationCollectorLockableBox _collectNull;
+	private static final ObservationCollectorLockableBox _collectOut;
+	private static final ObservationCollectorLockableBox _collectErr;
+	private static final LogObservationCollector _collectLog;
 	private static final ObservationWriterBase _writerOut;
 	private static final ObservationWriterBase _writerErr;
 	private static final PrimaryLogWriter _writerLog;
@@ -56,10 +57,10 @@ public class CoreCollectors {
 	static {
 		_announcer = new AnnouncerPrintStream(System.err);
 		
-		_collectNull = new ObservationCollectorLockableInstance();
-		_collectOut = new ObservationCollectorLockableInstance();
-		_collectErr = new ObservationCollectorLockableInstance();
-		_collectLog = new ObservationCollectorLockableInstance();
+		_collectNull = new ObservationCollectorLockableBox();
+		_collectOut = new ObservationCollectorLockableBox();
+		_collectErr = new ObservationCollectorLockableBox();
+		_collectLog = new LogObservationCollector();
 		
 		_writerOut = new ObservationWriterPrintStream(IONodeIdentifier.STDOUT, System.out);
 		_writerErr = new ObservationWriterPrintStream(IONodeIdentifier.STDERR, System.err);
@@ -68,7 +69,7 @@ public class CoreCollectors {
 		_writerLog.setShowLocations(true);
 		_collectOut.addWriter(_writerOut);
 		_collectErr.addWriter(_writerErr);
-		_collectLog.addWriter(_writerLog);
+		_collectLog.addWriterPrivileged(_writerLog);
 		
 		_collectNull.setObsLevel(ObsLevel.NONE);		
 		_collectNull.lockWriters();
@@ -76,7 +77,6 @@ public class CoreCollectors {
 		
 		_collectOut.lockWriters();
 		_collectErr.lockWriters();
-		_collectLog.lockWriters();
 		
 		_levelAlerts = ObsLevel.ALERT;
 	}

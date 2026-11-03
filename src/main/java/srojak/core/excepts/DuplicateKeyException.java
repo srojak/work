@@ -21,7 +21,7 @@ package srojak.core.excepts;
  *
  */
 public class DuplicateKeyException 
-		extends RuntimeException {
+		extends KeyRelatedException {
 
 	/**
 	 * 
@@ -29,43 +29,46 @@ public class DuplicateKeyException
 	private static final long serialVersionUID = -5458744547333925198L;
 
 	/**
-	 * 
+	 * @param objKey
 	 */
-	public DuplicateKeyException() {
-		super();
+	public DuplicateKeyException(Object objKey) {
+		super(objKey);
 	}
 
 	/**
+	 * @param objKey
 	 * @param message
 	 */
-	public DuplicateKeyException(String message) {
-		super(message);
+	public DuplicateKeyException(Object objKey, String message) {
+		super(objKey, message);
 	}
 
 	/**
+	 * @param objKey
 	 * @param cause
 	 */
-	public DuplicateKeyException(Throwable cause) {
-		super(cause);
+	public DuplicateKeyException(Object objKey, Throwable cause) {
+		super(objKey, cause);
 	}
 
 	/**
+	 * @param objKey
 	 * @param message
 	 * @param cause
 	 */
-	public DuplicateKeyException(String message, Throwable cause) {
-		super(message, cause);
+	public DuplicateKeyException(Object objKey, String message, Throwable cause) {
+		super(objKey, message, cause);
 	}
 
 	/**
+	 * @param objKey
 	 * @param message
 	 * @param cause
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public DuplicateKeyException(String message, Throwable cause, boolean enableSuppression,
+	public DuplicateKeyException(Object objKey, String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
+		super(objKey, message, cause, enableSuppression, writableStackTrace);
 	}
-
 }

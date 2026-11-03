@@ -64,22 +64,29 @@ public class AbstractObservationCollectorWithWriters
 			return List.of();
 		}
 	}
-
-	@Override
-	public synchronized void addWriter(ObservationWriter writer) {
-		if (writer != null) {
-			if (_flags.test(FLAGS_WRITERS_LOCKED)) {
-				throw new InvalidOperationException("writers are locked");
+	
+	protected synchronized void addWriterInner(ObservationWriter writer, boolean bIsPermanent) {
+		_listWriters.add(new MarkedObservationWriter(writer, bIsPermanent));
+	}
+	
+	protected synchronized void removeWriterInner(ObservationWriter writer, boolean bForce) {
+		Iterator<MarkedObservationWriter> iterator = _listWriters.iterator();
+		while (iterator.hasNext()) {
+			MarkedObservationWriter item = iterator.next();
+			if (item.isForWriter(writer)) {
+				if (item.isPermanent()) {
+					if (!bForce) {
+						throw new InvalidOperationException("remove writer", "writer is permanent");
+					}
+				}
+				iterator.remove();
+				return;
 			}
-			if (!writer.canWrite()) {
-				throw new IllegalArgumentException("writer is not valid");
-			}
-			_listWriters.add(new MarkedObservationWriter(writer, false));
 		}
 	}
 
 	@Override
-	public synchronized void addWriterPermanent(ObservationWriter writer) {
+	public void addWriter(ObservationWriter writer) {
 		if (writer != null) {
 			if (_flags.test(FLAGS_WRITERS_LOCKED)) {
 				throw new InvalidOperationException("writers are locked");
@@ -87,28 +94,31 @@ public class AbstractObservationCollectorWithWriters
 			if (!writer.canWrite()) {
 				throw new IllegalArgumentException("writer is not valid");
 			}
-			_listWriters.add(new MarkedObservationWriter(writer, true));
+			addWriterInner(writer, false);
+		}
+	}
+
+	@Override
+	public void addWriterPermanent(ObservationWriter writer) {
+		if (writer != null) {
+			if (_flags.test(FLAGS_WRITERS_LOCKED)) {
+				throw new InvalidOperationException("writers are locked");
+			}
+			if (!writer.canWrite()) {
+				throw new IllegalArgumentException("writer is not valid");
+			}
+			addWriterInner(writer, true);
 			_flags.set(FLAGS_HAS_PERM_WRITER);
 		}
 	}
 	
 	@Override
-	public synchronized void removeWriter(ObservationWriter writer) {
+	public void removeWriter(ObservationWriter writer) {
 		if (writer != null) {
 			if (_flags.test(FLAGS_WRITERS_LOCKED)) {
 				throw new InvalidOperationException("writers are locked");
 			}
-			Iterator<MarkedObservationWriter> iterator = _listWriters.iterator();
-			while (iterator.hasNext()) {
-				MarkedObservationWriter item = iterator.next();
-				if (item.isForWriter(writer)) {
-					if (item.isPermanent()) {
-						throw new InvalidOperationException("remove writer", "writer is permanent");
-					}
-					iterator.remove();
-					return;
-				}
-			}
+			removeWriterInner(writer, false);
 		}
 	}
 	
@@ -130,7 +140,7 @@ public class AbstractObservationCollectorWithWriters
 		}
 	}
 	
-	private synchronized void removeAllWriters() {
+	protected synchronized void removeAllWriters() {
 		_listWriters.clear();
 	}
 
@@ -147,10 +157,10 @@ public class AbstractObservationCollectorWithWriters
 		addWriter(writer);
 	}
 	
-	void writeCodeObservation(CodeValuesObservation observation) {
+	void writeCodeObservation(String strLead, CodeValuesObservation observation) {
 		List<ObservationWriter> listActive = getWriters(observation.level());
 		if (!listActive.isEmpty()) {
-			listActive.forEach(w -> w.writeObserved(observation));
+			listActive.forEach(w -> w.writeObserved(strLead, observation));
 		}
 	}
 }

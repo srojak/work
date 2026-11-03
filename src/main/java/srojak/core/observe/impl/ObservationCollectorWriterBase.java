@@ -75,7 +75,7 @@ public abstract class ObservationCollectorWriterBase
 	}
 
 	@Override
-	public boolean areWritesLocked() {
+	public boolean areWritersLocked() {
 		return _flags.test(FLAGS_WRITERS_LOCKED);
 	}
 	
@@ -91,6 +91,15 @@ public abstract class ObservationCollectorWriterBase
 	@Override
 	public void setUseFullClassNames(boolean bState) {
 		_flags.apply(bState, FLAGS_USE_FULL_CLASS_NAMES);
+	}
+	
+	@Override
+	public boolean showSourceLocations() {
+		return !_flags.test(FLAGS_SUPPRESS_SOURCE);
+	}
+	
+	protected void setSuppressSourceLocations(boolean bState) {
+		_flags.apply(bState, FLAGS_SUPPRESS_SOURCE);
 	}
 
 	@Override
@@ -198,10 +207,10 @@ public abstract class ObservationCollectorWriterBase
 		addWriter(writer);
 	}
 	
-	void writeCodeObservation(CodeValuesObservation observation) {
+	void writeCodeObservation(String strLead, CodeValuesObservation observation) {
 		List<ObservationWriter> listActive = getWriters(observation.level());
 		if (!listActive.isEmpty()) {
-			listActive.forEach(w -> w.writeObserved(observation));
+			listActive.forEach(w -> w.writeObserved(strLead, observation));
 		}
 	}
 }

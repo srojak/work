@@ -74,8 +74,8 @@ public abstract class ObservationWriterOver
 	}
 
 	@Override
-	public void writeObserved(CodeObservation observation) {
-		_writer.writeObserved(observation);
+	public void writeObserved(String strLead, CodeObservation observation) {
+		_writer.writeObserved(strLead, observation);
 	}
 
 	@Override
@@ -84,13 +84,8 @@ public abstract class ObservationWriterOver
 	}
 
 	@Override
-	public void writeObservedTrace(CodeObservation observation) {
-		_writer.writeObservedTrace(observation);
-	}
-
-	@Override
-	public void writeTrace(ObsLevel level, SourceLocation locOrigin, String strText) {
-		_writer.writeTrace(level, locOrigin, strText);
+	public void writeObservedTrace(String strLead, CodeObservation observation) {
+		_writer.writeObservedTrace(strLead, observation);
 	}
 
 	@Override
@@ -100,19 +95,19 @@ public abstract class ObservationWriterOver
 	}
 
 	@Override
-	public void writeObservedFault(CodeFaultObservation observation) {
-		_writer.writeObservedFault(observation);
+	public void writeObservedFault(String strLead, CodeFaultObservation observation) {
+		_writer.writeObservedFault(strLead, observation);
 	}
 
 	@Override
 	public void writeFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
-			EnumSet<FaultFormat> formats, StructuredFault fault) {
-		_writer.writeFault(level, locOrigin, activity, formats, fault);
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault) {
+		_writer.writeFault(level, locOrigin, activity, formats, strLead, fault);
 	}
 
 	@Override
-	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, LocalDateTime dtObs) {
-		_writer.writeTimeStamp(level, locOrigin, dtObs);
+	public void writeTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs) {
+		_writer.writeTimeStamp(level, locOrigin, strLead, dtObs);
 	}
 
 	@Override

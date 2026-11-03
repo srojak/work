@@ -23,6 +23,7 @@ import srojak.core.data.DataPassThrough;
 import srojak.core.observe.functional.CodeObservationBuilder;
 import srojak.core.observe.functional.CodeObservationBuilderWithInt;
 import srojak.core.observe.functional.CodeObservationBuilderWithPassThrough;
+import srojak.core.observe.functional.CodeValuesObservationBuilder;
 import srojak.core.result.XResult;
 
 /**
@@ -125,6 +126,8 @@ public interface ObservationCommonCollector
 	 */
 	void observe(ObsLevel level, DataPassThrough passThrough,
 			CodeObservationBuilderWithPassThrough builderMessage);
+	
+	void observeWithValues(ObsLevel level, CodeValuesObservationBuilder builderObs);
 	
 	/**
 	 * Write a time stamp at a given observation level.

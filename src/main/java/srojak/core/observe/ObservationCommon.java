@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 public interface ObservationCommon {
 
 	static final String STR_NULL = "(null)";
+	static final String STR_EMPTY = "";
 	static final DateTimeFormatter FORMAT_TIME_STAMP
 		= DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 	static final DecimalFormat FORMAT_COMMAS

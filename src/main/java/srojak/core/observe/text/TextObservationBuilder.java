@@ -17,7 +17,6 @@
 package srojak.core.observe.text;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import srojak.core.functional.TextMessageBuilder;
 
