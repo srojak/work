@@ -84,7 +84,7 @@ public class ClassDebugStore {
 	}
 	
 	public void setClassOptionsLike(DebugSwitch swPattern) {
-		_swClass.setLevel(swPattern.getLevel());
+		_swClass.setObsLevel(swPattern.getObsLevel());
 		_swClass.setShowSourceLocations(swPattern.showSourceLocations());
 	}
 	

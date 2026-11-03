@@ -19,9 +19,8 @@ package srojak.debug.impl;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import srojak.core.InvalidOperationException;
-import srojak.core.kernel.Kernel;
-import srojak.core.mutable.BooleanMutable;
+import srojak.core.excepts.InvalidOperationException;
+import srojak.core.logic.BooleanFlag;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationCollector;
 import srojak.core.observe.ObservationWriter;
@@ -47,7 +46,7 @@ public abstract class DebugAccessorBase
 		implements CommonDebugAccess, DebugAccessConsFlags, DebugNexusSwitchFlags {
 	private final int _flagsCons;
 	
-	protected static final BooleanMutable _commonFlag = new BooleanMutable(false);
+	protected static final BooleanFlag _commonFlag = new BooleanFlag(false);
 
 	protected DebugAccessorBase(int flags) {
 		_flagsCons = flags;
@@ -127,15 +126,15 @@ public abstract class DebugAccessorBase
 		return DebugNexusCore.DEBUG_OBSV;
 	}
 	
-	protected DebugSwitchContent fetchSwitch(DebugSwitchKey key, BooleanMutable bIsNew) {
-		bIsNew.setValue(false);
+	protected DebugSwitchContent fetchSwitch(DebugSwitchKey key, BooleanFlag bIsNew) {
+		bIsNew.clear();
 		DebugSwitchContent swDebug = DebugNexusCore.getContent(key);
 		if (swDebug == null) {
 			DebugSwitchKeyBase keyReal = (DebugSwitchKeyBase) key;
 			swDebug = DebugNexusCore.createSwitch(keyReal);
-			swDebug.setLevel(DebugNexusCore.getDefaultLogLevel());
+			swDebug.setObsLevel(DebugNexusCore.getDefaultLogLevel());
 			DebugNexusCore.putContent(swDebug);
-			bIsNew.setValue(true);
+			bIsNew.set();
 		}
 		return swDebug;
 	}
@@ -157,7 +156,7 @@ public abstract class DebugAccessorBase
 	@Override
 	public ObsLevel getDebugLevel(DebugSwitchKey key) {
 		Objects.requireNonNull(key, "key");
-		return fetchSwitch(key, _commonFlag).getLevel();
+		return fetchSwitch(key, _commonFlag).getObsLevel();
 	}
 
 	/**

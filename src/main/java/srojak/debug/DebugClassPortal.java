@@ -18,7 +18,7 @@ package srojak.debug;
 
 import java.util.Objects;
 
-import srojak.core.mutable.BooleanMutable;
+import srojak.core.logic.BooleanFlag;
 import srojak.core.reflect.ClassReflector;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.impl.ClassDebugOptionMap;
@@ -58,14 +58,14 @@ public class DebugClassPortal
 	
 	public DebugSwitch getMyClassSwitch() {
 		DebugSwitchKey key = makeKeyForClass(_locatorClass);
-		return fetchSwitch(key, new BooleanMutable(false));
+		return fetchSwitch(key, new BooleanFlag(false));
 	}
 	
 	public DebugSwitch getMyClassSubjectSwitch(String strSubject) {
 		Objects.requireNonNull(strSubject, "strSubject");
 		// TODO: who is responsible for validating subject strings?
 		DebugSwitchKey key = makeKeyForClassSubject(_locatorClass, strSubject);
-		return fetchSwitch(key, new BooleanMutable(false));
+		return fetchSwitch(key, new BooleanFlag(false));
 	}
 	
 	public void enableMyBaseClassSwitches() {

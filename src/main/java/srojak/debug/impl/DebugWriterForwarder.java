@@ -16,10 +16,18 @@
  */
 package srojak.debug.impl;
 
+import java.time.LocalDateTime;
+import java.util.EnumSet;
+
+import srojak.core.faults.FaultFormat;
+import srojak.core.faults.StructuredFault;
+import srojak.core.observe.ObsFormatOption;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.SourceLocation;
+import srojak.core.observe.code.CodeFaultObservation;
+import srojak.core.observe.code.CodeObservation;
 import srojak.core.observe.writers.ObservationWriterStandardBase;
 
 /**
@@ -52,9 +60,13 @@ public class DebugWriterForwarder
 	}
 
 	@Override
-	protected void innerWrite(ObsLevel level, SourceLocation locOrigin, String strText) {
+	protected void innerWrite(ObsLevel level, SourceLocation locOrigin, boolean bIsTrace, String strText) {
 		ObservationWriter writerDebug = DebugNexusCore.getWriter();
-		writerDebug.write(level, locOrigin, strText);
+		if (bIsTrace) {
+			writerDebug.writeTrace(level, locOrigin, strText);
+		} else {
+			writerDebug.write(level, locOrigin, strText);
+		}
 	}
 
 	@Override
@@ -62,6 +74,33 @@ public class DebugWriterForwarder
 			Exception exc, boolean bShowStack) {
 		ObservationWriter writerDebug = DebugNexusCore.getWriter();
 		writerDebug.writeException(level, locOrigin, activity, exc, bShowStack);
+	}
+
+	@Override
+	protected void innerWriteFault(ObsLevel level, SourceLocation locOrigin, ObservedActivity activity,
+			EnumSet<FaultFormat> formats, String strLead, StructuredFault fault) {
+		ObservationWriter writerDebug = DebugNexusCore.getWriter();
+		writerDebug.writeFault(level, locOrigin, activity, formats, strLead, fault);
+	}
+
+	@Override
+	protected void innerWriteObserved(String strLead, CodeObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+		ObservationWriter writerDebug = DebugNexusCore.getWriter();
+		// TODO: what happens to the options?
+		writerDebug.writeObserved(strLead, observation);
+	}
+
+	@Override
+	protected void innerWriteObservedFault(String strLead, CodeFaultObservation observation, EnumSet<ObsFormatOption> optionsFormat) {
+		ObservationWriter writerDebug = DebugNexusCore.getWriter();
+		// TODO: what happens to the options?
+		writerDebug.writeObservedFault(strLead, observation);
+	}
+
+	@Override
+	protected void innerWriteTimeStamp(ObsLevel level, SourceLocation locOrigin, String strLead, LocalDateTime dtObs) {
+		ObservationWriter writerDebug = DebugNexusCore.getWriter();
+		writerDebug.writeTimeStamp(level, locOrigin, strLead, dtObs);
 	}
 
 	@Override

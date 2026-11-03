@@ -45,7 +45,7 @@ public abstract class DebuggingListenerRelayBase
 		_swDebug = swDebug;
 		_levelObs = level;
 		Class<?> classSelf = getClass();
-		_swDebug.write(ObsLevel.TRACE, () -> "constructing " + classSelf.getSimpleName()
+		_swDebug.record(ObsLevel.TRACE, () -> "constructing " + classSelf.getSimpleName()
 				+ ", name=" + _tokenName.getName());
 	}
 

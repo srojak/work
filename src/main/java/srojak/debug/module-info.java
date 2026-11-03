@@ -21,8 +21,9 @@
 module srojak.debug {
 	requires transitive srojak.core;
 	exports srojak.debug;
-	exports srojak.debug.control to srojak.core, srojak.debug.config, srojak.utest.debug;
+	exports srojak.debug.control;
+	opens srojak.debug.control to srojak.core, srojak.debug.config;
 	exports srojak.debug.tools;
-	exports srojak.debug.impl to srojak.utest.debug, srojak.afw;
+	exports srojak.debug.impl to srojak.debug.config, srojak.utest.debug;
 	opens srojak.debug.impl to srojak.debug.config;
 }

@@ -18,8 +18,7 @@ package srojak.debug.impl;
 
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.SourceLocation;
-import srojak.core.observe.writers.SingleObservationCollectorObj;
-import srojak.debug.DebugSwitch;
+import srojak.core.observe.impl.SingleObservationCollectorObj;
 
 /**
  * @author Stephen
@@ -32,8 +31,9 @@ public class DebugObsCollectorObj
 	 * @param writer
 	 * @param level
 	 */
-	public DebugObsCollectorObj(DebugSwitch writer, SourceLocation locOrigin, ObsLevel level) {
-		super(writer, level, locOrigin);
+	public DebugObsCollectorObj(DebugSwitchContent swDebug, SourceLocation locOrigin, 
+			ObsLevel level, ObsLevel levelFilter, String strLead) {
+		super(swDebug.getWriterForSwitch(), level, levelFilter, locOrigin, strLead);
 	}
 
 }

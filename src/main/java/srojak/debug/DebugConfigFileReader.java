@@ -14,29 +14,25 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.debug.impl;
+package srojak.debug;
 
-import srojak.core.Announcer;
-import srojak.core.kernel.Kernel;
-import srojak.core.kernel.SelfLoaderBase;
+import java.nio.file.Path;
+
+import srojak.core.io.FileExistence;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObservedActivity;
 import srojak.core.result.XResult;
-import srojak.core.result.XResultStatusCarrier;
 
 /**
  * @author Stephen
  *
  */
-public class SelfLoader 
-		extends SelfLoaderBase {
+public interface DebugConfigFileReader {
 
-	@Override
-	protected XResult doLoad() {
-		XResultStatusCarrier result = new XResultStatusCarrier(ObservedActivity.INIT);
-		Announcer ann = Kernel.getAnnouncer();
-		ann.announceMessage(ObsLevel.NOTICE, SelfLoader.class, "loaded");
-		result.setValid();
-		return result;
-	}
+	void setClassWriterObsLevel(ObsLevel level);
+
+	void setParserWriterObsLevel(ObsLevel level);
+
+	XResult readConfigFile(Path pathFile, FileExistence exists);
+
+	XResult readConfigFile(String strFile, FileExistence exists);
 }

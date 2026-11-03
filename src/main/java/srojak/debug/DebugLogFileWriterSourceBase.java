@@ -26,9 +26,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 import srojak.core.io.DatedFileNameMethods;
-import srojak.core.kernel.Kernel;
-import srojak.core.kernel.KernelLog;
-import srojak.core.kernel.KernelMut;
+import srojak.core.main.CoreCollectors;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservedActivity;
@@ -79,10 +77,11 @@ public abstract class DebugLogFileWriterSourceBase {
 			OutputStream stream = Files.newOutputStream(_pathFile, _listOptions.toArray(new OpenOption[0]));
 			ObservationWriterUnicodeStream writer = new ObservationWriterUnicodeStream();
 				writer.assignOutputStream(stream);
+			CoreCollectors outputs = new CoreCollectors();
 			writer.setAutoFlush(true);
-			KernelLog.startLogFile(writer, dtNow);
-			KernelMut.setLogWriter(writer);
-			Kernel.OBS_KERNEL.write(ObsLevel.INFO, "Created log file " + _pathFile);
+			outputs.startLogFile(writer, dtNow);
+			outputs.setLogWriter(writer);
+			outputs.output().record(ObsLevel.INFO, "Created log file " + _pathFile);
 			result.setValid();
 		} catch (IOException exc) {
 			result.caughtException(exc);

@@ -16,7 +16,8 @@
  */
 package srojak.debug.control;
 
-import srojak.core.observe.ObsLevel;
+import srojak.core.observe.HasObsLevelForInstances;
+import srojak.core.observe.ObsLevelInstancePolicyHolder;
 import srojak.debug.DebugSwitch;
 
 /**
@@ -24,8 +25,9 @@ import srojak.debug.DebugSwitch;
  *
  */
 public interface DebugSwitchMutable
-		extends DebugSwitch {
+		extends DebugSwitch, HasObsLevelForInstances {
 
-	void setLevel(ObsLevel level);
 	void setShowSourceLocations(boolean bState);
+	void setUseFullClassNames(boolean bState);
+	void applyInstancePolicy(ObsLevelInstancePolicyHolder policy);
 }

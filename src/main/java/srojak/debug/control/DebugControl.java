@@ -17,6 +17,7 @@
 package srojak.debug.control;
 
 import srojak.core.io.IONodeIdentifier;
+import srojak.core.observe.ObsLevelInstancePolicyHolder;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.DebugSwitchKey;
 
@@ -33,4 +34,7 @@ public interface DebugControl {
 	DebugSwitchMutable createDebugSwitch(DebugSwitchKey key);
 	ClassDebugOptionsMutable getOrCreateClassOptions(PackageClassLocator locClass);
 	void enableBaseClassSwitches(DebugSwitchKey key);
+	boolean containsInstancePolicy(String strName);
+	void defineInstancePolicy(String strName, ObsLevelInstancePolicyHolder policy);
+	ObsLevelInstancePolicyHolder getInstancePolicy(String strName);
 }

@@ -23,17 +23,16 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 
 import srojak.core.io.LogFileLocator;
-import srojak.core.kernel.Kernel;
-import srojak.core.kernel.KernelLog;
-import srojak.core.kernel.priv.KernelOutput;
-import srojak.core.kernel.priv.KernelStore;
+import srojak.core.main.CoreCentral;
+import srojak.core.main.CoreCollectors;
+import srojak.core.main.ObservationWriterLogFileSource;
 import srojak.core.observe.ObsLevel;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.observe.ObservationWriterSource;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
-import srojak.core.observe.sources.ObservationWriterLogFileSource;
 import srojak.core.observe.writers.ObservationWriterUnicodeStream;
+import srojak.core.props.DebugProperties;
 import srojak.core.props.DebugPropertyKeys;
 import srojak.core.reflect.ClassReflector;
 import srojak.core.result.XResult;
@@ -44,6 +43,7 @@ import srojak.core.result.XResultStatusCarrier;
  * @author Stephen
  *
  */
+@Deprecated(forRemoval = true)
 public class AppDebugMethods
 		implements DebugPropertyKeys {
 	
@@ -61,8 +61,8 @@ public class AppDebugMethods
 			result.copyFrom(resultValid);
 			return result;
 		}
-		ClassReflector reflectApp = Kernel.getAppClass();
-		KernelOutput outputKernel = KernelStore.OUTPUT;
+		ClassReflector reflectApp = CoreCentral.getAppClass();
+		CoreCollectors outputKernel = new CoreCollectors();
 		LocalDateTime dtNow = LocalDateTime.now();
 		if (_useSourceObject) {
 			ObservationWriterSource source = new ObservationWriterLogFileSource(locLog);
@@ -76,7 +76,7 @@ public class AppDebugMethods
 			}
 		} else {
 			Path pathFile = locLog.formFile(dtNow);
-			outputKernel.collector().write(ObsLevel.DEBUG, "will write to " + pathFile);
+			outputKernel.output().record(ObsLevel.DEBUG, "will write to " + pathFile);
 			ObservationWriterUnicodeStream writer = new ObservationWriterUnicodeStream();
 			try {
 				OutputStream output = Files.newOutputStream(pathFile);
@@ -91,21 +91,24 @@ public class AppDebugMethods
 				return result;
 			}
 			writer.setAutoFlush(true);
-			KernelLog.startLogFile(writer, dtNow);
-			outputKernel.setLogWriter(writer);
-			Kernel.OBS_KERNEL.write(ObsLevel.INFO, "Created log file " + pathFile);
+			CoreCollectors outputs = new CoreCollectors();
+			outputs.startLogFile(writer, dtNow);
+			outputs.setLogWriter(writer);
+			outputs.output().record(ObsLevel.INFO, "Created log file " + pathFile);
 			result.setValid();
 		}
 		return result;
 	}
 	
 	public static XResult tryCreateLogFile(Class<?> classApp) {
-		LogFileLocator locLog = new LogFileLocator();
+		DebugProperties propsDebug = CoreCentral.getDebugProperties();
+		LogFileLocator locLog = new LogFileLocator(propsDebug);
 		return createLogFile(locLog);
 	}
 	
 	public static XResult tryCreateLogFile(Class<?> classApp, String strPrefix) {
-		LogFileLocator locLog = new LogFileLocator(strPrefix);
+		DebugProperties propsDebug = CoreCentral.getDebugProperties();
+		LogFileLocator locLog = new LogFileLocator(propsDebug, strPrefix);
 		return createLogFile(locLog);
 	}
 	

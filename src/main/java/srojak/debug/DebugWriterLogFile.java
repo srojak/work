@@ -25,15 +25,18 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import srojak.core.io.DatedFileNameMethods;
-import srojak.core.kernel.Kernel;
+import srojak.core.io.IONodeIdentifier;
+import srojak.core.io.IONodeName;
+import srojak.core.io.IONodeType;
+import srojak.core.observe.CoreObservers;
 import srojak.core.observe.ObsLevel;
+import srojak.core.observe.ObservationCommon;
 import srojak.core.observe.ObservedActivity;
 import srojak.core.observe.activity.SingleActivity;
 import srojak.core.observe.writers.ObservationWriterPrintStream;
 import srojak.core.result.XResultCarrierOf;
 import srojak.core.result.XResultOf;
 import srojak.core.tools.EnvTool;
-import srojak.debug.impl.DebugNexusCore;
 
 /**
  * @author Stephen
@@ -66,13 +69,14 @@ public class DebugWriterLogFile
 		_pathFile = _pathDir.resolve(DatedFileNameMethods.formFileName(strPrefix, "log", true, dtNow));
 		Files.createFile(_pathFile);
 		OutputStream streamOut = Files.newOutputStream(_pathFile);
+		IONodeIdentifier writesTo = new IONodeName(IONodeType.FILE, _pathFile.toString());
 		_print = new PrintStream(streamOut);
-		assignPrintStream(_print);
+		assignPrintStream(writesTo, _print);
 		_print.println("Java version " + EnvTool.getJavaVersion());
 		_print.println("log created for " + _strAppName + " on "
-				+ DebugNexusCore.FORMAT_TIME_STAMP.format(dtNow));
+				+ ObservationCommon.FORMAT_TIME_STAMP.format(dtNow));
 		// TODO functionally organize, create a writer for the announcement
-		Kernel.OBS_KERNEL.write(ObsLevel.INFO, "Created log file " + _pathFile);
+		CoreObservers.OBS_OUT.record(ObsLevel.INFO, "Created log file " + _pathFile);
 	}
 	
 	public Path getDirectoryPath() {

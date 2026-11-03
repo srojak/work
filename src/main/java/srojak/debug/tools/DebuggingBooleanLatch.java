@@ -52,7 +52,7 @@ public class DebuggingBooleanLatch
 	public DebuggingBooleanLatch(NameToken tokenName) {
 		super();
 		Objects.requireNonNull(tokenName, "tokenName");
-		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "name = " + tokenName.getName());
+		_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> "name = " + tokenName.getName());
 		_name = tokenName;
 		addStateChangeListener(new DebugStateChangeListener());
 	}
@@ -63,7 +63,7 @@ public class DebuggingBooleanLatch
 	public DebuggingBooleanLatch(NameToken tokenName, boolean bStateInitial) {
 		super(bStateInitial);
 		Objects.requireNonNull(tokenName, "tokenName");
-		_swDebugClass.writeTraceEnter(TraceLevel.MEDIUM, () -> "name = " + tokenName.getName()
+		_swDebugClass.traceEnter(TraceLevel.MEDIUM, () -> "name = " + tokenName.getName()
 				+ ", initial state = " + bStateInitial);
 		_name = tokenName;
 		addStateChangeListener(new DebugStateChangeListener());
@@ -80,15 +80,16 @@ public class DebuggingBooleanLatch
 	}
 	
 	@Override
-	public void propagate() {
-		_swDebugClass.writeTraceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName());
-		super.propagate();
+	protected void stateChangedTo(boolean bState) {
+		_swDebugClass.traceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName()
+			+ ", set state to " + bState);
+		super.stateChangedTo(bState);
 	}
 
 	@Override
 	public boolean setState(boolean bState) {
-		_swDebugClass.writeTraceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName()
-				+ ", set state to " + bState);
+		_swDebugClass.traceEnter(TraceLevel.LOW, () ->  "name = " + _name.getName()
+				+ ", setting state to " + bState);
 		return super.setState(bState);
 	}
 
@@ -96,7 +97,7 @@ public class DebuggingBooleanLatch
 			implements StateChangeListener {
 		@Override
 		public void stateChanged(StateChangeEvent event) {
-			_swDebugClass.write(ObsLevel.DEBUG3, "name = " + _name.getName()
+			_swDebugClass.record(ObsLevel.DEBUG3, "name = " + _name.getName()
 			+ ", event = " + event.toDataString());
 		}
 	}

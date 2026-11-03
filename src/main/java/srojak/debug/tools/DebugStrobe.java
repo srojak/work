@@ -74,6 +74,6 @@ public class DebugStrobe
 
 	@Override
 	public void run() {
-		_swDebugClass.write(ObsLevel.INFO, "time: " + FORMAT_TIME_STAMP.format(LocalDateTime.now()));
+		_swDebugClass.record(ObsLevel.INFO, "time: " + FORMAT_TIME_STAMP.format(LocalDateTime.now()));
 	}
 }

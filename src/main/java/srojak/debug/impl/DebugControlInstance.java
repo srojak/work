@@ -16,9 +16,14 @@
  */
 package srojak.debug.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import srojak.core.io.IONodeIdentifier;
-import srojak.core.kernel.Kernel;
-import srojak.core.kernel.KernelLog;
+import srojak.core.main.CoreCentral;
+import srojak.core.main.CoreCollectors;
+import srojak.core.observe.ObsLevelInstancePolicyHolder;
 import srojak.core.observe.ObservationWriter;
 import srojak.core.props.DebugProperties;
 import srojak.core.reflect.PackageClassLocator;
@@ -34,11 +39,15 @@ import srojak.debug.control.DebugSwitchMutable;
 public class DebugControlInstance 
 		implements DebugControl {
 	private final DebugProperties _properties;
+	private final Map<String, ObsLevelInstancePolicyHolder> _mapPolicies;
 	private final ObservationWriter _writerLog;
 	
 	public DebugControlInstance() {
-		_properties = Kernel.getDebugProperties();
-		_writerLog = KernelLog.getLogWriter();
+		_properties = CoreCentral.getDebugProperties();
+		_mapPolicies = new HashMap<String, ObsLevelInstancePolicyHolder>();
+		CoreCollectors outputs = new CoreCollectors();
+		// TODO: should be using the collector
+		_writerLog = outputs.getLogWriter();
 	}
 
 	@Override
@@ -85,6 +94,26 @@ public class DebugControlInstance
 	@Override
 	public void enableBaseClassSwitches(DebugSwitchKey key) {
 		DebugNexusCore.enableBaseClassSwitches(key);
+	}
+
+	@Override
+	public boolean containsInstancePolicy(String strName) {
+		return _mapPolicies.containsKey(strName);
+	}
+
+	@Override
+	public void defineInstancePolicy(String strName, ObsLevelInstancePolicyHolder policy) {
+		Objects.requireNonNull(strName, "strName");
+		if (strName.isBlank()) {
+			throw new IllegalArgumentException("strName is blank");
+		}
+		Objects.requireNonNull(policy, "policy");
+		_mapPolicies.put(strName, policy);
+	}
+
+	@Override
+	public ObsLevelInstancePolicyHolder getInstancePolicy(String strName) {
+		return _mapPolicies.get(strName);
 	}
 
 }

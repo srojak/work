@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import srojak.core.mutable.BooleanMutable;
+import srojak.core.data.DataPassThrough;
+import srojak.core.logic.BooleanFlag;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObsPassThroughList;
 import srojak.core.reflect.ClassReflector;
 import srojak.core.reflect.PackageClassLocator;
 import srojak.debug.impl.DebugAccessorBase;
@@ -60,10 +60,10 @@ public class DebugNexus
 			ObsLevel levelNew, boolean bShowSource) {
 		Objects.requireNonNull(key, "key");
 		Objects.requireNonNull(levelNew, "levelNew");
-		BooleanMutable bIsNew = new BooleanMutable(false);
+		BooleanFlag bIsNew = new BooleanFlag(false);
 		DebugSwitchContent swDebug = fetchSwitch(key, bIsNew);
-		if (bIsNew.getValue()) {
-			swDebug.setLevel(levelNew);
+		if (bIsNew.getState()) {
+			swDebug.setObsLevel(levelNew);
 			swDebug.setShowSourceLocations(bShowSource);
 		}
 		return swDebug;
@@ -86,7 +86,7 @@ public class DebugNexus
 		Objects.requireNonNull(key, "key");
 		requireCanModify();
 		DebugSwitchContent swDebug = fetchSwitch(key, _commonFlag);
-		swDebug.setLevel(level);
+		swDebug.setObsLevel(level);
 		swDebug.setShowSourceLocations(bShowSource);
 	}
 	
@@ -162,10 +162,10 @@ public class DebugNexus
 	 * Create a pass-through list.
 	 * @param strings The strings to enter into the list.
 	 * @return The pass-through list.
-	 * @see ObsPassThroughList for use of the pass-through list.
+	 * @see DataPassThrough for use of the pass-through list.
 	 */
-	public static ObsPassThroughList makePassThroughList(String[] strings) {
+	public static DataPassThrough makePassThroughList(String[] strings) {
 		Objects.requireNonNull(strings);
-		return ObsPassThroughList.createFrom(strings);
+		return DataPassThrough.createFrom(strings);
 	}
 }

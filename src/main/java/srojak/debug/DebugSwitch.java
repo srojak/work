@@ -16,19 +16,17 @@
  */
 package srojak.debug;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
+import srojak.core.InstanceNumberCommon;
+import srojak.core.data.DataPassThrough;
 import srojak.core.observe.ObsLevel;
-import srojak.core.observe.ObsPassThroughList;
-import srojak.core.observe.SingleObservationCollector;
-import srojak.core.observe.ObservationCommonWriter;
+import srojak.core.observe.ObservationCommonCollector;
+import srojak.core.observe.ObservationInstanceCommonCollector;
 import srojak.core.observe.ObservedActivity;
-import srojak.core.observe.TraceLevel;
-import srojak.core.reflect.PackageClassLocator;
+import srojak.core.observe.SingleObservationCollector;
 
 /**
  * @author Stephen
@@ -36,62 +34,25 @@ import srojak.core.reflect.PackageClassLocator;
  * the readonly interface to a debug switch.
  */
 public interface DebugSwitch 
-		extends ObservationCommonWriter {
+		extends DebugSwitchBase, ObservationCommonCollector, ObservationInstanceCommonCollector {
 	
 	boolean isLevelAccepted(ObsLevel level);
 	
-	/**
-	 * Get the key for the debug switch.
-	 * @return The key for this debug switch.
-	 */
-	DebugSwitchKey getKey();
-	
-	/**
-	 * Get the class locator for the debug switch.
-	 * @return The class locator from the key for this debug switch.
-	 */
-	PackageClassLocator getClassLocator();
-	
-	/**
-	 * Get the observation level assigned to the debug switch.
-	 * @return The current observation level assigned to the debug switch.
-	 */
-	ObsLevel getLevel();
-	
-	/**
-	 * Get the state of the show source locations flag for the debug switch.
-	 * @return The state of the show source locations flag for the debug switch.
-	 */
-	boolean showSourceLocations();
-	
-	/**
-	 * Get the name of the control set that defined this switch, if it was defined
-	 * by a control set.
-	 * @return The name of the defining control set, or an empty string.
-	 */
-	String getDefiningControlSet();
-	
-	/**
-	 * Test if the observation level assigned to the debug switch is at or above
-	 *   a given value.
-	 * @param level The test level to compare to the level assigned to the debug switch.
-	 * @return {@code true} if the debug switch level is at least the given level.
-	 */
-	boolean isLevelAtLeast(ObsLevel level);
+	boolean isLevelAcceptedForInstance(InstanceNumberCommon instance, ObsLevel level);
 	
 	/**
 	 * Write a message at an observation level.
 	 * @param level The level at which to write the message.
 	 * @param strMessage The text of the message.
 	 */
-	void write(ObsLevel level, String strMessage);
+	void record(ObsLevel level, String strMessage);
 	
 	/**
 	 * Write a message at an observation level.
 	 * @param level The level at which to write the message.
 	 * @param message The supplier of the message.
 	 */
-	void write(ObsLevel level, Supplier<String> message);
+	void record(ObsLevel level, Supplier<String> message);
 	
 	/**
 	 * Write a message at an observation level.
@@ -99,8 +60,8 @@ public interface DebugSwitch
 	 * @param listPassThrough The observable passthrough list carrying additional data.
 	 * @param message The function to write the message.
 	 */
-	void write(ObsLevel level, ObsPassThroughList listPassThrough, 
-			Function<ObsPassThroughList, String> message);
+	void record(ObsLevel level, DataPassThrough listPassThrough, 
+			Function<DataPassThrough, String> message);
 	
 	/**
 	 * Write an exception at an observation level.
@@ -109,75 +70,26 @@ public interface DebugSwitch
 	 * @param exc The exception whose contents are to be written.
 	 * @param bShowStack If {@code true}, the stack trace can be written.
 	 */
-	void writeException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack);
+	void recordException(ObsLevel level, ObservedActivity activity, Exception exc, boolean bShowStack);
 	
 	/**
-	 * Write a trace message to enter a method.
-	 * @param level The trace level at which to write the message.
+	 * Write a throwable object at an observation level.
+	 * @param level The level at which to write the message.
+	 * @param activity Identifies the activity that produced the exception.
+	 * @param t The throwable whose contents are to be written.
+	 * @param bShowStack If {@code true}, the stack trace can be written.
 	 */
-	void writeTraceEnter(TraceLevel level);
-	
-	/**
-	 * Write a trace message to enter a method with additional text.
-	 * @param level The trace level at which to write the message.
-	 * @param message The supplier of the additional text.
-	 */
-	void writeTraceEnter(TraceLevel level, Supplier<String> message);
-	
-	/**
-	 * Write a trace message to enter a method with additional text.
-	 * @param level The trace level at which to write the message.
-	 * @param listPassThrough The observable passthrough list carrying additional data.
-	 * @param message The function to write the message.
-	 */
-	void writeTraceEnter(TraceLevel level, ObsPassThroughList listPassThrough, 
-			Function<ObsPassThroughList, String> message);
-	
-	/**
-	 * Write a trace message to return from a method.
-	 * @param level The trace level at which to write the message.
-	 */
-	void writeTraceReturn(TraceLevel level);
-	
-	/**
-	 * Write a trace message to return from a method with additional text.
-	 * @param level The trace level at which to write the message.
-	 * @param message The supplier of the additional text.
-	 */
-	void writeTraceReturn(TraceLevel level, Supplier<String> message);
-	
-	/**
-	 * Write a trace message to return from a method with additional text.
-	 * @param level The trace level at which to write the message.
-	 * @param listPassThrough The observable passthrough list carrying additional data.
-	 * @param message The function to write the message.
-	 */
-	void writeTraceReturn(TraceLevel level, ObsPassThroughList listPassThrough, 
-			Function<ObsPassThroughList, String> message);
+	void recordThrowable(ObsLevel level, ObservedActivity activity, Throwable t, boolean bShowStack);
 	
 	/**
 	 * Build and write a message at an observation level.
 	 * @param level The level at which to write the message.
 	 * @param messageBuilder The consumer to build the message.
+	 * 
+	 * @deprecated Use writeObservation() instead.
 	 */
+	@Deprecated(forRemoval = true)
 	void buildAndWrite(ObsLevel level, Consumer<StringBuilder> messageBuilder);
-	
-	/**
-	 * Build and write a message at a given observation level.
-	 * @param level The observation level.
-	 * @param i The {@code int} value to pass through to the callback.
-	 * @param message The callback to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, int i, ObjIntConsumer<StringBuilder> messageBuilder);
-	
-	/**
-	 * Build and write a message at an observation level.
-	 * @param level The level at which to write the message.
-	 * @param listPassThrough The debug passthrough list carrying additional data.
-	 * @param messageBuilder The consumer to build the message.
-	 */
-	void buildAndWrite(ObsLevel level, ObsPassThroughList listPassThrough,
-			BiConsumer<StringBuilder, ObsPassThroughList> messageBuilder);
 	
 	/**
 	 * Create an observation collector at a given observation level.
@@ -187,16 +99,18 @@ public interface DebugSwitch
 	 */
 	SingleObservationCollector createCollector(ObsLevel level);
 	
+	void visitPolicies(StringBuilder sb);
+	
 	/**
 	 * Create a passthrough list for use with a call to write to this debug switch.
-	 * @param strings A set of strings to include in the passthrough list.
-	 * @return A passthrough list containing the input strings, in order.
+	 * @param objects A set of objects to include in the passthrough list.
+	 * @return A passthrough list containing the input objects, in order.
 	 * 
 	 * If you encounter errors like this:
 	 * Local variable N defined in an enclosing scope must be final or effectively final
 	 * The problem can be overcome through use of a passthrough list.
 	 */
-	static ObsPassThroughList passThrough(String... strings) {
-		return ObsPassThroughList.createFrom(strings);	
+	static DataPassThrough passThrough(Object... objects) {
+		return DataPassThrough.createFrom(objects);	
 	}
 }
