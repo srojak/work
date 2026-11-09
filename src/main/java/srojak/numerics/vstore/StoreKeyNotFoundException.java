@@ -17,7 +17,6 @@
 package srojak.numerics.vstore;
 
 import srojak.core.keys.ClassKey;
-import srojak.core.reflect.PackageClassLocator;
 
 /**
  * @author Stephen

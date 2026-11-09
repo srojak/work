@@ -16,7 +16,6 @@
  */
 package srojak.numerics.vstore;
 
-import srojak.core.CommonCollectionSize;
 import srojak.core.keys.NamedKey;
 
 /**

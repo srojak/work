@@ -18,7 +18,6 @@ package srojak.numerics.vstore.facades;
 
 import java.util.Objects;
 
-import srojak.core.keys.ClassKey;
 import srojak.core.keys.NamedKey;
 import srojak.numerics.vstore.NamedDoubleValueStore;
 import srojak.numerics.vstore.StoreKeyNotFoundException;
