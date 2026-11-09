@@ -52,7 +52,6 @@ public class StrobeUnit
 		_listeners = new CommonEventListenerList();
 		_timeRecent = LocalTime.now(_clock);
 		_dateRecent = LocalDate.now(_clock);
-		LocalTime time = LocalTime.now(_clock);
 	}
 	
 	public StrobeUnit() {

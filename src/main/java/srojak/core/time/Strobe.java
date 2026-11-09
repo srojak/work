@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import srojak.core.StrobeFrequency;
-import srojak.core.events.LifeCycleEventOriginating;
 
 /**
  * @author Stephen

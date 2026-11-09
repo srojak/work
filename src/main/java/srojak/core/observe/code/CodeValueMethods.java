@@ -44,7 +44,7 @@ public class CodeValueMethods
 	}
 
 	public static CodeValue capture(String strName, int value) {
-		return new CodeValueInt(strName, FORMAT_COMMAS, value);
+		return new CodeValueInt(strName, FORMAT_COMMAS.get(), value);
 	}
 
 	public static CodeValue capture(String strName, int value, DecimalFormat formatDecimal) {
@@ -52,7 +52,7 @@ public class CodeValueMethods
 	}
 
 	public static CodeValue capture(String strName, long value) {
-		return new CodeValueLong(strName, FORMAT_COMMAS, value);
+		return new CodeValueLong(strName, FORMAT_COMMAS.get(), value);
 	}
 
 	public static CodeValue capture(String strName, long value, DecimalFormat formatDecimal) {
@@ -60,7 +60,7 @@ public class CodeValueMethods
 	}
 
 	public static CodeValue capture(String strName, double value) {
-		return new CodeValueDouble(strName, FORMAT_3_DEC, value);
+		return new CodeValueDouble(strName, FORMAT_3_DEC.get(), value);
 	}
 
 	public static CodeValue capture(String strName, double value, DecimalFormat formatDecimal) {

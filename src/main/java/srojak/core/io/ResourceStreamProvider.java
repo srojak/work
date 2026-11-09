@@ -16,6 +16,7 @@
  */
 package srojak.core.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -25,5 +26,5 @@ import java.io.InputStream;
 public interface ResourceStreamProvider {
 
 	String getResourceName();
-	InputStream getResourceStream();
+	InputStream getResourceStream() throws IOException;
 }

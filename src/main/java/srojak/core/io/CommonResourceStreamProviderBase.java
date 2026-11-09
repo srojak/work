@@ -16,6 +16,7 @@
  */
 package srojak.core.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
@@ -41,7 +42,7 @@ public abstract class CommonResourceStreamProviderBase
 	}
 
 	@Override
-	public InputStream getResourceStream() {
+	public InputStream getResourceStream() throws IOException {
 		return _locResource.getResourceStream();
 	}
 

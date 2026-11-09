@@ -24,4 +24,5 @@ public interface ConfigPropertyKeys {
 
 	public static final String VERBOSE_CLASS_FIND = "verbose.class.find";
 	public static final String VERBOSE_MODULE_INSTALL = "verbose.module.install";
+	public static final String PERF_SUBSYS_DIR = "perf.subsys.dir";
 }

@@ -27,10 +27,12 @@ public interface ObservationCommon {
 
 	static final String STR_NULL = "(null)";
 	static final String STR_EMPTY = "";
-	static final DateTimeFormatter FORMAT_TIME_STAMP
-		= DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-	static final DecimalFormat FORMAT_COMMAS
-		= new DecimalFormat("#,###");
-	static final DecimalFormat FORMAT_3_DEC
-		= new DecimalFormat("#.000");
+	static final ThreadLocal<DateTimeFormatter> FORMAT_DATE_TIME_STAMP
+		= ThreadLocal.withInitial(() -> DateTimeFormatter.ofPattern("yy-MM-dd HH:mm"));
+	static final ThreadLocal<DateTimeFormatter> FORMAT_TIME_STAMP
+		= ThreadLocal.withInitial(() -> DateTimeFormatter.ofPattern("HH:mm:ss"));
+	static final ThreadLocal<DecimalFormat> FORMAT_COMMAS
+		= ThreadLocal.withInitial(() -> new DecimalFormat("#,###"));
+	static final ThreadLocal<DecimalFormat> FORMAT_3_DEC
+		= ThreadLocal.withInitial(() -> new DecimalFormat("#.000"));
 }

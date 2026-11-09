@@ -152,7 +152,7 @@ public abstract class ObservationWriterCommonTextBase
 			sb.append(locOrigin.toString(SourceDetail.CLASS_METHOD));
 		}
 		sb.append(" time: ");
-		sb.append(FORMAT_TIME_STAMP.format(dtObs));
+		sb.append(FORMAT_DATE_TIME_STAMP.get().format(dtObs));
 		writeOutput(sb);
 	}
 

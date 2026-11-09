@@ -20,13 +20,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import srojak.core.GlobalFormats;
 import srojak.core.events.CoreEvent;
 
 /**
  * @author Stephen
  *
  */
+@SuppressWarnings("serial")
 public class CalendarEvent 
 		extends CoreEvent {
 	private final LocalDate _date;

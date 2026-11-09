@@ -16,10 +16,13 @@
  */
 package srojak.core.io;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Objects;
 
 import srojak.core.Named;
+import srojak.core.excepts.PathResolutionException;
 
 /**
  * @author Stephen
@@ -43,8 +46,17 @@ public class ResourceLocator
 		_path = strPath;
 	}
 	
-	public InputStream getResourceStream() {
-		return _classOwner.getClassLoader().getResourceAsStream(_path);
+	public InputStream getResourceStream() 
+			throws IOException {
+		URL url = _classOwner.getClassLoader().getResource(_path);
+		if (url == null) {
+			throw new PathResolutionException("cannot resolve \"" + _path + "\"");
+		}
+		return url.openStream();
+	}
+	
+	public URL getResource() {
+		return _classOwner.getClassLoader().getResource(_path);
 	}
 
 	@Override

@@ -119,7 +119,7 @@ public class CoreCollectors {
 		ClassReflector _reflectorApp = CoreCentralStore._instance.getAppClass();
 		writer.write(ObsLevel.NOTICE, SourceLocation.start(), 
 				"log created for " + _reflectorApp.getName() + " on "
-						+ ObservationCommon.FORMAT_TIME_STAMP.format(dtNow));
+						+ ObservationCommon.FORMAT_DATE_TIME_STAMP.get().format(dtNow));
 		writer.write(ObsLevel.NOTICE, SourceLocation.start(), 
 					"Java version " + EnvTool.getJavaVersion());
 	}
