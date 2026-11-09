@@ -4,7 +4,8 @@ Work portfolio
 ## Java Modules
 The Java code is organized in these modules:
 * srojak.core: Core classes, with no dependencies on java.desktop.
-* srojak.numerics: Classes to support numeric calculations, including intervals.
+* srojak.numerics: Classes to support numeric calculations, including intervals and nullables.
+* srojak.sql: Classes to support SQL data management.
 * srojak.concurrent: Classes designed to support concurrent processing.
 * srojak.debug: Classes to implement debugging monitoring.
 * srojak.debug.config: Classes to read an XML configuration file to control debugging monitoring.
