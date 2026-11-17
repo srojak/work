@@ -22,5 +22,10 @@ module srojak.sql {
 	requires transitive java.sql;
 	requires transitive srojak.core;
 	requires transitive srojak.numerics;
+	requires transitive srojak.mantle;
+	requires transitive srojak.collate;
 	exports srojak.sql;
+	exports srojak.sql.collate;
+	exports srojak.sql.connect;
+	exports srojak.sql.mapobj;
 }
