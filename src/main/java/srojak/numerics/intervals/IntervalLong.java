@@ -18,6 +18,7 @@ package srojak.numerics.intervals;
 
 import java.util.Objects;
 import java.util.function.LongConsumer;
+import java.util.stream.LongStream;
 
 import srojak.numerics.IntervalType;
 
@@ -68,6 +69,10 @@ public class IntervalLong
 		return getMaximumValue() - getMinimumValue();
 	}
 	
+	public LongStream overRange() {
+		return LongStream.rangeClosed(getMinimumValue(), getMaximumValue());
+	}
+	
 	public boolean isInInterval(long value) {
 		return _type.evalLeftComparison(Long.compare(_valueMinimum, value))
 				&& _type.evalRightComparison(Long.compare(_valueMaximum, value));
@@ -75,10 +80,7 @@ public class IntervalLong
 	
 	public void overEachValue(LongConsumer consumer) {
 		Objects.requireNonNull(consumer, "consumer");
-		long lnStop = getMaximumValue();
-		for (long lnValue = getMinimumValue(); lnValue <= lnStop; lnValue++) {
-			consumer.accept(lnValue);
-		}
+		overRange().forEach(consumer);
 	}
 
 	@Override

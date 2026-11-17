@@ -24,6 +24,7 @@ module srojak.numerics {
 	requires transitive srojak.core;
 	exports srojak.numerics;
 	exports srojak.numerics.compass;
+	exports srojak.numerics.extmath;
 	exports srojak.numerics.function;
 	exports srojak.numerics.intervals;
 	exports srojak.numerics.nullable;

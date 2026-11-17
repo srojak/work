@@ -18,6 +18,7 @@ package srojak.numerics.intervals;
 
 import java.util.Objects;
 import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
 
 import srojak.numerics.IntervalType;
 
@@ -65,6 +66,10 @@ public class IntervalInt
 		return getMaximumValue() - getMinimumValue();
 	}
 	
+	public IntStream overRange() {
+		return IntStream.rangeClosed(getMinimumValue(), getMaximumValue());
+	}
+	
 	public boolean isInInterval(int value) {
 		return _type.evalLeftComparison(Integer.compare(_valueMinimum, value))
 				&& _type.evalRightComparison(Integer.compare(_valueMaximum, value));
@@ -72,10 +77,7 @@ public class IntervalInt
 	
 	public void overEachValue(IntConsumer consumer) {
 		Objects.requireNonNull(consumer, "consumer");
-		int nStop = getMaximumValue();
-		for (int nValue = getMinimumValue(); nValue <= nStop; nValue++) {
-			consumer.accept(nValue);
-		}
+		overRange().forEach(consumer);
 	}
 
 	@Override
