@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.text;
+package srojak.mantle.tprops;
+
+import java.util.stream.Stream;
+
+import srojak.core.CommonCollectionSize;
 
 /**
  * @author Stephen
  *
  */
-public interface TextReceiver {
+public interface TypedPropertySet 
+		extends CommonCollectionSize {
 
-	boolean isOpen();
-	void receive(String strText, boolean bImpliedNewline);
-	boolean isAutoFlush();
-	void flush();
+	boolean containsKey(String strName);
+	TypedProperty get(String strName);
+	<P extends TypedProperty> P getAs(String strName, Class<?> classProperty);
+	Stream<TypedProperty> stream();
 }

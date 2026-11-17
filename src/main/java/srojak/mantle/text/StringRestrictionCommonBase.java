@@ -16,53 +16,29 @@
  */
 package srojak.mantle.text;
 
-import java.io.PrintStream;
 import java.util.Objects;
-
-import srojak.core.logic.BooleanFlag;
 
 /**
  * @author Stephen
  *
  */
-public class PrintStreamTextReceiver 
-		implements TextReceiver {
-	private final PrintStream _stream;
-	private final BooleanFlag _bFaulted;
-
-	public PrintStreamTextReceiver(PrintStream stream) {
-		Objects.requireNonNull(stream, "stream");
-		_stream = stream;
-		_bFaulted = new BooleanFlag(false);
-	}
-
-	@Override
-	public boolean isOpen() {
-		return !_bFaulted.getState();
-	}
-
-	@Override
-	public void receive(String strText, boolean bImpliedNewline) {
-		if (!_bFaulted.getState()) {
-			_stream.print(strText);
-			if (bImpliedNewline) {
-				_stream.println();
-			}
-			if (_stream.checkError()) {
-				_bFaulted.set();
-			}
+public abstract class StringRestrictionCommonBase 
+		implements StringRestriction {
+	private final String _name;
+	
+	public StringRestrictionCommonBase(String strName) {
+		Objects.requireNonNull(strName, "strName");
+		if (strName.isBlank()) {
+			throw new IllegalArgumentException("strName is blank");
 		}
-
+		_name = strName;
 	}
 
 	@Override
-	public boolean isAutoFlush() {
-		return true;
+	public String getName() {
+		return _name;
 	}
 
 	@Override
-	public void flush() {
-		_stream.flush();
-	}
-
+	public abstract boolean validate(String strText);
 }

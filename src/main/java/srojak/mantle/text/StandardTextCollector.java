@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Objects;
 
 import srojak.core.CommonPrintWriter;
 
@@ -61,24 +62,30 @@ public class StandardTextCollector
 
 	@Override
 	public CommonPrintWriter format(String format, Object... args) {
+		Objects.requireNonNull(format, "format");
 		_writer.format(format, args);
 		return this;
 	}
 
 	@Override
 	public CommonPrintWriter format(Locale lcl, String format, Object... args) {
+		Objects.requireNonNull(lcl, "lcl");
+		Objects.requireNonNull(format, "format");
 		_writer.format(lcl, format, args);
 		return this;
 	}
 
 	@Override
 	public CommonPrintWriter printf(Locale lcl, String format, Object... args) {
+		Objects.requireNonNull(lcl, "lcl");
+		Objects.requireNonNull(format, "format");
 		_writer.printf(lcl, format, args);
 		return this;
 	}
 
 	@Override
 	public CommonPrintWriter printf(String format, Object... args) {
+		Objects.requireNonNull(format, "format");
 		_writer.printf(format, args);
 		return this;
 	}

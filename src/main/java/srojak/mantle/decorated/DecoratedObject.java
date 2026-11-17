@@ -65,7 +65,14 @@ public class DecoratedObject<T>
 
 	@Override
 	public void putDecorator(Decorator decorator) {
+		Objects.requireNonNull(decorator, "decorator");
 		_decorators.put(decorator.getNameToken(), decorator);		
+	}
+
+	@Override
+	public boolean putDecoratorIfAbsent(Decorator decorator) {
+		Objects.requireNonNull(decorator, "decorator");
+		return _decorators.putIfAbsent(decorator.getNameToken(), decorator) == null;
 	}
 
 	@Override

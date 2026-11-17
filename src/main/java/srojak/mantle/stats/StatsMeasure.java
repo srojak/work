@@ -26,6 +26,7 @@ public enum StatsMeasure {
 	NumberOfItemsLong,
 	CountsPerSecondInt,
 	CountsPerSecondLong,
+	NanosLong,
 	DeltaInt,
 	DeltaLong,
 	Fraction,

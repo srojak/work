@@ -14,43 +14,10 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.mantle.text;
-
-import java.util.Objects;
-
-import srojak.core.TextMessageRelay;
-
 /**
  * @author Stephen
  *
+ * Objects for collections of typed properties.
+ *
  */
-public class TextRelayTextReceiver 
-		implements TextReceiver {
-	private final TextMessageRelay _relay;
-	
-	public TextRelayTextReceiver(TextMessageRelay relay) {
-		Objects.requireNonNull(relay, "relay");
-		_relay = relay;
-	}
-
-	@Override
-	public boolean isOpen() {
-		return true;
-	}
-
-	@Override
-	public void receive(String strText, boolean bImpliedNewline) {
-		_relay.writeln(strText);
-	}
-
-	@Override
-	public boolean isAutoFlush() {
-		return true;
-	}
-
-	@Override
-	public void flush() {
-		// no effect
-	}
-
-}
+package srojak.mantle.tprops;

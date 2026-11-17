@@ -39,6 +39,7 @@ module srojak.mantle {
 	exports srojak.mantle.reflect;
 	exports srojak.mantle.restbl;
 	exports srojak.mantle.text;
+	exports srojak.mantle.tprops;
 	exports srojak.mantle.trees;
 	exports srojak.mantle.vstore;
 }

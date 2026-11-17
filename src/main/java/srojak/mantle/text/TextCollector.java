@@ -17,6 +17,7 @@
 package srojak.mantle.text;
 
 import srojak.core.CommonPrintWriter;
+import srojak.core.text.TextReceiver;
 
 /**
  * @author Stephen
