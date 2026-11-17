@@ -16,6 +16,8 @@
  */
 package srojak.core.keys;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,55 +30,20 @@ import srojak.core.specialized.IntegerCounter;
  * @author Stephen
  *
  */
-public class ClassKey {
-	private final Class<?> _classRef;
+public class ClassKey
+	extends ClassKeyCommon {
 	
 	public ClassKey(Class<?> classRef, boolean bAllowInterfaces) {
-		Objects.requireNonNull(classRef, "classRef");
+		super(classRef);
 		if (!bAllowInterfaces) {
 			if (classRef.isInterface()) {
 				throw new IllegalArgumentException(classRef.getSimpleName() + " is an interface");
 			}
 		}
-		_classRef = classRef;
 	}
 	
 	public ClassKey(Class<?> classRef) {
 		this(classRef, false);
-	}
-	
-	public Class<?> getReferencedClass() {
-		return _classRef;
-	}
-	
-	public boolean isKeyFor(Class<?> classObj) {
-		Objects.requireNonNull(classObj, "classObj");
-		return _classRef.isAssignableFrom(classObj);
-	}
-
-	@Override
-	public int hashCode() {
-		return _classRef.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		} else if (obj == null) {
-			return false;
-		} else if (obj instanceof ClassKey other) {
-			return _classRef == other._classRef;
-		} else if (obj instanceof Class<?> other) {
-			return _classRef == other;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public String toString() {
-		return _classRef.toString();
 	}
 	
 	public static List<ClassKey> findAllQualifyingIn(Collection<ClassKey> keys, Class<?> classTarget) {

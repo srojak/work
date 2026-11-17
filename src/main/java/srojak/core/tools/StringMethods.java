@@ -19,6 +19,7 @@ package srojak.core.tools;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.stream.IntStream;
 
 /**
  * @author Stephen
@@ -118,5 +119,18 @@ public class StringMethods {
 			}
 		}
 		return true;
+	}
+	
+	public static IntStream codePointsStartingAt(String strText, int nStart) {
+		Objects.requireNonNull(strText, "strText");
+		Objects.checkIndex(nStart, strText.length());
+		IntStream.Builder builder = IntStream.builder();
+		int idx = nStart;
+		while (idx < strText.length()) {
+			int cp = strText.codePointAt(idx);
+			builder.accept(cp);
+			idx += Character.charCount(cp);
+		}
+		return builder.build();
 	}
 }

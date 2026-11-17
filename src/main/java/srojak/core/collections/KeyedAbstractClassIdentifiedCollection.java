@@ -17,7 +17,6 @@
 package srojak.core.collections;
 
 import srojak.core.ClassIdentifiedElements;
-import srojak.core.CommonCollectionSize;
 
 /**
  * @author Stephen

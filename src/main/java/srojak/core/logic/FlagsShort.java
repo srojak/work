@@ -42,6 +42,10 @@ public final class FlagsShort
 		}
 	}
 	
+	public void reset() {
+		_flags = 0;
+	}
+	
 	public void copyFrom(FlagsShortTest flagsSource) {
 		Objects.requireNonNull(flagsSource, "flagsSource");
 		_flags = flagsSource.allFlags();

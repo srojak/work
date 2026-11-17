@@ -16,8 +16,6 @@
  */
 package srojak.core.impl;
 
-import java.util.Objects;
-
 import srojak.core.safety.CycleDepthMonitor;
 import srojak.core.safety.CycleDepthStop;
 

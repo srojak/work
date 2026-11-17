@@ -42,6 +42,10 @@ public final class FlagsInt
 		}
 	}
 	
+	public void reset() {
+		_flags = 0;
+	}
+	
 	public void copyFrom(FlagsIntTest flagsSource) {
 		Objects.requireNonNull(flagsSource, "flagsSource");
 		_flags = flagsSource.allFlags();
