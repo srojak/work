@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
-import srojak.core.NamedIntValue;
+import srojak.mantle.nvalues.NamedIntValue;
 
 /**
  * @author Stephen

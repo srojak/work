@@ -17,29 +17,22 @@
 /**
  * @author Stephen
  *
- * Objects at this level can use the debugging facility.
- * 
- * The dependency on srojak.numerics is to prevent the latter from depending on this module.
+ * Restriction:
+ * This module may not depend upon srojak.afw or srojak.debug.
  */
-module srojak.mantle {
+module srojak.numerics {
 	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.debug;
-	exports srojak.mantle;
-	exports srojak.mantle.atoms;
-	exports srojak.mantle.base;
-	exports srojak.mantle.collections;
-	exports srojak.mantle.decorated;
-	exports srojak.mantle.functional;
-	exports srojak.mantle.impl to srojak.utest.mantle;
-	exports srojak.mantle.io;
-	exports srojak.mantle.outcome;
-	exports srojak.mantle.quants;
-	exports srojak.mantle.stats;
-	exports srojak.mantle.reflect;
-	exports srojak.mantle.restbl;
-	exports srojak.mantle.text;
-	exports srojak.mantle.tprops;
-	exports srojak.mantle.trees;
-	exports srojak.mantle.vstore;
+	exports srojak.numerics;
+	exports srojak.numerics.compass;
+	exports srojak.numerics.extmath;
+	exports srojak.numerics.function;
+	exports srojak.numerics.intervals;
+	exports srojak.numerics.nullable;
+	exports srojak.numerics.sequence;
+	exports srojak.numerics.vertices;
+	exports srojak.numerics.vstore;
+	exports srojak.numerics.vstore.collections;
+	exports srojak.numerics.vstore.facades;
+	exports srojak.numerics.vstore.primitives;
+	exports srojak.numerics.weighted;
 }
