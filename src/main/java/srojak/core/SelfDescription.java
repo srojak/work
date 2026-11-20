@@ -16,44 +16,22 @@
  */
 package srojak.core;
 
-import java.util.Objects;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+@Retention(CLASS)
+@Target({TYPE, FIELD, METHOD})
 /**
  * @author Stephen
  *
+ * Allow a class, method or field to describe itself.
  */
-public abstract class NamedValueBase 
-		implements Named {
-	private final String _strName;
+public @interface SelfDescription {
 	
-	public NamedValueBase(String strName) {
-		Objects.requireNonNull(strName, "strName");
-		if (strName.isEmpty()) {
-			throw new IllegalArgumentException("strName is empty");
-		}
-		_strName = strName;
-	}
-
-	@Override
-	public String getName() {
-		return _strName;
-	}
-
-	@Override
-	public int hashCode() {
-		return _strName.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		NamedValueBase other = (NamedValueBase) obj;
-		return Objects.equals(_strName, other._strName);
-	}
-
+	String  value();
 }

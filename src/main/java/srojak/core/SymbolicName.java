@@ -16,32 +16,22 @@
  */
 package srojak.core;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+@Retention(RUNTIME)
+@Target({TYPE, FIELD, METHOD})
 /**
  * @author Stephen
  *
+ * The symbolic name associated with a class, field or method.
  */
-public class NamedIntValue
-		extends NamedValueBase {
-	private int _nValue;
-	
-	/**
-	 * @param strName
-	 */
-	public NamedIntValue(String strName, int valueInitial) {
-		super(strName);
-		_nValue = valueInitial;
-	}
-	
-	protected void validate(int value) {
-		// base class method does nothing
-	}
+public @interface SymbolicName {
 
-	public int getValue() {
-		return _nValue;
-	}
-	
-	public void setValue(int value) {
-		validate(value);
-		_nValue = value;
-	}
+	String value();
 }

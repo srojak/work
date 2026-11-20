@@ -17,7 +17,7 @@
 package srojak.core.reflect;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Executable;
+import java.lang.reflect.Member;
 import java.util.Objects;
 
 import srojak.core.result.XResultCarrierOf;
@@ -31,7 +31,7 @@ public class ReflectionMethods
 		implements ReflectionActivityNames {
 	
 	public static boolean isNameJRE(String strName) {
-		Objects.requireNonNull(strName, "strPackageName");
+		Objects.requireNonNull(strName, "strName");
 		return strName.startsWith("java.") || strName.startsWith("javax.")
 				|| strName.startsWith("jdk.");
 	}
@@ -46,5 +46,15 @@ public class ReflectionMethods
 			result.caughtThrowable(t);
 		}
 		return result;
+	}
+	
+	public static boolean isStatic(Member member) {
+		Objects.requireNonNull(member, "member");
+		return java.lang.reflect.Modifier.isStatic(member.getModifiers());
+	}
+	
+	public static boolean isPublic(Member member) {
+		Objects.requireNonNull(member, "member");
+		return java.lang.reflect.Modifier.isPublic(member.getModifiers());
 	}
 }
