@@ -28,6 +28,7 @@ module srojak.numerics {
 	exports srojak.numerics.function;
 	exports srojak.numerics.intervals;
 	exports srojak.numerics.nullable;
+	exports srojak.numerics.sequence;
 	exports srojak.numerics.vertices;
 	exports srojak.numerics.vstore;
 	exports srojak.numerics.vstore.collections;

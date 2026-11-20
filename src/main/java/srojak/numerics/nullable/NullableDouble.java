@@ -16,12 +16,12 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
 import srojak.core.excepts.NullValueException;
 import srojak.numerics.DoublePrecisionComparer;
-import srojak.numerics.NullableValue;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 
 /**
@@ -29,8 +29,8 @@ import srojak.numerics.OrderedComparison;
  *
  */
 public sealed interface NullableDouble 
-		extends NullableValue, Equatable<NullableDouble>, Comparable<NullableDouble> 
-		permits NullableDoubleBox {
+		extends NullableComparable<NullableDouble> 
+		permits NullableDoubleValue {
 	
 	/**
 	 * Is the there a value for the current object, and is it NaN?
@@ -363,13 +363,17 @@ public sealed interface NullableDouble
 	 */
 	NullableFloat toFloat(boolean bAllowUnderflow);
 	
+	default Comparator<NullableDouble> getComparator() {
+		return new NullableGenericComparator<NullableDouble>();
+	}
+	
 	/**
 	 * Return a nullable object containing a value.
 	 * @param value The value to use.
 	 * @return The {@code NullableDouble} object representing the value.
 	 */
 	public static NullableDouble from(double value) {
-		return new NullableDoubleBox(value);
+		return new NullableDoubleValue(value);
 	}
 	
 	/**
@@ -379,9 +383,9 @@ public sealed interface NullableDouble
 	 */
 	public static NullableDouble from(Double value) {
 		if (value == null) {
-			return new NullableDoubleBox();
+			return new NullableDoubleValue();
 		} else {
-			return new NullableDoubleBox(value.doubleValue());
+			return new NullableDoubleValue(value.doubleValue());
 		}
 	}
 	
@@ -390,7 +394,7 @@ public sealed interface NullableDouble
 	 * @return The {@code NullableDouble} object representing {@code null}.
 	 */
 	public static NullableDouble fromNull() {
-		return new NullableDoubleBox();
+		return new NullableDoubleValue();
 	}
 	
 	/**
@@ -404,7 +408,7 @@ public sealed interface NullableDouble
 	public static NullableDouble max(NullableDouble first, NullableDouble ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableDoubleBox.max(DoublePrecisionComparer.DEFAULT_COMPARER, first, rest);
+		return NullableDoubleValue.max(DoublePrecisionComparer.DEFAULT_COMPARER, first, rest);
 	}
 	
 	/**
@@ -418,7 +422,7 @@ public sealed interface NullableDouble
 	public static NullableDouble max(DoublePrecisionComparer comparer, NullableDouble first, NullableDouble ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableDoubleBox.max(comparer, first, rest);
+		return NullableDoubleValue.max(comparer, first, rest);
 	}
 	
 	/**
@@ -432,7 +436,7 @@ public sealed interface NullableDouble
 	public static NullableDouble min(NullableDouble first, NullableDouble ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableDoubleBox.min(DoublePrecisionComparer.DEFAULT_COMPARER, first, rest);
+		return NullableDoubleValue.min(DoublePrecisionComparer.DEFAULT_COMPARER, first, rest);
 	}
 	
 	/**
@@ -446,7 +450,7 @@ public sealed interface NullableDouble
 	public static NullableDouble min(DoublePrecisionComparer comparer, NullableDouble first, NullableDouble ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableDoubleBox.min(comparer, first, rest);
+		return NullableDoubleValue.min(comparer, first, rest);
 	}
 
 	/**
@@ -460,6 +464,6 @@ public sealed interface NullableDouble
 	 * @see Double#parseDouble(String)
 	 */
 	public static NullableDouble parse(String strInput) {
-		return NullableDoubleBox.parse(strInput);
+		return NullableDoubleValue.parse(strInput);
 	}
 }

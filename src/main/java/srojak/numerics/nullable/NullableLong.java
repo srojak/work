@@ -16,10 +16,11 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
-import srojak.numerics.NullableValue;
+import srojak.core.excepts.NullValueException;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 
 /**
@@ -27,8 +28,8 @@ import srojak.numerics.OrderedComparison;
  *
  */
 public sealed interface NullableLong 
-		extends NullableValue, Equatable<NullableLong>, Comparable<NullableLong>
-		permits NullableLongBox {
+		extends NullableComparable<NullableLong>
+		permits NullableLongValue {
 
 	/**
 	 * Get the value of the object, if it is not {@code null}.
@@ -246,13 +247,17 @@ public sealed interface NullableLong
 	 */
 	NullableTinyint toTinyint();
 	
+	default Comparator<NullableLong> getComparator() {
+		return new NullableGenericComparator<NullableLong>();
+	}
+	
 	/**
 	 * Return a nullable object containing a value.
 	 * @param value The value to use.
 	 * @return The {@code NullableLong} object representing the value.
 	 */
 	public static NullableLong from(long value) {
-		return new NullableLongBox(value);
+		return new NullableLongValue(value);
 	}
 	
 	/**
@@ -262,9 +267,9 @@ public sealed interface NullableLong
 	 */
 	public static NullableLong from(Long value) {
 		if (value == null) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(value.intValue());
+			return new NullableLongValue(value.intValue());
 		}
 	}
 	
@@ -273,7 +278,7 @@ public sealed interface NullableLong
 	 * @return The {@code NullableLong} object representing {@code null}.
 	 */
 	public static NullableLong fromNull() {
-		return new NullableLongBox();
+		return new NullableLongValue();
 	}
 	
 	/**
@@ -286,7 +291,7 @@ public sealed interface NullableLong
 	public static NullableLong max(NullableLong first, NullableLong ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableLongBox.max(first, rest);
+		return NullableLongValue.max(first, rest);
 	}
 	
 	/**
@@ -299,7 +304,7 @@ public sealed interface NullableLong
 	public static NullableLong min(NullableLong first, NullableLong ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableLongBox.min(first, rest);
+		return NullableLongValue.min(first, rest);
 	}
 
 	/**
@@ -314,7 +319,7 @@ public sealed interface NullableLong
 	 * @see Long#parseLong(String, int)
 	 */
 	public static NullableLong parse(String strInput) {
-		return NullableLongBox.parse(strInput, 10);
+		return NullableLongValue.parse(strInput, 10);
 	}
 	
 	/**
@@ -330,6 +335,6 @@ public sealed interface NullableLong
 	 * @see Long#parseLong(String, int)
 	 */
 	public static NullableLong parse(String strInput, int radix) {
-		return NullableLongBox.parse(strInput, radix);
+		return NullableLongValue.parse(strInput, radix);
 	}
 }

@@ -24,8 +24,8 @@ import srojak.numerics.NullableValue;
  *
  */
 public sealed interface NullableBoolean 
-		extends NullableValue, Equatable<NullableBoolean>, Comparable<NullableBoolean>
-		permits NullableBooleanBox {
+		extends NullableValue, Equatable<NullableBoolean>
+		permits NullableBooleanValue {
 
 	/**
 	 * Is the value of the object {@code true}?
@@ -79,7 +79,7 @@ public sealed interface NullableBoolean
 	 * @return The {@code NullableBoolean} object representing the value.
 	 */
 	public static NullableBoolean from(boolean bValue) {
-		return new NullableBooleanBox(bValue);
+		return new NullableBooleanValue(bValue);
 	}
 	
 	/**
@@ -89,9 +89,9 @@ public sealed interface NullableBoolean
 	 */
 	public static NullableBoolean from(Boolean bValue) {
 		if (bValue == null) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox(bValue.booleanValue());
+			return new NullableBooleanValue(bValue.booleanValue());
 		}
 	}
 	
@@ -100,7 +100,7 @@ public sealed interface NullableBoolean
 	 * @return The {@code NullableBoolean} object representing {@code null}.
 	 */
 	public static NullableBoolean fromNull() {
-		return new NullableBooleanBox();
+		return new NullableBooleanValue();
 	}
 	
 	/**
@@ -113,6 +113,6 @@ public sealed interface NullableBoolean
 	 * @see Boolean#parseBoolean(String)
 	 */
 	public static NullableBoolean parse(String strInput) {
-		return NullableBooleanBox.parse(strInput);
+		return NullableBooleanValue.parse(strInput);
 	}
 }

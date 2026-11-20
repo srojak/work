@@ -16,10 +16,11 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
-import srojak.numerics.NullableValue;
+import srojak.core.excepts.NullValueException;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 
 /**
@@ -27,8 +28,8 @@ import srojak.numerics.OrderedComparison;
  *
  */
 public sealed interface NullableInt 
-		extends NullableValue, Equatable<NullableInt>, Comparable<NullableInt>
-		permits NullableIntBox {
+		extends NullableComparable<NullableInt>
+		permits NullableIntValue {
 
 	/**
 	 * Get the value of the object, if it is not {@code null}.
@@ -244,13 +245,17 @@ public sealed interface NullableInt
 	 */
 	String toString(int radix);
 	
+	default Comparator<NullableInt> getComparator() {
+		return new NullableGenericComparator<NullableInt>();
+	}
+	
 	/**
 	 * Return a nullable object containing a value.
 	 * @param value The value to use.
 	 * @return The {@code NullableInt} object representing the value.
 	 */
 	public static NullableInt from(int value) {
-		return new NullableIntBox(value);
+		return new NullableIntValue(value);
 	}
 	
 	/**
@@ -260,9 +265,9 @@ public sealed interface NullableInt
 	 */
 	public static NullableInt from(Integer value) {
 		if (value == null) {
-			return new NullableIntBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableIntBox(value.intValue());
+			return new NullableIntValue(value.intValue());
 		}
 	}
 	
@@ -271,7 +276,7 @@ public sealed interface NullableInt
 	 * @return The {@code NullableInt} object representing {@code null}.
 	 */
 	public static NullableInt fromNull() {
-		return new NullableIntBox();
+		return new NullableIntValue();
 	}
 	
 	/**
@@ -284,7 +289,7 @@ public sealed interface NullableInt
 	public static NullableInt max(NullableInt first, NullableInt ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableIntBox.max(first, rest);
+		return NullableIntValue.max(first, rest);
 	}
 	
 	/**
@@ -297,7 +302,7 @@ public sealed interface NullableInt
 	public static NullableInt min(NullableInt first, NullableInt ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableIntBox.min(first, rest);
+		return NullableIntValue.min(first, rest);
 	}
 
 	/**
@@ -312,7 +317,7 @@ public sealed interface NullableInt
 	 * @see Integer#parseInt(String, int)
 	 */
 	public static NullableInt parse(String strInput) {
-		return NullableIntBox.parse(strInput, 10);
+		return NullableIntValue.parse(strInput, 10);
 	}
 	
 	/**
@@ -328,6 +333,6 @@ public sealed interface NullableInt
 	 * @see Integer#parseInt(String, int)
 	 */
 	public static NullableInt parse(String strInput, int radix) {
-		return NullableIntBox.parse(strInput, radix);
+		return NullableIntValue.parse(strInput, radix);
 	}
 }

@@ -105,10 +105,10 @@ public final class NullableBigIntValue
 		Objects.requireNonNull(value, "value");
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(_value.compareTo(value));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -117,10 +117,10 @@ public final class NullableBigIntValue
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(_value.compareTo(other.value()));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 

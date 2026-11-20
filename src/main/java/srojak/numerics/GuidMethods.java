@@ -43,7 +43,7 @@ public class GuidMethods {
 		bytesUpper[5] = bytes[4];
 		bytesUpper[6] = bytes[7];
 		bytesUpper[7] = bytes[6];
-		byte[] bytesLower = Arrays.copyOfRange(bytes, 8, 15);
+		byte[] bytesLower = Arrays.copyOfRange(bytes, 8, 16);
 		long lnHigh = ByteBuffer.wrap(bytesUpper).getLong();
 		long lnLow = ByteBuffer.wrap(bytesLower).getLong();
 		return new UUID(lnHigh, lnLow);

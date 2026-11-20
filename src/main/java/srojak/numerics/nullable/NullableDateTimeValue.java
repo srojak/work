@@ -25,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 
@@ -124,10 +125,10 @@ public final class NullableDateTimeValue
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(zdtValue, "zdtValue");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(_value.compareTo(zdtValue));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -136,10 +137,10 @@ public final class NullableDateTimeValue
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(_value.compareTo(other.value()));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -229,9 +230,9 @@ public final class NullableDateTimeValue
 		Objects.requireNonNull(endExclusive, "endExclusive");
 		Objects.requireNonNull(unit, "unit");
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.until(endExclusive, unit));
+			return new NullableLongValue(_value.until(endExclusive, unit));
 		}
 	}
 
@@ -240,9 +241,9 @@ public final class NullableDateTimeValue
 		Objects.requireNonNull(endExclusive, "endExclusive");
 		Objects.requireNonNull(unit, "unit");
 		if (_isNull || endExclusive.isNull()) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.until(endExclusive.value(), unit));
+			return new NullableLongValue(_value.until(endExclusive.value(), unit));
 		}
 	}
 
@@ -251,9 +252,9 @@ public final class NullableDateTimeValue
 		Objects.requireNonNull(end, "end");
 		Objects.requireNonNull(unit, "unit");
 		if (_isNull || end.isNull()) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(unit.between(_value, end.value()));
+			return new NullableLongValue(unit.between(_value, end.value()));
 		}
 	}
 
@@ -317,9 +318,6 @@ public final class NullableDateTimeValue
 		}
 	}
 	
-	/*
-	 * 
-	 */
 	/**
 	 * Parse a string in ISO-8601 format.
 	 * 
@@ -351,7 +349,7 @@ public final class NullableDateTimeValue
      * @throws DateTimeParseException if the input does not contain a parseable representation
 	 * 	of a {@code ZonedDateTime} or "null"
 	 * @see ZonedDateTime#parse(CharSequence, DateTimeFormatter)
-	 * @see DateTimeFormatter#parse(CharSequence, java.text.ParsePosition)
+	 * @see DateTimeFormatter#parse(CharSequence, TemporalQuery)
 	 */
 	static NullableDateTime parse(String strInput, DateTimeFormatter formatter) {
 		Objects.requireNonNull(strInput, "strInput");

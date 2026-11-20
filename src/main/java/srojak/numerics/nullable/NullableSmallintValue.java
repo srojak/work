@@ -25,7 +25,7 @@ import srojak.numerics.OrderedComparison;
  * @author Stephen
  *
  */
-public final class NullableSmallintBox 
+public final class NullableSmallintValue 
 		extends NullableValueBase 
 		implements NullableSmallint {
 	private short _value;
@@ -33,7 +33,7 @@ public final class NullableSmallintBox
 	/**
 	 * Null value constructor.
 	 */
-	NullableSmallintBox() {
+	NullableSmallintValue() {
 		super(true);
 		_value = 0;
 	}
@@ -42,7 +42,7 @@ public final class NullableSmallintBox
 	 * Value constructor.
 	 * @param value Value for the object.
 	 */
-	NullableSmallintBox(short value) {
+	NullableSmallintValue(short value) {
 		super(false);
 		_value = value;
 	}
@@ -51,7 +51,7 @@ public final class NullableSmallintBox
 	 * Value constructor for expressions
 	 * @param value {@code int} value for the object.
 	 */
-	NullableSmallintBox(int value) {
+	NullableSmallintValue(int value) {
 		super(false);
 		short v = (short) value;
 		if (v != value) {
@@ -153,10 +153,10 @@ public final class NullableSmallintBox
 	public NullableBoolean compareTo(OrderedComparison comparison, short value) {
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(Short.compare(_value, value));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -172,10 +172,10 @@ public final class NullableSmallintBox
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(Short.compare(_value, other.value()));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 	
@@ -279,9 +279,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint plus(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeAdd(_value, value));
+		return new NullableSmallintValue(safeAdd(_value, value));
 	}
 
 	/**
@@ -294,9 +294,9 @@ public final class NullableSmallintBox
 	public NullableSmallint plus(NullableSmallint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeAdd(_value, operand.value()));
+		return new NullableSmallintValue(safeAdd(_value, operand.value()));
 	}
 
 	/**
@@ -308,9 +308,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint minus(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeSubtract(_value, value));
+		return new NullableSmallintValue(safeSubtract(_value, value));
 	}
 
 	/**
@@ -323,9 +323,9 @@ public final class NullableSmallintBox
 	public NullableSmallint minus(NullableSmallint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeSubtract(_value, operand.value()));
+		return new NullableSmallintValue(safeSubtract(_value, operand.value()));
 	}
 
 	/**
@@ -337,9 +337,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint subtractFrom(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeSubtract(value, _value));
+		return new NullableSmallintValue(safeSubtract(value, _value));
 	}
 
 	/**
@@ -351,9 +351,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint times(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeMultiply(_value, value));
+		return new NullableSmallintValue(safeMultiply(_value, value));
 	}
 
 	/**
@@ -366,9 +366,9 @@ public final class NullableSmallintBox
 	public NullableSmallint times(NullableSmallint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(safeMultiply(_value, operand.value()));
+		return new NullableSmallintValue(safeMultiply(_value, operand.value()));
 	}
 
 	/**
@@ -380,9 +380,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint dividedBy(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox((short) (_value / value));
+		return new NullableSmallintValue((short) (_value / value));
 	}
 
 	/**
@@ -395,9 +395,9 @@ public final class NullableSmallintBox
 	public NullableSmallint dividedBy(NullableSmallint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(_value / operand.value());
+		return new NullableSmallintValue(_value / operand.value());
 	}
 
 	/**
@@ -409,9 +409,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint dividedInto(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(value / _value);
+		return new NullableSmallintValue(value / _value);
 	}
 
 	/**
@@ -423,9 +423,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint remainder(short value) {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(_value % value);
+		return new NullableSmallintValue(_value % value);
 	}
 
 	/**
@@ -438,9 +438,9 @@ public final class NullableSmallintBox
 	public NullableSmallint remainder(NullableSmallint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
-		return new NullableSmallintBox(_value % operand.value());
+		return new NullableSmallintValue(_value % operand.value());
 	}
 
 	/**
@@ -453,9 +453,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableBoolean bitTest(short mask) {
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox((_value & mask) != 0);
+			return new NullableBooleanValue((_value & mask) != 0);
 		}
 	}
 
@@ -466,9 +466,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint abs() {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
-			return new NullableSmallintBox(Math.abs(_value));
+			return new NullableSmallintValue(Math.abs(_value));
 		}
 	}
 
@@ -480,12 +480,12 @@ public final class NullableSmallintBox
 	@Override
 	public NullableSmallint negate() {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
 			if (_value == Short.MIN_VALUE) {
 	            throw new ArithmeticException("smallint overflow");				
 			}
-			return new NullableSmallintBox(- _value);
+			return new NullableSmallintValue(- _value);
 		}
 	}
 
@@ -496,9 +496,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableLong toLong() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value);
+			return new NullableLongValue(_value);
 		}
 	}
 
@@ -509,9 +509,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableInt toInt() {
 		if (_isNull) {
-			return new NullableIntBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableIntBox(_value);
+			return new NullableIntValue(_value);
 		}
 	}
 
@@ -523,9 +523,9 @@ public final class NullableSmallintBox
 	@Override
 	public NullableTinyint toTinyint() {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
-			return new NullableTinyintBox(_value);
+			return new NullableTinyintValue(_value);
 		}
 	}
 
@@ -600,9 +600,9 @@ public final class NullableSmallintBox
 	protected Object clone() 
 			throws CloneNotSupportedException {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
-			return new NullableSmallintBox(_value);
+			return new NullableSmallintValue(_value);
 		}
 	}
 
@@ -617,19 +617,19 @@ public final class NullableSmallintBox
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
 		short answer = first.value();
 		for (NullableSmallint next : rest) {
 			if (next.isNull()) {
-				return new NullableSmallintBox();
+				return new NullableSmallintValue();
 			}
 			short value = next.value();
 			if (answer < value) {
 				answer = value;
 			}
 		}
-		return new NullableSmallintBox(answer);
+		return new NullableSmallintValue(answer);
 	}
 	
 	/**
@@ -643,19 +643,19 @@ public final class NullableSmallintBox
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		}
 		short answer = first.value();
 		for (NullableSmallint next : rest) {
 			if (next.isNull()) {
-				return new NullableSmallintBox();
+				return new NullableSmallintValue();
 			}
 			short value = next.value();
 			if (answer > value) {
 				answer = value;
 			}
 		}
-		return new NullableSmallintBox(answer);
+		return new NullableSmallintValue(answer);
 	}
 	
 	/**
@@ -674,9 +674,9 @@ public final class NullableSmallintBox
 			throws NumberFormatException {
 		Objects.requireNonNull(strInput, "strInput");
 		if (strInput.isEmpty() || strInput.equalsIgnoreCase(STR_NULL)) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
-			return new NullableSmallintBox(Short.parseShort(strInput, radix));
+			return new NullableSmallintValue(Short.parseShort(strInput, radix));
 		}
 	}
 }

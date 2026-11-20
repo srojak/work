@@ -101,36 +101,36 @@ public final class NullableDurationValue
 	@Override
 	public NullableLong toSeconds() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.toSeconds());
+			return new NullableLongValue(_value.toSeconds());
 		}
 	}
 
 	@Override
 	public NullableLong toMinutes() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.toMinutes());
+			return new NullableLongValue(_value.toMinutes());
 		}
 	}
 
 	@Override
 	public NullableLong toHours() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.toHours());
+			return new NullableLongValue(_value.toHours());
 		}
 	}
 
 	@Override
 	public NullableLong toDays() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.toDays());
+			return new NullableLongValue(_value.toDays());
 		}
 	}
 
@@ -138,9 +138,9 @@ public final class NullableDurationValue
 	public NullableLong toChronoUnit(ChronoUnit unit) {
 		Objects.requireNonNull(unit, "unit");
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value.dividedBy(unit.getDuration()));
+			return new NullableLongValue(_value.dividedBy(unit.getDuration()));
 		}
 	}
 

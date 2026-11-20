@@ -16,16 +16,13 @@
  */
 package srojak.numerics.nullable;
 
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
 import srojak.core.excepts.NullValueException;
 import srojak.core.field.Lazy;
-import srojak.numerics.OrderedComparison;
 import srojak.numerics.GuidMethods;
+import srojak.numerics.OrderedComparison;
 
 /**
  * @author Stephen
@@ -109,10 +106,10 @@ public class NullableUUIDValue
 		Objects.requireNonNull(value, "value");
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(_value.compareTo(value));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -121,10 +118,10 @@ public class NullableUUIDValue
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(_value.compareTo(other.value()));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 

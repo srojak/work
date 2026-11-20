@@ -16,11 +16,11 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
 import srojak.core.excepts.NullValueException;
-import srojak.numerics.NullableValue;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 
 /**
@@ -28,8 +28,8 @@ import srojak.numerics.OrderedComparison;
  *
  */
 public sealed interface NullableSmallint 
-		extends NullableValue, Equatable<NullableSmallint>, Comparable<NullableSmallint>
-		permits NullableSmallintBox {
+		extends NullableComparable<NullableSmallint>
+		permits NullableSmallintValue {
 
 	/**
 	 * Get the value of the object, if it is not {@code null}.
@@ -244,13 +244,17 @@ public sealed interface NullableSmallint
 	 */
 	String toString(int radix);
 	
+	default Comparator<NullableSmallint> getComparator() {
+		return new NullableGenericComparator<NullableSmallint>();
+	}
+	
 	/**
 	 * Return a nullable object containing a value.
 	 * @param value The value to use.
 	 * @return The {@code NullableSmallint} object representing the value.
 	 */
 	public static NullableSmallint from(short value) {
-		return new NullableSmallintBox(value);
+		return new NullableSmallintValue(value);
 	}
 	
 	/**
@@ -260,9 +264,9 @@ public sealed interface NullableSmallint
 	 */
 	public static NullableSmallint from(Short value) {
 		if (value == null) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
-			return new NullableSmallintBox(value.shortValue());
+			return new NullableSmallintValue(value.shortValue());
 		}
 	}
 	
@@ -271,7 +275,7 @@ public sealed interface NullableSmallint
 	 * @return The {@code NullableSmallint} object representing {@code null}.
 	 */
 	public static NullableSmallint fromNull() {
-		return new NullableSmallintBox();
+		return new NullableSmallintValue();
 	}
 	
 	/**
@@ -284,7 +288,7 @@ public sealed interface NullableSmallint
 	public static NullableSmallint max(NullableSmallint first, NullableSmallint ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableSmallintBox.max(first, rest);
+		return NullableSmallintValue.max(first, rest);
 	}
 	
 	/**
@@ -297,7 +301,7 @@ public sealed interface NullableSmallint
 	public static NullableSmallint min(NullableSmallint first, NullableSmallint ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableSmallintBox.min(first, rest);
+		return NullableSmallintValue.min(first, rest);
 	}
 
 	/**
@@ -312,7 +316,7 @@ public sealed interface NullableSmallint
 	 * @see Short#parseShort(String, int)
 	 */
 	public static NullableSmallint parse(String strInput) {
-		return NullableSmallintBox.parse(strInput, 10);
+		return NullableSmallintValue.parse(strInput, 10);
 	}
 	
 	/**
@@ -328,6 +332,6 @@ public sealed interface NullableSmallint
 	 * @see Short#parseShort(String, int)
 	 */
 	public static NullableSmallint parse(String strInput, int radix) {
-		return NullableSmallintBox.parse(strInput, radix);
+		return NullableSmallintValue.parse(strInput, radix);
 	}
 }

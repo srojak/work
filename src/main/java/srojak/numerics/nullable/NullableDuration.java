@@ -19,18 +19,20 @@ package srojak.numerics.nullable;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
-import srojak.core.Equatable;
-import srojak.numerics.NullableValue;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 
 /**
  * @author Stephen
  *
  */
-public interface NullableDuration 
-		extends NullableValue, Equatable<NullableDuration>, Comparable<NullableDuration> {
+public sealed interface NullableDuration 
+		extends NullableComparable<NullableDuration>
+		permits NullableDurationValue {
 
 	Duration value();
 	
@@ -77,4 +79,25 @@ public interface NullableDuration
 	NullableDuration abs();
 	
 	NullableDuration negate();
+	
+	default Comparator<NullableDuration> getComparator() {
+		return new NullableGenericComparator<NullableDuration>();
+	}
+	
+	public static NullableDuration from(Duration dur) {
+		if (dur == null) {
+			return new NullableDurationValue();
+		} else {
+			return new NullableDurationValue(dur);
+		}
+	}
+	
+	public static NullableDuration fromNonNull(Duration dur) {
+		Objects.requireNonNull(dur, "dur");
+		return new NullableDurationValue(dur);
+	}
+	
+	public static NullableDuration fromNull() {
+		return new NullableDurationValue();
+	}
 }

@@ -18,24 +18,22 @@ package srojak.numerics.nullable;
 
 import java.util.Objects;
 
-import srojak.core.excepts.NullValueException;
-
 /**
  * @author Stephen
  *
  */
-public final class NullableBooleanBox 
+public final class NullableBooleanValue 
 		implements NullableBoolean {
 	private final byte _flags;
 	
 	private static final byte FLAGS_NULL = 0x1;
 	private static final byte FLAGS_TRUE = 0x2;
 	
-	NullableBooleanBox() {
+	NullableBooleanValue() {
 		_flags = FLAGS_NULL;
 	}
 	
-	NullableBooleanBox(boolean bInitialValue) {
+	NullableBooleanValue(boolean bInitialValue) {
 		_flags = bInitialValue ? FLAGS_TRUE : 0;
 	}
 
@@ -57,15 +55,6 @@ public final class NullableBooleanBox
 	}
 
 	@Override
-	public int compareTo(NullableBoolean o) {
-		if (o == null || isNull() || o.isNull()) {
-			throw new NullValueException("at least one operand in comparison is null");
-		} else {
-			return Boolean.compare(isTrue(), o.isTrue());
-		}
-	}
-
-	@Override
 	public boolean isTrue() {
 		return (_flags & FLAGS_TRUE) != 0;
 	}
@@ -78,9 +67,9 @@ public final class NullableBooleanBox
 	@Override
 	public NullableBoolean not() {
 		if (isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox(!isTrue());
+			return new NullableBooleanValue(!isTrue());
 		}
 	}
 
@@ -89,22 +78,22 @@ public final class NullableBooleanBox
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (isNull()) {
-			return new NullableBooleanBox();			
+			return new NullableBooleanValue();			
 		}
 		boolean bAnswer = first.isTrue();
 		if (first.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else if (!first.isTrue()) {
 			bAnswer = false;
 		}
 		for (NullableBoolean next : rest) {
 			if (next.isNull()) {
-				return new NullableBooleanBox();
+				return new NullableBooleanValue();
 			} else if (!next.isTrue()) {
 				bAnswer = false;
 			}
 		}
-		return new NullableBooleanBox(bAnswer);
+		return new NullableBooleanValue(bAnswer);
 	}
 
 	@Override
@@ -112,31 +101,31 @@ public final class NullableBooleanBox
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (isNull()) {
-			return new NullableBooleanBox();			
+			return new NullableBooleanValue();			
 		}
 		boolean bAnswer = first.isTrue();
 		if (first.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else if (first.isTrue()) {
 			bAnswer = true;
 		}
 		for (NullableBoolean next : rest) {
 			if (next.isNull()) {
-				return new NullableBooleanBox();
+				return new NullableBooleanValue();
 			} else if (next.isTrue()) {
 				bAnswer = true;
 			}
 		}
-		return new NullableBooleanBox(bAnswer);
+		return new NullableBooleanValue(bAnswer);
 	}
 
 	@Override
 	public NullableBoolean xor(NullableBoolean operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (isNull() || operand.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox(isTrue() != operand.isTrue());
+			return new NullableBooleanValue(isTrue() != operand.isTrue());
 		}
 	}
 
@@ -173,18 +162,18 @@ public final class NullableBooleanBox
 	protected Object clone() 
 			throws CloneNotSupportedException {
 		if (isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox(isTrue());
+			return new NullableBooleanValue(isTrue());
 		}
 	}
 
 	static NullableBoolean parse(String strInput) {
 		Objects.requireNonNull(strInput, "strInput");
 		if (strInput.isEmpty() || strInput.equalsIgnoreCase(STR_NULL)) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox(Boolean.parseBoolean(strInput));
+			return new NullableBooleanValue(Boolean.parseBoolean(strInput));
 		}
 	}
 }

@@ -19,33 +19,57 @@ package srojak.numerics.nullable;
 import java.util.Objects;
 
 import srojak.core.excepts.NullValueException;
-import srojak.numerics.DoublePrecisionComparer;
+import srojak.numerics.SinglePrecisionComparer;
 import srojak.numerics.OrderedComparison;
 
 /**
  * @author Stephen
  *
  */
-public final class NullableDoubleBox 
-		extends NullableValueBase 
-		implements NullableDouble {
-	private final double _value;
+public final class NullableFloatValue 
+		extends NullableValueBase implements NullableFloat {
+	private final float _value;
 
 	/**
 	 * Null value constructor.
 	 */
-	NullableDoubleBox() {
+	NullableFloatValue() {
 		super(true);
-		_value = Double.NaN;
+		_value = Float.NaN;
 	}
 	
 	/**
 	 * Value constructor.
 	 * @param value Value for the object.
 	 */
-	NullableDoubleBox(double value) {
+	NullableFloatValue(float value) {
 		super(false);
 		_value = value;
+	}
+	
+	/**
+	 * Value constructor for expressions
+	 * @param value
+	 */
+	NullableFloatValue(double value, boolean bAllowUnderflow) {
+		super(false);
+		if (Double.isNaN(value)) {
+			_value = Float.NaN;
+		} else if (value == Double.POSITIVE_INFINITY) {
+			_value = Float.POSITIVE_INFINITY;
+		} else if (value == Double.NEGATIVE_INFINITY) {
+			_value = Float.NEGATIVE_INFINITY;
+		} else {
+			double dAbs = Math.abs(value);
+			if (dAbs > Float.MAX_VALUE) {
+	            throw new ArithmeticException("float overflow");
+			} else if (!bAllowUnderflow) {
+				if (value != 0.0d && dAbs < Float.MIN_VALUE) {
+					throw new ArithmeticException("float underflow");
+				}
+			}
+			_value = (float) value;
+		}
 	}
 
 	/**
@@ -55,7 +79,7 @@ public final class NullableDoubleBox
 	 */
 	@Override
 	public boolean isNaN() {
-		return (!_isNull && Double.isNaN(_value));
+		return (!_isNull && Float.isNaN(_value));
 	}
 
 	/**
@@ -65,7 +89,7 @@ public final class NullableDoubleBox
 	 */
 	@Override
 	public boolean isInfinite() {
-		return (!_isNull && Double.isInfinite(_value));
+		return (!_isNull && Float.isInfinite(_value));
 	}
 
 	/**
@@ -77,7 +101,7 @@ public final class NullableDoubleBox
 		if (_isNull) {
 			return false;
 		} else {
-			return !Double.isNaN(_value) && !Double.isInfinite(_value);
+			return !Float.isNaN(_value) && !Float.isInfinite(_value);
 		}
 	}
 
@@ -87,7 +111,7 @@ public final class NullableDoubleBox
 	 * @throws NullValueException if the object is {@code null}.
 	 */
 	@Override
-	public double value() {
+	public float value() {
 		if (_isNull) {
 			throw new NullValueException("value is null");
 		}
@@ -100,7 +124,7 @@ public final class NullableDoubleBox
 	 * @return the value of the object, or the parameter value.
 	 */
 	@Override
-	public double valueOr(double valueIfNull) {
+	public float valueOr(float valueIfNull) {
 		if (_isNull) {
 			return valueIfNull;
 		}
@@ -108,7 +132,7 @@ public final class NullableDoubleBox
 	}
 
 	/**
-	 * Is the value equal to another instance of a {@code NullableDouble}?
+	 * Is the value equal to another instance of a {@code NullableFloat}?
 	 * @return {@code true} if the object and other instance are not {@code null}
 	 *  and both have the same value.
 	 *  
@@ -116,7 +140,7 @@ public final class NullableDoubleBox
 	 *  and the object is {@code null}.
 	 */
 	@Override
-	public boolean isEqual(NullableDouble obj) {
+	public boolean isEqual(NullableFloat obj) {
 		if (obj == null) {
 			return false;
 		} else if (_isNull || obj.isNull()) {
@@ -139,12 +163,12 @@ public final class NullableDoubleBox
      * @see Comparable#compareTo(Object)
 	 */
 	@Override
-	public int compareTo(NullableDouble o) {
+	public int compareTo(NullableFloat o) {
 		Objects.requireNonNull(o, "o");
 		if (_isNull || o.isNull()) {
 			throw new NullValueException("at least one operand in comparison is null");
 		} else {
-			return DoublePrecisionComparer.DEFAULT_COMPARER.compare(_value, o.value());
+			return SinglePrecisionComparer.DEFAULT_COMPARER.compare(_value, o.value());
 		}
 	}
 
@@ -163,7 +187,7 @@ public final class NullableDoubleBox
      * @see Comparable#compareTo(Object)
 	 */
 	@Override
-	public int compareTo(DoublePrecisionComparer comparer, NullableDouble other) {
+	public int compareTo(SinglePrecisionComparer comparer, NullableFloat other) {
 		Objects.requireNonNull(comparer, "comparer");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
@@ -179,11 +203,11 @@ public final class NullableDoubleBox
 	 * @return {@code true} if the value of the object is not null and equal to the parameter {@code value}.
 	 */
 	@Override
-	public boolean isEqualTo(double value) {
+	public boolean isEqualTo(float value) {
 		if (_isNull) {
 			return false;
 		} else {
-			return DoublePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, value);
+			return SinglePrecisionComparer.DEFAULT_COMPARER.areEqual(_value, value);
 		}
 	}
 
@@ -194,7 +218,7 @@ public final class NullableDoubleBox
 	 * @return {@code true} if the value of the object is not null and equal to the parameter {@code value}.
 	 */
 	@Override
-	public boolean isEqualTo(DoublePrecisionComparer comparer, double value) {
+	public boolean isEqualTo(SinglePrecisionComparer comparer, float value) {
 		Objects.requireNonNull(comparer, "comparer");
 		if (_isNull) {
 			return false;
@@ -211,13 +235,13 @@ public final class NullableDoubleBox
 	 * 	if the value of the object is not {@code null} and the comparison is true.
 	 */
 	@Override
-	public NullableBoolean compareTo(OrderedComparison comparison, double value) {
+	public NullableBoolean compareTo(OrderedComparison comparison, float value) {
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			boolean bCompar = comparison.evaluate(DoublePrecisionComparer.DEFAULT_COMPARER.compare(_value, value));
-			return new NullableBooleanBox(bCompar);
+			boolean bCompar = comparison.evaluate(SinglePrecisionComparer.DEFAULT_COMPARER.compare(_value, value));
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -229,14 +253,14 @@ public final class NullableDoubleBox
 	 * 	@{code other} is not {@code null} and the comparison is true.
 	 */
 	@Override
-	public NullableBoolean compareTo(OrderedComparison comparison, NullableDouble other) {
+	public NullableBoolean compareTo(OrderedComparison comparison, NullableFloat other) {
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			boolean bCompar = comparison.evaluate(DoublePrecisionComparer.DEFAULT_COMPARER.compare(_value, other.value()));
-			return new NullableBooleanBox(bCompar);
+			boolean bCompar = comparison.evaluate(SinglePrecisionComparer.DEFAULT_COMPARER.compare(_value, other.value()));
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -249,14 +273,14 @@ public final class NullableDoubleBox
 	 * 	if the value of the object is not {@code null} and the comparison is true.
 	 */
 	@Override
-	public NullableBoolean compareTo(DoublePrecisionComparer comparer, OrderedComparison comparison, double value) {
+	public NullableBoolean compareTo(SinglePrecisionComparer comparer, OrderedComparison comparison, float value) {
 		Objects.requireNonNull(comparer, "comparer");
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(comparer.compare(_value, value));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -269,16 +293,16 @@ public final class NullableDoubleBox
 	 * 	@{code other} is not {@code null} and the comparison is true.
 	 */
 	@Override
-	public NullableBoolean compareTo(DoublePrecisionComparer comparer, OrderedComparison comparison,
-			NullableDouble other) {
+	public NullableBoolean compareTo(SinglePrecisionComparer comparer, OrderedComparison comparison,
+			NullableFloat other) {
 		Objects.requireNonNull(comparer, "comparer");
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(comparer.compare(_value, other.value()));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -289,11 +313,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble plus(double value) {
+	public NullableFloat plus(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value + value);
+		return new NullableFloatValue(_value + value);
 	}
 
 	/**
@@ -303,12 +327,12 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble plus(NullableDouble operand) {
+	public NullableFloat plus(NullableFloat operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value + operand.value());
+		return new NullableFloatValue(_value + operand.value());
 	}
 
 	/**
@@ -318,11 +342,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble minus(double value) {
+	public NullableFloat minus(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value - value);
+		return new NullableFloatValue(_value - value);
 	}
 
 	/**
@@ -332,12 +356,12 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble minus(NullableDouble operand) {
+	public NullableFloat minus(NullableFloat operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value - operand.value());
+		return new NullableFloatValue(_value - operand.value());
 	}
 
 	/**
@@ -347,11 +371,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble subtractFrom(double value) {
+	public NullableFloat subtractFrom(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(value - _value);
+		return new NullableFloatValue(value - _value);
 	}
 
 	/**
@@ -361,11 +385,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble times(double value) {
+	public NullableFloat times(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value * value);
+		return new NullableFloatValue(_value * value);
 	}
 
 	/**
@@ -375,12 +399,12 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble times(NullableDouble operand) {
+	public NullableFloat times(NullableFloat operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value * operand.value());
+		return new NullableFloatValue(_value * operand.value());
 	}
 
 	/**
@@ -390,11 +414,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableDouble dividedBy(double value) {
+	public NullableFloat dividedBy(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value / value);
+		return new NullableFloatValue(_value / value);
 	}
 
 	/**
@@ -404,12 +428,12 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableDouble dividedBy(NullableDouble operand) {
+	public NullableFloat dividedBy(NullableFloat operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value / operand.value());
+		return new NullableFloatValue(_value / operand.value());
 	}
 
 	/**
@@ -419,11 +443,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableDouble dividedInto(double value) {
+	public NullableFloat dividedInto(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(value / _value);
+		return new NullableFloatValue(value / _value);
 	}
 
 	/**
@@ -433,11 +457,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableDouble remainder(double value) {
+	public NullableFloat remainder(float value) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value % value);
+		return new NullableFloatValue(_value % value);
 	}
 
 	/**
@@ -447,12 +471,12 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableDouble remainder(NullableDouble operand) {
+	public NullableFloat remainder(NullableFloat operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		return new NullableDoubleBox(_value % operand.value());
+		return new NullableFloatValue(_value % operand.value());
 	}
 
 	/**
@@ -460,11 +484,11 @@ public final class NullableDoubleBox
 	 * @return  A new object containing the absolute value or {@code null}.
 	 */
 	@Override
-	public NullableDouble abs() {
+	public NullableFloat abs() {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Math.abs(_value));
+			return new NullableFloatValue(Math.abs(_value));
 		}
 	}
 
@@ -474,11 +498,11 @@ public final class NullableDoubleBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableDouble negate() {
+	public NullableFloat negate() {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(- _value);
+			return new NullableFloatValue(- _value);
 		}
 	}
 
@@ -496,11 +520,11 @@ public final class NullableDoubleBox
      * @see Math#ceil(double)
 	 */
 	@Override
-	public NullableDouble ceil() {
+	public NullableFloat ceil() {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Math.ceil(_value));
+			return new NullableFloatValue(Math.ceil(_value), true);
 		}
 	}
 
@@ -518,11 +542,11 @@ public final class NullableDoubleBox
      * @see Math#floor(double)
 	 */
 	@Override
-	public NullableDouble floor() {
+	public NullableFloat floor() {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Math.floor(_value));
+			return new NullableFloatValue(Math.floor(_value), true);
 		}
 	}
 
@@ -540,30 +564,11 @@ public final class NullableDoubleBox
 	 * @see Math#rint(double)
 	 */
 	@Override
-	public NullableDouble round() {
+	public NullableFloat round() {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Math.rint(_value));
-		}
-	}
-
-	/**
-     * Returns the closest {@code long} to the argument, with ties
-     * rounding to positive infinity.
-     * 
-     * Adds the special case that, if the object is {@code null},
-     *  the result will also be {@code null}.
-	 * 
-	 * @return A {@code NullableLong} object containing the result.
-	 * @see Math#round(double)
-	 */
-	@Override
-	public NullableLong roundToLong() {
-		if (_isNull) {
-			return new NullableLongBox();
-		} else {
-			return new NullableLongBox(Math.round(_value));
+			return new NullableFloatValue(Math.rint(_value), true);
 		}
 	}
 
@@ -575,21 +580,20 @@ public final class NullableDoubleBox
      *  the result will also be {@code null}.
 	 * 
 	 * @return A {@code NullableInt} object containing the result.
-	 * @see Math#round(double)
 	 * @see Math#toIntExact(long)
 	 */
 	@Override
 	public NullableInt roundtoInt() {
 		if (_isNull) {
-			return new NullableIntBox();
+			return new NullableIntValue();
 		} else {
-			int value = Math.toIntExact(Math.round(_value));
-			return new NullableIntBox(value);
+			int value = Math.round(_value);
+			return new NullableIntValue(value);
 		}
 	}
 
 	/**
-     * Returns a {@code NullableDouble} containing the signum function of the value:
+     * Returns a {@code NullableFloat} containing the signum function of the value:
      * zero if the value is zero, 
      * 1.0 if the argument is greater than zero, 
      * -1.0 if the argument is less than zero.
@@ -597,35 +601,35 @@ public final class NullableDoubleBox
      * Adds the special case that, if the object is {@code null},
      *  the result will also be {@code null}.
 	 * 
-	 * @return A {@code NullableDouble} containing the result.
+	 * @return A {@code NullableFloat} containing the result.
 	 * @see Math#signum(double)
 	 */
 	@Override
-	public NullableDouble signum() {
+	public NullableFloat signum() {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Math.signum(_value));
+			return new NullableFloatValue(Math.signum(_value));
 		}
 	}
 
 	/**
-	 * Returns a {@code NullableDouble} containing the magnitude of the object
+	 * Returns a {@code NullableFloat} containing the magnitude of the object
 	 * 	and the sign of the argument.
 	 * 
      * Adds the special case that, if the object is {@code null},
      *  the result will also be {@code null}.
      *  
 	 * @param sign The parameter whose sign is to be applied.
-	 * @return A {@code NullableDouble} containing the result.
+	 * @return A {@code NullableFloat} containing the result.
 	 * @see Math#copySign(double, double)
 	 */
 	@Override
-	public NullableDouble applySign(double sign) {
+	public NullableFloat applySign(float sign) {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Math.copySign(_value, sign));
+			return new NullableFloatValue(Math.copySign(_value, sign));
 		}
 	}
 
@@ -641,38 +645,36 @@ public final class NullableDoubleBox
 	@Override
 	public NullableInt getExponent() {
 		if (_isNull) {
-			return new NullableIntBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableIntBox(Math.getExponent(_value));
+			return new NullableIntValue(Math.getExponent(_value));
 		}
 	}
 
 	/**
-	 * Create a {@code NullableFloat} object like the current object.
-	 * @param bAllowUnderflow If {@code true}, do not check for underflow during value conversion.
-	 * @return A {@code NullableFloat} having the properties of the current object.
-	 * @throws ArithmeticException if the operation would overflow.
+	 * Create a {@code NullableDouble} object like the current object.
+	 * @return A {@code NullableDouble} having the properties of the current object.
 	 */
 	@Override
-	public NullableFloat toFloat(boolean bAllowUnderflow) {
+	public NullableDouble toDouble() {
 		if (_isNull) {
-			return new NullableFloatBox();
+			return new NullableDoubleValue();
 		} else {
-			return new NullableFloatBox(_value, bAllowUnderflow);
+			return new NullableDoubleValue(_value);
 		}
 	}
 
 	/**
 	 * Return a hash code for the object.
 	 * @return A hash code for the instance.
-	 * @see Double#hashCode(int)
+	 * @see Float#hashCode(int)
 	 */
 	@Override
 	public int hashCode() {
 		if (_isNull) {
 			return 0;
 		} else {
-			return Double.hashCode(_value);
+			return Float.hashCode(_value);
 		}
 	}
 
@@ -687,9 +689,9 @@ public final class NullableDoubleBox
 	public boolean equals(Object obj) {
 		if (_isNull || obj == null) {
 			return false;
-		} else if (obj instanceof NullableDouble other) {
+		} else if (obj instanceof NullableFloat other) {
 			return isEqual(other);
-		} else if (obj instanceof Double other) {
+		} else if (obj instanceof Float other) {
 			return _value == other.intValue();
 		} else {
 			return false;
@@ -705,7 +707,7 @@ public final class NullableDoubleBox
 		if (_isNull) {
 			return STR_NULL;
 		} else {
-			return Double.toString(_value);
+			return Float.toString(_value);
 		}
 	}
 
@@ -717,83 +719,83 @@ public final class NullableDoubleBox
 	protected Object clone() 
 			throws CloneNotSupportedException {
 		if (_isNull) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(_value);
+			return new NullableFloatValue(_value);
 		}
 	}
 
 	/**
-	 * Take the maximum value of one or more {@code NullableDouble} objects.
+	 * Take the maximum value of one or more {@code NullableFloat} objects.
 	 * If any of the objects are {@code null}, the result will be {@code null}.
 	 * @param comparer The comparer to use.
 	 * @param first The first object to consider.
 	 * @param rest Additional objects to consider.
-	 * @return The resulting {@code NullableDouble} object.
+	 * @return The resulting {@code NullableFloat} object.
 	 */
-	public static NullableDouble max(DoublePrecisionComparer comparer, NullableDouble first, NullableDouble ... rest) {
+	public static NullableFloat max(SinglePrecisionComparer comparer, NullableFloat first, NullableFloat ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		double answer = first.value();
-		for (NullableDouble next : rest) {
+		float answer = first.value();
+		for (NullableFloat next : rest) {
 			if (next.isNull()) {
-				return new NullableDoubleBox();
+				return new NullableFloatValue();
 			}
-			double value = next.value();
+			float value = next.value();
 			if (comparer.compare(answer, OrderedComparison.LT, value)) {
 				answer = value;
 			}
 		}
-		return new NullableDoubleBox(answer);
+		return new NullableFloatValue(answer);
 	}
 	
 	/**
-	 * Take the minimum value of one or more {@code NullableDouble} objects.
+	 * Take the minimum value of one or more {@code NullableFloat} objects.
 	 * If any of the objects are {@code null}, the result will be {@code null}.
 	 * @param comparer The comparer to use.
 	 * @param first The first object to consider.
 	 * @param rest Additional objects to consider.
-	 * @return The resulting {@code NullableDouble} object.
+	 * @return The resulting {@code NullableFloat} object.
 	 */
-	public static NullableDouble min(DoublePrecisionComparer comparer, NullableDouble first, NullableDouble ... rest) {
+	public static NullableFloat min(SinglePrecisionComparer comparer, NullableFloat first, NullableFloat ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		}
-		double answer = first.value();
-		for (NullableDouble next : rest) {
+		float answer = first.value();
+		for (NullableFloat next : rest) {
 			if (next.isNull()) {
-				return new NullableDoubleBox();
+				return new NullableFloatValue();
 			}
-			double value = next.value();
+			float value = next.value();
 			if (comparer.compare(answer, OrderedComparison.GT, value)) {
 				answer = value;
 			}
 		}
-		return new NullableDoubleBox(answer);
+		return new NullableFloatValue(answer);
 	}
 	
 	/**
-	 * Parse a {@code String} containing a representation of a {@code NullableDouble}.
+	 * Parse a {@code String} containing a representation of a {@code NullableFloat}.
 	 * @param strInput The string representation of the value.
 	 * 	If the string is empty or "null", it is recognized as null.
-	 * @return A {@code NullableDouble} containing the parsed value.
+	 * @return A {@code NullableFloat} containing the parsed value.
 	 * @throws NullPointerException if {@code strInput} is itself {@code null}.
 	 * @throws NumberFormatException if the input does not contain a parseable representation
-	 * 	of a {@code NullableDouble}
-	 * @see Double#parseDouble(String)
+	 * 	of a {@code NullableFloat}
+	 * @see Float#parseFloat(String)
 	 */
-	static NullableDouble parse(String strInput)
+	static NullableFloat parse(String strInput)
 			throws NumberFormatException {
 		Objects.requireNonNull(strInput, "strInput");
 		if (strInput.isEmpty() || strInput.equalsIgnoreCase(STR_NULL)) {
-			return new NullableDoubleBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableDoubleBox(Double.parseDouble(strInput));
+			return new NullableFloatValue(Float.parseFloat(strInput));
 		}
 	}
 }

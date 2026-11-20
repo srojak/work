@@ -16,20 +16,20 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.UUID;
 
-import srojak.core.Equatable;
 import srojak.core.excepts.NullValueException;
-import srojak.numerics.NullableValue;
-import srojak.numerics.OrderedComparison;
 import srojak.numerics.GuidMethods;
+import srojak.numerics.NullableComparable;
+import srojak.numerics.OrderedComparison;
 
 /**
  * @author Stephen
  *
  */
 public interface NullableUUID 
-		extends NullableValue, Equatable<NullableUUID>, Comparable<NullableUUID> {
+		extends NullableComparable<NullableUUID> {
 
 	/**
 	 * Get the value of the object, if it is not {@code null}.
@@ -67,6 +67,10 @@ public interface NullableUUID
 	NullableBoolean compareTo(OrderedComparison comparison, NullableUUID other);
 	
 	byte[] toGuidBytes();
+	
+	default Comparator<NullableUUID> getComparator() {
+		return new NullableGenericComparator<NullableUUID>();
+	}
 	
 	static NullableUUID from(UUID value) {
 		return new NullableUUIDValue(value);

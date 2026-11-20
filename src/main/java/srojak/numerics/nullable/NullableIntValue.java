@@ -25,24 +25,24 @@ import srojak.numerics.OrderedComparison;
  * @author Stephen
  *
  */
-public final class NullableLongBox 
+public final class NullableIntValue 
 		extends NullableValueBase 
-		implements NullableLong {
-	private long _value;
-	
+		implements NullableInt {
+	private int _value;
+
 	/**
 	 * Null value constructor.
 	 */
-	public NullableLongBox() {
+	NullableIntValue() {
 		super(true);
-		_value = 0L;
+		_value = 0;
 	}
-
+	
 	/**
 	 * Value constructor.
 	 * @param value Value for the object.
 	 */
-	public NullableLongBox(long value) {
+	NullableIntValue(int value) {
 		super(false);
 		_value = value;
 	}
@@ -53,7 +53,7 @@ public final class NullableLongBox
 	 * @throws NullValueException if the object is {@code null}.
 	 */
 	@Override
-	public long value() {
+	public int value() {
 		if (_isNull) {
 			throw new NullValueException("value is null");
 		}
@@ -66,7 +66,7 @@ public final class NullableLongBox
 	 * @return the value of the object, or the parameter value.
 	 */
 	@Override
-	public long valueOr(long valueIfNull) {
+	public int valueOr(int valueIfNull) {
 		if (_isNull) {
 			return valueIfNull;
 		}
@@ -74,7 +74,7 @@ public final class NullableLongBox
 	}
 
 	/**
-	 * Is the value equal to another instance of a {@code NullableLong}?
+	 * Is the value equal to another instance of a {@code NullableInt}?
 	 * @return {@code true} if the object and other instance are not {@code null}
 	 *  and both have the same value.
 	 *  
@@ -82,7 +82,7 @@ public final class NullableLongBox
 	 *  and the object is {@code null}.
 	 */
 	@Override
-	public boolean isEqual(NullableLong obj) {
+	public boolean isEqual(NullableInt obj) {
 		if (obj == null) {
 			return false;
 		} else if (_isNull || obj.isNull()) {
@@ -105,12 +105,12 @@ public final class NullableLongBox
      * @see Comparable#compareTo(Object)
 	 */
 	@Override
-	public int compareTo(NullableLong o) {
+	public int compareTo(NullableInt o) {
 		Objects.requireNonNull(o, "o");
 		if (_isNull || o.isNull()) {
 			throw new NullValueException("at least one operand in comparison is null");
 		} else {
-			return Long.compare(_value, o.value());
+			return Integer.compare(_value, o.value());
 		}
 	}
 
@@ -120,7 +120,7 @@ public final class NullableLongBox
 	 * @return {@code true} if the value of the object is not null and equal to the parameter {@code value}.
 	 */
 	@Override
-	public boolean isEqualTo(long value) {
+	public boolean isEqualTo(int value) {
 		if (_isNull) {
 			return false;
 		} else {
@@ -136,13 +136,13 @@ public final class NullableLongBox
 	 * 	if the value of the object is not {@code null} and the comparison is true.
 	 */
 	@Override
-	public NullableBoolean compareTo(OrderedComparison comparison, long value) {
+	public NullableBoolean compareTo(OrderedComparison comparison, int value) {
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			boolean bCompar = comparison.evaluate(Long.compare(_value, value));
-			return new NullableBooleanBox(bCompar);
+			boolean bCompar = comparison.evaluate(Integer.compare(_value, value));
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -154,14 +154,14 @@ public final class NullableLongBox
 	 * 	@{code other} is not {@code null} and the comparison is true.
 	 */
 	@Override
-	public NullableBoolean compareTo(OrderedComparison comparison, NullableLong other) {
+	public NullableBoolean compareTo(OrderedComparison comparison, NullableInt other) {
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			boolean bCompar = comparison.evaluate(Long.compare(_value, other.value()));
-			return new NullableBooleanBox(bCompar);
+			boolean bCompar = comparison.evaluate(Integer.compare(_value, other.value()));
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -171,7 +171,7 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong increment() {
+	public NullableInt increment() {
 		if (!_isNull) {
 			_value = Math.incrementExact(_value);
 		}
@@ -184,7 +184,7 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong decrement() {
+	public NullableInt decrement() {
 		if (!_isNull) {
 			_value = Math.decrementExact(_value);
 		}
@@ -198,7 +198,7 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong increment(long delta) {
+	public NullableInt increment(int delta) {
 		if (delta <= 0) {
 			throw new IllegalArgumentException("delta must be positive");
 		}
@@ -215,7 +215,7 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong decrement(long delta) {
+	public NullableInt decrement(int delta) {
 		if (delta <= 0) {
 			throw new IllegalArgumentException("delta must be positive");
 		}
@@ -232,11 +232,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong plus(long value) {
+	public NullableInt plus(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.addExact(_value, value));
+		return new NullableIntValue(Math.addExact(_value, value));
 	}
 
 	/**
@@ -246,12 +246,12 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong plus(NullableLong operand) {
+	public NullableInt plus(NullableInt operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.addExact(_value, operand.value()));
+		return new NullableIntValue(Math.addExact(_value, operand.value()));
 	}
 
 	/**
@@ -261,11 +261,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong minus(long value) {
+	public NullableInt minus(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.subtractExact(_value, value));
+		return new NullableIntValue(Math.subtractExact(_value, value));
 	}
 
 	/**
@@ -275,12 +275,12 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong minus(NullableLong operand) {
+	public NullableInt minus(NullableInt operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.subtractExact(_value, operand.value()));
+		return new NullableIntValue(Math.subtractExact(_value, operand.value()));
 	}
 
 	/**
@@ -290,11 +290,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong subtractFrom(long value) {
+	public NullableInt subtractFrom(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.subtractExact(value, _value));
+		return new NullableIntValue(Math.subtractExact(value, _value));
 	}
 
 	/**
@@ -304,11 +304,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong times(long value) {
+	public NullableInt times(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.multiplyExact(_value, value));
+		return new NullableIntValue(Math.multiplyExact(_value, value));
 	}
 
 	/**
@@ -318,12 +318,12 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong times(NullableLong operand) {
+	public NullableInt times(NullableInt operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(Math.multiplyExact(_value, operand.value()));
+		return new NullableIntValue(Math.multiplyExact(_value, operand.value()));
 	}
 
 	/**
@@ -333,11 +333,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableLong dividedBy(long value) {
+	public NullableInt dividedBy(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(_value / value);
+		return new NullableIntValue(_value / value);
 	}
 
 	/**
@@ -347,12 +347,12 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableLong dividedBy(NullableLong operand) {
+	public NullableInt dividedBy(NullableInt operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(_value / operand.value());
+		return new NullableIntValue(_value / operand.value());
 	}
 
 	/**
@@ -362,11 +362,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableLong dividedInto(long value) {
+	public NullableInt dividedInto(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(value / _value);
+		return new NullableIntValue(value / _value);
 	}
 
 	/**
@@ -376,11 +376,11 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableLong remainder(long value) {
+	public NullableInt remainder(int value) {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(_value % value);
+		return new NullableIntValue(_value % value);
 	}
 
 	/**
@@ -390,12 +390,12 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the divisor is zero.
 	 */
 	@Override
-	public NullableLong remainder(NullableLong operand) {
+	public NullableInt remainder(NullableInt operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		return new NullableLongBox(_value % operand.value());
+		return new NullableIntValue(_value % operand.value());
 	}
 
 	/**
@@ -406,11 +406,11 @@ public final class NullableLongBox
 	 * 	is non-zero in the value of the object.
 	 */
 	@Override
-	public NullableBoolean bitTest(long mask) {
+	public NullableBoolean bitTest(int mask) {
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox((_value & mask) != 0);
+			return new NullableBooleanValue((_value & mask) != 0);
 		}
 	}
 
@@ -419,11 +419,11 @@ public final class NullableLongBox
 	 * @return  A new object containing the absolute value or {@code null}.
 	 */
 	@Override
-	public NullableLong abs() {
+	public NullableInt abs() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableLongBox(Math.abs(_value));
+			return new NullableIntValue(Math.abs(_value));
 		}
 	}
 
@@ -433,26 +433,24 @@ public final class NullableLongBox
 	 * @throws ArithmeticException if the operation would overflow.
 	 */
 	@Override
-	public NullableLong negate() {
+	public NullableInt negate() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableLongBox(Math.negateExact(_value));
+			return new NullableIntValue(Math.negateExact(_value));
 		}
 	}
 
 	/**
-	 * Create a {@code NullableInt} object like the current object.
-	 * @return A {@code NullableInt} having the properties of the current object.
-	 * @throws ArithmeticException if the operation would overflow.
-	 * @see Math#toIntExact(long)
+	 * Create a {@code NullableLong} object like the current object.
+	 * @return A {@code NullableLong} having the properties of the current object.
 	 */
 	@Override
-	public NullableInt toInt() {
+	public NullableLong toLong() {
 		if (_isNull) {
-			return new NullableIntBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableIntBox(Math.toIntExact(_value));
+			return new NullableLongValue(_value);
 		}
 	}
 
@@ -464,9 +462,9 @@ public final class NullableLongBox
 	@Override
 	public NullableSmallint toSmallint() {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
-			return new NullableSmallintBox(Math.toIntExact(_value));
+			return new NullableSmallintValue(_value);
 		}
 	}
 
@@ -478,23 +476,23 @@ public final class NullableLongBox
 	@Override
 	public NullableTinyint toTinyint() {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
-			return new NullableTinyintBox(Math.toIntExact(_value));
+			return new NullableTinyintValue(_value);
 		}
 	}
 
 	/**
 	 * Return a hash code for the object.
 	 * @return A hash code for the instance.
-	 * @see Long#hashCode(int)
+	 * @see Integer#hashCode(int)
 	 */
 	@Override
 	public int hashCode() {
 		if (_isNull) {
 			return 0;
 		} else {
-			return Long.hashCode(_value);
+			return _value;
 		}
 	}
 
@@ -509,7 +507,7 @@ public final class NullableLongBox
 	public boolean equals(Object obj) {
 		if (_isNull || obj == null) {
 			return false;
-		} else if (obj instanceof NullableLong other) {
+		} else if (obj instanceof NullableInt other) {
 			return isEqual(other);
 		} else if (obj instanceof Integer other) {
 			return _value == other.intValue();
@@ -527,7 +525,7 @@ public final class NullableLongBox
 		if (_isNull) {
 			return STR_NULL;
 		} else {
-			return Long.toString(_value);
+			return Integer.toString(_value);
 		}
 	}
 
@@ -536,14 +534,14 @@ public final class NullableLongBox
 	 * @param radix The radix to use when converting the value.
 	 * @return Either "null" or the string representation of the object's value
 	 * 	in the given radix.
-	 * @see Long#toString(int)
+	 * @see Integer#toString(int)
 	 */
 	@Override
 	public String toString(int radix) {
 		if (_isNull) {
 			return STR_NULL;
 		} else {
-			return Long.toString(_value, radix);
+			return Integer.toString(_value, radix);
 		}
 	}
 
@@ -555,83 +553,83 @@ public final class NullableLongBox
 	protected Object clone() 
 			throws CloneNotSupportedException {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableLongBox(_value);
+			return new NullableIntValue(_value);
 		}
 	}
 
 	/**
-	 * Take the maximum value of one or more {@code NullableLong} objects.
+	 * Take the maximum value of one or more {@code NullableInt} objects.
 	 * If any of the objects are {@code null}, the result will be {@code null}.
 	 * @param first The first object to consider.
 	 * @param rest Additional objects to consider.
-	 * @return The resulting {@code NullableLong} object.
+	 * @return The resulting {@code NullableInt} object.
 	 */
-	public static NullableLong max(NullableLong first, NullableLong ... rest) {
+	public static NullableInt max(NullableInt first, NullableInt ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		long answer = first.value();
-		for (NullableLong next : rest) {
+		int answer = first.value();
+		for (NullableInt next : rest) {
 			if (next.isNull()) {
-				return new NullableLongBox();
+				return new NullableIntValue();
 			}
-			long value = next.value();
+			int value = next.value();
 			if (answer < value) {
 				answer = value;
 			}
 		}
-		return new NullableLongBox(answer);
+		return new NullableIntValue(answer);
 	}
 	
 	/**
-	 * Take the minimum value of one or more {@code NullableLong} objects.
+	 * Take the minimum value of one or more {@code NullableInt} objects.
 	 * If any of the objects are {@code null}, the result will be {@code null}.
 	 * @param first The first object to consider.
 	 * @param rest Additional objects to consider.
-	 * @return The resulting {@code NullableLong} object.
+	 * @return The resulting {@code NullableInt} object.
 	 */
-	public static NullableLong min(NullableLong first, NullableLong ... rest) {
+	public static NullableInt min(NullableInt first, NullableInt ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		}
-		long answer = first.value();
-		for (NullableLong next : rest) {
+		int answer = first.value();
+		for (NullableInt next : rest) {
 			if (next.isNull()) {
-				return new NullableLongBox();
+				return new NullableIntValue();
 			}
-			long value = next.value();
+			int value = next.value();
 			if (answer > value) {
 				answer = value;
 			}
 		}
-		return new NullableLongBox(answer);
+		return new NullableIntValue(answer);
 	}
 	
 	/**
-	 * Parse a {@code String} containing a representation of a {@code NullableLong}
+	 * Parse a {@code String} containing a representation of a {@code NullableInt}
 	 *  in the given radix.
 	 * @param strInput The string representation of the value.
 	 * 	If the string is empty or "null", it is recognized as null.
 	 * @param radix The radix to be used when parsing.
-	 * @return A {@code NullableLong} containing the parsed value.
+	 * @return A {@code NullableInt} containing the parsed value.
 	 * @throws NullPointerException if {@code strInput} is itself {@code null}.
 	 * @throws NumberFormatException if the input does not contain a parseable representation
-	 * 	of a {@code NullableLong}
-	 * @see Long#parseLong(String, int)
+	 * 	of a {@code NullableInt}
+	 * @see Integer#parseInt(String, int)
 	 */
-	static NullableLong parse(String strInput, int radix)
+	static NullableInt parse(String strInput, int radix)
 			throws NumberFormatException {
 		Objects.requireNonNull(strInput, "strInput");
 		if (strInput.isEmpty() || strInput.equalsIgnoreCase(STR_NULL)) {
-			return new NullableLongBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableLongBox(Long.parseLong(strInput, radix));
+			return new NullableIntValue(Integer.parseInt(strInput, radix));
 		}
 	}
 }

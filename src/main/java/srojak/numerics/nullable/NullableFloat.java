@@ -16,11 +16,11 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
 import srojak.core.excepts.NullValueException;
-import srojak.numerics.NullableValue;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 import srojak.numerics.SinglePrecisionComparer;
 
@@ -29,8 +29,8 @@ import srojak.numerics.SinglePrecisionComparer;
  *
  */
 public sealed interface NullableFloat 
-		extends NullableValue, Equatable<NullableFloat>, Comparable<NullableFloat>
-		permits NullableFloatBox {
+		extends NullableComparable<NullableFloat>
+		permits NullableFloatValue {
 	
 	/**
 	 * Is the there a value for the current object, and is it NaN?
@@ -348,13 +348,17 @@ public sealed interface NullableFloat
 	 */
 	NullableDouble toDouble();
 	
+	default Comparator<NullableFloat> getComparator() {
+		return new NullableGenericComparator<NullableFloat>();
+	}
+	
 	/**
 	 * Return a nullable object containing a value.
 	 * @param value The value to use.
 	 * @return The {@code NullableFloat} object representing the value.
 	 */
 	public static NullableFloat from(float value) {
-		return new NullableFloatBox(value);
+		return new NullableFloatValue(value);
 	}
 	
 	/**
@@ -364,9 +368,9 @@ public sealed interface NullableFloat
 	 */
 	public static NullableFloat from(Float value) {
 		if (value == null) {
-			return new NullableFloatBox();
+			return new NullableFloatValue();
 		} else {
-			return new NullableFloatBox(value.floatValue());
+			return new NullableFloatValue(value.floatValue());
 		}
 	}
 	
@@ -375,7 +379,7 @@ public sealed interface NullableFloat
 	 * @return The {@code NullableFloat} object representing {@code null}.
 	 */
 	public static NullableFloat fromNull() {
-		return new NullableFloatBox();
+		return new NullableFloatValue();
 	}
 	
 	/**
@@ -389,7 +393,7 @@ public sealed interface NullableFloat
 	public static NullableFloat max(NullableFloat first, NullableFloat ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableFloatBox.max(SinglePrecisionComparer.DEFAULT_COMPARER, first, rest);
+		return NullableFloatValue.max(SinglePrecisionComparer.DEFAULT_COMPARER, first, rest);
 	}
 	
 	/**
@@ -403,7 +407,7 @@ public sealed interface NullableFloat
 	public static NullableFloat max(SinglePrecisionComparer comparer, NullableFloat first, NullableFloat ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableFloatBox.max(comparer, first, rest);
+		return NullableFloatValue.max(comparer, first, rest);
 	}
 	
 	/**
@@ -417,7 +421,7 @@ public sealed interface NullableFloat
 	public static NullableFloat min(NullableFloat first, NullableFloat ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableFloatBox.min(SinglePrecisionComparer.DEFAULT_COMPARER, first, rest);
+		return NullableFloatValue.min(SinglePrecisionComparer.DEFAULT_COMPARER, first, rest);
 	}
 	
 	/**
@@ -431,7 +435,7 @@ public sealed interface NullableFloat
 	public static NullableFloat min(SinglePrecisionComparer comparer, NullableFloat first, NullableFloat ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableFloatBox.min(comparer, first, rest);
+		return NullableFloatValue.min(comparer, first, rest);
 	}
 
 	/**
@@ -445,6 +449,6 @@ public sealed interface NullableFloat
 	 * @see Double#parseDouble(String)
 	 */
 	public static NullableFloat parse(String strInput) {
-		return NullableFloatBox.parse(strInput);
+		return NullableFloatValue.parse(strInput);
 	}
 }

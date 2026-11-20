@@ -18,10 +18,11 @@ package srojak.numerics.nullable;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.Comparator;
 
 import srojak.core.Equatable;
 import srojak.core.excepts.NullValueException;
-import srojak.numerics.NullableValue;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 import srojak.numerics.extmath.MathContextCarrying;
 import srojak.numerics.extmath.MathContextDyadicRule;
@@ -31,8 +32,7 @@ import srojak.numerics.extmath.MathContextDyadicRule;
  *
  */
 public interface NullableDecimal 
-		extends NullableValue, MathContextCarrying, Equatable<NullableDecimal>, 
-			Comparable<NullableDecimal> {
+		extends NullableComparable<NullableDecimal>, MathContextCarrying, Equatable<NullableDecimal> {
 
 	/**
 	 * Get the value of the object, if it is not {@code null}.
@@ -207,6 +207,10 @@ public interface NullableDecimal
 	NullableDecimal max(NullableDecimal operand);
 
 	NullableDecimal min(NullableDecimal operand);
+	
+	default Comparator<NullableDecimal> getComparator() {
+		return new NullableGenericComparator<NullableDecimal>();
+	}
 	
 	static NullableDecimal from(BigDecimal value, MathContext context) {
 		return new NullableDecimalValue(value, context);

@@ -25,7 +25,7 @@ import srojak.numerics.OrderedComparison;
  * @author Stephen
  *
  */
-public final class NullableTinyintBox 
+public final class NullableTinyintValue 
 		extends NullableValueBase 
 		implements NullableTinyint {
 	private byte _value;
@@ -33,7 +33,7 @@ public final class NullableTinyintBox
 	/**
 	 * Null value constructor.
 	 */
-	NullableTinyintBox() {
+	NullableTinyintValue() {
 		super(true);
 		_value = 0;
 	}
@@ -42,7 +42,7 @@ public final class NullableTinyintBox
 	 * Value constructor.
 	 * @param value Value for the object.
 	 */
-	NullableTinyintBox(byte value) {
+	NullableTinyintValue(byte value) {
 		super(false);
 		_value = value;
 	}
@@ -51,7 +51,7 @@ public final class NullableTinyintBox
 	 * Value constructor for expressions
 	 * @param value {@code int} value for the object.
 	 */
-	NullableTinyintBox(int value) {
+	NullableTinyintValue(int value) {
 		super(false);
 		byte v = (byte) value;
 		if (v != value) {
@@ -153,10 +153,10 @@ public final class NullableTinyintBox
 	public NullableBoolean compareTo(OrderedComparison comparison, byte value) {
 		Objects.requireNonNull(comparison, "comparison");
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(Short.compare(_value, value));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 
@@ -172,10 +172,10 @@ public final class NullableTinyintBox
 		Objects.requireNonNull(comparison, "comparison");
 		Objects.requireNonNull(other, "other");
 		if (_isNull || other.isNull()) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
 			boolean bCompar = comparison.evaluate(Short.compare(_value, other.value()));
-			return new NullableBooleanBox(bCompar);
+			return new NullableBooleanValue(bCompar);
 		}
 	}
 	
@@ -279,9 +279,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint plus(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeAdd(_value, value));
+		return new NullableTinyintValue(safeAdd(_value, value));
 	}
 
 	/**
@@ -294,9 +294,9 @@ public final class NullableTinyintBox
 	public NullableTinyint plus(NullableTinyint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeAdd(_value, operand.value()));
+		return new NullableTinyintValue(safeAdd(_value, operand.value()));
 	}
 
 	/**
@@ -308,9 +308,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint minus(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeSubtract(_value, value));
+		return new NullableTinyintValue(safeSubtract(_value, value));
 	}
 
 	/**
@@ -323,9 +323,9 @@ public final class NullableTinyintBox
 	public NullableTinyint minus(NullableTinyint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeSubtract(_value, operand.value()));
+		return new NullableTinyintValue(safeSubtract(_value, operand.value()));
 	}
 
 	/**
@@ -337,9 +337,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint subtractFrom(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeSubtract(value, _value));
+		return new NullableTinyintValue(safeSubtract(value, _value));
 	}
 
 	/**
@@ -351,9 +351,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint times(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeMultiply(_value, value));
+		return new NullableTinyintValue(safeMultiply(_value, value));
 	}
 
 	/**
@@ -366,9 +366,9 @@ public final class NullableTinyintBox
 	public NullableTinyint times(NullableTinyint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(safeMultiply(_value, operand.value()));
+		return new NullableTinyintValue(safeMultiply(_value, operand.value()));
 	}
 
 	/**
@@ -380,9 +380,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint dividedBy(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox((short) (_value / value));
+		return new NullableTinyintValue((short) (_value / value));
 	}
 
 	/**
@@ -395,9 +395,9 @@ public final class NullableTinyintBox
 	public NullableTinyint dividedBy(NullableTinyint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(_value / operand.value());
+		return new NullableTinyintValue(_value / operand.value());
 	}
 
 	/**
@@ -409,9 +409,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint dividedInto(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(value / _value);
+		return new NullableTinyintValue(value / _value);
 	}
 
 	/**
@@ -423,9 +423,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint remainder(byte value) {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(_value % value);
+		return new NullableTinyintValue(_value % value);
 	}
 
 	/**
@@ -438,9 +438,9 @@ public final class NullableTinyintBox
 	public NullableTinyint remainder(NullableTinyint operand) {
 		Objects.requireNonNull(operand, "operand");
 		if (_isNull || operand.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
-		return new NullableTinyintBox(_value % operand.value());
+		return new NullableTinyintValue(_value % operand.value());
 	}
 
 	/**
@@ -453,9 +453,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableBoolean bitTest(byte mask) {
 		if (_isNull) {
-			return new NullableBooleanBox();
+			return new NullableBooleanValue();
 		} else {
-			return new NullableBooleanBox((_value & mask) != 0);
+			return new NullableBooleanValue((_value & mask) != 0);
 		}
 	}
 
@@ -466,9 +466,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint abs() {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
-			return new NullableTinyintBox(Math.abs(_value));
+			return new NullableTinyintValue(Math.abs(_value));
 		}
 	}
 
@@ -480,12 +480,12 @@ public final class NullableTinyintBox
 	@Override
 	public NullableTinyint negate() {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
 			if (_value == Short.MIN_VALUE) {
 	            throw new ArithmeticException("smallint overflow");				
 			}
-			return new NullableTinyintBox(- _value);
+			return new NullableTinyintValue(- _value);
 		}
 	}
 
@@ -496,9 +496,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableLong toLong() {
 		if (_isNull) {
-			return new NullableLongBox();
+			return new NullableLongValue();
 		} else {
-			return new NullableLongBox(_value);
+			return new NullableLongValue(_value);
 		}
 	}
 
@@ -509,9 +509,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableInt toInt() {
 		if (_isNull) {
-			return new NullableIntBox();
+			return new NullableIntValue();
 		} else {
-			return new NullableIntBox(_value);
+			return new NullableIntValue(_value);
 		}
 	}
 
@@ -522,9 +522,9 @@ public final class NullableTinyintBox
 	@Override
 	public NullableSmallint toSmallint() {
 		if (_isNull) {
-			return new NullableSmallintBox();
+			return new NullableSmallintValue();
 		} else {
-			return new NullableSmallintBox((short) _value);
+			return new NullableSmallintValue((short) _value);
 		}
 	}
 
@@ -599,9 +599,9 @@ public final class NullableTinyintBox
 	protected Object clone() 
 			throws CloneNotSupportedException {
 		if (_isNull) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
-			return new NullableTinyintBox(_value);
+			return new NullableTinyintValue(_value);
 		}
 	}
 
@@ -616,19 +616,19 @@ public final class NullableTinyintBox
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
 		byte answer = first.value();
 		for (NullableTinyint next : rest) {
 			if (next.isNull()) {
-				return new NullableTinyintBox();
+				return new NullableTinyintValue();
 			}
 			byte value = next.value();
 			if (answer < value) {
 				answer = value;
 			}
 		}
-		return new NullableTinyintBox(answer);
+		return new NullableTinyintValue(answer);
 	}
 	
 	/**
@@ -642,19 +642,19 @@ public final class NullableTinyintBox
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
 		if (first.isNull()) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		}
 		byte answer = first.value();
 		for (NullableTinyint next : rest) {
 			if (next.isNull()) {
-				return new NullableTinyintBox();
+				return new NullableTinyintValue();
 			}
 			byte value = next.value();
 			if (answer > value) {
 				answer = value;
 			}
 		}
-		return new NullableTinyintBox(answer);
+		return new NullableTinyintValue(answer);
 	}
 	
 	/**
@@ -673,9 +673,9 @@ public final class NullableTinyintBox
 			throws NumberFormatException {
 		Objects.requireNonNull(strInput, "strInput");
 		if (strInput.isEmpty() || strInput.equalsIgnoreCase(STR_NULL)) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
-			return new NullableTinyintBox(Byte.parseByte(strInput, radix));
+			return new NullableTinyintValue(Byte.parseByte(strInput, radix));
 		}
 	}
 }

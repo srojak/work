@@ -22,14 +22,6 @@ package srojak.numerics;
  * Nullable containers for primitive values.
  * {@code null} values propagate through calculations.
  * 
- * The basic rules for comparisons are:
- * <ol type="1">
- * <li>Comparisons returning a {@code NullableBoolean}, for which {@code null} moves through the comparison.</li>
- * <li>Comparisons returning a {@code boolean} value return {@code false} if a {@code null} value is an operand.</li>
- * <li>Comparisons returning an {@code int} value cannot express the result if a {@code null} value is an operand.
- * Therefore, they must throw a {@code NullValueException}.</li>
- * </ol>
- * 
  */
 public interface NullableValue {
 	

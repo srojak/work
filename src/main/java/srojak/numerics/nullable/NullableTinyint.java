@@ -16,10 +16,11 @@
  */
 package srojak.numerics.nullable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
-import srojak.numerics.NullableValue;
+import srojak.core.excepts.NullValueException;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
 
 /**
@@ -27,8 +28,8 @@ import srojak.numerics.OrderedComparison;
  *
  */
 public sealed interface NullableTinyint 
-		extends NullableValue, Equatable<NullableTinyint>, Comparable<NullableTinyint>
-		permits NullableTinyintBox {
+		extends NullableComparable<NullableTinyint>
+		permits NullableTinyintValue {
 
 	/**
 	 * Get the value of the object, if it is not {@code null}.
@@ -242,13 +243,17 @@ public sealed interface NullableTinyint
 	 */
 	String toString(int radix);
 	
+	default Comparator<NullableTinyint> getComparator() {
+		return new NullableGenericComparator<NullableTinyint>();
+	}
+	
 	/**
 	 * Return a nullable object containing a value.
 	 * @param value The value to use.
 	 * @return The {@code NullableTinyint} object representing the value.
 	 */
 	public static NullableTinyint from(byte value) {
-		return new NullableTinyintBox(value);
+		return new NullableTinyintValue(value);
 	}
 	
 	/**
@@ -258,9 +263,9 @@ public sealed interface NullableTinyint
 	 */
 	public static NullableTinyint from(Byte value) {
 		if (value == null) {
-			return new NullableTinyintBox();
+			return new NullableTinyintValue();
 		} else {
-			return new NullableTinyintBox(value.shortValue());
+			return new NullableTinyintValue(value.shortValue());
 		}
 	}
 	
@@ -269,7 +274,7 @@ public sealed interface NullableTinyint
 	 * @return The {@code NullableTinyint} object representing {@code null}.
 	 */
 	public static NullableTinyint fromNull() {
-		return new NullableTinyintBox();
+		return new NullableTinyintValue();
 	}
 	
 	/**
@@ -282,7 +287,7 @@ public sealed interface NullableTinyint
 	public static NullableTinyint max(NullableTinyint first, NullableTinyint ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableTinyintBox.max(first, rest);
+		return NullableTinyintValue.max(first, rest);
 	}
 	
 	/**
@@ -295,7 +300,7 @@ public sealed interface NullableTinyint
 	public static NullableTinyint min(NullableTinyint first, NullableTinyint ... rest) {
 		Objects.requireNonNull(first, "first");
 		Objects.requireNonNull(rest, "rest");
-		return NullableTinyintBox.min(first, rest);
+		return NullableTinyintValue.min(first, rest);
 	}
 
 	/**
@@ -310,7 +315,7 @@ public sealed interface NullableTinyint
 	 * @see Short#parseShort(String, int)
 	 */
 	public static NullableTinyint parse(String strInput) {
-		return NullableTinyintBox.parse(strInput, 10);
+		return NullableTinyintValue.parse(strInput, 10);
 	}
 	
 	/**
@@ -326,6 +331,6 @@ public sealed interface NullableTinyint
 	 * @see Short#parseShort(String, int)
 	 */
 	public static NullableTinyint parse(String strInput, int radix) {
-		return NullableTinyintBox.parse(strInput, radix);
+		return NullableTinyintValue.parse(strInput, radix);
 	}
 }

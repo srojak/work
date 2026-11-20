@@ -29,18 +29,21 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
+import java.util.Comparator;
 import java.util.Objects;
 
-import srojak.core.Equatable;
-import srojak.numerics.NullableTimeZonedValue;
+import srojak.core.excepts.NullValueException;
+import srojak.numerics.HasTimeZone;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.OrderedComparison;
+import srojak.numerics.TemporalValue;
 
 /**
  * @author Stephen
  *
  */
 public sealed interface NullableDateTime
-		extends NullableTimeZonedValue, Equatable<NullableDateTime>, Comparable<NullableDateTime> 
+		extends NullableComparable<NullableDateTime>, TemporalValue, HasTimeZone
 		permits NullableDateTimeValue {
 
 	/**
@@ -143,6 +146,10 @@ public sealed interface NullableDateTime
 		} else {
 			return new NullableDateTimeValue(zdtValue);
 		}
+	}
+	
+	default Comparator<NullableDateTime> getComparator() {
+		return new NullableGenericComparator<NullableDateTime>();
 	}
 	
 	public static NullableDateTime fromNonNull(ZonedDateTime zdtValue) {
