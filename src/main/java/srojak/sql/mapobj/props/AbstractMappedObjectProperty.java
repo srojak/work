@@ -19,12 +19,14 @@ package srojak.sql.mapobj.props;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.Objects;
 
 import srojak.core.keys.InterfaceKey;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
 import srojak.numerics.NullableValue;
+import srojak.sql.ValueBindingException;
 import srojak.sql.mapobj.AbstractMappedObject;
 import srojak.sql.mapobj.MappedObjectProperty;
 
@@ -65,8 +67,18 @@ public abstract class AbstractMappedObjectProperty
 	}
 
 	@Override
+	public String fieldName() {
+		return _field.getName();
+	}
+
+	@Override
 	public String columnName() {
 		return _nameColumn;
+	}
+
+	@Override
+	public boolean columnNameEquals(String strName) {
+		return _nameColumn.equalsIgnoreCase(strName);
 	}
 
 	@Override
@@ -104,6 +116,20 @@ public abstract class AbstractMappedObjectProperty
 		return _sqlType;
 	}
 	
+	protected abstract NullableValue createTypedDefault(); 
+	
+	@Override
+	public void setToDefault(AbstractMappedObject instance) 
+			throws IllegalAccessException {
+		NullableValue nble = createTypedDefault();
+		_field.set(instance, nble);
+	}
+
+	@Override
+	public Comparator<?> getComparator() {
+		throw new UnsupportedOperationException("objects of this type do not have comparators");
+	}
+
 	protected abstract NullableValue readFrom(ResultSet rset)
 			throws SQLException;
 
@@ -114,5 +140,25 @@ public abstract class AbstractMappedObjectProperty
 		Objects.requireNonNull(rset, "rset");
 		NullableValue nble = readFrom(rset);
 		_field.set(instance, nble);
+	}
+	
+	protected Object getFieldValue(AbstractMappedObject instance) 
+			throws IllegalArgumentException, IllegalAccessException {
+		return _field.get(instance);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T extends NullableValue> T getFieldValueAs(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException {
+		Object objValue = _field.get(instance);
+		return (T) objValue;
+	}
+	
+	protected void checkNullState(NullableValue nble) {
+		if (!isNullable()) {
+			if (nble.isNull()) {
+				throw new ValueBindingException(fieldName(), "value is null for non-null column");
+			}
+		}
 	}
 }

@@ -26,7 +26,7 @@ import srojak.sql.mapobj.props.MappedDateTimeProperty;
  * @author Stephen
  *
  */
-public class NullableDateTimePropertyFactory
+public final class NullableDateTimePropertyFactory
 		extends AbstractTimeZonedPropertyFactory {
 
 	public NullableDateTimePropertyFactory() {

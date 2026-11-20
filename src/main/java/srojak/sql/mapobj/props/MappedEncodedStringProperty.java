@@ -25,6 +25,10 @@ import srojak.collate.Collation;
 import srojak.core.logic.FlagsIntTest;
 import srojak.numerics.NullableValue;
 import srojak.sql.NullableCollatedString;
+import srojak.sql.ValueBindingException;
+import srojak.sql.mapobj.AbstractMappedObject;
+import srojak.sql.valbind.JdbcValueBinding;
+import srojak.sql.valbind.NullableCollatedEncodedStringBinding;
 
 /**
  * @author Stephen
@@ -60,5 +64,13 @@ public class MappedEncodedStringProperty
 			}
 			return NullableCollatedString.from(_collation, strContent);
 		}
+	}
+
+	@Override
+	public JdbcValueBinding bind(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException, ValueBindingException {
+		NullableCollatedString nble = getFieldValueAs(instance);
+		checkNullState(nble);
+		return new NullableCollatedEncodedStringBinding(_nameColumn, _sqlType, nble, _maxLength);
 	}
 }

@@ -14,35 +14,19 @@
  * You should have received a copy of the GNU General Public License along with this portfolio.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package srojak.sql.impl;
+package srojak.sql.mapobj;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
+import srojak.core.data.DataErrorSeverity;
 import srojak.core.keys.ClassKey;
-import srojak.sql.mapobj.ObjectMapping;
 
 /**
  * @author Stephen
  *
  */
-public class MappedObjectCatalog {
+public interface ObjectMappingIssue {
 
-	private static final Map<ClassKey, ObjectMapping> _mapObjects
-			= new HashMap<ClassKey, ObjectMapping>();
+	ClassKey classOfMappedObject();
+	DataErrorSeverity severity();
+	String text();
 	
-	public static boolean isKnown(ClassKey key) {
-		return _mapObjects.containsKey(key);
-	}
-	
-	public static ObjectMapping getObjectMappingFor(ClassKey key) {
-		return _mapObjects.get(key);
-	}
-	
-	public static void register(ClassKey key, ObjectMapping mapping) {
-		Objects.requireNonNull(key, "key");
-		Objects.requireNonNull(mapping, "mapping");
-		_mapObjects.put(key, mapping);
-	}
 }

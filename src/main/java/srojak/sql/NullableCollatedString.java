@@ -20,8 +20,9 @@ import java.util.Objects;
 
 import srojak.collate.Collation;
 import srojak.collate.CollationRegexOptions;
-import srojak.core.Equatable;
-import srojak.numerics.NullableValue;
+import srojak.collate.HasCollation;
+import srojak.numerics.NullableComparable;
+import srojak.numerics.OrderedComparison;
 import srojak.numerics.nullable.NullableBoolean;
 
 /**
@@ -29,12 +30,21 @@ import srojak.numerics.nullable.NullableBoolean;
  *
  */
 public sealed interface NullableCollatedString
-		extends NullableValue, Equatable<NullableCollatedString>,
-			Comparable<NullableCollatedString> 
-		permits NullableCollatedStringBox {
+		extends NullableComparable<NullableCollatedString>, HasCollation
+		permits NullableCollatedStringValue {
 	
 	String value();
 	int length();
+
+	/**
+	 * Compare the value of the object to another value.
+	 * @param comparison The comparison to apply.
+	 * @param strValue The value to which to compare.
+	 * @return A {@code NullableBoolean} object whose value is {@code true} 
+	 * 	if the value of the object is not {@code null} and the comparison is true.
+	 */
+	NullableBoolean compareTo(OrderedComparison comparison, String strValue);
+
 	boolean isEmpty();
 	boolean hasSameCollationAs(NullableCollatedString other);
 	boolean hasSameCharsetAs(NullableCollatedString other);
@@ -48,7 +58,6 @@ public sealed interface NullableCollatedString
 	NullableBoolean startsWith(String prefix);
 	NullableBoolean startsWith(String prefix, int toffset);
 	NullableBoolean endsWith(String suffix);
-	Collation getCollation();
 	NullableCollatedString substring(int beginIndex);
 	NullableCollatedString substring(int beginIndex, int endIndex);
 	NullableCollatedString replace(char oldChar, char newChar);
@@ -59,12 +68,12 @@ public sealed interface NullableCollatedString
 	
 	public static NullableCollatedString from(Collation collation, String strContent) {
 		Objects.requireNonNull(collation, "collation");
-		return new NullableCollatedStringBox(collation, strContent);
+		return new NullableCollatedStringValue(collation, strContent);
 	}
 	
 	public static NullableCollatedString from(Collation collation, StringBuilder sbContent) {
 		Objects.requireNonNull(collation, "collation");
-		return new NullableCollatedStringBox(collation, sbContent);
+		return new NullableCollatedStringValue(collation, sbContent);
 	}
 	
 	/**
@@ -74,14 +83,14 @@ public sealed interface NullableCollatedString
 	 */
 	public static NullableCollatedString fromNull(Collation collation) {
 		Objects.requireNonNull(collation, "collation");
-		return new NullableCollatedStringBox(collation);
+		return new NullableCollatedStringValue(collation);
 	}
 	
 	public static NullableCollatedString join(Collation collation, CharSequence delimiter, CharSequence ... sequences) {
 		Objects.requireNonNull(collation, "collation");
 		Objects.requireNonNull(delimiter, "delimiter");
 		Objects.requireNonNull(sequences, "sequences");
-		return new NullableCollatedStringBox(collation, String.join(delimiter, sequences));
+		return new NullableCollatedStringValue(collation, String.join(delimiter, sequences));
 	}
 	
 	public static NullableCollatedString join(Collation collation, CharSequence delimiter,
@@ -89,18 +98,18 @@ public sealed interface NullableCollatedString
 		Objects.requireNonNull(collation, "collation");
 		Objects.requireNonNull(delimiter, "delimiter");
 		Objects.requireNonNull(sequences, "sequences");
-		return new NullableCollatedStringBox(collation, String.join(delimiter, sequences));
+		return new NullableCollatedStringValue(collation, String.join(delimiter, sequences));
 	}
 	
 	public static NullableCollatedString format(Collation collation, String format, Object ... args) {
 		Objects.requireNonNull(collation, "collation");
 		Objects.requireNonNull(format, "format");
 		Objects.requireNonNull(args, "args");
-		return new NullableCollatedStringBox(collation, String.format(collation.getLocale(), format, args));
+		return new NullableCollatedStringValue(collation, String.format(collation.getLocale(), format, args));
 	}
 	
 	public static NullableCollatedString decodeFrom(Collation collation, byte[] bytes, int offset, int length) {
 		Objects.requireNonNull(collation, "collation");
-		return new NullableCollatedStringBox(collation, bytes, offset, length);
+		return new NullableCollatedStringValue(collation, bytes, offset, length);
 	}
 }

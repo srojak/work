@@ -17,38 +17,27 @@
 package srojak.sql.mapobj.factories;
 
 import srojak.core.keys.ClassKey;
+import srojak.numerics.nullable.NullableSmallint;
 import srojak.sql.MappedObjectException;
-import srojak.sql.mapobj.ColumnSource;
-import srojak.sql.mapobj.props.AbstractMappedObjectProperty;
+import srojak.sql.mapobj.MappedObjectProperty;
+import srojak.sql.mapobj.props.MappedSmallintProperty;
 
 /**
  * @author Stephen
  *
  */
-public abstract class AbstractPrimitivePropertyFactory 
-		extends AbstractPropertyFactory {
+public final class NullableSmallintPropertyFactory 
+		extends AbstractScalarPropertyFactory {
 
-	/**
-	 * @param classToMatch
-	 */
-	public AbstractPrimitivePropertyFactory(Class<?> classToMatch) {
-		super(classToMatch);
+	public NullableSmallintPropertyFactory() {
+		super(NullableSmallint.class);
 	}
 
 	@Override
-	public void apply(ClassKey keyForObject, ColumnSource annotColumn) throws MappedObjectException {
-		_nameColumn = annotColumn.name();
-		if (_nameColumn.isBlank()) {
-			throw new MappedObjectException(keyForObject, "column name is blank");
-		}
-		if (annotColumn.isNullable()) {
-			_flags.set(FLAGS_NULLABLE);
-		}
-		if (annotColumn.isReadOnly()) {
-			_flags.set(FLAGS_READONLY);
-		}
-		if (annotColumn.isIdentity()) {
-			_flags.set(FLAGS_IDENTITY);
-		}
+	public MappedObjectProperty create(ClassKey keyForObject) throws MappedObjectException {
+		MappedSmallintProperty property = new MappedSmallintProperty(_field, _nameColumn, _flags);
+		applyKeyTo(property);
+		return property;
 	}
+
 }

@@ -24,41 +24,49 @@ import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import srojak.collate.Collation;
 import srojak.collate.CollationCatalog;
 import srojak.collate.CollationComparisonRule;
 import srojak.collate.CollationDefinition;
 import srojak.collate.DecoratedCollation;
+import srojak.core.data.DataErrorSeverity;
+import srojak.core.excepts.KeyNotFoundException;
 import srojak.core.keys.ClassKey;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
+import srojak.core.specialized.IntegerCounter;
 import srojak.mantle.decorated.DecoratorIntValue;
+import srojak.sql.DatabaseAction;
 import srojak.sql.MappedObjectException;
 import srojak.sql.SQLCollation;
+import srojak.sql.ValueBindingException;
 import srojak.sql.collate.SQLCollationCatalog;
 import srojak.sql.mapobj.AbstractMappedObject;
 import srojak.sql.mapobj.ColumnSource;
 import srojak.sql.mapobj.ColumnTimeZone;
 import srojak.sql.mapobj.KeyColumn;
 import srojak.sql.mapobj.MappedObjectProperty;
+import srojak.sql.mapobj.MappedObjectSource;
 import srojak.sql.mapobj.ObjectMapping;
+import srojak.sql.mapobj.ObjectMappingIssue;
 import srojak.sql.mapobj.SingleTableSource;
 import srojak.sql.mapobj.TextColumnSource;
 import srojak.sql.mapobj.UseCollation;
 import srojak.sql.mapobj.UseSQLCollation;
+import srojak.sql.mapobj.factories.MapObjPropertyFactoryStore;
 import srojak.sql.mapobj.factories.MappedObjectPropertyFactory;
 import srojak.sql.mapobj.factories.MappedTextPropertyFactory;
-import srojak.sql.mapobj.factories.NullableCollatedStringPropertyFactory;
-import srojak.sql.mapobj.factories.NullableDateTimePropertyFactory;
-import srojak.sql.mapobj.factories.NullableIntPropertyFactory;
+import srojak.sql.valbind.JdbcValueBinding;
 
 /**
  * @author Stephen
@@ -68,30 +76,16 @@ public class ObjectMappingCarrier
 		implements ObjectMapping {
 	private final ClassKey _classMapped;
 	private final FlagsInt _flags;
+	private final List<ObjectMappingIssue> _listIssues;
 	private AbstractMappedObjectSource _objSource;
 	private String _queryRead;
 	private Constructor<?> _constr;
-	
-	private static final Map<Class<?>, MappedObjectPropertyFactory> _mapFactories;
-	
-	static {
-		_mapFactories = new HashMap<Class<?>, MappedObjectPropertyFactory>();
-		
-		MappedObjectPropertyFactory[] factories = {
-				new NullableIntPropertyFactory(),
-				new NullableDateTimePropertyFactory(),
-				new NullableCollatedStringPropertyFactory(),
-		};
-		
-		for (MappedObjectPropertyFactory pf : factories) {
-			_mapFactories.put(pf.forClass().getReferencedClass(), pf);
-		}
-	}
 	
 	public ObjectMappingCarrier(Class<?> classMappedObject) {
 		Objects.requireNonNull(classMappedObject, "classMappedObject");
 		_classMapped = new ClassKey(classMappedObject);
 		_flags = new FlagsInt();
+		_listIssues = new LinkedList<ObjectMappingIssue>();
 	}
 
 	@Override
@@ -112,36 +106,70 @@ public class ObjectMappingCarrier
 	}
 
 	@Override
+	public boolean hasWarnings() {
+		return _flags.test(FLAGS_HAS_WARNINGS);
+	}
+
+	@Override
+	public Stream<ObjectMappingIssue> issues() {
+		return _listIssues.stream();
+	}
+	
+	@Override
+	public MappedObjectSource objSource() {
+		return _objSource;
+	}
+
+	@SuppressWarnings("unused")
+	private void recordWarning(String strText) {
+		ObjectMappingIssueBox issue = new ObjectMappingIssueBox(_classMapped, DataErrorSeverity.WARN, strText);
+		_listIssues.add(issue);
+		_flags.set(FLAGS_HAS_WARNINGS);
+	}
+	
+	private void recordError(IntegerCounter countErrors, String strText) {
+		ObjectMappingIssueBox issue = new ObjectMappingIssueBox(_classMapped, DataErrorSeverity.ERROR, strText);
+		_listIssues.add(issue);
+		countErrors.increment();
+	}
+
+	@Override
 	public void process() throws MappedObjectException {
 		if (!_flags.test(FLAGS_PROCESSED)) {
+			IntegerCounter errors = new IntegerCounter();
 			AbstractMappedObjectSource sourceMapped = null;
 			Annotation[] annots = _classMapped.getAnnotations();
 			for (Annotation annot : annots) {
 				if (annot instanceof SingleTableSource a) {
 					if (sourceMapped != null) {
-						throw new MappedObjectException(_classMapped,
-								"multiple definining annotations");
+						recordError(errors, "multiple definining annotations");
 					} else {
 						sourceMapped = new MappedObjectSingleTableSource(a);
 					}
 				}
 			}
 			if (sourceMapped == null) {
-				throw new MappedObjectException(_classMapped, "no source defined");
+				recordError(errors, "no source defined");
+			}
+			if (errors.value() > 0) {
+				throw new MappedObjectException(_classMapped, "improper source definition");
 			}
 			
 			Set<String> setColumns = new HashSet<String>();
 			Field[] fields = _classMapped.getDeclaredFields();
+			loopFields:
 			for (Field field : fields) {
 				KeyColumn kc = field.getAnnotation(KeyColumn.class);
 				ColumnSource cs = field.getAnnotation(ColumnSource.class);
 				if (cs != null) {
 					if (setColumns.contains(cs.name())) {
-						throw new MappedObjectException(_classMapped, "duplicate column name \"" + cs.name() + "\"");
+						recordError(errors, "duplicate column name \"" + cs.name() + "\"");
+						continue loopFields;
 					}
-					MappedObjectPropertyFactory factory = _mapFactories.get(field.getType());
+					MappedObjectPropertyFactory factory = MapObjPropertyFactoryStore.get(field.getType());
 					if (factory == null) {
-						throw new MappedObjectException(_classMapped, "field " + field.getName() + " has unrecognized data type");
+						recordError(errors, "field " + field.getName() + " has unrecognized data type");
+						continue loopFields;
 					}
 					factory.reset();
 					factory.setField(field);
@@ -164,16 +192,19 @@ public class ObjectMappingCarrier
 				TextColumnSource tcs = field.getAnnotation(TextColumnSource.class);
 				if (tcs != null) {
 					if (setColumns.contains(tcs.name())) {
-						throw new MappedObjectException(_classMapped, "duplicate column name \"" + tcs.name() + "\"");
+						recordError(errors, "duplicate column name \"" + tcs.name() + "\"");
+						continue loopFields;
 					}
-					MappedObjectPropertyFactory factory = _mapFactories.get(field.getType());
+					MappedObjectPropertyFactory factory = MapObjPropertyFactoryStore.get(field.getType());
 					if (factory == null) {
-						throw new MappedObjectException(_classMapped, "field " + field.getName() + " has unrecognized data type");
+						recordError(errors, "field " + field.getName() + " has unrecognized data type");
+						continue loopFields;
 					}
 					UseCollation annotCollation = field.getAnnotation(UseCollation.class);
 					UseSQLCollation annotSQLColl = field.getAnnotation(UseSQLCollation.class);
 					if (annotCollation == null && annotSQLColl == null) {
-						throw new MappedObjectException(_classMapped, "field " + field.getName() + " does not define its collation");
+						recordError(errors, "field " + field.getName() + " does not define its collation");
+						continue loopFields;
 					}
 					if (factory instanceof MappedTextPropertyFactory factoryText) {
 						factoryText.reset();
@@ -191,13 +222,15 @@ public class ObjectMappingCarrier
 							CollationDefinition definition = CollationDefinition.compose(lcl, charSet, ruleCompare);
 							collation = CollationCatalog.get(definition);
 							if (collation == null) {
-								throw new MappedObjectException(_classMapped, "undefined collation " + definition);
+								recordError(errors, "undefined collation " + definition);
+								continue loopFields;
 							}
 						} else {					
 							SQLCollation collSql = SQLCollation.name(annotSQLColl.value());
 							DecoratedCollation dcoll = SQLCollationCatalog.get(collSql);
 							if (dcoll == null) {
-								throw new MappedObjectException(_classMapped, "unrecognized collation " + collation);
+								recordError(errors, "unrecognized collation " + collation);
+								continue loopFields;
 							}
 							int nDelta = 0;
 							DecoratorIntValue decorDelta = dcoll.getDecoratorAs(SQLCollationCatalog.DELTA);
@@ -205,7 +238,8 @@ public class ObjectMappingCarrier
 								nDelta = decorDelta.getValue();
 							}
 							if (nDelta > annotSQLColl.delta()) {
-								throw new MappedObjectException(_classMapped, "collation " + collation + " not suitable");
+								recordError(errors, "collation " + collation + " not suitable");
+								continue loopFields;
 							}
 							collation = dcoll.getValue();
 						}
@@ -214,21 +248,25 @@ public class ObjectMappingCarrier
 						sourceMapped.add(property);
 						setColumns.add(property.columnName());
 					} else {
-						throw new MappedObjectException(_classMapped, "field" + field.getName() + " is not a text field");
+						recordError(errors, "field" + field.getName() + " is not a text field");
 					}
 				}
 			}
 			
 			if (sourceMapped._listColumns.isEmpty()) {
-				throw new MappedObjectException(_classMapped, "no mapped columns defined");
+				recordError(errors, "no mapped columns defined");
+			}
+			
+			if (errors.value() > 0) {
+				throw new MappedObjectException(_classMapped, "one or more improper property definitions");
 			}
 			
 			try {
-				_constr = _classMapped.getReferencedClass().getDeclaredConstructor();
+				_constr = _classMapped.getReferencedClass().getDeclaredConstructor(ObjectMapping.class);
 			} catch (NoSuchMethodException e) {
-				throw new MappedObjectException(_classMapped, "no default constructor", e);
+				throw new MappedObjectException(_classMapped, "no mapping constructor", e);
 			} catch (SecurityException e) {
-				throw new MappedObjectException(_classMapped, "default constructor is inaccessible", e);
+				throw new MappedObjectException(_classMapped, "mapping constructor is inaccessible", e);
 			}
 			
 			_queryRead = sourceMapped.stmtRead();
@@ -240,31 +278,66 @@ public class ObjectMappingCarrier
 	}
 
 	@Override
+	public MappedObjectProperty getPropertyForFieldNamed(String strField) {
+		Objects.requireNonNull(strField, "strField");
+		MappedObjectProperty property = _objSource.propertyForColumn(strField);
+		if (property == null) {
+			throw new KeyNotFoundException(strField, "named field not found");
+		}
+		return property;
+	}
+
+	@Override
+	public MappedObjectProperty getPropertyForColumnNamed(String strColumn) {
+		Objects.requireNonNull(strColumn, "strColumn");
+		MappedObjectProperty property = _objSource.propertyForColumn(strColumn);
+		if (property == null) {
+			throw new KeyNotFoundException(strColumn, "named column not found");
+		}
+		return property;
+	}
+
+	@Override
 	public ResultSet query(Statement stmt) throws SQLException {
 		return stmt.executeQuery(_queryRead);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends AbstractMappedObject> T createInstance() 
+	public <M extends AbstractMappedObject> M createInstance() 
 			throws MappedObjectException {
 		try {
-			return (T) _constr.newInstance();
+			return (M) _constr.newInstance(this);
 		} catch (InstantiationException e) {
-			throw new MappedObjectException(_classMapped, "default constructor instantiation", e);
+			throw new MappedObjectException(_classMapped, "constructor instantiation", e);
 		} catch (IllegalAccessException e) {
-			throw new MappedObjectException(_classMapped, "default constructor access", e);
+			throw new MappedObjectException(_classMapped, "constructor access", e);
 		} catch (IllegalArgumentException e) {
-			throw new MappedObjectException(_classMapped, "default constructor argument", e);
+			throw new MappedObjectException(_classMapped, "constructor argument", e);
 		} catch (InvocationTargetException e) {
-			throw new MappedObjectException(_classMapped, "default constructor invocation", e);
+			throw new MappedObjectException(_classMapped, "constructor invocation", e);
 		}
 	}
 
 	@Override
-	public <T extends AbstractMappedObject> void populateFrom(ResultSet rset, T instance) 
+	public <M extends AbstractMappedObject> void populateDefaults(M instance)
+			throws MappedObjectException {
+		Objects.requireNonNull(instance, "instance");
+		List<MappedObjectProperty> properties = _objSource.properties().toList();
+		for (MappedObjectProperty p : properties) {
+			try {
+				p.setToDefault(instance);
+			} catch (IllegalAccessException e) {
+				throw new MappedObjectException(_classMapped, "illegal access", e);
+			}
+		}
+	}
+
+	@Override
+	public <M extends AbstractMappedObject> void populateFrom(ResultSet rset, M instance) 
 			throws SQLException, MappedObjectException {
 		Objects.requireNonNull(rset, "rset");
+		Objects.requireNonNull(instance, "instance");
 		List<MappedObjectProperty> properties = _objSource.properties().toList();
 		for (MappedObjectProperty p : properties) {
 			try {
@@ -275,5 +348,64 @@ public class ObjectMappingCarrier
 				throw new MappedObjectException(_classMapped, "illegal access", e);
 			}
 		}
+	}
+	
+	private <M extends AbstractMappedObject> JdbcValueBinding bindPropertyValue(M instance, MappedObjectProperty property)
+				throws MappedObjectException, ValueBindingException {
+		try {
+			return property.bind(instance);
+		} catch (IllegalArgumentException exc) {
+			throw new MappedObjectException(_classMapped, "illegal argument during binding", exc);
+		} catch (IllegalAccessException exc) {
+			throw new MappedObjectException(_classMapped, 
+					"no access to property " + property.columnName() + " during binding", exc);
+		}
+	}
+
+	@Override
+	public <M extends AbstractMappedObject> List<JdbcValueBinding> bindPropertyValues(M instance, DatabaseAction action)
+			throws MappedObjectException, ValueBindingException {
+		Objects.requireNonNull(instance, "instance");
+		Objects.requireNonNull(action, "action");
+		List<MappedObjectProperty> properties = _objSource.properties().toList();
+		List<JdbcValueBinding> listBindings = new ArrayList<JdbcValueBinding>(properties.size());
+		for (MappedObjectProperty p : properties) {
+			if (action == DatabaseAction.INSERT) {
+				if (p.isIdentity() || p.isReadOnly()) {
+					continue;
+				}
+			}
+			JdbcValueBinding binding = bindPropertyValue(instance, p);
+			listBindings.add(binding);
+		}
+		return listBindings;
+	}
+
+	@Override
+	public <M extends AbstractMappedObject> List<JdbcValueBinding> bindPropertyValues(M instance,
+			Collection<String> columnNames) 
+					throws MappedObjectException, ValueBindingException {
+		Objects.requireNonNull(instance, "instance");
+		Objects.requireNonNull(columnNames, "columnNames");
+		int nColumns = columnNames.size();
+		if (nColumns == 0) {
+			throw new IllegalArgumentException("columnNames is empty");
+		}
+		List<JdbcValueBinding> listBindings = new ArrayList<JdbcValueBinding>(nColumns);
+		List<String> listUnresolvedColumns = new LinkedList<String>();
+		for (String nameColumn : columnNames) {
+			MappedObjectProperty property = _objSource.propertyForColumn(nameColumn);
+			if (property == null) {
+				listUnresolvedColumns.add(nameColumn);
+			} else {
+				JdbcValueBinding binding = bindPropertyValue(instance, property);
+				listBindings.add(binding);
+			}
+		}
+		if (!listUnresolvedColumns.isEmpty()) {
+			throw new ValueBindingException(_classMapped.toShortString(), 
+					"unresolved columns: " + String.join(", ", listUnresolvedColumns));
+		}
+		return listBindings;
 	}
 }

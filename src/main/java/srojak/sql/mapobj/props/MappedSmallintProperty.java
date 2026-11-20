@@ -22,14 +22,19 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import srojak.core.logic.FlagsIntTest;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.NullableValue;
 import srojak.numerics.nullable.NullableSmallint;
+import srojak.sql.mapobj.AbstractMappedObject;
+import srojak.sql.valbind.JdbcValueBinding;
+import srojak.sql.valbind.NullableSmallintValueBinding;
 
 /**
  * @author Stephen
  *
  */
-public class MappedSmallintProperty extends AbstractMappedObjectProperty {
+public final class MappedSmallintProperty 
+		extends AbstractMappedComparableProperty {
 
 	/**
 	 * @param field
@@ -41,6 +46,11 @@ public class MappedSmallintProperty extends AbstractMappedObjectProperty {
 	}
 
 	@Override
+	protected NullableComparable<?> createComparableDefault() {
+		return NullableSmallint.fromNull();
+	}
+
+	@Override
 	protected NullableValue readFrom(ResultSet rset)
 			throws SQLException {
 		short nValue = rset.getShort(_nameColumn);
@@ -49,5 +59,13 @@ public class MappedSmallintProperty extends AbstractMappedObjectProperty {
 		} else {
 			return NullableSmallint.from(nValue);
 		}
+	}
+
+	@Override
+	public JdbcValueBinding bind(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException {
+		NullableSmallint nble = getFieldValueAs(instance);
+		checkNullState(nble);
+		return new NullableSmallintValueBinding(_nameColumn, nble);
 	}
 }

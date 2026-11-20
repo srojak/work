@@ -17,10 +17,14 @@
 package srojak.sql.mapobj.props;
 
 import java.lang.reflect.Field;
+import java.util.Comparator;
 import java.util.Objects;
 
 import srojak.collate.Collation;
 import srojak.core.logic.FlagsIntTest;
+import srojak.numerics.NullableValue;
+import srojak.sql.NullableCollatedString;
+import srojak.sql.NullableCollatedStringComparator;
 import srojak.sql.mapobj.MappedObjectTextProperty;
 
 /**
@@ -72,5 +76,15 @@ public abstract class AbstractMappedTextProperty
 	@Override
 	public Collation collation() {
 		return _collation;
+	}
+
+	@Override
+	protected NullableValue createTypedDefault() {
+		return NullableCollatedString.fromNull(_collation);
+	}
+
+	@Override
+	public Comparator<?> getComparator() {
+		return new NullableCollatedStringComparator(_collation);
 	}
 }

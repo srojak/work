@@ -22,18 +22,28 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import srojak.core.logic.FlagsIntTest;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.NullableValue;
 import srojak.numerics.nullable.NullableInt;
+import srojak.sql.ValueBindingException;
+import srojak.sql.mapobj.AbstractMappedObject;
+import srojak.sql.valbind.JdbcValueBinding;
+import srojak.sql.valbind.NullableIntValueBinding;
 
 /**
  * @author Stephen
  *
  */
-public class MappedIntProperty 
-		extends AbstractMappedObjectProperty {
+public final class MappedIntProperty 
+		extends AbstractMappedComparableProperty {
 
 	public MappedIntProperty(Field field, String strColumnName, FlagsIntTest flagsSource) {
 		super(field, strColumnName, flagsSource, Types.INTEGER);
+	}
+
+	@Override
+	protected NullableComparable<?> createComparableDefault() {
+		return NullableInt.fromNull();
 	}
 
 	@Override
@@ -45,5 +55,13 @@ public class MappedIntProperty
 		} else {
 			return NullableInt.from(value);
 		}
+	}
+
+	@Override
+	public JdbcValueBinding bind(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException, ValueBindingException {
+		NullableInt nble = getFieldValueAs(instance);
+		checkNullState(nble);
+		return new NullableIntValueBinding(_nameColumn, nble);
 	}
 }

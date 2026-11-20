@@ -18,9 +18,12 @@ package srojak.sql.mapobj;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 
 import srojak.core.keys.InterfaceKey;
 import srojak.core.logic.FlagsIntTest;
+import srojak.sql.ValueBindingException;
+import srojak.sql.valbind.JdbcValueBinding;
 
 /**
  * @author Stephen
@@ -30,7 +33,10 @@ public interface MappedObjectProperty
 		extends MappedObjectPropertyFlags {
 
 	InterfaceKey fieldType();
+	String fieldName();
+	Comparator<?> getComparator();
 	String columnName();
+	boolean columnNameEquals(String strName);
 	FlagsIntTest getFlags();
 	boolean isKeyComponent();
 	int keyOrdinal();
@@ -38,6 +44,10 @@ public interface MappedObjectProperty
 	boolean isReadOnly();
 	boolean isIdentity();
 	int sqlType();
+	void setToDefault(AbstractMappedObject instance) 
+			throws IllegalAccessException;
 	void readIntoProperty(AbstractMappedObject instance, ResultSet rset)
 			throws IllegalArgumentException, IllegalAccessException, SQLException;
+	JdbcValueBinding bind(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException, ValueBindingException;
 }

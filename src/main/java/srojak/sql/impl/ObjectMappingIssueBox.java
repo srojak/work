@@ -1,0 +1,68 @@
+/**
+ * Copyright © 2026 Stephen Rojak.
+ * 
+ * This file is part of the srojak Java portfolio.
+ * 
+ * The srojak Java portfolio is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free Software Foundation,
+ * version 3 of the License.
+ * 
+ * The srojak Java portfolio is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this portfolio.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+package srojak.sql.impl;
+
+import java.util.Objects;
+
+import srojak.core.data.DataErrorSeverity;
+import srojak.core.keys.ClassKey;
+import srojak.sql.mapobj.ObjectMappingIssue;
+
+/**
+ * @author Stephen
+ *
+ */
+public class ObjectMappingIssueBox 
+		implements ObjectMappingIssue {
+	private final ClassKey _classMapped;
+	private final DataErrorSeverity _severity;
+	private final String _text;
+	
+	public ObjectMappingIssueBox(ClassKey keyClass, DataErrorSeverity severity, String strText) {
+		Objects.requireNonNull(keyClass, "keyClass");
+		Objects.requireNonNull(severity, "severity");
+		Objects.requireNonNull(strText, "strText");
+		_classMapped = keyClass;
+		_severity = severity;
+		_text = strText;
+	}
+
+	@Override
+	public ClassKey classOfMappedObject() {
+		return _classMapped;
+	}
+
+	@Override
+	public DataErrorSeverity severity() {
+		return _severity;
+	}
+
+	@Override
+	public String text() {
+		return _text;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("severity=");
+		sb.append(_severity);
+		sb.append(": ");
+		sb.append(_text);
+		return sb.toString();
+	}
+}

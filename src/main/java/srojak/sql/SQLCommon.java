@@ -24,6 +24,7 @@ import srojak.core.faults.ExceptionFormatter;
 import srojak.core.faults.FaultMethods;
 import srojak.sql.collate.SQLCollationCatalog;
 import srojak.sql.impl.SqlExceptionFormatter;
+import srojak.sql.mapobj.factories.MapObjPropertyFactoryStore;
 
 /**
  * @author Stephen
@@ -45,6 +46,8 @@ public class SQLCommon {
 		CollationCatalog.loadInitial();
 		
 		SQLCollationCatalog.initialize();
+		
+		MapObjPropertyFactoryStore.initialize();
 	}
 	
 	/**

@@ -26,17 +26,21 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 import srojak.core.logic.FlagsIntTest;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.NullableValue;
 import srojak.numerics.nullable.NullableDateTime;
 import srojak.sql.SQLCommon;
+import srojak.sql.mapobj.AbstractMappedObject;
 import srojak.sql.mapobj.MappedObjectTimeZonedProperty;
+import srojak.sql.valbind.JdbcValueBinding;
+import srojak.sql.valbind.NullableDateTimeValueBinding;
 
 /**
  * @author Stephen
  *
  */
-public class MappedDateTimeProperty
-		extends AbstractMappedObjectProperty
+public final class MappedDateTimeProperty
+		extends AbstractMappedComparableProperty
 		implements MappedObjectTimeZonedProperty {
 	private ZoneId _idZone;
 
@@ -61,6 +65,11 @@ public class MappedDateTimeProperty
 	}
 
 	@Override
+	protected NullableComparable<?> createComparableDefault() {
+		return NullableDateTime.fromNull();
+	}
+
+	@Override
 	protected NullableValue readFrom(ResultSet rset)
 			throws SQLException {
 		LocalDateTime dtIn = rset.getObject(_nameColumn, LocalDateTime.class);
@@ -70,5 +79,13 @@ public class MappedDateTimeProperty
 			ZonedDateTime zdtValue = dtIn.atZone(_idZone);
 			return NullableDateTime.from(zdtValue);
 		}
+	}
+
+	@Override
+	public JdbcValueBinding bind(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException {
+		NullableDateTime nble = getFieldValueAs(instance);
+		checkNullState(nble);
+		return new NullableDateTimeValueBinding(_nameColumn, nble);
 	}
 }

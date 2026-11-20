@@ -26,8 +26,8 @@ import srojak.sql.mapobj.props.MappedIntProperty;
  * @author Stephen
  *
  */
-public class NullableIntPropertyFactory 
-		extends AbstractPrimitivePropertyFactory {
+public final class NullableIntPropertyFactory 
+		extends AbstractScalarPropertyFactory {
 
 	public NullableIntPropertyFactory() {
 		super(NullableInt.class);

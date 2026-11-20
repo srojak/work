@@ -17,15 +17,22 @@
 /**
  * @author Stephen
  *
+ * Restriction:
+ * This module may not depend upon srojak.afw or srojak.debug.
  */
-module srojak.sql {
-	requires transitive java.sql;
+module srojak.numerics {
 	requires transitive srojak.core;
-	requires transitive srojak.numerics;
-	requires transitive srojak.mantle;
-	requires transitive srojak.collate;
-	exports srojak.sql;
-	exports srojak.sql.collate;
-	exports srojak.sql.connect;
-	exports srojak.sql.mapobj;
+	exports srojak.numerics;
+	exports srojak.numerics.compass;
+	exports srojak.numerics.extmath;
+	exports srojak.numerics.function;
+	exports srojak.numerics.intervals;
+	exports srojak.numerics.nullable;
+	exports srojak.numerics.sequence;
+	exports srojak.numerics.vertices;
+	exports srojak.numerics.vstore;
+	exports srojak.numerics.vstore.collections;
+	exports srojak.numerics.vstore.facades;
+	exports srojak.numerics.vstore.primitives;
+	exports srojak.numerics.weighted;
 }

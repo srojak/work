@@ -37,6 +37,7 @@ public interface MappedObjectSource {
 	String stmtUpdate();
 	String stmtDelete();
 	Stream<MappedObjectProperty> properties();
+	MappedObjectProperty propertyForColumn(String strColumnName);	
 	
 	static final int FLAGS_SINGLE = 0x1;
 	static final int FLAGS_CAN_INSERT = 0x2;

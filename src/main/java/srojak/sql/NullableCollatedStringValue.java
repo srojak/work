@@ -16,6 +16,7 @@
  */
 package srojak.sql;
 
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 import srojak.collate.Collation;
 import srojak.collate.CollationRegexOptions;
 import srojak.core.excepts.NullValueException;
+import srojak.numerics.OrderedComparison;
 import srojak.numerics.nullable.NullableBoolean;
 import srojak.numerics.nullable.NullableValueBase;
 
@@ -30,20 +32,20 @@ import srojak.numerics.nullable.NullableValueBase;
  * @author Stephen
  *
  */
-public final class NullableCollatedStringBox
+public final class NullableCollatedStringValue
 		extends NullableValueBase
 		implements NullableCollatedString {
 	private final Collation _collation;
 	private final String _str;
 
-	NullableCollatedStringBox(Collation collation) {
+	NullableCollatedStringValue(Collation collation) {
 		super(true);
 		Objects.requireNonNull(collation, "collation");
 		_collation = collation;
 		_str = "";
 	}
 
-	NullableCollatedStringBox(Collation collation, String strContent) {
+	NullableCollatedStringValue(Collation collation, String strContent) {
 		super(false);
 		Objects.requireNonNull(collation, "collation");
 		Objects.requireNonNull(strContent, "strContent");
@@ -51,7 +53,7 @@ public final class NullableCollatedStringBox
 		_str = strContent;
 	}
 
-	NullableCollatedStringBox(Collation collation, StringBuilder sbContent) {
+	NullableCollatedStringValue(Collation collation, StringBuilder sbContent) {
 		super(false);
 		Objects.requireNonNull(collation, "collation");
 		Objects.requireNonNull(sbContent, "sbContent");
@@ -59,7 +61,7 @@ public final class NullableCollatedStringBox
 		_str = new String(sbContent);
 	}
 	
-	NullableCollatedStringBox(Collation collation, byte[] bytes, int offset, int length) {
+	NullableCollatedStringValue(Collation collation, byte[] bytes, int offset, int length) {
 		super(false);
 		Objects.requireNonNull(collation, "collation");
 		Objects.requireNonNull(bytes, "bytes");
@@ -93,6 +95,44 @@ public final class NullableCollatedStringBox
 			throw new NullValueException("at least one operand in comparison is null");
 		} else {
 			return _collation.compare(_str, o.value());
+		}
+	}
+
+	/**
+	 * Compare the value of the object to another value.
+	 * @param comparison The comparison to apply.
+	 * @param strValue The value to which to compare.
+	 * @return A {@code NullableBoolean} object whose value is {@code true} 
+	 * 	if the value of the object is not {@code null} and the comparison is true.
+	 */
+	@Override
+	public NullableBoolean compareTo(OrderedComparison comparison, String strValue) {
+		Objects.requireNonNull(comparison, "comparison");
+		Objects.requireNonNull(strValue, "strValue");
+		if (_isNull) {
+			return NullableBoolean.fromNull();
+		} else {
+			boolean bCompar = comparison.evaluate(_collation.compare(_str, strValue));
+			return NullableBoolean.from(bCompar);
+		}
+	}
+
+	/**
+	 * Compare the value of the object to another value.
+	 * @param comparison The comparison to apply.
+	 * @param other The other operand to which to compare.
+	 * @return A {@code NullableBoolean} object whose value is {@code true} if the value of the object is not {@code null},
+	 * 	@{code other} is not {@code null} and the comparison is true.
+	 */
+	@Override
+	public NullableBoolean compareTo(OrderedComparison comparison, NullableCollatedString other) {
+		Objects.requireNonNull(comparison, "comparison");
+		Objects.requireNonNull(other, "other");
+		if (_isNull || other.isNull()) {
+			return NullableBoolean.fromNull();
+		} else {
+			boolean bCompar = comparison.evaluate(_collation.compare(_str, other.value()));
+			return NullableBoolean.from(bCompar);
 		}
 	}
 
@@ -243,27 +283,27 @@ public final class NullableCollatedStringBox
 	@Override
 	public NullableCollatedString substring(int beginIndex) {
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
-			return new NullableCollatedStringBox(_collation, _str.substring(beginIndex));
+			return new NullableCollatedStringValue(_collation, _str.substring(beginIndex));
 		}
 	}
 
 	@Override
 	public NullableCollatedString substring(int beginIndex, int endIndex) {
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
-			return new NullableCollatedStringBox(_collation, _str.substring(beginIndex, endIndex));
+			return new NullableCollatedStringValue(_collation, _str.substring(beginIndex, endIndex));
 		}
 	}
 
 	@Override
 	public NullableCollatedString replace(char oldChar, char newChar) {
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
-			return new NullableCollatedStringBox(_collation, _str.replace(oldChar, newChar));
+			return new NullableCollatedStringValue(_collation, _str.replace(oldChar, newChar));
 		}
 	}
 
@@ -273,11 +313,11 @@ public final class NullableCollatedStringBox
 		Objects.requireNonNull(options, "options");
 		Objects.requireNonNull(replacement, "replacement");
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
 			Pattern pattern = _collation.compile(regex, options);
 			Matcher matcher = pattern.matcher(_str);
-			return new NullableCollatedStringBox(_collation, matcher.replaceAll(replacement));
+			return new NullableCollatedStringValue(_collation, matcher.replaceAll(replacement));
 		}
 	}
 
@@ -287,30 +327,35 @@ public final class NullableCollatedStringBox
 		Objects.requireNonNull(options, "options");
 		Objects.requireNonNull(replacement, "replacement");
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
 			Pattern pattern = _collation.compile(regex, options);
 			Matcher matcher = pattern.matcher(_str);
-			return new NullableCollatedStringBox(_collation, matcher.replaceFirst(replacement));
+			return new NullableCollatedStringValue(_collation, matcher.replaceFirst(replacement));
 		}
 	}
 
 	@Override
 	public NullableCollatedString toLowerCase() {
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
-			return new NullableCollatedStringBox(_collation, _str.toLowerCase(_collation.getLocale()));
+			return new NullableCollatedStringValue(_collation, _str.toLowerCase(_collation.getLocale()));
 		}
 	}
 
 	@Override
 	public NullableCollatedString toUpperCase() {
 		if (_isNull) {
-			return new NullableCollatedStringBox(_collation);
+			return new NullableCollatedStringValue(_collation);
 		} else {
-			return new NullableCollatedStringBox(_collation, _str.toUpperCase(_collation.getLocale()));
+			return new NullableCollatedStringValue(_collation, _str.toUpperCase(_collation.getLocale()));
 		}
+	}
+
+	@Override
+	public Comparator<NullableCollatedString> getComparator() {
+		return new NullableCollatedStringComparator(_collation);
 	}
 
 	@Override

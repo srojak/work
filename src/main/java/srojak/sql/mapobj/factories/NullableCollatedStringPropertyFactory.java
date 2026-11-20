@@ -28,7 +28,7 @@ import srojak.sql.mapobj.props.MappedLatin1StringProperty;
  * @author Stephen
  *
  */
-public class NullableCollatedStringPropertyFactory 
+public final class NullableCollatedStringPropertyFactory 
 		extends AbstractTextPropertyFactory {
 
 	public NullableCollatedStringPropertyFactory() {

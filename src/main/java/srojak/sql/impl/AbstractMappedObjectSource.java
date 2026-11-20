@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import srojak.core.excepts.InvalidOperationException;
 import srojak.core.logic.FlagsInt;
 import srojak.core.logic.FlagsIntTest;
+import srojak.core.tools.ListMethods;
 import srojak.sql.mapobj.MappedObjectProperty;
 import srojak.sql.mapobj.MappedObjectSource;
 
@@ -89,6 +90,11 @@ public abstract class AbstractMappedObjectSource
 	@Override
 	public Stream<MappedObjectProperty> properties() {
 		return _listColumns.stream();
+	}
+
+	@Override
+	public MappedObjectProperty propertyForColumn(String strColumnName) {
+		return ListMethods.findInList(_listColumns, c -> c.columnNameEquals(strColumnName));
 	}
 
 	public void add(MappedObjectProperty column) {

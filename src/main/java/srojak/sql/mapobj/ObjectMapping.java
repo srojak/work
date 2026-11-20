@@ -19,10 +19,18 @@ package srojak.sql.mapobj;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
 import srojak.core.keys.ClassKey;
 import srojak.core.logic.FlagsIntTest;
+import srojak.core.observe.ObservedActivity;
+import srojak.core.observe.activity.SingleActivity;
+import srojak.sql.DatabaseAction;
 import srojak.sql.MappedObjectException;
+import srojak.sql.ValueBindingException;
+import srojak.sql.valbind.JdbcValueBinding;
 
 /**
  * @author Stephen
@@ -32,13 +40,28 @@ public interface ObjectMapping {
 
 	ClassKey mappedObjectClass();
 	FlagsIntTest getFlags();
+	Stream<ObjectMappingIssue> issues();
 	boolean isValid();
+	boolean hasWarnings();
+	MappedObjectSource objSource();
 	void process() throws MappedObjectException;
+	MappedObjectProperty getPropertyForFieldNamed(String strField);
+	MappedObjectProperty getPropertyForColumnNamed(String strColumn);
 	ResultSet query(Statement stmt) throws SQLException;
-	<T extends AbstractMappedObject> T createInstance() throws MappedObjectException;
-	<T extends AbstractMappedObject> void populateFrom(ResultSet rset, T instance) 
+	<M extends AbstractMappedObject> M createInstance() 
+			throws MappedObjectException;
+	<M extends AbstractMappedObject> void populateDefaults(M instance)
+			throws MappedObjectException;
+	<M extends AbstractMappedObject> void populateFrom(ResultSet rset, M instance) 
 			throws SQLException, MappedObjectException;
+	<M extends AbstractMappedObject> List<JdbcValueBinding> bindPropertyValues(M instance, DatabaseAction action)
+			throws MappedObjectException, ValueBindingException;
+	<M extends AbstractMappedObject> List<JdbcValueBinding> bindPropertyValues(M instance, Collection<String> columnNames)
+			throws MappedObjectException, ValueBindingException;
 	
 	static final int FLAGS_VALID = 0x1;
-	static final int FLAGS_PROCESSED = 0x2;
+	static final int FLAGS_HAS_WARNINGS = 0x2;
+	static final int FLAGS_PROCESSED = 0x4;
+	
+	static final ObservedActivity ACTIVITY_PROCESS_MAPPING = new SingleActivity("process mapping");
 }

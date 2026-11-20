@@ -22,15 +22,19 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import srojak.core.logic.FlagsIntTest;
+import srojak.numerics.NullableComparable;
 import srojak.numerics.NullableValue;
 import srojak.numerics.nullable.NullableTinyint;
+import srojak.sql.mapobj.AbstractMappedObject;
+import srojak.sql.valbind.JdbcValueBinding;
+import srojak.sql.valbind.NullableTinyintValueBinding;
 
 /**
  * @author Stephen
  *
  */
-public class MappedTinyintProperty 
-		extends AbstractMappedObjectProperty {
+public final class MappedTinyintProperty 
+		extends AbstractMappedComparableProperty {
 
 	/**
 	 * @param field
@@ -42,6 +46,11 @@ public class MappedTinyintProperty
 	}
 
 	@Override
+	protected NullableComparable<?> createComparableDefault() {
+		return NullableTinyint.fromNull();
+	}
+
+	@Override
 	protected NullableValue readFrom(ResultSet rset) throws SQLException {
 		byte nValue = rset.getByte(_nameColumn);
 		if (rset.wasNull()) {
@@ -49,6 +58,14 @@ public class MappedTinyintProperty
 		} else {
 			return NullableTinyint.from(nValue);
 		}
+	}
+
+	@Override
+	public JdbcValueBinding bind(AbstractMappedObject instance)
+			throws IllegalArgumentException, IllegalAccessException {
+		NullableTinyint nble = getFieldValueAs(instance);
+		checkNullState(nble);
+		return new NullableTinyintValueBinding(_nameColumn, nble);
 	}
 
 }
